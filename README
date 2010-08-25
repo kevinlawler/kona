@@ -1,7 +1,8 @@
-To compile:
-gcc -O3 k.c
+To compile (OS X/Linux):
+gcc -lm -ldl -O3 k.c
 
 To compile with tests:
-gcc -O3 -DNDEBUG k.c
+gcc -lm -ldl -O3 -DNDEBUG k.c
 
-makeheaders is used to generate header files
+makeheaders is used to generate the h.h header file
+makeheaders -h *.c > h.h
