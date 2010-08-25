@@ -1,0 +1,7 @@
+To compile:
+gcc -O3 k.c
+
+To compile with tests:
+gcc -O3 -DNDEBUG k.c
+
+makeheaders is used to generate header files
