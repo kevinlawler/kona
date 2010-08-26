@@ -1,8 +1,8 @@
 To compile (OS X/Linux):
-gcc -lm -ldl -O3 k.c
+gcc -lm -ldl -O3 k.c -o k
 
 To compile with tests:
-gcc -lm -ldl -O3 -DNDEBUG k.c
+gcc -lm -ldl -O3 -DNDEBUG k.c -o k
 
 makeheaders is used to generate the h.h header file
 makeheaders -h *.c > h.h
