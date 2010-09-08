@@ -655,7 +655,9 @@ K _3m(K x)
   //O("client: connecting to %s\n", s);
   I yes=1;
   setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I));//disable nagle
+#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
   setsockopt(sockfd, SOL_SOCKET,  SO_NOSIGPIPE,&yes, sizeof(I)); 
+#endif
   freeaddrinfo(servinfo); 
 
   //Z C m[ 8]; if(-1==sendall(sockfd,(S)&m,sizeof m))R DOE; //not really sure what this handshake is for, 32-bit K3.2 requires it
