@@ -23,11 +23,11 @@ R z;
 S_MONAD(gtime, "{(_dj _ x % 86400; 100 _sv 24 60 60 _vs x ! 86400)}") //will error until _sv works
 S_MONAD(inv,   "{((2##*x)#1,&#*x)_lsq x}")
 
-S_DYAD(binl, "x _bin/: y")
+S_DYAD(binl, "{x _bin/: y}")
 S_DYAD(dvl,  "{x@&(#y)=y?/:x}" ) 
 S_DYAD(di,   "{:[@x;._f[. x;(!x)?/:y];x@&@[(#x)#1;y;:;0]]}") 
 S_DYAD(dot,  "+/*") //reimplementing this would make matrix math faster. See SSE dot call
-S_DYAD(dv,   "{x _dvl ,y") 
+S_DYAD(dv,   "{x _dvl ,y}") 
 S_DYAD(in,   "{:[:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}") 
 S_DYAD(lin,  "{(#y)>y?/:x}") 
 S_DYAD(mul,  "{x _dot\\:y}") 
