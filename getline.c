@@ -25,7 +25,9 @@ I appender(S *s, I *n, S t, I k) //concatenate t to s
   R 0;
 }
 
-#ifdef __MACH__
+#if defined(__MACH__) || defined(__OpenBSD__)
+I getdelim(S *s,I*n, I d, FILE *f);
+
 I getline(S *s,I*n, FILE *f){ return getdelim(s,n,'\n',f);}
 I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
 {
