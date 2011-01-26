@@ -34,9 +34,10 @@ K backslash(S s,I n);
 K workspace(S s);
 I expander(S *s,I n);
 I appender(S *s,I *n,S t,I k);
-#if defined(__MACH__)
-I getline(S *s,I *n,FILE *f);
+#if defined(__MACH__) || defined(__OpenBSD__)
 I getdelim(S *s,I *n,I d,FILE *f);
+I getdelim(S *s,I *n,I d,FILE *f);
+I getline(S *s,I *n,FILE *f);
 #endif
 V KP[sizeof(V)*8+1];
 extern C errmsg[256];
