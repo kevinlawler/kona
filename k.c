@@ -881,7 +881,7 @@ cleanup:
     }
   }
 
-  if((2>=k || !a) && adverb == eachright) // ||!a because {1}/:!9 is valid
+  if(adverb == eachright) // {1}/:!9 is valid
   {
     I bt=b->t, bn=b->n;
     if(bt > 0) R dv_ex(a,p-1,b);
@@ -892,8 +892,9 @@ cleanup:
     R demote(z);
   }
 
-  if(2>=k && adverb == eachleft)
+  if(adverb == eachleft)
   {
+    if(!a) R VE; 
     I at=a->t, an=a->n;
     if(at > 0) R dv_ex(a,p-1,b);
     K z = newK(0,an),d;
@@ -903,7 +904,7 @@ cleanup:
     R demote(z);
   }
 
-  if(2==k && adverb == eachpair)
+  if(adverb == eachpair) //2==k necessary?
   {
     I bt=b->t, bn=b->n;
     if(bt >  0) R dv_ex(b,p-1,b);
@@ -932,9 +933,6 @@ cleanup:
 
     R z;
   }
-
-
-  if(2 > k && adverb == eachpair) R VE;  //? test this
 
   //this could be better ??
   I gn=0;
