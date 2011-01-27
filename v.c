@@ -360,9 +360,11 @@ I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
   R 0;
 }
 
+I isColonDyadic(K x){R xt==7 && kW(x)[0] ==addressColon && !kW(x)[1];}
+
 K specialAmendDot(K c, K args) //If c is like colon_dyadic return args@1, else dot
 {
-  if(c->t==7 && kW(c)[0] == addressColon && !kW(c)[1]) R 2==args->n?ci(kK(args)[1]):_n();
+  if(isColonDyadic(c)) R 2==args->n?ci(kK(args)[1]):_n();
   R vf_ex(&c,args);
 }
 
@@ -655,6 +657,25 @@ K dot_tetradic_2(K *g, K b, K c, K y)
 //TODO: All this must be rewritten to handle function-local-dictionaries and global
 K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
 {
+  if(isColonDyadic(c) && !y) //'Error Trap'
+  {
+    K d = newK(0,2); 
+    K i = Ki(0);
+    M(d,i)
+    kK(d)[0] = i;
+    K z = vf_ex(&a,b);
+    kK(d)[1]=z;
+    if(!z) 
+    {
+      *kI(i)=1;
+      K e=newK(-3,strlen(errmsg));
+      M(d,e);
+      strcpy(kC(e),errmsg);
+      kK(d)[1]=e;
+    }
+    R demote(d);
+  }
+
   K q=0, *p=0;
 
 //TODO: Index/Of claims to accept handles as sub-elements....is this true??? for Of and for DOT_TETRADIC etc... 
@@ -676,13 +697,6 @@ K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
 
   if(!dot_tetradic_2(g,b,c,y)) R 0; // bubble up err
 
-  //if(isColonDyadic(c) && !y) //TODO: 'Error Trap'
-  //   .[%; (3;4); :] 
-  //  (0;0.75) 
-  //    .[%; (3;0); :] 
-  //  (0;0i) 
-  //    .[=; 0; :] 
-  //  (1;"valence") 
 
   //monadic @[1;();:] -> (1;"rank")
   //        @[_n;1 2;:] -> (0; 1 2) 

@@ -115,12 +115,13 @@ I tests02()
   //Projections
   TC(skip, {x}[1;],{x}[1;]) //VE
   TC(skip, +[1;2;;;],+[1;2;;;]) //VE
+  TC(skip, (1;"valence"), .[+[1;2;;;]; 5;:] ) //fill in error trap //this has a problem?  +[1;2;;;;] causing valence when shouldn't?
+
   TC({x+y}[1;],{x+y}[1;])
   TC({x+y}[;1],{x+y}[;1])
   TC(!3, {x,y,z}[;;2][;1][0])
   TC(1 2 3 4, {x[z;y]}[,][3 4;1 2])
   TC(!3, f:{[a;b;c]a,b,c}; g:f 0; h:g 1; h 2)
-  TC(skip, (1;"valence"), +[1;2;;;] 5) //fill in error trap
   TC(skip, {[a;b;c;d;e]a+b+c+d+e}[;;1;1;1]'[;1] , {[a;b;c;d;e]a+b+c+d+e}[;;1;1;1]'[;1])
   TC((1 0;1 3) , a:(1 0;3 2); f:{a[x;y]}; (a[]0;f[]0)) //Cross-sectional indexing inconsistent with simple composition/projection
   TC(2 1, f:![1;]; f 1 2)
@@ -143,6 +144,12 @@ I tests02()
   TC(2,{[a;a]a+a}[1;9]) //oddly enough
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
+  TC(.[*; (3;4); :], (0;12) )
+  TC(.[*;3 4 5;:], (1;"valence"))
+  TC((.[-1 -2 _; ,!9; :]) , (1;"domain"))
+  TC((.[0 10 100 _; ,!9; :]) , (1;"length"))
+  //TC(.[=; 0; :] , (1;"valence") ) // ignore: better to return =[0;] than valence error
+
   TC(-9131, _jd 20100101)
 
   //Degenerate uses of : colon verb
@@ -656,9 +663,6 @@ I testsBook()
   TC(skip, 2, {}$"1+1")
   TC(("canoe";`dinghy;"kayak";66545;{x+y}) , ("canoe";`dinghy),("kayak";66545;{x+y})   )
   TC(skip, 1++, 1+a:+)  //Should seven_types merge sub-seven_types ?
-  TC(skip, (0;0.75), .[%% ;(3;4);:]) // % is %% because of c-string
-  TC(skip, (0;0i), .[%% ;(3;0);:])
-  TC(skip, (1;"valence"), .[=;0;:])
   TC(skip, +\\(!2;!3))  //error (adverbs check intermediate values)
   TC(skip, 1+/() 1 2 3) //error
 }

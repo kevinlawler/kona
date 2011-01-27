@@ -123,7 +123,7 @@ V KP[sizeof(V)*8+1]; //KPOOL
 
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
 extern K kerr(S s){ R snprintf(errmsg,256,"%s",s),(K)0;} 
-I oerr(){R O("%s %s\n",*errmsg?errmsg:"undescribed","error");}
+I oerr(){R O("%s %s\n",errmsg,"error");}
 
 N SYMBOLS;//immutable symbol interning
 K KTREE;  //dictionary, the main/global variable storage area
@@ -1419,6 +1419,7 @@ I kinit() //oom (return bad)
   addressSSR  = vt_ + 0;
   addressWhat = vd+charpos(vc,'?'); addressAt    = vd+charpos(vc,'@');
   addressDot  = vd+charpos(vc,'.'); addressColon = vd+charpos(vc,':');
+  kerr("undescribed");//initialize errmsg string to be non-null for more useful reporting
   SYMBOLS=newN(); //Initialize intern pool 
   seedPRNG(randomBits()); 
   KFIXED=newK(0,0);

@@ -312,6 +312,7 @@ K lookup(K a,S b);
 K at_verb(K a,K b);
 K at(K x,K y);
 I updateIndex(K *p,I x,K r);
+I isColonDyadic(K x);
 K specialAmendDot(K c,K args);
 K at_ref(K *p,K b,K c,K y);
 K at_tetradic(K a,K b,K c,K y);
