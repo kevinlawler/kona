@@ -59,7 +59,7 @@ K backslash(S s, I n)
       CS('p',R NYI)
       CS('r',R NYI) //see seedPRNG()
       CS('s',R NYI)
-      CS('t',R NYI) //also \t [digits]
+      CS('t',R backslash_t(t)) //TODO: also \t [digits]
       CS('v',R NYI)
       CS('w',R workspace(s)) //used,allocated,mapped. lfop: Linux & 'ps' use /proc/self/stat or /proc/<MY_PID>/stat
     }
@@ -70,6 +70,16 @@ K backslash(S s, I n)
   if(isspace(s[1]))s++; //Allow system commands to be executed without preceding space
   R system(s)?DOE:_n();
 }
+
+
+K backslash_t(S s)
+{
+  I d=clock(); 
+  cd(X(s));
+  d=(clock()-d)/(CLOCKS_PER_SEC/1000);
+  R Kf(d);
+}
+
 
 #ifdef __MACH__
 #include <mach/mach_types.h> 
