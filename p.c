@@ -90,7 +90,7 @@ I mark_name(S s,I n,I i,I*m)
 {
   I c=0;
   if(m[i])R 0;
-  if(i && isalnum(s[i-1]))R 0; //Not tested well. May be missing cases. Was added to allow 0n (not 0nabc)
+  if(i && isalnum_(s[i-1]))R 0; //Not tested well. May be missing cases. Was added to allow 0n (not 0nabc)
 
   //_A case
   if(i<n-1&&s[i]=='_'&&isalpha(s[i+1])&&(i==n-2||m[i+2]||!isalnumdot_(s[i+2])))R 2;
@@ -235,6 +235,8 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
   marker(mark_ignore,MARK_IGNORE)// get leftover spaces, anything else we want to ignore
 
   DO(n,if(m[i]==MARK_UNMARKED){cd(v);cd(km); R PE;}) 
+  //DO(n,if(m[i]>0 && (!i || m[i]!=ABS(m[i-1]) )){cd(v);cd(km); R PE;})  //this is true but unnecessary. we handle "_db_bd 1"
+
   //TODO: check here to see if any _A+ listed that don't exist ("reserved error") free m etc. reserved error probably bubbles from "dename"
   //TODO: technically .k._a  (a valid global name e.g. no sym quotes) throws a value error then parse error here (we marked it weird)
   //(one nice thing about being restrictive here (_verb and -0.0: number verbs) is future versions are backwards compatible)

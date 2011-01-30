@@ -214,8 +214,11 @@ I tests02()
   TC(1,a:(!11)#\\:"cd"; &/{x~_db _bd x}/:a)
   TC(1,a:(!11)#\\:(`a;"c";1); &/{x~_db _bd x}/:a)
   TC(1,a:(!11)#\\:,(`a;"c";1); &/{x~_db _bd x}/:a)
-  TC(skip,0, _bd_db 1)//this shouldn't parse as it is
+  //TC((1;"parse"), .[.:;,"_db_bd 1";:] ) //we handle this case now instead of error
+  TC(2,  _db_bd_db_bd 2) //K3 handles strings specially or other?
   TC(1,&/{x~_db _bd x}/: (+;+:;-;-:)) // handle unreserved monadic,dyadic verbs
+
+  TC(skip, 0 2, .[.:;"1+1";:]) //bug in K3?
 
   TC(32, (+/ *)[1 2 3;4 5 6])
   TC(32,  1 2 3 _dot 4 5 6)
