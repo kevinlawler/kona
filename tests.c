@@ -215,7 +215,8 @@ I tests02()
   TC(1,a:(!11)#\\:(`a;"c";1); &/{x~_db _bd x}/:a)
   TC(1,a:(!11)#\\:,(`a;"c";1); &/{x~_db _bd x}/:a)
   //TC((1;"parse"), .[.:;,"_db_bd 1";:] ) //we handle this case now instead of error
-  TC(2,  _db_bd_db_bd 2) //K3 handles strings specially or other?
+  TC(2,  _db_bd_db_bd 2) //should be able to handle this case
+  
   TC(1,&/{x~_db _bd x}/: (+;+:;-;-:)) // handle unreserved monadic,dyadic verbs
 
   TC(skip, 0 2, .[.:;"1+1";:]) //bug in K3?
@@ -642,6 +643,10 @@ I testsBook()
 
   //System Functions
   TC(2#1.0, _abs - _cos 0 0)
+
+  //Names
+  TC( a.b_c.d:1;a.b_c.d, 1)
+
 
   TC(skip, 1, 4 _in 1 7 2 4 6 3)
   TC(skip, 0, 4 3 _in 1 7 2 4 6 3)
