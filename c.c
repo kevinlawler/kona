@@ -42,7 +42,54 @@ K backslash(S s, I n)
     {
       CS('\\',exit(0))
       CS('\'',R NYI)
-      CS('+',R NYI)
+      CS('+', O("Verbs +-*%%|&^!<>=~@?_,#$.:\n");
+              O("Verbs work on all sensible types (ints, floats, strings, symbols, lists)\n");
+              O("+ monadic  flip. transpose a matrix (a depth-2 list)\n");
+              O("+ dyadic   plus. add numbers together\n");
+              O("- monadic  negate. invert sign\n");
+              O("- dyadic   minus. subtraction\n");
+              O("* monadic  first. first element from the list\n");
+              O("* dyadic   times. multiply two numbers\n");
+              O("%% monadic  reciprocal. 1 over x \n");
+              O("%% dyadic   divide. x divided by y (not mod) \n");
+              O("| monadic  reverse. reverse order of list\n");
+              O("| dyadic   max/or. MAX(x,y) or OR(x,y) \n");
+              O("& monadic  where. &0 0 1 0 3 yields 2 4 4 4. \n");
+              O("& dyadic   min/and. MIN(x,y) or AND(x,y) \n");
+              O("^ monadic  shape. #elts at each depth (min over) \n");
+              O("^ dyadic   power. x to the exponent y \n");
+              O("! monadic  mod/rotate. 5!3 yields 2;  1 ! 4 5 6 yields 5 6 4 \n");
+              O("! dyadic   enumerate. !4 yields 0 1 2 3\n");
+              O("< monadic  grade up. indices of list sorted ascending \n");
+              O("< dyadic   less. boolean is x less than y\n");
+              O("> monadic  grade down. indices of list sorted descending\n");
+              O("> dyadic   more. boolean is x greater than y\n");
+              O("= monadic  group. =3 4 3 4 4 yields (0 2;1 3 4)  \n");
+              O("= dyadic   equals. 1 2 3 = 1 2 4 yields 1 1 0 (tolerantly) \n");
+              O("~ monadic  not. ~ 0 1 0 2 0 yields 1 0 1 0 1 \n");
+              O("~ dyadic   match. 1 2 ~ 1 2 yields 1 (types must match)\n");
+              O("@ monadic  atom. boolean is arg an atom (as opposed to a list) \n");
+              O("@ dyadic   at. elts from x at indices y\n");
+              O("@ triadic  monadic amend. see \\. \n");
+              O("@ tetradic dyadic amend. see \\.\n");
+              O("? monadic  unique. distinct elts from a list \n");
+              O("? dyadic   find/invert. index of y in x  / {x^2} ? 2 yields sqrt(2) \n");
+              O("? triadic  invert-guess. secant method with clues \n");
+              O("_ monadic  floor. tolerant floor function \n");
+              O("_ dyadic   drop/cut. lose x elts from list y / separate into pieces \n");
+              O(", monadic  enlist. put x inside a 1-element list \n");
+              O(", dyadic   join. \"ab\",\"cd\" yields \"abcd\"\n");
+              O("# monadic  count. number of elements in list \n");
+              O("# dyadic   take/reshape. fill x elts from y \n");
+              O("$ monadic  format. cast to string \n");
+              O("$ dyadic   form/format. cast \n");
+              O(". monadic  execute/make dictionary. .\"1+1\" yields 2 \n");
+              O(". dyadic   value. 1 2 3 . ,2 yields 3. see \\. \n");
+              O(". triadic  monadic amend. see \\. \n");
+              O(". tetradic dyadic amend. see \\. \n");
+              O(":          overloaded with many operations. \n");
+
+        R _n() )
       CS('.',R NYI)
       CS('_',R NYI)
       CS('0',R NYI)
