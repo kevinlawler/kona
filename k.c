@@ -733,6 +733,7 @@ K dv_ex(K a, V *p, K b)
   if(!p || !*p) R 0; //TODO: ???
   if(!b) R 0; //TODO: Projection?  'u v\' 
 
+
   V *o = p-1;
 
   //Arity of V?A_1...A_n-1 for X V?A_1...A_n Y; 0 for X Y, X A Y
@@ -848,19 +849,18 @@ cleanup:
 
   if(2==k && adverb == each)//TODO: 'f'[x;y;z;...]'
   {
-    I at=a->t, an=a->n, bt=b->t, bn=b->n;
-    if(at <= 0 && bt <= 0 && an != bn) R LE; 
-
-    if(at > 0 && bt > 0) R dv_ex(a,p-1,b);
-    else if (at > 0) adverb = eachright;
-    else if(bt > 0) adverb = eachleft;
+    if(!a) adverb= eachright;
+    else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE; 
+    else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
+    else if (a->t > 0) adverb = eachright;
+    else if(b->t > 0) adverb = eachleft;
     else
     {
      //a and b both lists/vectors of size an
       a=promote(a); //oom
       b=promote(b); //oom
-      K z = newK(0,an); //oom
-      DO(an, kK(z)[i]=dv_ex(kK(a)[i],p-1,kK(b)[i])) //oom/err
+      K z = newK(0,a->n); //oom
+      DO(a->n, kK(z)[i]=dv_ex(kK(a)[i],p-1,kK(b)[i])) //oom/err
       cd(a);
       cd(b);
       R demote(z);
@@ -943,7 +943,9 @@ cleanup:
   K g=newK(0,gn);U(g);
   if(gn > 1) kK(g)[1]=b;
   if(gn > 0) kK(g)[0]=a?a:b;
+
   K temp = vf_ex(*p,g);
+
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
   R temp;
 }
@@ -996,7 +998,18 @@ K vf_ex(V q, K g)
   if(2==k && a && b){ z=((K(*)(K,K))w)(a,b); GC;}
   //? (+).1 -> err ; {[a;b]a+b} 1 -> err
   if(2==k && !a){VE; GC;} //Reachable? Projection?
-  if(2==k && !b){ GC;} //Reachable? Projection? '(1+)' -> 1+  Build 7-verb? (Refactor with 'c' from []+: ex and maybe another place?)
+
+  //Reachable: try "#'(1;1 2)" (the # is dyadic not monadic #:). We return projection (#[1;],#[1 2;]), K3.2 gives valence error
+  if(2==k && !b)
+  { K v = Kv(), kb = newK(-4,2); M(v,kb)
+    kK(kb)[0]=q; 
+    kK(kb)[1]=0;
+    kV(v)[CODE] = kb;
+    z = vf_ex(&v,g); //Punt and let another call to vf_ex handle projecting. Probably could build the projected-verb here instead.
+    cd(v);
+    GC;
+  } //old comment: Projection? '(1+)' -> 1+  Build 7-verb? (Refactor with 'c' from []+: ex and maybe another place?)
+
   //+:[a] ... +:[a;b] handled above (valence err)
   if(1==k && a) { z= ((K(*)(K))w)(a); GC;}
   if(1==k && !a) GC; //Reachable? Projection?
@@ -1007,7 +1020,7 @@ K vf_ex(V q, K g)
   I t=f->n;
   if(-1==n)n=valence(f); //don't compute twice
 
-  //Projecting simple verbs works. The ex 7-type wrapper will catch simple verbs and they will make it back here.
+  //Projecting simple verbs works. The ex 7-type wrapper will catch simple verbs and they will make it back here. (except in above 2==k && a && !b case?)
   K o=kV(f)[CODE]; K p=kV(f)[PARAMS]; K s=kV(f)[LOCALS]; K r=kV(f)[CONJ]; 
   I special = 1==t && !r && (addressAt==*kW(f) || addressDot==*kW(f) || addressWhat==*kW(f)); //_ssr is not special (not overloaded)
   if((argc < gn || (gn < n && !special)) && n) //Project. Move this ahead of verbs when finished
