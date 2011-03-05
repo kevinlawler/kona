@@ -236,7 +236,7 @@ K _lt(K a);
 K _ltime(K a);
 I stat_sz(S u,I *n);
 K _size(K a);
-K _bin(K a,K b);
+K _bin(K x,K y);
 K _draw(K a,K b);
 void vitter_a(I *a,I n,I N,I j);
 void vitter(I *a,I n,I N);

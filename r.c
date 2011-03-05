@@ -244,10 +244,10 @@ K _size(K a)
 //Dyadic System Functions ///////////////
 /////////////////////////////////////////
 //K3.2 bug: (0 1;0.0 1.0) _bin 0 1 -> 2   but (0 1;0 1) _bin 0 1 -> 0
-K _bin(K a,K b) 
-{ I at=a->t,an=a->n,bt=b->t,bn=b->n;
-  P(at>0,RE)
-  R Ki(binr(a,0,a->n-1,b));
+K _bin(K x,K y) 
+{ I yt=y->t,yn=y->n;
+  P(xt>0,RE)
+  R Ki(binr(x,0,xn-1,y));
 } 
 
 K _draw(K a,K b)
@@ -901,7 +901,7 @@ I binr(K a,I b,I c,K x)
 {
   I i=b+(c-b)/2, r=CIX(a,i,x);//i is sic
   if(0==r) if(i>0 && !CIX(a,i-1,x))r=1;else R i;
-  if(b==c)R -1==r?1+i:i;//pos if you did insert into list
+  if(b>=c)R -1==r?1+i:i;//pos if you did insert into list
   R 0<r?binr(a,b,i-1,x):binr(a,i+1,c,x);
 }
 
