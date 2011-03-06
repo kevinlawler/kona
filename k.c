@@ -464,7 +464,7 @@ K promote(K a)//Identity on lists. Lists from vectors. Pseudo-enlist on atoms (a
   K z=newK(0,a->n);
   K x;
   I v=ABS(at);
-  if     (4==v) DO(a->n, x=newK(v,1); *kS(x)=kS(a)[i]; kK(z)[i]=x )
+  if     (4==v) DO(a->n, x=newK(v,1); *kS(x)=kS(a)[i]; kK(z)[i]=x ) //mm/o
   else if(3==v) DO(a->n, x=newK(v,1); *kC(x)=kC(a)[i]; kK(z)[i]=x ) 
   else if(2==v) DO(a->n, x=newK(v,1); *kF(x)=kF(a)[i]; kK(z)[i]=x ) 
   else if(1==v) DO(a->n, x=newK(v,1); *kI(x)=kI(a)[i]; kK(z)[i]=x ) 
