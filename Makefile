@@ -8,11 +8,16 @@ OBJ= $(SRC:.c=.o)
 
 all: k
 
-k k_test: $(OBJ) $(HDR)
+k: $(OBJ)
+	$(CC) $(LIBS) $(CFLAGS) $< -o $@
+
+k_test: $(SRC) $(HDR)
 	$(CC) $(LIBS) $(CFLAGS) $< -o $@
 
 test: CFLAGS= -O1 -g3 -DNDEBUG
 test: k_test
+
+$(OBJ): $(SRC) $(HDR)
 
 clean:
 	rm -f k k_test *.o
