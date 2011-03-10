@@ -8,7 +8,7 @@ OBJ= $(SRC:.c=.o)
 
 all: k
 
-k k_test: $(OBJ)
+k k_test: $(OBJ) $(HDR)
 	$(CC) $(LIBS) $(CFLAGS) $< -o $@
 
 test: CFLAGS= -O1 -g3 -DNDEBUG
