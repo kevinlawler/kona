@@ -1,13 +1,20 @@
-LIBS=	-lm
+CFLAGS= -O3
+LIBS  = -lm
+LIBS += -ldl    #If on OpenBSD, comment this out.
 
-#If on OpenBSD, comment this out.
-LIBS+=	-ldl
+SRC= k.c
+HDR= h.h
+OBJ= $(SRC:.c=.o)
 
-k: k.c
-	${CC} ${LIBS} -O3 k.c -o $@
+all: k
 
-k_test: k.c
-	${CC} ${LIBS} -DNDEBUG k.c -o $@
+k k_test: $(OBJ)
+	$(CC) $(LIBS) $(CFLAGS) $< -o $@
+
+test: CFLAGS= -O1 -g3 -DNDEBUG
+test: k_test
 
 clean:
-	rm -f k k_test
+	rm -f k k_test *.o
+
+.PHONY: all test clean
