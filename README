@@ -4,5 +4,8 @@ gcc -lm -ldl -O3 k.c -o k
 To compile with tests:
 gcc -lm -ldl -DNDEBUG k.c -o k
 
+rlwrap is recommended for use with k
+rlwrap ./k
+
 makeheaders is used to generate the h.h header file
 makeheaders -h *.c > h.h
