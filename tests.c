@@ -239,7 +239,7 @@ I tests02()
   TC(2 0 1 0, 10 _vs 2010)
   TC(skip, ((2;2 2);(0;0 0);(1; 1 1);(0;1 2)), 10 _vs (2010;2011 2012)) //broken until {}\[] adverbs fixed? or subfunctions?
   TC(skip, 0, (_+[2;]) 11) //segfault
-
+  TC(skip,   if[1; `0:“bad unicode quotes”]) //segfault
 }
 
 I tests01()
