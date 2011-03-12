@@ -14,7 +14,7 @@ k: $(OBJ)
 k_test: $(SRC) $(HDR)
 	$(CC) $(LIBS) $(CFLAGS) $< -o $@
 
-test: CFLAGS= -DNDEBUG
+test: CFLAGS= -O0 -g3 -DNDEBUG
 test: k_test
 
 $(OBJ): $(SRC) $(HDR)
