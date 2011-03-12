@@ -26,7 +26,7 @@ typedef struct pda{I i,s,n;S c;}Pda;typedef Pda*PDA; //holds parse state. pos in
 #define kW(x) ((V*)kS(kVC(x)))
 #define II LONG_MAX //I Infinity (Use -II for I Negative Infinity)
 #define IN LONG_MIN //I Null (one less than -II)
-#define FI 1/0.     //TODO: IEEE works everywhere? consider isnan,isinf in math.h. 'INFINITY' define also
+#define FI 1/0.     //IEEE should work everywhere 
 #define FN 0/0.     //Alternate takes can be found in Arthur's "k.h"
 #define Z static
 #define O printf
@@ -329,7 +329,7 @@ S strdupn (S s,I k) {S d=malloc(k+1);if(!d)R 0;d[k]=0;R memcpy(d,s,k);} // mm/o 
 
 I FC(F a, F b)//Floating-Point Compare
 {
-  F E=0.00000000000000000001; //TODO: This should rely on PP ?
+  F E=0.00000000000000000001; //This value seems to work, might should be a different one though
 
   if(isinf(a)&&isinf(b)) R 0;
   if(ABS(a-b) <= E*MAX(ABS(a),ABS(b)))R 0;
