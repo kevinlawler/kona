@@ -2,9 +2,9 @@ CFLAGS= -O3
 LIBS  = -lm
 LIBS += -ldl    #If on OpenBSD, comment this out.
 
-SRC= k.c
+SRC= c.c getline.c k.c mt.c p.c r.c tests.c v.c
 HDR= h.h
-OBJ= $(SRC:.c=.o)
+OBJ= k.o        # $(SRC:.c=.o)
 
 all: k
 
