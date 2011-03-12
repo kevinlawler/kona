@@ -35,15 +35,16 @@ K backslash(S s, I n)
 {
   S t;
   if(1==n) //TODO: if error or waiting on matching )]} then \ will resolve
+  {
     O("Backslash Commands:\n"
       "\\+      verb help\n"
       "\\'      adverb help\n"
       "\\:      I/O verb help\n"
       "\\[cmd]  system command (also \\[ cmd]), \\echo hello\n"
-     "\\\\      exit (or ctrl+d)\n"
-    
-    ); 
-
+      "\\\\      exit (or ctrl+d)\n"
+    );
+    R _n();
+  }
   else if(!s[2] || isspace(s[2]))
   {
     t=s+(s[2]?3:2);
