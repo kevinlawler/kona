@@ -2,7 +2,7 @@ CFLAGS= -O3
 LIBS  = -lm
 LIBS += -ldl    #If on OpenBSD, comment this out.
 
-SRC= c.c getline.c k.c mt.c p.c r.c tests.c v.c
+SRC= k.c c.c getline.c mt.c p.c r.c tests.c v.c
 HDR= h.h
 OBJ= k.o        # $(SRC:.c=.o)
 
@@ -14,7 +14,7 @@ k: $(OBJ)
 k_test: $(SRC) $(HDR)
 	$(CC) $(LIBS) $(CFLAGS) $< -o $@
 
-test: CFLAGS= -O1 -g3 -DNDEBUG
+test: CFLAGS= -DNDEBUG
 test: k_test
 
 $(OBJ): $(SRC) $(HDR)
