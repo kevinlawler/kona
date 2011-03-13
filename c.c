@@ -31,7 +31,7 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   R _n();
 }
 
-K precision(UI n) {if(n>19)R DOE; PPON=!!n; PP=PPON?n:PPMAX; R _n();}
+K precision(UI n) {if(n>PPMAX)R DOE; PPON=!!n; PP=PPON?n:PPMAX; R _n();}
 
 K precision_(void){R PPON?Ki(PP):Ki(0);}
 
