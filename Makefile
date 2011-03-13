@@ -23,4 +23,7 @@ $(OBJ): $(SRC) $(HDR)
 clean:
 	rm -f k k_test *.o
 
+TAGS: *.c *.h
+	etags *.[ch]
+
 .PHONY: all test clean
