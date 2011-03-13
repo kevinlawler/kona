@@ -1,8 +1,8 @@
-#To compile (OS X/Linux):
-gcc -lm -ldl -O3 k.c -o k
+#To compile (OS X/Linux/OpenBSD):
+make    # gmake on OpenBSD
 
-#To compile with tests:
-gcc -lm -ldl -DNDEBUG k.c -o k
+#To compile with tests (k_test):
+make test
 
 #rlwrap makes the k command line interface much nicer
 #rlwrap adds history and eliminates the "^[[A^[[A^[[D^[[C^..." problem
