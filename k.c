@@ -136,6 +136,8 @@ K NIL;    //Useful to avoid actually allocating _n nils (use _n() instead)
 
 S LS;     //special symbol for locals (repeated,invisble)
 I PP=7;   //Print Precision Digits
+I PPMAX=19;
+C PPON=1;
 I max(I a,I b){R a>b?a:b;}
 I min(I a,I b){R a<b?a:b;}
 
@@ -692,7 +694,7 @@ void showAtDepth(K a, I d, I x, I vdep, I b)
   if(3==ABS(t)) { O("\"");                 DO(a->n, CPMAX UC c=kC(a)[i];
                                               if(isprint(c)&&(!isescape(c)))O("%c",c);
                                               else if(isescape(c))
-                                                SW (c) {CS('"',O("\\\""));CS('\\',O("\\\\"));CS('\b',O("\\b"));CS('\n',O("\\n"));CS('\r',O("\\r"));CS('\t',O("\\t"));}
+                                                SW(c){CS('"',O("\\\""));CS('\\',O("\\\\"));CS('\b',O("\\b"));CS('\n',O("\\n"));CS('\r',O("\\r"));CS('\t',O("\\t"));}
                                               else O("\\%.3o",c) ) O("\""); }
   if(4==ABS(t)) if(!a->n) O("0#`");   else{DO(a->n, CPMAX O(simpleString(kS(a)[i])?"`%s":"`\"%s\"", kS(a)[i]);  O(i<_i-1?" ":""))}
   if(7==    t)

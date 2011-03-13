@@ -31,9 +31,13 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   R _n();
 }
 
+K precision(UI n) {if(n>19)R DOE; PPON=!!n; PP=PPON?n:PPMAX; R _n();}
+
+K precision_(void){R PPON?Ki(PP):Ki(0);}
+
 K backslash(S s, I n)
 {
-  S t;
+  C b=s[2]; I m; S t,u; K z;
   if(1==n) //TODO: if error or waiting on matching )]} then \ will resolve
   {
     O("Backslash Commands:\n"
@@ -45,9 +49,11 @@ K backslash(S s, I n)
     );
     R _n();
   }
-  else if(!s[2] || isspace(s[2]))
+  else if(!b || isspace(b))
   {
-    t=s+(s[2]?3:2);
+    t=s+(b?3:2);
+    m=n-(t-s);
+    u=m?spn(t,m):0;
     SW(s[1])
     {
       CS('\\',exit(0))
@@ -172,7 +178,7 @@ K backslash(S s, I n)
       CS('i',R NYI)
       CS('l',R load(t)) 
       CS('m',R NYI) //shows nonstandard system commands
-      CS('p',R NYI)
+      CS('p',if(u&&m){P(!(z=formKiCS(u)),TE); z=precision(*kI(z));} else z=precision_(); R z)
       CS('r',R NYI) //see seedPRNG()
       CS('s',R NYI)
       CS('t',R backslash_t(t)) //TODO: also \t [digits]
