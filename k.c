@@ -1420,13 +1420,16 @@ I attend() //K3.2 uses fcntl somewhere
 
 }
 
+Z I skip_bp=0;
+
 I args(int n,S*v)
 {
   I c;
-  while(-1!=(c=getopt(n,v,":h:i:")))SW(c)
+  while(-1!=(c=getopt(n,v,":bh:i:")))SW(c)
   {
     CS('h',O("%d\n", atoi(optarg)))
     CS('i',PORT=optarg)
+    CS('b',skip_bp=1)
     CSR(':',)CS('?', O("%c ",optopt); show(kerr("opt")))
   }
   while(optind < n) load(v[optind++]);
@@ -1461,8 +1464,8 @@ V ptf(V v){ R 0;} //delme
 int main(int argc,S*argv)
 {
   kinit();
-  boilerplate();
   args(argc,argv);
+  if (!skip_bp) boilerplate();
   attend(); //loop on stdin/inet
   R 0;
 }
