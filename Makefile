@@ -1,6 +1,7 @@
 CFLAGS= -O3
 LIBS  = -lm
-LIBS += -ldl    #If on OpenBSD, comment this out.
+
+include config.mk
 
 SRC= k.c c.c getline.c mt.c p.c r.c tests.c v.c
 HDR= h.h
