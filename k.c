@@ -660,6 +660,7 @@ I valence(V p)
   R 0;
 }
 
+I isescape(UC c) {R (c=='"'||c=='\\'||c=='\b'||c=='\n'||c=='\r'||c=='\t');}
 
 //TODO: Attempt to refactor this with 5:monadic
 void showAtDepth(K a, I d, I x, I vdep, I b)
@@ -688,7 +689,11 @@ void showAtDepth(K a, I d, I x, I vdep, I b)
   if(0==    t )                            DO(a->n, CPMAX showAtDepth(kK(a)[i],d+1,i*m,0,0);O(i<_i-1?m?"\n":";":""))
   if(1==ABS(t)) if(!a->n) O("!0");    else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O("0N"):f==-II?O("-0I"):f==II?O("0I"):O("%ld",f); if(i<_i-1)O(" "))
   if(2==ABS(t)) if(!a->n) O("0#0.0"); else DO(a->n, CPMAX g=kF(a)[i];isnan(g)?O("0n"):g==-FI?O("-0i"):g==FI?O("0i"):O("%.*g",(int)PP,g);if(i<_i-1)O(" ");else if(fabs(g-(I)g) < pow(10,-PP))O(".0"))
-  if(3==ABS(t)) { O("\"");                 DO(a->n, CPMAX UC c=kC(a)[i]; if(isprint(c))O("%c",c); else O("\\%.3o",c) ) O("\""); }//TODO: escapes [\"\\\b\n\r\t]  --- (\b is \010 not \007)
+  if(3==ABS(t)) { O("\"");                 DO(a->n, CPMAX UC c=kC(a)[i];
+                                              if(isprint(c)&&(!isescape(c)))O("%c",c);
+                                              else if(isescape(c))
+                                                SW (c) {CS('"',O("\\\""));CS('\\',O("\\\\"));CS('\b',O("\\b"));CS('\n',O("\\n"));CS('\r',O("\\r"));CS('\t',O("\\t"));}
+                                              else O("\\%.3o",c) ) O("\""); }
   if(4==ABS(t)) if(!a->n) O("0#`");   else{DO(a->n, CPMAX O(simpleString(kS(a)[i])?"`%s":"`\"%s\"", kS(a)[i]);  O(i<_i-1?" ":""))}
   if(7==    t)
   {
