@@ -37,7 +37,7 @@ K precision_(void){R PPON?Ki(PP):Ki(0);}
 
 K backslash(S s, I n)
 {
-  C b=s[2]; I m; S t,u; K z;
+  S t; C b;
   if(1==n) //TODO: if error or waiting on matching )]} then \ will resolve
   {
     O("Backslash Commands:\n"
@@ -49,11 +49,9 @@ K backslash(S s, I n)
     );
     R _n();
   }
-  else if(!b || isspace(b))
+  else if( !(b=s[2]) || isspace(b))
   {
     t=s+(b?3:2);
-    m=n-(t-s);
-    u=m?spn(t,m):0;
     SW(s[1])
     {
       CS('\\',exit(0))
@@ -178,7 +176,7 @@ K backslash(S s, I n)
       CS('i',R NYI)
       CS('l',R load(t)) 
       CS('m',R NYI) //shows nonstandard system commands
-      CS('p',if(u&&m){P(!(z=formKiCS(u)),TE); z=precision(*kI(z));} else z=precision_(); R z)
+      CS('p',R *t?precision(atoi(t)):precision_())
       CS('r',R NYI) //see seedPRNG()
       CS('s',R NYI)
       CS('t',R backslash_t(t)) //TODO: also \t [digits]
@@ -200,7 +198,7 @@ K backslash_t(S s)
   I d=clock(); 
   cd(X(s));
   d=(clock()-d)/(CLOCKS_PER_SEC/1000);
-  R Kf(d);
+  R Ki(d);
 }
 
 

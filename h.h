@@ -144,6 +144,7 @@ I sva(V p);
 I adverbClass(V p);
 I valence(V p);
 I isescape(UC c);
+I needspt0(F f);
 void showAtDepth(K a,I d,I x,I vdep,I b);
 K show(K a);
 K dv_ex(K a,V *p,K b);
