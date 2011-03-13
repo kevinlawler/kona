@@ -1,13 +1,6 @@
 void boilerplate()
 {
-//  #define EXPDATE  "-8890"
-//  O("This test copy expires ");
-//  cd(show(X("_dj " EXPDATE)));
-//  K x=_(1);
-//  K y=X(EXPDATE  " < _ _T");
-//  if(matchI(x,y))exit((I)show(kerr("exp")));
-//  cd(x); cd(y);
-  if(!isatty(fileno(stdout))) R;
+ if(!isatty(fileno(stdout))) R;
   O("K Console - Enter \\ for help\n");
   prompt(0);
 
