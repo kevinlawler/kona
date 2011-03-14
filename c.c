@@ -34,6 +34,7 @@ K backslash(S s, I n)
   if(1==n) //TODO: if error or waiting on matching )]} then \ will resolve
   {
     O("Backslash Commands:\n"
+      "\\0      datatypes help\n"
       "\\+      verb help\n"
       "\\'      adverb help\n"
       "\\:      I/O verb help\n"
@@ -123,7 +124,42 @@ K backslash(S s, I n)
       )
       CS('.',R NYI)
       CS('_',R NYI)
-      CS('0',R NYI)
+      CS('0',
+             O("Datatypes  -4 -3 -2 -1 0 1 2 3 4 5 6 7\n"
+               "Monadic 4: reveals type, 4:1 2 3 yields -1\n"
+               "-4 vector symbol     `a`b`c or ,`a\n"
+               "-3 vector character  \"abc\" or ,\"c\" \n"
+               "-2 vector float      1.0 2.0 3.33 or ,1.0\n"
+               "-1 vector integer    1 2 3 or ,1\n"
+               " 0 list   general    (`a;1 2 3) or (`a;(1 2 3;(3 4;\"c\")))\n"
+               " 1 scalar integer    1\n"
+               " 2 scalar float      1.0\n"
+               " 3 scalar character  \"c\" \n"
+               " 4 scalar symbol     `s\n"
+               " 5 dictionary        .((`a;10;);(`b;20;))  or  .()  or  .,(`a;5;) \n"
+               " 6 nil               _n or (;;) (list of 3 nils)  \n"
+               " 7 verbs/functions   +  +: {1+x}  +[1;]  (|+)  {[a;b]1+a+b}  {x+y}[1;]\n"
+               "Empty Lists:\n"
+               "-4 0#`\n"
+               "-3 \"\"\n"
+               "-2 0#0.0\n"
+               "-1 !0\n"
+               " 0 ()\n"
+               "Special numeric types:\n"
+               " 0N null integer\n"
+               " 0n null float\n"
+               "-0I infinity integer negative\n"
+               " 0I infinity integer positive\n"
+               "-0i infinity float   negative\n"
+               " 0i infinity float   positive\n"
+               "Dictionaries:\n"
+               "Start by making a dictionary d[`k]:4\n"
+               "d[]   values\n"
+               "!d    keys\n"
+               "d[`k] value at k\n"
+               "d@`k  value at k\n"
+              );
+      )
       CS(':',
              O("I/O Verbs 0: 1: 2: 3: 4: 5: 6:\n"
                "\nDisk\n"
