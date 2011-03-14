@@ -13,17 +13,19 @@ K formKsCS(S s)
 
 K formKiCS(S s) //  0 $ "123\000456\000" is 123 ('\0' char)
 {
-  C *p;
-  I r=IN,e;
+  C *p,q=0;
+  I r=IN;
 
   I w=parseNI(s,strlen(s));
   if(w) r=NI[w]; 
   else if(*s)
   {
-    r=StoI(s,&e);
+    r=strtol(s,&p,10);
+    errno=0; //is this ok to do?
+    q=*p;
     if(IN==r)r=-II;//if r < -0I then r=-0I
   }
-  P(e,DOE);
+  P(q && !isblank(q),DOE)
   R Ki(r);//oom
 }
 
