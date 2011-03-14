@@ -22,7 +22,7 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   if (!f)
   {
     len=strlen(s);
-    p=newK(-3,len+2);
+    U(p=newK(-3,len+2))
     strcpy(kC(p),s);
     strcat(kC(p)+len, ".k");
     f=fopen(kC(p), "r");
