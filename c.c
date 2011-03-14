@@ -236,7 +236,7 @@ K backslash_t(S s)
 {
   I d=clock(); 
   cd(X(s));
-  d=(clock()-d)/(CLOCKS_PER_SEC/1000);
+  d=(clock()-d)/((F)CLOCKS_PER_SEC/1000);
   R Ki(d);
 }
 
