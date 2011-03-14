@@ -3,7 +3,7 @@ LIBS  = -lm
 
 include config.mk
 
-SRC= k.c c.c getline.c mt.c p.c r.c tests.c v.c
+SRC= k.c c.c getline.c mt.c p.c r.c tests.c v.c 0.c
 HDR= h.h
 OBJ= k.o        # $(SRC:.c=.o)
 
