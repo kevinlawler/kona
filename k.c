@@ -339,6 +339,8 @@ I FC(F a, F b)//Floating-Point Compare
 }
 F FF(F f){F F;R modf(f,&F);}//Floating-Point Fractional Part
 
+I StoI(S s,I *e){S t; I i=strtol(s,&t,10); *e=(errno!=0||t==s||*t!=0); R i;}
+
 I SC(S a,S b){I x=strcmp(a,b); R x<0?-1:x>0?1:0;}//String Compare: strcmp unfortunately does not draw from {-1,0,1}
 S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be called before introducing any sym to the instance
 { //We are using this to ensure any two 'character-identical' symbols are in fact represented by the same pointer S
@@ -1235,7 +1237,7 @@ K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: co
 }
 
 I randomBits(){I s;I f=open("/dev/urandom",0);read(f,&s,sizeof(s));close(f);R s;} //lfop
-I seedPRNG(I s){init_genrand64(SEED=s);}
+void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);}
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input

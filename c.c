@@ -215,8 +215,8 @@ K backslash(S s, I n)
       CS('i',R NYI)
       CS('l',R load(t))
       CS('m',R NYI) //shows nonstandard system commands
-      CS('p',if(*t){S u; I p=strtol(t,&u,10); P(errno!=0||u==t||*u!=0,TE); R precision(p);} else R precision_())
-      CS('r',R NYI) //see seedPRNG()
+      CS('p',if(*t){I e; I p=StoI(t,&e); P(e,TE); R precision(p);} else R precision_())
+      CS('r',if(*t){I e; I r=StoI(t,&e); P(e,TE); seedPRNG(r); R _n();} else R Ki(SEED))
       CS('s',R NYI)
       CS('t',R backslash_t(t)) //TODO: also \t [digits]
       CS('v',R NYI)
