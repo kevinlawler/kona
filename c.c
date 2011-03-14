@@ -15,9 +15,19 @@ void boilerplate()
 //Q. What if K is sending a large message to a client or server. Does it block?
 //A. ?
 
-K load(S s) //TODO: working dir is stable ... store then reset after reading scripts //TODO: 'file' loads 'file.k'
+K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
 {
   FILE*f=fopen(s,"r");
+  K p; I len;
+  if (!f)
+  {
+    len=strlen(s);
+    p=newK(-3,len+2);
+    strcpy(kC(p),s);
+    strcat(kC(p)+len, ".k");
+    f=fopen(kC(p), "r");
+    cd(p);
+  }
   P(!f,_n())
   lines(f);
   fclose(f);
