@@ -663,7 +663,7 @@ I valence(V p)
 }
 
 I isescape(UC c) {R (c=='"'||c=='\\'||c=='\b'||c=='\n'||c=='\r'||c=='\t');}
-I needspt0(F f){C b[512];snprintf(b,512,"%.*g",(int)PP,f); R !stringHasChar(b,'.') && !stringHasChar(b,'e');}//no better way I know
+I needspt0(F f){if(isnan(f)||-FI==f||FI==f)R 0; C b[512];snprintf(b,512,"%.*g",(int)PP,f); R !stringHasChar(b,'.') && !stringHasChar(b,'e');}//no better way I know
 
 //TODO: Attempt to refactor this with 5:monadic
 void showAtDepth(K a, I d, I x, I vdep, I b)
@@ -1461,8 +1461,8 @@ V ptf(V v){ R 0;} //delme
 int main(int argc,S*argv)
 {
   kinit();
-  boilerplate();
   args(argc,argv);
+  boilerplate();
   attend(); //loop on stdin/inet
   R 0;
 }
