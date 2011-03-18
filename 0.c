@@ -695,14 +695,16 @@ K _3d(K x,K y) //'async' TCP
 K _4d(K x,K y) //see _3d
 {
   if (4==xt && !**kS(x) && -3==y->t) { // `4:"ls" -> lines from popen("ls", "r"), blocking
-    FILE *f; K z; K l; S s=0; I n=0;
+    FILE *f; K z; K l; S s=0,t; I n=0;
     f=popen(kC(y),"r");
     P(!f,_n())
     z=newK(0,0); //oom
     while (getline(&s, &n, f) >= 0)
-      { l = newK(-3,n-1);
-        strncpy(kC(l),s,n-1);
-        kap(&z,l);
+    { t=memchr(s,'\0',n);
+      if(t)n=t-s;
+      l=newK(-3,n-1);
+      strncpy(kC(l),s,n-1);
+      kap(&z,l);
     }
     pclose(f);
     R z;
