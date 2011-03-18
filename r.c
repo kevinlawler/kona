@@ -269,7 +269,7 @@ K _draw(K a,K b)
     I d=-c;
     vitter(kI(y),y->n,d); //Vitter's algorithm
     //else DO(d,if((d-i)*RF()<(n-j))kI(y)[j++]=i; if(j==n)break;) //Knuth Algorithm 3.4.2S (better: Soln 3.4.2-8b)
-    for(j=n-1;j>1;j--){k=1+j*RF();s=kI(y)[j];kI(y)[j]=kI(y)[k];kI(y)[k]=s;} //Knuth Algorithm 3.4.2P
+    for(j=n-1;j>0;j--){k=(1+j)*RF();s=kI(y)[j];kI(y)[j]=kI(y)[k];kI(y)[k]=s;} //Knuth Algorithm 3.4.2P
   }
   z=take_reshape(a,y);
   cd(y);
