@@ -97,7 +97,7 @@ S sdup(S s);
 S strdupn(S s,I k);
 I FC(F a,F b);
 F FF(F f);
-I StoI(S s,I *e);
+I StoI(S s,I *n);
 I SC(S a,S b);
 S sp(S k);
 S spn(S s,I n);
