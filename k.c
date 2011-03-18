@@ -339,7 +339,7 @@ I FC(F a, F b)//Floating-Point Compare
 }
 F FF(F f){F F;R modf(f,&F);}//Floating-Point Fractional Part
 
-I StoI(S s,I *e){S t; I i=strtol(s,&t,10); *e=(errno!=0||t==s||*t!=0); R i;}
+I StoI(S s,I *n){S t; *n=strtol(s,&t,10); R (errno!=0||t==s||*t!=0);}
 
 I SC(S a,S b){I x=strcmp(a,b); R x<0?-1:x>0?1:0;}//String Compare: strcmp unfortunately does not draw from {-1,0,1}
 S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be called before introducing any sym to the instance
