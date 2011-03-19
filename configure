@@ -11,7 +11,7 @@ case "$u" in  #choose the config.mk.* extension based on uname
 esac
 
 if [ -z "$e" ]; then  #emptystring?
-  echo "couldn't find os"
+  echo "couldn't find os. email k.concerns@gmail.com"
   exit
 fi
 
