@@ -23,7 +23,7 @@ K _0m(K a)
  
   S v;
 
-  if(-1==(I)(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
+  if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
   close(f);
 
   I c=s?1:0,d=0,e;
@@ -90,7 +90,7 @@ K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
     //if (write(f,"",1) != 1) R 0; //write error
 
     S v;
-    if(-1==(I)(v=mmap(0,s,PROT_WRITE,MAP_SHARED,f,0)))R SE; //Should this be MAP_PRIVATE|MAP_NORESERVE?
+    if(MAP_FAILED==(v=mmap(0,s,PROT_WRITE,MAP_SHARED,f,0)))R SE; //Should this be MAP_PRIVATE|MAP_NORESERVE?
 
     close(f);
 
@@ -152,7 +152,7 @@ K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a b
   P(f<0,DOE)
 
   S v;
-  if(-1==(I)(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb)))R SE;
+  if(MAP_FAILED==(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb)))R SE;
   close(f);
 
   I r=0,t=0;
@@ -229,7 +229,7 @@ K _1m(K x) //Keeps binary files mapped
 
   S v;
   //These mmap arguments are present in Arthur's code. WRITE+PRIVATE lets reference count be modified without affecting file
-  if(-1==(I)(v=mmap(0,s,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,0)))R SE;
+  if(MAP_FAILED==(v=mmap(0,s,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,0)))R SE;
 
   //TODO: verify that the file is valid K data. For -1,-2,-3 types (at least) you can avoid scanning the whole thing and check size
   I b=0;
@@ -268,7 +268,7 @@ K _1m_r(I f,V fixed, V v,V aft,I*b) //File descriptor, moving * into mmap, fixed
     I mod = offset % PG(); //offset must be a multiple of the pagesize
     length+=mod;
     offset-=mod;
-    if(-1==(I)(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,offset))){R SE;}
+    if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,offset))){R SE;}
     z=(K)(((V)u+mod)-3*sizeof(I)); //3*sizeof(I) for c,t,n
     //if(1<=t || 3<=t){dd(z->n)} // ???
   }
@@ -309,7 +309,7 @@ K _1d_write(K x,K y)
   P(ftruncate(f,n),SE)
   //lfop: see 0: write for possible way to do ftruncate etc. on Windows
   S v;
-  if(-1==(I)(v=mmap(0,n,PROT_WRITE,MAP_SHARED,f,0)))R SE; // should this be MAP_PRIVATE|MAP_NORESERVE ?
+  if(MAP_FAILED==(v=mmap(0,n,PROT_WRITE,MAP_SHARED,f,0)))R SE; // should this be MAP_PRIVATE|MAP_NORESERVE ?
   close(f);
 
   wrep(y,v,1);
@@ -499,7 +499,7 @@ K _1d_read(K a,K b)
   P(f<0, DOE)
 
   S v;
-  if(-1==(I)(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb)))R SE;
+  if(MAP_FAILED==(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb)))R SE;
   close(f);
 
   //End of copy/paste
@@ -578,7 +578,7 @@ K _2m(K a) //again, minor copy/paste here
   P(f<0,DOE)
 
   S v;
-  if(-1==(I)(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE;
+  if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE;
   close(f);
 
   //K3.2 Bug: does not check boundary and will segfault on bad binary data (e.g., char vec with lying size of >> pagesize)
@@ -770,7 +770,7 @@ K _5d(K x,K y)
 
   //lfop: see 0: write for possible way to do ftruncate etc. on Windows
   S v;
-  if(-1==(I)(v=mmap(0,n,PROT_WRITE,MAP_SHARED,f,0)))R SE;
+  if(MAP_FAILED==(v=mmap(0,n,PROT_WRITE,MAP_SHARED,f,0)))R SE;
   close(f);
 
   I*w=(I*)v;
@@ -802,7 +802,7 @@ K readVector(K x,I t)//This is largely copy/pasted from 0:. Written only for -1,
   P(f<0, DOE)
   S v;
 
-  if(-1==(I)(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
+  if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
   close(f);
 
   K z=newK(t,ceil(s/(F)bp(t)));//TODO: oom (unmap, etc.)
@@ -845,7 +845,7 @@ K _6d(K a,K b) //A lot of this is copy/paste from 0: dyadic write
     P(ftruncate(f,e+n),SE)
     //lfop: see 0: write for possible way to do ftruncate etc. on Windows
     S v;
-    if(-1==(I)(v=mmap(0,e+n,PROT_WRITE,MAP_SHARED,f,0)))R SE; //should this be MAP_PRIVATE|MAP_NORESERVE ?
+    if(MAP_FAILED==(v=mmap(0,e+n,PROT_WRITE,MAP_SHARED,f,0)))R SE; //should this be MAP_PRIVATE|MAP_NORESERVE ?
     close(f);
     memcpy(v+e,kC(b),n);
     msync(v+e,n,MS_SYNC|MS_INVALIDATE);

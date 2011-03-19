@@ -215,7 +215,7 @@ V kalloc(I k) //bytes. assumes k>0
   if(r>KP_MAX)R amem(k);// allocate for objects of sz > 2^KP_MAX
   R unpool(r);
 }
-V amem(I k){K z;if(-1==(I)(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME; R z;}
+V amem(I k){K z;if(MAP_FAILED==(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME; R z;}
 V unpool(I r)
 {
   V*z;
@@ -263,8 +263,8 @@ I kexpander(K*p,I n) //expand only.
   if(r>KP_MAX) //Large anonymous mmapped structure - (simulate mremap)
   {
     if(f<=0) R 1;
-    if(-1!=(I)   mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1;//Add pages to end
-    U(v=amem(d)) memcpy(v,a,c); *p=v; munmap(a,c); R 1; //Couldn't add pages, copy to new space
+    if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1;//Add pages to end
+    U(v=amem(d))   memcpy(v,a,c); *p=v; munmap(a,c); R 1; //Couldn't add pages, copy to new space
   }
   //Standard pool object
   I s=lsz(d);
@@ -339,7 +339,7 @@ I FC(F a, F b)//Floating-Point Compare
 }
 F FF(F f){F F;R modf(f,&F);}//Floating-Point Fractional Part
 
-I StoI(S s,I *n){S t; *n=strtol(s,&t,10); R (errno!=0||t==s||*t!=0);}
+I StoI(S s,I *n){S t; *n=strtol(s,&t,10); R !(errno!=0||t==s||*t!=0);}
 
 I SC(S a,S b){I x=strcmp(a,b); R x<0?-1:x>0?1:0;}//String Compare: strcmp unfortunately does not draw from {-1,0,1}
 S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be called before introducing any sym to the instance
