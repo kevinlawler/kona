@@ -1,5 +1,9 @@
 #To compile (OS X/Linux/OpenBSD):
-make    # gmake on OpenBSD
+./configure
+make           #gmake on OpenBSD
+
+#To start the interpreter
+./k
 
 #To compile with tests (k_test):
 make test
