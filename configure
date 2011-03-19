@@ -1,0 +1,21 @@
+#lowercase uname -s
+u=`uname -s | tr "[:upper:]" "[:lower:]"` 
+
+c=config.mk
+e="" #extension
+
+case "$u" in  #choose the config.mk.* extension based on uname
+  linux) e=linux ;;
+  openbsd) e=openbsd ;;
+  darwin) e=openbsd ;;
+esac
+
+if [ -z "$e" ]; then  #emptystring?
+  echo "couldn't find os"
+  exit
+fi
+
+echo "linking $c to $c.$e"
+ln -sf $c.$e $c  #give 'make' a config.mk file (config.mk.$e)
+echo done 
+
