@@ -21,6 +21,7 @@ K _3m(K x);
 I sendall(I s,S b,I k);
 I ksender(I sockfd,K y,I t);
 K _3d(K x,K y);
+K popen_charvec(C *cmd);
 K _4d(K x,K y);
 K _4m(K x);
 K _5m(K x);
