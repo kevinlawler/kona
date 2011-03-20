@@ -1,3 +1,5 @@
+#include "incs.h"
+
 //Based on BSD's getdelim.c - [BSD License] (c) 2009 David Schultz <das@FreeBSD.org>
 
 I expander(S *s, I n) //grow s? n - needs size

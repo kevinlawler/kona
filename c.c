@@ -1,3 +1,5 @@
+#include "incs.h"
+
 void boilerplate()
 {
  if(!isatty(fileno(stdout))) R;

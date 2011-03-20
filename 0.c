@@ -1,3 +1,5 @@
+#include "incs.h"
+
 //Number verbs, monadic & dyadic
 
 //TODO: Do the 0:,1:,5:,6: writes need explicit file level locks (two K3.2 instances, second process can't write to same file first is (error))

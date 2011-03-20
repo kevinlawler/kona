@@ -1,3 +1,5 @@
+#include "incs.h"
+
 //Reserved verbs/functions (_verb)
 
 //'S' for [pre-]Scripted. These macros should be refactored/rewritten. Certainly don't need new K every time.
@@ -68,9 +70,9 @@ _MATH; //all the math functions
 S n_s = _SYSTEMN;         // _n type reserved: "Tadfhikmnpstuvw";
 #undef W
 #define W(x) QUOTE(_##x),
-S vm_s[] = {_SYSTEM1};
-S vd_s[] = {_SYSTEM2};
-S vt_s[] = {_SYSTEM3};
+S vm_s[] = {_SYSTEM1 0};
+S vd_s[] = {_SYSTEM2 0};
+S vt_s[] = {_SYSTEM3 0};
 #undef W
 #define W(x) _##x,
 V vn_[] = {_SYSTEMN 0}; //niladic

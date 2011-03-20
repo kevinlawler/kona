@@ -1,3 +1,4 @@
+#include "incs.h"
 
 S CSK(K x){ R !x?0:4==xt?*kS(x):3==ABS(xt)?kC(x):0;}//non-allocating CSTRING from K. assumes +4,+-3 types are null-terminated
 
