@@ -32,7 +32,7 @@ v.o: v.c
 tests.o: tests.c $(SRC) $(HDR)
 
 clean:
-	rm -f k k_test *.o
+	rm -rf k k_test k_test.dSYM *.o 
 
 TAGS: *.c *.h
 	etags *.[ch]
