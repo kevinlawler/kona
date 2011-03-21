@@ -511,14 +511,15 @@ static I vn_ct, vm_ct, vd_ct, vt_ct;
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
 { 
+  I k;
   if(in(p,vm ))R 1; // + -    (~40 of these)
   if(in(p,vd ))R 2;  
   if(in(p,vm0))R 1; // 0: 6:  (~14 of these)
   if(in(p,vd0))R 2;  
 
-  if(diff(p,vm_)<vm_ct)R 1; // _abs   (~46 of these)
-  if(diff(p,vd_)<vd_ct)R 2; 
-  if(diff(p,vt_)<vt_ct)R 3;  
+  if((k=diff(p,vm_))<vm_ct && k>=0)R 1; // _abs   (~46 of these)
+  if((k=diff(p,vd_))<vd_ct && k>=0)R 2; 
+  if((k=diff(p,vt_))<vt_ct && k>=0)R 3;  
   R 0;              // (~100 in total) 
 }
 I adverbClass(V p) { R in(p,adverbs)? 1+diff(p,adverbs)/3: 0; } //0: not an adverb, 1: / \ ', 2: /: \: ':
@@ -603,10 +604,10 @@ void showAtDepth(K a, I d, I x, I vdep, I b)
       { //TODO: mute extraneous :
         if     (in(p,vd0)) O("%ld:" , p-vd0);
         else if(in(p,vm0)) O("%ld::", p-vm0);
-        else if(diff(p,vt_)<vt_ct) O("%s",vt_s[p-vt_]);
-        else if(diff(p,vd_)<vd_ct) O("%s",vd_s[p-vd_]);
-        else if(diff(p,vm_)<vm_ct) O("%s",vm_s[p-vm_]);
-        else if (k=sva(p)) O(2==k?"%c":"%c:",   verbsChar(p));
+        else if((k=diff(p,vt_)) < vt_ct && k>=0) O("%s",vt_s[p-vt_]);
+        else if((k=diff(p,vd_)) < vd_ct && k>=0) O("%s",vd_s[p-vd_]);
+        else if((k=diff(p,vm_)) < vm_ct && k>=0) O("%s",vm_s[p-vm_]);
+        else if(k=sva(p)) O(2==k?"%c":"%c:",   verbsChar(p));
         else if(k=adverbClass(p)) O(1==k?"%c":"%c:", adverbsChar(p));
         else showAtDepth(*(K*)p,d+1,0,1+vdep,0);
       }
@@ -1332,6 +1333,8 @@ K KFIXED;
 I kinit() //oom (return bad)
 {
   atexit(finally);
+#define SETLEN(x) {I i; for(i=0; x[i]; i++)  x##ct = i+1; }
+  SETLEN(vn_); SETLEN(vm_); SETLEN(vd_); SETLEN(vt_); 
   addressSSR  = vt_ + 0;
   addressWhat = vd+charpos(vc,'?'); addressAt    = vd+charpos(vc,'@');
   addressDot  = vd+charpos(vc,'.'); addressColon = vd+charpos(vc,':');
@@ -1341,9 +1344,6 @@ I kinit() //oom (return bad)
   KFIXED=newK(0,0);
   kap(&KFIXED,NIL=Kn());cd(NIL);
   __d = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
-  I i;
-#define SETLEN(x) for(i=0; x[i]!=0; i++) ; x##ct = i
-  SETLEN(vn_); SETLEN(vm_); SETLEN(vd_); SETLEN(vt_); 
 #ifdef NDEBUG
   test();
 #endif
