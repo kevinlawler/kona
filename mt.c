@@ -1,3 +1,5 @@
+#include "incs.h"
+
 //abridged. License BSD-style Takuji Nishimura & Makoto Matsumoto http://www.math.hiroshima-u.ac.jp/~m-mat/MT/emt.html
 //Before using, initialize the state by using init_genrand64(seed)  
 //mt19937-64.c

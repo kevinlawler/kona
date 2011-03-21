@@ -6,7 +6,7 @@ make           #gmake on OpenBSD
 ./k
 
 #To compile with tests (k_test):
-make test
+make clean && make test
 
 #rlwrap makes the k command line interface much nicer
 #rlwrap adds history and eliminates the "^[[A^[[A^[[D^[[C^..." problem

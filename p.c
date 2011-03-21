@@ -1,3 +1,5 @@
+#include "incs.h"
+
 //Parser
 I formed_group(C c){S s="\n \\/\"";R charpos(s,c);} //could be table-lookup instead
 S formed_dfa = 
@@ -506,7 +508,9 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                         u=strdupn(s+k,r);
                         //oom u - you can return 0 but catch above?
 
-                        #define V_SC(x) if(!z) DO(AE(x##s), if(!SC(u,x##s[i])){z=x+i;break;}) //faster is to sp() / hash-table  (compared to SC())
+                        /*#define V_SC(x) if(!z) DO(AE(x##s), if(!SC(u,x##s[i])){z=x+i;break;}) //faster is to sp() / hash-table  (compared to SC())*/
+                        I i;
+                        #define V_SC(x) if(!z) { for(i=0; x##s[i]!=NULL;i++) { if(!SC(u,x##s[i])){z=x+i;break;}}} //faster is to sp() / hash-table  (compared to SC())
                         V_SC(vm_)
                         V_SC(vd_)
                         V_SC(vt_)
