@@ -661,7 +661,8 @@ I testsBook()
 
   TC_("#:'(1;,1;1 2;1 2 3)","1 1 2 3") 
   TC_("skip", "#'(1;1 2)"  "(#[1;];#[1 2;])")  //This is true, and will pass, but set to skip until projections are actually compared correctly
-  TC_("a:(#'3 4 5)[0]; a 9", "9 9 9")
+  TC_("a:(#'3 4 6)[0]; a 9", "9 9 9")
+  TC_(".'\"98\"", ".'\"98\"") // .'"98" was causing crash bug. now projects  
 
 
   TC(skip, 1, 4 _in 1 7 2 4 6 3)

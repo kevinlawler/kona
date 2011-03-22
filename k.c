@@ -952,11 +952,13 @@ K vf_ex(V q, K g)
   //Projecting simple verbs works. The ex 7-type wrapper will catch simple verbs and they will make it back here. (except in above 2==k && a && !b case?)
   K o=kV(f)[CODE]; K p=kV(f)[PARAMS]; K s=kV(f)[LOCALS]; K r=kV(f)[CONJ]; 
   I special = 1==t && !r && (addressAt==*kW(f) || addressDot==*kW(f) || addressWhat==*kW(f)); //_ssr is not special (not overloaded)
-  if((argc < gn || (gn < n && !special)) && n) //Project. Move this ahead of verbs when finished
+
+  if(n && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
   {
     z=kclone(f); //Is this an opportunity to capture an under-referenced function? Consider if it could be in use as part of assignment, etc.
     if(!z)GC;
     K*m=(K*)kV(z)+CONJ;
+    if(special)n=2; // .'"98" cases. allows a:.[+] then a 2 3  (. is forced 2-adic & not .[;;;]) is this a kluge?
     if(!*m) *m=newK(0,n);
     if(!*m){cd(z);GC;}
     K *q=kK(*m);
