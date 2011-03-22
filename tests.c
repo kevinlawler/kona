@@ -239,6 +239,7 @@ I tests02()
   TC(5:(+),   (,"+")) 
   TC(5:(|/), "|/") 
   TC(5:(_acos;_tanh;_abs;_size;_bin;_vs;_ssr), "(_acos;_tanh;_abs;_size;_bin;_vs;_ssr)")
+  TC_("a:.'(+;-);a@\\:1 2", "3 -1")
 
   TC(skip, 2010,  10 _sv 2 0 1 0)
   TC(skip, 11,     2 _sv 1 0 1 1 )
