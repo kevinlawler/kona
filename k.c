@@ -1062,8 +1062,9 @@ K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/retu
 
   R z;
 }
-K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2
+K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (full pieces in between semicolons/newlines) 
 {
+  if(in(*w,adverbs))R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
   I c=0; while(w[c] && !bk(w[c])){c++; if(addressColon==w[c-1])break;} //must break or assignment is n^2  (a:b:c:1)
 
   if(!c || !VA(w[c-1]) || (c>1 && addressColon==w[c-1] ) ) R ex2(w,k); //typical list for execution
