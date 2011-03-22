@@ -235,6 +235,11 @@ I tests02()
   // \p
   TC( 4:."\\p",1)
 
+  TC(3999, #5:2000#1) //5:monadic should not be subject to "..." display eliding (before displaying it anyway)
+  TC(5:(+),   (,"+")) 
+  TC(5:(|/), "|/") 
+  TC(5:(_acos;_tanh;_abs;_size;_bin;_vs;_ssr), "(_acos;_tanh;_abs;_size;_bin;_vs;_ssr)")
+
   TC(skip, 2010,  10 _sv 2 0 1 0)
   TC(skip, 11,     2 _sv 1 0 1 1 )
   TC(1 6 40, 24 60 60 _vs 4000)
