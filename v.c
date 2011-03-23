@@ -1072,7 +1072,7 @@ K flip(K a)
 K first(K a)
 { //Empty lists return prototypical atoms, e.g., *0#0.0 yields 0.0 
   I at=a->t, an=a->n;
-  if(-4==at)R Ks(an?*kS(a):sp(""));
+  if(-4==at)R Ks(an?*kS(a):LS);
   if(-3==at)R Kc(an?*kC(a):' ');//Vectors
   if(-2==at)R Kf(an?*kF(a):0.0);
   if(-1==at)R Ki(an?*kI(a):0);
@@ -1089,11 +1089,11 @@ K reshaper(K a, K b, I d, I f, I* p)
   I n=-1==v?f:v;//f is missing factor
   K z=newK(t,n); U(z)
   if(!g)DO(n,kK(z)[i]=reshaper(a,b,d+1,f,p))
-  else if(4==ABS(bt))DO(n,kS(z)[i]=kS(b)[++*p%bn])
-  else if(3==ABS(bt))DO(n,kC(z)[i]=kC(b)[++*p%bn])
-  else if(2==ABS(bt))DO(n,kF(z)[i]=kF(b)[++*p%bn])
-  else if(1==ABS(bt))DO(n,kI(z)[i]=kI(b)[++*p%bn])
-  else if(0==ABS(bt))DO(n,kK(z)[i]=ci(kK(b)[++*p%bn]))
+  else if(4==ABS(bt))DO(n,kS(z)[i]=bn?kS(b)[++*p%bn]:LS)
+  else if(3==ABS(bt))DO(n,kC(z)[i]=bn?kC(b)[++*p%bn]:' ')
+  else if(2==ABS(bt))DO(n,kF(z)[i]=bn?kF(b)[++*p%bn]:0.0)
+  else if(1==ABS(bt))DO(n,kI(z)[i]=bn?kI(b)[++*p%bn]:0)
+  else if(0==ABS(bt))DO(n,kK(z)[i]=bn?ci(kK(b)[++*p%bn]):_n())
   else if(5<=    bt )DO(n,kK(z)[i]=ci(b))
   R z;
 }
@@ -1117,7 +1117,7 @@ K take(K a, K b)
  k=k<0?bn+k:0;
  I t=bt<5?-ABS(bt):0;
  K z=newK(t,n);
- if     (4==ABS(bt))DO(n,kS(z)[i]=bn?kS(b)[(i+k)%m]:sp(""))
+ if     (4==ABS(bt))DO(n,kS(z)[i]=bn?kS(b)[(i+k)%m]:LS) //sp("")
  else if(3==ABS(bt))DO(n,kC(z)[i]=bn?kC(b)[(i+k)%m]:' ')
  else if(2==ABS(bt))DO(n,kF(z)[i]=bn?kF(b)[(i+k)%m]:0.0)
  else if(1==ABS(bt))DO(n,kI(z)[i]=bn?kI(b)[(i+k)%m]:0)
