@@ -559,16 +559,33 @@ I valence(V p)
 }
 
 I isescape(UC c) {R (c=='"'||c=='\\'||c=='\b'||c=='\n'||c=='\r'||c=='\t');}
-I needspt0(F f){if(isnan(f)||-FI==f||FI==f)R 0; C b[512];snprintf(b,512,"%.*g",(int)PP,f); R !stringHasChar(b,'.') && !stringHasChar(b,'e');}//no better way I know
+I needspt0(F f){if(isnan(f)||-FI==f||FI==f)R 0; Z C b[512];snprintf(b,512,"%.*g",(int)PP,f); R !stringHasChar(b,'.') && !stringHasChar(b,'e');}//no better way I know
 
-//TODO: Attempt to refactor this with 5:monadic
-void showAtDepth(K a, I d, I x, I vdep, I b)
+int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: monadic (_5m)
 {
+  Z C b[512];
+  va_list args;
+  va_start (args, s);
+  if(!u) vprintf (s, args); //stdout
+  else //5: monadic
+  { 
+    I n=vsnprintf(b,512,s,args);
+    DO(n, if(!kap(u,b+i)); ) //todo: err handling
+  }
+  va_end (args);
+}
+
+#define O_(...) splitprint(u,__VA_ARGS__)
+void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
+{ //Only pass a bounded (<512?) number of chars at a time to O_ (ie don't use "%s",long_string )
   if(!a)R; //0==NULL internal K. NB: Lowercase _n is a valid K of type 6. 
+
   I t=a->t;//Has to go below null check
-  if(x)DO(d,O(" "))
-  if(5==t){O(".");d+=1; t=0;}
-  if(t<=0 && a->n==1)O(",");
+
+  if(x)DO(d,O_(" "))
+  if(!u && d>19){O_("...");R;}//too deep for stdout
+  if(5==t){O_(".");d+=1; t=0;}
+  if(t<=0 && a->n==1)O_(",");
 
   //TODO: separate lines ("aaa";"bbb") but same line ("aaa";"bbb";"c")
   //K3.2 "c",,"aa"  --> prints one line not two
@@ -578,52 +595,60 @@ void showAtDepth(K a, I d, I x, I vdep, I b)
   if(0==t && !b)DO(a->n, s=kK(a)[i]; if(s && s->t <=0 && (s->n || -3==s->t)){m=1;break;} if(s && s->t==5){m=1;break;})//Set m?
 
   I enclose= (0==t && a->n!=1) || (t==7 && vdep);//verb_depth
-  if(enclose)O(b?"[":"(");
+  if(enclose)O_(b?"[":"(");
 
   I f;F g;
   
   I pmax = 500;//limit output on long lists. could be improved. would be better as a global variable with <= 0 indicating disabled
-  #define CPMAX {if(i>pmax){O("...");break;}}
+  #define CPMAX {if(!u && i>pmax){O_("...");break;}}
 
-  if(0==    t )                            DO(a->n, CPMAX showAtDepth(kK(a)[i],d+1,i*m,0,0);O(i<_i-1?m?"\n":";":""))
-  if(1==ABS(t)) if(!a->n) O("!0");    else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O("0N"):f==-II?O("-0I"):f==II?O("0I"):O("%ld",f); if(i<_i-1)O(" "))
-  if(2==ABS(t)) if(!a->n) O("0#0.0"); else DO(a->n, CPMAX g=kF(a)[i];isnan(g)?O("0n"):g==-FI?O("-0i"):g==FI?O("0i"):O("%.*g",(int)PP,g);if(i<_i-1)O(" ");else if(needspt0(g))O(".0"))
-  if(3==ABS(t)) { O("\"");                 DO(a->n, CPMAX UC c=kC(a)[i];
-                                              if(isprint(c)&&(!isescape(c)))O("%c",c);
+  if(0==    t )                            DO(a->n, CPMAX printAtDepth(u,kK(a)[i],d+1,i*m,0,0);O_(i<_i-1?m?"\n":";":""))
+  if(1==ABS(t)) if(!a->n) O_("!0");    else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O_("0N"):f==-II?O_("-0I"):f==II?O_("0I"):O_("%ld",f); if(i<_i-1)O_(" "))
+  if(2==ABS(t)) if(!a->n) O_("0#0.0"); else DO(a->n, CPMAX g=kF(a)[i];isnan(g)?O_("0n"):g==-FI?O_("-0i"):g==FI?O_("0i"):O_("%.*g",(int)PP,g);if(i<_i-1)O_(" ");else if(needspt0(g))O_(".0"))
+  if(3==ABS(t)) { O_("\"");                 DO(a->n, CPMAX UC c=kC(a)[i];
+                                              if(isprint(c)&&(!isescape(c)))O_("%c",c);
                                               else if(isescape(c))
-                                                SW(c){CS('"',O("\\\""));CS('\\',O("\\\\"));CS('\b',O("\\b"));CS('\n',O("\\n"));CS('\r',O("\\r"));CS('\t',O("\\t"));}
-                                              else O("\\%.3o",c) ) O("\""); }
-  if(4==ABS(t)) if(!a->n) O("0#`");   else{DO(a->n, CPMAX O(simpleString(kS(a)[i])?"`%s":"`\"%s\"", kS(a)[i]);  O(i<_i-1?" ":""))}
+                                                SW(c){CS('"',O_("\\\""));CS('\\',O_("\\\\"));CS('\b',O_("\\b"));CS('\n',O_("\\n"));CS('\r',O_("\\r"));CS('\t',O_("\\t"));}
+                                              else O_("\\%.3o",c) ) O_("\""); }
+  if(4==ABS(t)) if(!a->n) O_("0#`");  
+                else 
+                { I ss=0,sl;S str;
+                  DO(a->n, CPMAX str=kS(a)[i]; sl=strlen(str);ss=simpleString(str);
+                           O_("`"); if(!ss) O_("\""); DO2(sl, O_("%c", str[j] )) O_(i<_i-1?" ":""); if(!ss) O_("\""); 
+                    ) 
+                }
+
   if(7==    t)
   {
     if(1==a->n)
     {
-      I i,k;
+      I i,k; S s;
       V *v=kW(a),*p;
       for(i=0;p=v[i];i++)
       { //TODO: mute extraneous :
-        if     (in(p,vd0)) O("%ld:" , p-vd0);
-        else if(in(p,vm0)) O("%ld::", p-vm0);
-        else if((k=diff(p,vt_)) < vt_ct && k>=0) O("%s",vt_s[p-vt_]);
-        else if((k=diff(p,vd_)) < vd_ct && k>=0) O("%s",vd_s[p-vd_]);
-        else if((k=diff(p,vm_)) < vm_ct && k>=0) O("%s",vm_s[p-vm_]);
-        else if(k=sva(p)) O(2==k?"%c":"%c:",   verbsChar(p));
-        else if(k=adverbClass(p)) O(1==k?"%c":"%c:", adverbsChar(p));
-        else showAtDepth(*(K*)p,d+1,0,1+vdep,0);
+        if     (in(p,vd0)) O_("%ld:" , p-vd0);
+        else if(in(p,vm0)) O_("%ld::", p-vm0);
+        else if((k=diff(p,vt_)) < vt_ct && k>=0){s=vt_s[p-vt_]; k=strlen(s); DO(k,O_("%c",s[i]))}
+        else if((k=diff(p,vd_)) < vd_ct && k>=0){s=vd_s[p-vd_]; k=strlen(s); DO(k,O_("%c",s[i]))}
+        else if((k=diff(p,vm_)) < vm_ct && k>=0){s=vm_s[p-vm_]; k=strlen(s); DO(k,O_("%c",s[i]))} 
+        else if(k=sva(p)) O_(2==k?"%c":"%c:",   verbsChar(p));
+        else if(k=adverbClass(p)) O_(1==k?"%c":"%c:", adverbsChar(p));
+        else printAtDepth(u,*(K*)p,d+1,0,1+vdep,0);
       }
     }
     else if(2==a->n){ R;} //TODO cfunc
     else if(3==a->n)
     {
-      O("{%s}", kC(kV(a)[CODE])); 
+      O_("{%s}", kC(kV(a)[CODE])); 
     }
-    if(kV(a)[CONJ]){showAtDepth(kV(a)[CONJ],d+1,0,0,1);}
+    if(kV(a)[CONJ]){printAtDepth(u,kV(a)[CONJ],d+1,0,0,1);}
   } 
-  if(enclose)O(b?"]":")");
+  if(enclose)O_(b?"]":")");
 }
+
 K show(K a)
 {
-  showAtDepth(a,0,0,0,0);
+  printAtDepth(0,a,0,0,0,0);
   if(a && a->t!=6)O("\n");  
   if(!a)oerr();
   R a;
@@ -927,11 +952,13 @@ K vf_ex(V q, K g)
   //Projecting simple verbs works. The ex 7-type wrapper will catch simple verbs and they will make it back here. (except in above 2==k && a && !b case?)
   K o=kV(f)[CODE]; K p=kV(f)[PARAMS]; K s=kV(f)[LOCALS]; K r=kV(f)[CONJ]; 
   I special = 1==t && !r && (addressAt==*kW(f) || addressDot==*kW(f) || addressWhat==*kW(f)); //_ssr is not special (not overloaded)
-  if((argc < gn || (gn < n && !special)) && n) //Project. Move this ahead of verbs when finished
+
+  if(n && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
   {
     z=kclone(f); //Is this an opportunity to capture an under-referenced function? Consider if it could be in use as part of assignment, etc.
     if(!z)GC;
     K*m=(K*)kV(z)+CONJ;
+    if(special)n=2; // .'"98" cases. allows a:.[+] then a 2 3  (. is forced 2-adic & not .[;;;]) is this a kluge?
     if(!*m) *m=newK(0,n);
     if(!*m){cd(z);GC;}
     K *q=kK(*m);
@@ -1035,8 +1062,9 @@ K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/retu
 
   R z;
 }
-K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2
+K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (full pieces in between semicolons/newlines) 
 {
+  if(in(*w,adverbs))R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
   I c=0; while(w[c] && !bk(w[c])){c++; if(addressColon==w[c-1])break;} //must break or assignment is n^2  (a:b:c:1)
 
   if(!c || !VA(w[c-1]) || (c>1 && addressColon==w[c-1] ) ) R ex2(w,k); //typical list for execution

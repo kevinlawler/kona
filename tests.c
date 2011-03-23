@@ -235,6 +235,12 @@ I tests02()
   // \p
   TC( 4:."\\p",1)
 
+  TC(3999, #5:2000#1) //5:monadic should not be subject to "..." display eliding (before displaying it anyway)
+  TC(5:(+),   (,"+")) 
+  TC(5:(|/), "|/") 
+  TC(5:(_acos;_tanh;_abs;_size;_bin;_vs;_ssr), "(_acos;_tanh;_abs;_size;_bin;_vs;_ssr)")
+  TC_("a:.'(+;-);a@\\:1 2", "3 -1")
+
   TC(skip, 2010,  10 _sv 2 0 1 0)
   TC(skip, 11,     2 _sv 1 0 1 1 )
   TC(1 6 40, 24 60 60 _vs 4000)
@@ -656,7 +662,8 @@ I testsBook()
 
   TC_("#:'(1;,1;1 2;1 2 3)","1 1 2 3") 
   TC_("skip", "#'(1;1 2)"  "(#[1;];#[1 2;])")  //This is true, and will pass, but set to skip until projections are actually compared correctly
-  TC_("a:(#'3 4 5)[0]; a 9", "9 9 9")
+  TC_("a:(#'3 4 6)[0]; a 9", "9 9 9")
+  TC_(".'\"98\"", ".'\"98\"") // .'"98" was causing crash bug. now projects  
 
 
   TC(skip, 1, 4 _in 1 7 2 4 6 3)

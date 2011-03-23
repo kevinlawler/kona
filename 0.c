@@ -728,7 +728,15 @@ K _4d(K x,K y) //see _3d
 }
 K _4m(K x){R Ki(x->t);}
 
-K _5m(K x){R NYI;}
+
+K _5m(K x)
+{
+  K z;
+  U(z=newK(-3,0))
+  printAtDepth(&z,x,0,0,0,0);
+  R z;
+}
+
 //TODO Does 5:d need a filesize double? Trunc replace O_Creat? In other numeric i/o verbs? Note: trunc doesn't necessarily reserve disk space so can still have disk err
 K _5d(K x,K y)
 {
