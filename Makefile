@@ -18,7 +18,7 @@ k_test: k.c $(OBJ) $(HDR) tests.o
 test: CFLAGS= -O0 -g3 -DNDEBUG
 test: k_test
 
-*.o: ${HDR}
+*.o: ${HDR} Makefile
 
 k.c: ${SRC}
 0.o: 0.c
