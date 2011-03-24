@@ -34,7 +34,7 @@ S_DYAD(in,   "{:[:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}")
 S_DYAD(lin,  "{(#y)>y?/:x}") 
 S_DYAD(mul,  "{x _dot\\:y}") 
 S_DYAD(sv,   "{{z+y*x}/[0;x;y]}")  //won't work until f/[;;] is implemented
-S_DYAD(vs,   "{:[(~1=_abs 4:y)|(~1=_abs 4:x);_n;:[@x;{(1_|{ _ y % x}[x]\\y)!x}[x;y]; {|(-1 _ j)-a*1 _ j:y(_%)\\a:|x}[x;y]]]}") //Working subfunction constants would remove [x] projection. Second part from K2 manual
+S_DYAD(vs,   "{:[(1<_abs 4:y)|(~1=_abs 4:x);_n;:[@x;{(1_|{ _ y % x}[x]\\y)!x}[x;y]; {|(-1 _ j)-a*1 _ j:y(_%)\\a:|x}[x;y]]]}") //Working subfunction constants would remove [x] projection. Second part from K2 manual
 
 S_TRIAD(ssr, "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\"=y$:),0)+/:x _ss y)_ x;,/ :[7=4:z;@[x;i;z];4:z$:;@[x;i;:[;z]];@[x;i;:;z]]}") //missing a few things
 
