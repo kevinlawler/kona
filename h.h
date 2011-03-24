@@ -78,6 +78,8 @@ I lsz(I k);
 I repool(V v,I r);
 I kexpander(K *p,I n);
 K kap(K *a,V v);
+K kapn(K *a,V v,I n);
+K kapn_(K *a,V *v,I n);
 N newN();
 PDA newPDA();
 I push(PDA p,C c);

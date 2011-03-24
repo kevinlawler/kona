@@ -165,28 +165,35 @@ I kexpander(K*p,I n) //expand only.
   repool(a,r);
   R 1;
 }
-extern K kap(K*a,V v)
+
+K kapn_(K *a,V *v,I n)
 {
   if(!a)R 0;
-  K k=*a; //we could play with k!=0 and allocating k here
-  if(!kexpander(&k,k->n+1)) R 0; //oom
+  K k=*a;
+  I t=k->t,m=k->n,p=m+n;
+  if(!kexpander(&k,p))R 0;
   if(k!=*a)
   {
     #ifdef NDEBUG
     DO(kreci, if(*a==krec[i]){krec[i]=0; break; })
-    #endif 
+    #endif
     *a=k;
   }
-  I t=k->t, m=k->n++;
-  if(0==t || 5==t) kK(k)[m]=ci(v);
-  else if(-1==t)   kI(k)[m]=*(I*)v;
-  else if(-2==t)   kF(k)[m]=*(F*)v;
-  else if(-3==t)  {kC(k)[m]=*(S )v;kC(k)[m+1]=0;}
-  else if(-4==t)   kS(k)[m]=*(S*)v;
-  else R 0; //TODO: Does kap support other types? (atoms could be harder)
-
+  k->n=p;
+  if(0==t||5==t) DO(n, kK(k)[i+m]=ci(((K*)v)[i]))
+  else if(1==ABS(t)) memcpy(kI(k)+m,*v,n*sizeof(I));
+  else if(2==ABS(t)) memcpy(kF(k)+m,*v,n*sizeof(F));
+  else if(3==ABS(t)){strncpy(kC(k)+m,(S)*v,n); kC(k)[p]=0;}
+  else if(4==ABS(t)) memcpy(kS(k)+m,*v,n*sizeof(S));
+  else R 0;
+  if(t>0&&t<5&&m==1&&p>1)k->t*=-1;
   R *a;
 }
+
+extern K kapn(K *a,V v,I n){R kapn_(a,&v,n);}
+
+extern K kap(K*a,V v){R kapn_(a,&v,1);}
+
 N newN(){R unpool(lsz(sizeof(Node)));}
 PDA newPDA(){PDA p=unpool(lsz(sizeof(Pda)));U(p) p->c=malloc(1); if(!p->c){ME;R 0;} R p;}
 I push(PDA p, C c){R appender(&p->c,&p->n,&c,1);} 
@@ -570,7 +577,7 @@ int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: mon
   else //5: monadic
   { 
     I n=vsnprintf(b,512,s,args);
-    DO(n, if(!kap(u,b+i)); ) //todo: err handling
+    if(!kapn(u,b,n)); //todo: err handling
   }
   va_end (args);
 }
