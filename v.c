@@ -1,5 +1,45 @@
 #include "incs.h"
 
+/* Init vars for scalar dyad */
+#define SCALAR_INIT(maxt)               \
+  I at=a->t, an=a->n, bt=b->t, bn=b->n; \
+  I type = MAX(ABS(at),ABS(bt));        \
+  P(at <= 0 && bt <= 0 && an != bn, LE) \
+  P(type > maxt, TE ) /* > allowed types? */              \
+  I zt=type;          /* Starting at worst known type */  \
+  if(MIN(at,bt) < 1) zt=-zt; /* Plural? */                \
+  if(!at || !bt) zt=0;       /* Generic list trumps */    \
+  I zn=at>0?bn:an;
+
+/* Macro case: N:N, 1:N, N:1 implicit looping for op */
+#define SCALAR_OP_CASE(op, cres, ca, cb)                      \
+   if (an==bn) { DO(zn,cres [i]= op (ca [i], cb [i])) }       \
+   else if (an==1) { DO(zn,cres [i]= op (ca [0], cb [i])) }   \
+   else /* bn==1 */ { DO(zn,cres [i]= op (ca [i], cb [0])) }
+
+/* Scalar operator macro, with proper float/int/array treatment */
+#define SCALAR_OP(op,verb)                                                      \
+   if (2==ABS(at) && 2==ABS(bt)) { SCALAR_OP_CASE(op,kF(z),kF(a),kF(b)) }       \
+   else if (2==ABS(at) && 1==ABS(bt)) { SCALAR_OP_CASE(op,kF(z),kF(a),kI(b)) }  \
+   else if (1==ABS(at) && 2==ABS(bt)) { SCALAR_OP_CASE(op,kF(z),kI(a),kF(b)) }  \
+   else if (1==ABS(at) && 1==ABS(bt)) { SCALAR_OP_CASE(op,kI(z),kI(a),kI(b)) }  \
+   else if (0==at || 0==bt) { dp(&z,verb,a,b); }
+
+/* Macro case: N:N, 1:N, N:1 implicit looping for expression */
+#define SCALAR_EXPR_CASE(expr, cres, ca, cb, vx, vy)        \
+   if (an==bn) { DO(zn, vx=ca [i];vy=cb [i]; expr); }       \
+   else if (an==1) { vx=ca [0]; DO(zn, vy=cb [i]; expr); }  \
+   else /* bn==1 */ { vy=cb [0]; DO(zn, vx=ca [i]; expr); }
+
+/* Scalar expression macro, with proper float/int/array treatment */
+#define SCALAR_EXPR(expr,verb,vx,vy)                                                      \
+   if (2==ABS(at) && 2==ABS(bt)) { SCALAR_EXPR_CASE(expr,kF(z),kF(a),kF(b),vx,vy) }       \
+   else if (2==ABS(at) && 1==ABS(bt)) { SCALAR_EXPR_CASE(expr,kF(z),kF(a),kI(b),vx,vy) }  \
+   else if (1==ABS(at) && 2==ABS(bt)) { SCALAR_EXPR_CASE(expr,kF(z),kI(a),kF(b),vx,vy) }  \
+   else if (1==ABS(at) && 1==ABS(bt)) { SCALAR_EXPR_CASE(expr,kI(z),kI(a),kI(b),vx,vy) }  \
+   else if (0==at || 0==bt) { dp(&z,verb,a,b); }
+
+
 S CSK(K x){ R !x?0:4==xt?*kS(x):3==ABS(xt)?kC(x):0;}//non-allocating CSTRING from K. assumes +4,+-3 types are null-terminated
 
 K formKsCS(S s) 
@@ -1321,11 +1361,7 @@ K power(K a, K b)
   F x,y;
   //K3.2 silently yields 0n for -3^0.5 , even though some Kx documentation says domain error.
   #define FPOWER kF(z)[i]=(0==y)?1:(0==x)?0:pow(x,y); //x^0==1; 0^y==0 for y!=0; rest should be same as pow
-  if     (2==ABS(at) && 2==ABS(bt)) DO(zn,x=kF(a)[i%an];y=kF(b)[i%bn]; FPOWER)
-  else if(2==ABS(at) && 1==ABS(bt)) DO(zn,x=kF(a)[i%an];y=kI(b)[i%bn]; FPOWER)
-  else if(1==ABS(at) && 2==ABS(bt)) DO(zn,x=kI(a)[i%an];y=kF(b)[i%bn]; FPOWER)
-  else if(1==ABS(at) && 1==ABS(bt)) DO(zn,x=kI(a)[i%an];y=kI(b)[i%bn]; FPOWER)
-  else if(0==at || 0==bt) dp(&z,power,a,b);
+  SCALAR_EXPR(FPOWER,power,x,y)
 
   R z;
 }
@@ -1415,78 +1451,36 @@ K enumerate(K a)
 
 K plus(K a, K b) //compare plus() to times() or minus()
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
-  I type = MAX(ABS(at),ABS(bt));
-
-  P(at <= 0 && bt <= 0 && an != bn,LE)
-  P(type > 2,TE)
-
-  //Determine our return values type
-  I zt=type;                    //Starting point, worst known type
-  if(MIN(at,bt) < 1) zt=-zt;    //Plural?
-  if(!at || !bt) zt=0;          //Generic list trumps
-  I zn=at>0?bn:an;              //Have to be careful if one is atom and one is [empty?] list
+  SCALAR_INIT(2)
   K z=newK(zt,zn);U(z)          //Finally, we know what we're going to make
 
-  if     (2==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=kF(a)[i%an]+kF(b)[i%bn])
-  else if(2==ABS(at) && 1==ABS(bt)) DO(zn,kF(z)[i]=kF(a)[i%an]+kI(b)[i%bn])
-  else if(1==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=kI(a)[i%an]+kF(b)[i%bn])
-  //Plus diverges here from the standard +-*% ops to show how to improve cases. sort types to remove cases. remove modulo. add aligned SIMD
-  //Switching to SIMD operations is about twice as fast
-  // ((x+y)&~y) ceil to y+1
-  //else if(-1==    at  && -1==    bt ) DO(zn,kI(z)[i]=kI(a)[i%an]+kI(b)[i%bn])
-  //else if(-1==    at  && -1==    bt ) { I *c=kI(a),*d=kI(b),*e=kI(z); DO(zn, e[i]=c[i]+d[i] )    }  //Note: faster everywhere to eliminate modulo
-  else if(-1==    at  && -1==    bt ) { veci *c=(veci*)a,*d=(veci*)b,*e=(veci*)z; DO(((((zn+3)+1)&~1))/2, e[i]=c[i]+d[i] ) if(z!=b)z->c=1; z->t=zt; z->n=zn; } 
-  else if(1==ABS(at) && 1==ABS(bt)) DO(zn,kI(z)[i]=kI(a)[i%an]+kI(b)[i%bn])
-  else if(0==at || 0==bt) dp(&z,plus,a,b);
-
-  
+  #define PLUS(x, y) ((x) + (y))
+  SCALAR_OP(PLUS,plus)
+  #undef PLUS
 
   R z;
 }
 
 K times(K a, K b)//TODO: Float results will respect intermediate OI or Oi. Other functions too. (& casts.)
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
-  I type = MAX(ABS(at),ABS(bt));
-
-  P(at <= 0 && bt <= 0 && an != bn,LE)
-  P(type > 2,TE)
-
-  I zt=type;                    
-  if(MIN(at,bt) < 1) zt=-zt;    
-  if(!at || !bt) zt=0;          
-  I zn=at>0?bn:an;              
+  SCALAR_INIT(2)
   K z=newK(zt,zn);U(z)
 
-  if     (2==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=kF(a)[i%an]*kF(b)[i%bn])
-  else if(2==ABS(at) && 1==ABS(bt)) DO(zn,kF(z)[i]=kF(a)[i%an]*kI(b)[i%bn])
-  else if(1==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=kI(a)[i%an]*kF(b)[i%bn])
-  else if(1==ABS(at) && 1==ABS(bt)) DO(zn,kI(z)[i]=kI(a)[i%an]*kI(b)[i%bn])
-  else if(0==at || 0==bt) dp(&z,times,a,b);
+  #define TIMES(x, y) ((x) * (y))
+  SCALAR_OP(TIMES,times)
+  #undef TIMES
 
   R z;
 }
 
 K minus(K a, K b)
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
-  I type = MAX(ABS(at),ABS(bt));
-
-  P(at <= 0 && bt <= 0 && an != bn,LE)
-  P(type > 2,TE)
-
-  I zt=type;                    
-  if(MIN(at,bt) < 1) zt=-zt;    
-  if(!at || !bt) zt=0;          
-  I zn=at>0?bn:an;              
+  SCALAR_INIT(2)
   K z=newK(zt,zn);U(z)              
 
-  if     (2==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=kF(a)[i%an]-kF(b)[i%bn])
-  else if(2==ABS(at) && 1==ABS(bt)) DO(zn,kF(z)[i]=kF(a)[i%an]-kI(b)[i%bn])
-  else if(1==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=kI(a)[i%an]-kF(b)[i%bn])
-  else if(1==ABS(at) && 1==ABS(bt)) DO(zn,kI(z)[i]=kI(a)[i%an]-kI(b)[i%bn])
-  else if(0==at || 0==bt) dp(&z,minus,a,b);
+  #define MINUS(x, y) ((x) - (y))
+  SCALAR_OP(MINUS,minus)
+  #undef MINUS
 
   R z;
 }
@@ -1495,16 +1489,7 @@ K negate(K x){K y,z; U(y=Ki(0)) z=minus(y,x); cd(y); R z;} //TODO: probably impl
 
 K divide(K a, K b)//NB: Integral values promoted to float
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
-  I type = MAX(ABS(at),ABS(bt));
-
-  P(at <= 0 && bt <= 0 && an != bn, LE)
-  P(type > 2 , TE)
-
-  I zt=type;
-  if(MIN(at,bt) < 1) zt=-zt;
-  if(!at || !bt) zt=0;
-  I zn=at>0?bn:an;
+  SCALAR_INIT(2)
   if(1==zt*zt)zt*=2;
   K z=newK(zt,zn);U(z)
 
@@ -1512,11 +1497,7 @@ K divide(K a, K b)//NB: Integral values promoted to float
   //TODO:nulls;is it necessary to check for inf? IEEE may handle it already everywhere
   //TODO: ensure that 1/inf==0 and 1/-inf ==0
   #define FDIVIDE kF(z)[i]=!d?!u?0:u>0?y:-y:u/d //0/0=0, 1/0=oo, -1/0=-oo, 1/2=0.5 
-  if     (2==ABS(at) && 2==ABS(bt))DO(zn,u=kF(a)[i%an];d=kF(b)[i%bn]; FDIVIDE)
-  else if(2==ABS(at) && 1==ABS(bt))DO(zn,u=kF(a)[i%an];d=kI(b)[i%bn]; FDIVIDE)
-  else if(1==ABS(at) && 2==ABS(bt))DO(zn,u=kI(a)[i%an];d=kF(b)[i%bn]; FDIVIDE)
-  else if(1==ABS(at) && 1==ABS(bt))DO(zn,u=kI(a)[i%an];d=kI(b)[i%bn]; FDIVIDE)
-  else if(0==at || 0==bt) dp(&z,minus,a,b);
+  SCALAR_EXPR(FDIVIDE,divide,u,d)
 
   R z;
 }
@@ -1525,48 +1506,23 @@ K reciprocal(K x){K y,z; U(y=Kf(1)) z=divide(y,x); cd(y); R z;}
 
 K min_and(K a, K b)
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
-  I type = MAX(ABS(at),ABS(bt));
-
-  P(at <= 0 && bt <= 0 && an != bn, LE)
-  P(type > 2, TE )
-
-  I zt=type;
-  if(MIN(at,bt) < 1) zt=-zt;
+  SCALAR_INIT(2)
   if(!at || !bt) zt=0;
-  I zn=at>0?bn:an;
   K z=newK(zt,zn);U(z)
 
   F f,g; I x,y; 
-  if     (2==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=MIN(kF(a)[i%an],kF(b)[i%bn]))
-  else if(2==ABS(at) && 1==ABS(bt)) DO(zn,kF(z)[i]=MIN(kF(a)[i%an],kI(b)[i%bn]))
-  else if(1==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=MIN(kI(a)[i%an],kF(b)[i%bn]))
-  else if(1==ABS(at) && 1==ABS(bt)) DO(zn,kI(z)[i]=MIN(kI(a)[i%an],kI(b)[i%bn]))
-  else if(0==at || 0==bt) dp(&z,min_and,a,b);
+  SCALAR_OP(MIN,min_and)
 
   R z;
 }
 
 K max_or(K a, K b)
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
-  I type = MAX(ABS(at),ABS(bt));
-
-  P(at <= 0 && bt <= 0 && an != bn, LE)
-  P(type > 2,TE )
-
-  I zt=type;
-  if(MIN(at,bt) < 1) zt=-zt;
-  if(!at || !bt) zt=0;
-  I zn=at>0?bn:an;
+  SCALAR_INIT(2)
   K z=newK(zt,zn);U(z)
 
   F f,g; I x,y; 
-  if     (2==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=MAX(kF(a)[i%an],kF(b)[i%bn]))
-  else if(2==ABS(at) && 1==ABS(bt)) DO(zn,kF(z)[i]=MAX(kF(a)[i%an],kI(b)[i%bn]))
-  else if(1==ABS(at) && 2==ABS(bt)) DO(zn,kF(z)[i]=MAX(kI(a)[i%an],kF(b)[i%bn]))
-  else if(1==ABS(at) && 1==ABS(bt)) DO(zn,kI(z)[i]=MAX(kI(a)[i%an],kI(b)[i%bn]))
-  else if(0==at || 0==bt) dp(&z,max_or,a,b);
+  SCALAR_OP(MAX,max_or)
 
   R z;
 }
