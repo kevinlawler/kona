@@ -11,6 +11,3 @@ make clean && make test
 #rlwrap makes the k command line interface much nicer
 #rlwrap adds history and eliminates the "^[[A^[[A^[[D^[[C^..." problem
 rlwrap ./k
-
-#makeheaders is used to generate the h.h header file
-makeheaders -h *.c > h.h
