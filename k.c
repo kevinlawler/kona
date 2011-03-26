@@ -531,11 +531,14 @@ I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class i
 }
 I adverbClass(V p) { R in(p,adverbs)? 1+diff(p,adverbs)/3: 0; } //0: not an adverb, 1: / \ ', 2: /: \: ':
 
+I specialValence(V p){ R (p==addressSSR||p==addressWhat)?3:(p==addressAt||p==addressDot)?4:0;}
 I valence(V p)
 {
   I a,i;
-  a=(p==addressSSR||p==addressWhat)?3:(p==addressAt||p==addressDot)?4:sva(p);
+  a=specialValence(p);
+  a=a?a:sva(p);
   if(a) R a;
+
   if(adverbClass(p)) R 0;
 
   K v=*(K*)p;
@@ -554,8 +557,17 @@ I valence(V p)
     i=kVC(v)->n-1;
     V*k=kW(v)[i-1];
     // /: or \: or dyadic verb at end, 2, else 1 (other adverb,monadic-verb)
-    if(*k==eachright || *k==eachleft)R 2;
-    if(adverbClass(k)) R 1;
+    if(*k==eachright || *k==eachleft)R 2; //todo: this looks off: eachright can be valence 1? as in +:/:  ?
+    if(i>1 && *k==each || *k==over || *k==scan)  //for f'[x;y;z], f/[x;y;z], ...
+    {
+      V*q; I j=0;
+      do q=kW(v)[i-2-(j++)]; while(*q==each || *q==over || *q==scan);
+      
+      if(!sva(q) || specialValence(q)) 
+        if(j<i-2) R valence(q)-1; //eg  f:...0(0|+)\ (the zero binds on the left) 
+        else R valence(q); //if(!VA(q) && (*q)->t==7) R valence(q);
+    }
+    if(adverbClass(k)) R 2;
     if(sva(k)>1 && i>1 && !VA(kW(v)[i-2]))R valence(k)-1; //NB: f:(7+);g:(1+|+); both dyad-plus, f valence 1, g valence 2. Rule is 1 for nd; 2 for vd;
     R valence(k);
   }
@@ -667,21 +679,24 @@ K show(K a)
 K dv_ex(K a, V *p, K b) 
 {
   if(!p || !*p) R 0; //TODO: ???
-  if(!b) R 0; //TODO: Projection?  'u v\' 
-
+  if(!b) R kerr("undefined"); //TODO: Projection?  'u v\' 
 
   V *o = p-1;
 
   //Arity of V?A_1...A_n-1 for X V?A_1...A_n Y; 0 for X Y, X A Y
   I k=adverbClass(*p)?adverbClass(*o)?1:sva(*o):sva(*p);
   k=adverbClass(*p)?adverbClass(*o)?1:valence(*o):valence(*p); //also t7 basic
-  if(k>2)k=2; //??? bound for 'what', etc.   ???  valence is weird here
-
+  
   V adverb=*(V*)*p; //TODO: Implement adverb "Error Reports" error checking from manual
   I isSimpleVerb = sva(*p); 
-
+  
+  //k>2 --- ??? bound for special verbs ?.@ , etc.  ??? k=2 ??? valence is weird here
+  //!(adver...  ---- added to let f/[;;;] through
+  //if(k>2 && !(adverbClass(*p) && !VA(*o)))k=2; 
+  if(k>2)k=2; 
+ 
   //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
-  if(2==k && adverb == over)//TODO: 'f/[x;y;z;...]'
+  if(2==k && adverb == over)
   {
       K u=0,v=0;
       K y=a?v=join(u=enlist(a),b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
@@ -737,7 +752,7 @@ cleanup:
     R c;
   }
 
-  if(2==k && adverb == scan)//TODO: 'f\[x;y;z;...]'
+  if(2==k && adverb == scan)
   {
     K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u); //oom
     I yt=y->t, yn=y->n;
@@ -783,7 +798,7 @@ cleanup:
     R u;
   }
 
-  if(2==k && adverb == each)//TODO: 'f'[x;y;z;...]'
+  if(2==k && adverb == each)
   {
     if(!a) adverb= eachright;
     else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE; 
@@ -960,6 +975,10 @@ K vf_ex(V q, K g)
   K o=kV(f)[CODE]; K p=kV(f)[PARAMS]; K s=kV(f)[LOCALS]; K r=kV(f)[CONJ]; 
   I special = 1==t && !r && (addressAt==*kW(f) || addressDot==*kW(f) || addressWhat==*kW(f)); //_ssr is not special (not overloaded)
 
+  I ii=o->n-2; //not the terminating NULL, but the entry before
+  V*u=(V*) kK(o)+ii;
+  if(2==n && 1==adverbClass(*u) ) n=1; //   / \ '  but maybe should exclude '
+
   if(n && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
   {
     z=kclone(f); //Is this an opportunity to capture an under-referenced function? Consider if it could be in use as part of assignment, etc.
@@ -1043,6 +1062,7 @@ V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
 K ex(K a){ U(a); K z=ex_(&a,0); cd(a);R z;} //Input is 7-0 type from wd()
 
+
 K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
   I n=0, e=1, i,a;
@@ -1063,12 +1083,89 @@ K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/retu
   if(1==r)z=collapse(z); 
   if(k)
   {
-    if(!valence(&z) && 0==k->t) DO(k->n,if(!kK(k)[i])kK(k)[i]=_n()) //Fill in 0-type NULLs with Kn()
-    x=vf_ex(&z,k); cd(z); z=x;
+    I j=valence(&z);
+    if(!j && 0==k->t) DO(k->n,if(!kK(k)[i])kK(k)[i]=_n()) //Fill in 0-type NULLs with Kn()
+
+    if(z->t!=7 ||z->n!=1||(j<k->n && !(0==j && k->n==1))) { x=vf_ex(&z,k); cd(z); R z=x;} //(0==j untested) project if necessary, reuse vf_ex.
+    else // checking if looks like f'[] or f/[] or ...
+    {
+      K p = kV(z)[CODE];
+      I i=p->n-2; //not the terminating NULL, but the entry before
+      V*q=(V*) kK(p)+i;
+
+      if(k->n >1 && !sva(*q) && adverbClass(*q) )
+      {
+        x=bv_ex(q,k);
+        cd(z);
+        R x;
+      }
+      /////////////////////////
+      x=vf_ex(&z,k); cd(z); z=x; //copy/paste
+      /////////////////////////
+    }
   } 
 
   R z;
 }
+
+K bv_ex(V*p,K k)
+{
+  V q=*(V*)*p;
+  K x;
+
+  //assert 0!=k->n
+  //assert k==b->n (otherwise, projection/VE, which shouldn't reach here)
+  I n=0;
+  if(over==q)
+  {
+    DO(k->n-1, x=kK(k)[i+1]; if(!x->n)R ci(*kK(k)); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return x_0 if any empty list x_{i>0}
+    n=MAX(1,n);//if nothing was a list set to 1
+    K z=ci(*kK(k));
+    K g=newK(0,k->n);
+    M(z,g);
+    DO(n,*kK(g)=z; DO2(g->n-1, x=itemAtIndex(kK(k)[j+1],i); M(x,z,g) kK(g)[j+1]=x;)
+         x=bv_ex(p-1,g); M(x,z,g) DO2(g->n, cd(kK(g)[j]); kK(g)[j]=0 ) //set to 0 in case OOM happens
+         z=x) 
+    cd(g);
+    R z;
+  }
+
+  if(scan==q)
+  {
+    DO(k->n-1, x=kK(k)[i+1]; if(!x->n)R ci(*kK(k)); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return x_0 if any empty list x_{i>0}
+    if(!n) R bv_ex(p-1,k); //  {x+y+z}\[1;1;1] yields 1 but {x+y+z}\[1;1;1 1] yields (1 1;3 3;5 5)  
+    n=MAX(1,n);//if nothing was a list set to 1
+    K z=newK(0,1); 
+    K g=newK(0,k->n);
+    M(z,g);
+    kK(z)[0]=ci(*kK(k));
+    DO(n,*kK(g)=ci(kK(z)[z->n-1]); DO2(g->n-1, x=itemAtIndex(kK(k)[j+1],i); M(x,z,g) kK(g)[j+1]=x;)
+         x=bv_ex(p-1,g); M(x,z,g) DO2(g->n, cd(kK(g)[j]); kK(g)[j]=0 ) //set to 0 in case OOM happens
+         kap(&z,x); cd(x);) 
+    cd(g);
+    z=collapse(z); //unnecessary?
+    R z;
+  }
+
+  if(each==q)
+  {
+    DO(k->n, x=kK(k)[i]; if(!x->n)R newK(0,0); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return () on any empty list
+    n=MAX(1,n);//if nothing was a list set to 1
+    K z=newK(0,n), g=newK(0,k->n); M(g,z)//break [;;...] into subpieces for f, store in g
+    DO(n, K x; DO2(k->n, x=itemAtIndex(kK(k)[j],i); M(x,g,z) kK(g)[j]=x) x=bv_ex(p-1,g); M(x,z,g) kK(z)[i]=x; DO2(k->n, cd(kK(g)[j]); kK(g)[j]=0))//sic =0
+    cd(g);
+    z=collapse(z);
+    R z;
+  }
+
+  if(eachright==q) R NYI;//todo: is this reachable?
+  if(eachleft ==q) R NYI;//todo: is this reachable?
+  if(eachpair ==q) R NYI;//todo: is this reachable?
+
+  R vf_ex(*p,k);
+}
+
+
 K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (full pieces in between semicolons/newlines) 
 {
   if(in(*w,adverbs))R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
@@ -1103,7 +1200,8 @@ K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: co
   I i=0;
 
   //TODO: is this messed up ......we can't index like this for (|-+) ?? what about 0-NULL []
-  if(!v || !*v)R k?(1==k->n)?ci(kK(k)[0]):0:(K)ends; //? '1 + _n' -> domain err, '1 +' -> 1+ . but '4: . ""' -> 6 
+  //ci(k) was R 0; ...  put this here for f/[x;y;z]
+  if(!v || !*v)R k?(1==k->n)?ci(kK(k)[0]):ci(k):(K)ends; //? '1 + _n' -> domain err, '1 +' -> 1+ . but '4: . ""' -> 6 
 
   if(bk(*v)) R *v;  // ; case
 
@@ -1141,7 +1239,7 @@ K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: co
 
   while(v[1] && adverbClass(v[2+i])) i++;
   //TODO: Catch 0-returned-errors here and below
-  if(!sva(v[0]) && (i || 2==sva(v[1])))   // na+. or nv. case
+  if(!sva(v[0]) && (i || 2==sva(v[1])))   // na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
   {
     t2=ex2(v+2+i,k); //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
