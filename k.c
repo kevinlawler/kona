@@ -173,7 +173,8 @@ K kapn_(K *a,V *v,I n)
   I t=k->t,m=k->n,p=m+n;
   if(6==t)
   {
-    K z=newK(0,p),*zv=kK(z);
+    K z=newK(0,p);U(z)
+    K *zv=kK(z);
     *zv++=_n(); DO(n, zv[i]=_n());
     cd(k);
     *a=z;
@@ -190,8 +191,7 @@ K kapn_(K *a,V *v,I n)
   k->n=p;
   SW(ABS(t))
   {
-    case 0:
-    CS(5, DO(n, kK(k)[i+m]=ci(((K*)v)[i])));
+    CSR(0,) CS(5, DO(n, kK(k)[i+m]=ci(((K*)v)[i])));
     CS(1, memcpy(kI(k)+m,*v,n*sizeof(I)));
     CS(2, memcpy(kF(k)+m,*v,n*sizeof(F)));
     CS(3, strncpy(kC(k)+m,(S)*v,n); kC(k)[p]=0);
