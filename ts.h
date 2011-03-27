@@ -58,6 +58,7 @@ typedef struct pda{I i,s,n;S c;}Pda;typedef Pda*PDA; //holds parse state. pos in
 #define _(...) X(#__VA_ARGS__)
 #define GC goto cleanup
 #define STDIN fileno(stdin)
+#define STDOUT fileno(stdout)
 
 #define P(x,y) {if(x)R(y);}
 #define U(x) P(!(x),0)

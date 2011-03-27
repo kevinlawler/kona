@@ -150,8 +150,8 @@ I tests02()
   TC((.[-1 -2 _; ,!9; :]) , (1;"domain"))
   TC((.[0 10 100 _; ,!9; :]) , (1;"length"))
   //TC(.[=; 0; :] , (1;"valence") ) // ignore: better to return =[0;] than valence error
-  TC((.[.:;,"{_foo[x]}";:]),(1;"parse"))
-  TC(skip,(.[{_foo[x]};0;:]),(1;"parse"))//.[NULL;...] errors inside bracket should not be interpreted as projections
+  TC((.[.:;,"{_foo[x]}";:]),(1;"reserved"))
+  TC(skip,(.[{_foo[x]};0;:]),(1;"reserved"))//.[NULL;...] errors inside bracket should not be interpreted as projections
 
   TC(-9131, _jd 20100101)
 
@@ -306,6 +306,12 @@ I tests02()
   //f'/\...[x;y;z;...]
   TC_("(33 34;39 40)", "{x+y+z}'/[(1 2;3 4);(5 6;7 8);(9 10;11 12)]")
   TC_("(31 32;41 42)", "{x+y+z}/'[(1 2;3 4);(5 6;7 8);(9 10;11 12)]")
+
+  TC( (@[0$;0 1;:])   , (1;"type"))
+  TC( (@[0$;0 1.0;:]) , (1;"type"))
+  TC( (@[0$;`a`a;:])  , (1;"type"))
+
+  //TC( do[5;."a:(1 2)[0]:3"], _n)
 
 }
 

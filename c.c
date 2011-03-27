@@ -2,7 +2,7 @@
 
 void boilerplate()
 {
- if(!isatty(fileno(stdout))) R;
+ if(!isatty(STDOUT) || !isatty(STDIN)) R;
   O("K Console - Enter \\ for help\n");
   prompt(0);
 

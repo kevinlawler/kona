@@ -160,7 +160,7 @@ K dollar(K a, K b) //form/format_dyadic
     a=x?promote(a):ci(a); //-3
     b=y?promote(b):ci(b); //-3
     z=a&&b?newK(0,x?a->n:b->n):0;
-    if(z)DO(z->n, kK(z)[i]=dollar(x?kK(a)[i]:a,y?kK(b)[i]:b))
+    if(z)DO(z->n, K q=dollar(x?kK(a)[i]:a,y?kK(b)[i]:b); M(q,z,a,b) kK(z)[i]=q)
     cd(a);cd(b);
     R demote(z);
   }
@@ -207,7 +207,7 @@ K dollar(K a, K b) //form/format_dyadic
     //if(5<=at)
     R 0;//TODO: Else parse-execute (6,7, looks like for 5, maybe 4 too???)
   }
-  
+
   R TE;
 }
 
