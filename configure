@@ -7,6 +7,7 @@ e="" #extension
 case "$u" in  #choose the config.mk.* extension based on uname
   linux) e=linux ;;
   openbsd) e=openbsd ;;
+  freebsd) e=openbsd ;;
   darwin) e=openbsd ;;
 esac
 
