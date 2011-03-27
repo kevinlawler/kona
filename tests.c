@@ -312,6 +312,9 @@ I tests02()
   TC( (@[0$;`a`a;:])  , (1;"type"))
 
   TC( (@[.:;"a:(1 2)[0]:3";:] ), (1;"parse") )  
+  TC( (@[.:;"a:(0 1;2 3); a[0][1]:9";:] ), (1;"parse") )  
+  TC( (@[.:;"(1):2";:] ), (0;2) )    //optional, differs from K3.2
+  TC( (@[.:;"a: 1 1 1; a/[0] +: 10";:] ), (1;"type") ) //not sure on this one. think ... +:10 is ... index flip 10. Should be parse err?
   TC( (@[.:;"5 (a:5)/1";:] ), (1;"type") )  
 
 }

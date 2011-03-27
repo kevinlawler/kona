@@ -552,17 +552,11 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       z=r-grab==1?(1==a?vm:vd)+charsVerb(s[k]):(1==a?vm0:vd0)+(i=atol(s+k));
                       if(i<0||i>6)R (I)PE; //error if atol(s+k) not in [0-6]  (sva can fail since arrays close by in memory)
 
-                      //TODO: if(k>0 && ':'==s[k] && !name_bracket_assign ) <--- parse error
-                          //TODO:  (0): 11       <--- parse error
-                          //TODO:   a/[0] +: 10  <--- parse error (even if a is 1 1 1)
-                          //TODO: Assignment is not supported for nested bracket: a[][][] +: 1  <--- parse error
-
+                      //Assignment is not supported for nested bracket: a[][][] +: 1  <--- parse error
                       //save ':' if       a    []?        :    y    ;?        ---> colon   verb (should be covered except for   0   :  `file  -> 0:`file )
                       //save ':' if       a    []?    +   :         ;?        ---> monadic verb
                       //save ':' if       a    []?    +   :    y    ;?        ---> dyadic  verb
                       //what passes for y?  <--- anything that isn't an end/\0, except colon  verb will go on to ex1 to the right and assign _n
-                     
-                      //Throw parse error when NAME is not beginning of assignment clause. and at most one BRACKET (simple: char string unaltered and compacted, read back)
       )
     CS(MARK_ADVERB ,  z=adverbs+charsAdverb(s[k])+(r>1?3:0))
     CS(MARK_END    ,  z=ends)
