@@ -150,6 +150,8 @@ I tests02()
   TC((.[-1 -2 _; ,!9; :]) , (1;"domain"))
   TC((.[0 10 100 _; ,!9; :]) , (1;"length"))
   //TC(.[=; 0; :] , (1;"valence") ) // ignore: better to return =[0;] than valence error
+  TC((.[.:;,"{_foo[x]}";:]),(1;"parse"))
+  TC(skip,(.[{_foo[x]};0;:]),(1;"parse"))//.[NULL;...] errors inside bracket should not be interpreted as projections
 
   TC(-9131, _jd 20100101)
 

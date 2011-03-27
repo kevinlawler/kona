@@ -254,7 +254,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
   K kw=newK(-4,1+oc); M(v,km,ks2,kw) V*w=(V*)kK(kw);//words. Assumes terminal extra NULL
 
   I c=0,j=0;
-  DO(y, i+=-1+(j=capture(s2,y,i,m,w,&c,(K*)kV(v)+LOCALS,dict,func)); if(!j)R 0; ) //TODO: parse error: cd()/etc
+  DO(y, i+=-1+(j=capture(s2,y,i,m,w,&c,(K*)kV(v)+LOCALS,dict,func)); if(!j){PE; M(0,v,km,ks2,kw)} ) 
   //O("sl:");DO(n  ,if(!s2[i])break;O("%4c" ,s2[i]))O("\n"); O("ml:");DO(n  ,O("%4ld",m[i]))O("\n"); O("##:");DO(n  ,O("%4ld",  i ))O("\n"); 
   cd(km);cd(ks2);
 
@@ -514,8 +514,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                         V_SC(vm_)
                         V_SC(vd_)
                         V_SC(vt_)
-                        //U(z) //TODO: error here or earlier when marking and come across _invalidsystemverbname ? you can return 0 but catch above?
                         free(u);
+                        U(z) // _invalidsystemverbname 
                         break; // _verb does not grab monadic ':' following
                       }
 
