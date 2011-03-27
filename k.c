@@ -168,9 +168,17 @@ I kexpander(K*p,I n) //expand only.
 
 K kapn_(K *a,V *v,I n)
 {
-  if(!a)R 0;
+  if(!a||!n)R 0;
   K k=*a;
   I t=k->t,m=k->n,p=m+n;
+  if(6==t)
+  {
+    K z=newK(0,p),*zv=kK(z);
+    *zv++=_n(); DO(n, zv[i]=_n());
+    cd(k);
+    *a=z;
+    R z;
+  }
   if(!kexpander(&k,p))R 0;
   if(k!=*a)
   {
@@ -180,13 +188,17 @@ K kapn_(K *a,V *v,I n)
     *a=k;
   }
   k->n=p;
-  if(0==t||5==t) DO(n, kK(k)[i+m]=ci(((K*)v)[i]))
-  else if(1==ABS(t)) memcpy(kI(k)+m,*v,n*sizeof(I));
-  else if(2==ABS(t)) memcpy(kF(k)+m,*v,n*sizeof(F));
-  else if(3==ABS(t)){strncpy(kC(k)+m,(S)*v,n); kC(k)[p]=0;}
-  else if(4==ABS(t)) memcpy(kS(k)+m,*v,n*sizeof(S));
-  else R 0;
-  if(t>0&&t<5&&m==1&&p>1)k->t*=-1;
+  SW(ABS(t))
+  {
+    case 0:
+    CS(5, DO(n, kK(k)[i+m]=ci(((K*)v)[i])));
+    CS(1, memcpy(kI(k)+m,*v,n*sizeof(I)));
+    CS(2, memcpy(kF(k)+m,*v,n*sizeof(F)));
+    CS(3, strncpy(kC(k)+m,(S)*v,n); kC(k)[p]=0);
+    CS(4, memcpy(kS(k)+m,*v,n*sizeof(S)))
+    CD:   R 0;
+  }
+  if(t>0&&t<5&&p>1)k->t*=-1;
   R *a;
 }
 
