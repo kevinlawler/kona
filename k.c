@@ -750,7 +750,7 @@ cleanup:
 
     if(useN)
     {
-      DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c)) //TODO: err 0==c
+      DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c))
       c=c?c:b;//mm/o
     }
     else while(1)
