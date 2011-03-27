@@ -21,7 +21,7 @@
 #include <arpa/inet.h> 
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 
-#if defined(__OpenBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__)
 #include <sys/socket.h>
 #include <netinet/in.h>
 #endif
