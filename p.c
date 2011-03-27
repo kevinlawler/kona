@@ -531,6 +531,9 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       if(k-i > 0) if(MARK_NAME == ABS(m[k-i-1])) name_bracket_assign = 1; //(no adverb, assigning to non-names, etc)
                       if(!is_colon && !(k+1<n && ':'==s[k+1] && -MARK_VERB==m[k+1] ))name_bracket_assign=0;
 
+                      //  Handles this case at least (0 0)[0]:1  (works but not proven correct/the right thing to do)
+                      if(i && is_colon && !modifier_colon && !name_bracket_assign) R (I)PE;
+
                       I y_present= k+r+1<n && !(s[k+r+1] == ':' && -MARK_VERB==m[k+r+1]) && MARK_END != ABS(m[k+r+1]);
 
                       //MARK_END may end up being redundant here?
