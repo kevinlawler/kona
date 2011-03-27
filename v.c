@@ -1507,7 +1507,6 @@ K reciprocal(K x){K y,z; U(y=Kf(1)) z=divide(y,x); cd(y); R z;}
 K min_and(K a, K b)
 {
   SCALAR_INIT(2)
-  if(!at || !bt) zt=0;
   K z=newK(zt,zn);U(z)
 
   F f,g; I x,y; 
