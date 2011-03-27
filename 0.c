@@ -18,16 +18,22 @@ K _0m(K a)
   I t=a->t;
   P(4!=t && 3!=ABS(t), TE)
 
-  I f=open(CSK(a),0);
-  P(f<0,DOE)
-
-  I s; P(stat_sz(CSK(a),&s),SE)
- 
-  S v;
-
-  if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
-  close(f);
-
+  I b=0,s=0;
+  S u,v=0;
+  if(4==t && !**kS(a)){
+    if(getdelim(&v,&s,EOF,stdin)<0)GC;
+    u=memchr(v,'\0',s);
+    if(u)s=u-v;
+    b=1;
+  }
+  else
+  {
+    I f=open(CSK(a),0);
+    P(f<0,DOE)
+    P(stat_sz(CSK(a),&s),SE)
+    if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
+    close(f);
+  }
   I c=s?1:0,d=0,e;
   DO(s, if('\n'==v[i] && i < s-1)c++) //1st run: count \n
   K k;
@@ -39,8 +45,7 @@ K _0m(K a)
   DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n;) //3rd run: populate 
 
 cleanup:
-  munmap(v,s);
-
+  if(b&&v)free(v);else munmap(v,s);
   R z;
 }
 
@@ -707,6 +712,7 @@ K popen_charvec(C *cmd)
     strncpy(kC(l),s,n-1);
     kap(&z,l);
   }
+  if(s)free(s);
   pclose(f);
   R z;
 }
