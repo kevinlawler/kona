@@ -173,7 +173,8 @@ K kapn_(K *a,V *v,I n)
   I t=k->t,m=k->n,p=m+n;
   if(6==t)
   {
-    K z=newK(0,p),*zv=kK(z);
+    K z=newK(0,p);U(z)
+    K *zv=kK(z);
     *zv++=_n(); DO(n, zv[i]=_n());
     cd(k);
     *a=z;
@@ -190,8 +191,7 @@ K kapn_(K *a,V *v,I n)
   k->n=p;
   SW(ABS(t))
   {
-    case 0:
-    CS(5, DO(n, kK(k)[i+m]=ci(((K*)v)[i])));
+    CSR(0,) CS(5, DO(n, kK(k)[i+m]=ci(((K*)v)[i])));
     CS(1, memcpy(kI(k)+m,*v,n*sizeof(I)));
     CS(2, memcpy(kF(k)+m,*v,n*sizeof(F)));
     CS(3, strncpy(kC(k)+m,(S)*v,n); kC(k)[p]=0);
@@ -1087,7 +1087,7 @@ K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/retu
     CS(0, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){cd(z); U(x=ex1(v+1+i,0)) z=bk(x)?_n():x;})//  c:9;a+b;c:1 
     CS(4, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){U(x=ex1(v+1+i,0)) x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); if(i==n) R x; if(xt!=1){cd(x);R TE;} a=*kI(x);cd(x); if(a)R ex1(v+i+1,0); else while(i<n&&!bk(v[i]))i++; } R _n())
     CSR(5,)CSR(6,)CS(7, do{U(x=ex1(v,0)) x=bk(x)?_n():x; if(xt!=1){cd(x);R TE;}a=*kI(x);cd(x);i=0;while(++i<n&&!bk(v[i])); if(i>=n)break;SW(r){CSR(5,)CS(6,if(a)cd(ex0(v+i+1,0,0)))CS(7,DO2(a,cd(ex0(v+i+1,0,0))))}}while(6==r && a); R _n())
-    CD:z=newK(0,n?e:0); if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){x=ex1(v+1+i,0); kK(z)[--e]=bk(x)?2==r?0:_n():x;}// (c:9;a+b;c:1) oom
+    CD:z=newK(0,n?e:0); if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){x=ex1(v+1+i,0);M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}// (c:9;a+b;c:1) oom
   }
 
   //Note on brackets: [] is _n, not (). Expression [1;1] (0-type with two atoms) is different from [1 1] (integer vector)
