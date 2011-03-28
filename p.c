@@ -8,7 +8,7 @@ S formed_dfa =
   "021151" //1 OK
   "021451" //2 OK-SPACE //TODO: Tab is in the space group (enough to justify migration to table-lookup?)
   "033333" //3 OK-LOCKED //TODO: was 033433 but any "\t x/y" commented. breaks comment in funcs. is why can't \cmd in func?
-  "044444" //4 COMMENT
+  "044444" //4 COMMENT //TODO: ^^^ merge COMMENT & OK-LOCKED. diff't DFA for funcs?
   "556515" //5 QUOTE
   "555555" //6 QUOTE-ESCAPE
 ;
