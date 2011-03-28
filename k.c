@@ -9,7 +9,7 @@
 //buckets."
 #define KP_MIN 5  //2^x, must be at least ceil(lg(sizeof(V)))
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
-V KP[sizeof(V)*8+1]; //KPOOL
+extern V KP[sizeof(V)*8+1]; //KPOOL
 
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
 extern K kerr(S s){ R snprintf(errmsg,256,"%s",s),(K)0;} 

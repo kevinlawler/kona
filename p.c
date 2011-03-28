@@ -504,7 +504,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       if('_'==s[k] && r > 1)
                       {
                         if(k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r]) R (I)PE;
-                        u=strdupn(s+k,r); P(!u,PE)
+                        u=strdupn(s+k,r); P(!u,(I)PE)
                         /*#define V_SC(x) if(!z) DO(AE(x##s), if(!SC(u,x##s[i])){z=x+i;break;}) //faster is to sp() / hash-table  (compared to SC())*/
                         I i;
                         #define V_SC(x) if(!z) { for(i=0; x##s[i]!=NULL;i++) { if(!SC(u,x##s[i])){z=x+i;break;}}} //faster is to sp() / hash-table  (compared to SC())
