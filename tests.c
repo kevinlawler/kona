@@ -317,6 +317,8 @@ I tests02()
   TC( (@[.:;"a: 1 1 1; a/[0] +: 10";:] ), (1;"type") ) //not sure on this one. think ... +:10 is ... index flip 10. Should be parse err?
   TC( (@[.:;"5 (a:5)/1";:] ), (1;"type") )  
 
+  TC(13, ({x(|+\\)\\1 1} 5)[5;0])
+
 }
 
 I tests01()

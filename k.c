@@ -572,12 +572,20 @@ I valence(V p)
     if(*k==eachright || *k==eachleft)R 2; //todo: this looks off: eachright can be valence 1? as in +:/:  ?
     if(i>1 && *k==each || *k==over || *k==scan)  //for f'[x;y;z], f/[x;y;z], ...
     {
-      V*q; I j=0;
+      V*q; I j=0,s;
       do q=kW(v)[i-2-(j++)]; while(*q==each || *q==over || *q==scan);
       
-      if(!sva(q) || specialValence(q)) 
-        if(j<i-2) R valence(q)-1; //eg  f:...0(0|+)\ (the zero binds on the left) 
-        else R valence(q); //if(!VA(q) && (*q)->t==7) R valence(q);
+      s=sva(q);
+      if(s && !specialValence(q)) R s - ((i-2-j)?0:1); // |+\ or +\   (leaves out |@\ and @\ ...or not...or intentional...?)
+
+      if(j<i-2 ) R valence(q)-1; //eg  f:...0(0|+)\ (the zero binds on the left) 
+      else 
+      {
+        R valence(q);
+        //if(*kW(v)==q) R valence(q);
+        //R valence(q)-1;
+      }  //if(!VA(q) && (*q)->t==7) R valence(q);
+
     }
     if(adverbClass(k)) R 2;
     if(sva(k)>1 && i>1 && !VA(kW(v)[i-2]))R valence(k)-1; //NB: f:(7+);g:(1+|+); both dyad-plus, f valence 1, g valence 2. Rule is 1 for nd; 2 for vd;
@@ -793,7 +801,7 @@ cleanup:
     if(a && 1 == a->t){useN=1; n=*kI(a);}
     P(n < 0,IE) //mmo
 
-    if(useN) DO(n, d=first(reverse(u)); c=dv_ex(0,p-1,d); u=join(u,enlist(c));) //mm/o
+    if(useN) DO(n, U(v=reverse(u)) d=first(v); cd(v); c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); u=join(w=u,v); cd(w); cd(v); U(u)) 
     else while(1)
     {
       d=first(v=reverse(u));cd(v);
