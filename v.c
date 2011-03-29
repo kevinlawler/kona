@@ -921,6 +921,7 @@ K qrand(K a,K b)
 K sample(K x,K y)
 {
   K a,b,z;
+  if(!y->n) R take(x,y);
   U(b=Ki(countI(y)))
   a=qrand(x,b);
   M(a,b) cd(b);
