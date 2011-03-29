@@ -1,3 +1,4 @@
+extern V KP[sizeof(V)*8+1]; //KPOOL
 K _0m(K a);
 K _0d(K a,K b);
 I ok_0dw(K b);
@@ -43,7 +44,6 @@ I getdelim(S *s,I *n,I d,FILE *f);
 I getdelim(S *s,I *n,I d,FILE *f);
 I getline(S *s,I *n,FILE *f);
 #endif
-V KP[sizeof(V)*8+1];
 extern C errmsg[256];
 K kerr(S s);
 I oerr();

@@ -1,40 +1,45 @@
-CFLAGS= -O3
-LIBS  = -lm
+PREFIX = /usr/local
+CFLAGS = -m64
+LDFLAGS = -m64 -lm
 
-include config.mk
+OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
-SRC= c.c getline.c mt.c p.c r.c v.c 0.c
-HDR= h.h incs.h ts.h
-OBJ= $(SRC:.c=.o)
+ifeq (linux,$(OS))
+	LDFLAGS += -ldl
+endif
+ifeq (freebsd,$(OS))
+endif
+ifeq (openbsd,$(OS))
+endif
+ifeq (darwin,$(OS))
+endif
+ifeq (sunos,$(OS))
+	LDFLAGS += -lsocket
+endif
 
-all: k
+all: k k_test
 
-k: k.c $(OBJ)
-	$(CC) $(LIBS) $(CFLAGS) $< -o $@ ${OBJ}
+k: CFLAGS += -O3 -fast
+k: k.o c.o getline.o mt.o p.o r.o v.o 0.o
 
-k_test: k.c $(OBJ) $(HDR) tests.o
-	$(CC) $(LIBS) $(CFLAGS) $< -o $@ ${OBJ} tests.o
-
-test: CFLAGS= -O0 -g3 -DNDEBUG
+k_test: CFLAGS += -O0 -g3 -DNDEBUG
+k_test: k.t.o c.t.o getline.t.o mt.t.o p.t.o r.t.o v.t.o 0.t.o tests.t.o
+	$(CC) $(LOADLIBES) $(LDFLAGS) $^ -o $@
 test: k_test
 
-*.o: ${HDR} Makefile
+# Dependencies.
+k.o c.o getline.o mt.o p.o r.o v.o 0.o k.t.o c.t.o getline.t.o mt.t.o p.t.o r.t.o v.t.o 0.t.o tests.t.o: incs.h h.h ts.h Makefile
 
-k.c: ${SRC}
-0.o: 0.c
-c.o: c.c
-getline.o: getline.c
-mt.o: mt.c
-p.o: p.c
-r.o: r.c mt.c 0.c
-v.o: v.c
-
-tests.o: tests.c $(SRC) $(HDR)
+install:
+	install k $(PREFIX)/bin/k
 
 clean:
-	rm -rf k k_test k_test.dSYM *.o 
+	$(RM) -r k k_test k.dSYM k_test.dSYM *.o
 
 TAGS: *.c *.h
 	etags *.[ch]
 
-.PHONY: all test clean
+%.t.o: %.c
+	$(CC) $(CFLAGS) -c $(CPPFLAGS) -o $@ $<
+
+.PHONY: all clean install
