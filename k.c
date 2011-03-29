@@ -51,16 +51,16 @@ I OOM_CD(I g, ...) //out-of-memory count-decrement
 //This source would be improved by getting ridding of remaing malloc/calloc/realloc
 K cd(K a)
 {
-  #ifdef NDEBUG
+  #ifdef DEBUG
   if(a && a->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd(a) dd(a->c) dd(a->t) dd(a->n) show(a); }
   #endif 
   if(!a || --a->c) R a;
-  #ifdef NDEBUG
+  #ifdef DEBUG
   DO(kreci, if(a==krec[i]){krec[i]=0; break; })
   #endif 
   if(7==a->t){ DO(-1+TYPE_SEVEN_SIZE,cd(kV(a)[1+i]))} //-4 special trick: don't recurse on V members. assumes sizeof S==K==V
   if(0==a->t || 5==a->t) DO(a->n, cd(kK(a)[a->n-i-1]))
-  #ifdef NDEBUG
+  #ifdef DEBUG
   if(0)R 0; //for viewing K that have been memory leaked
   #endif
   //assumes seven_type a->k is < PG()
@@ -93,7 +93,7 @@ K newK(I t, I n)
   U(z=kalloc(k))
   //^^ relies on MAP_ANON being zero-filled for 0==t || 5==t (cd() the half-complete), 3==ABS(t) kC(z)[n]=0 (+-3 types emulate c-string)
   z->c=1; z->t=t; z->n=n;
-  #ifdef NDEBUG
+  #ifdef DEBUG
   if(testtime) krec[kreci++]=z;
   #endif
   R z;
@@ -183,7 +183,7 @@ K kapn_(K *a,V *v,I n)
   if(!kexpander(&k,p))R 0;
   if(k!=*a)
   {
-    #ifdef NDEBUG
+    #ifdef DEBUG
     DO(kreci, if(*a==krec[i]){krec[i]=0; break; })
     #endif
     *a=k;
@@ -1296,7 +1296,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(v==1) goto done;//generally incomplete
   if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
   RTIME(d,k=ex(wd(*a,*n)))
-#ifdef NDEBUG
+#ifdef DEBUG
   if(o&&k)O("Elapsed: %.7f\n",d);
 #endif
   if(o)show(k);
@@ -1489,7 +1489,7 @@ I kinit() //oom (return bad)
   KFIXED=newK(0,0);
   kap(&KFIXED,NIL=Kn());cd(NIL);
   __d = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
-#ifdef NDEBUG
+#ifdef DEBUG
   test();
 #endif
   KTREE=Kd();//Initalize. Alt, KTREE=_(.,(`k;));
@@ -1511,7 +1511,7 @@ int main(int argc,S*argv)
   R 0;
 }
 
-#ifdef NDEBUG
+#ifdef DEBUG
 void tf(N n){if(!n)R;DO(2,tf(n->c[i]))free(n->k);repool(n,lsz(sizeof(Node))); } //tree free
 I kreci=0; 
 V krec[1000000];
@@ -1520,7 +1520,7 @@ I CV(K v) { V a[1000]; I n=0; while(v) { dd(v); a[n++]=v; DO(n, DO2(n-i-1, if(a[
 
 void finally()
 {
-#ifdef NDEBUG   
+#ifdef DEBUG   
 tf(SYMBOLS); cd(KTREE); cd(KFIXED);
 //valgrind --leak-check=full --show-reachable=yes /tmp/a.out
 #endif

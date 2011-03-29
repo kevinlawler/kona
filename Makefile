@@ -22,7 +22,7 @@ all: k k_test
 k: CFLAGS += -O3 -fast
 k: k.o c.o getline.o mt.o p.o r.o v.o 0.o
 
-k_test: CFLAGS += -O0 -g3 -DNDEBUG
+k_test: CFLAGS += -O0 -g3 -DDEBUG
 k_test: k.t.o c.t.o getline.t.o mt.t.o p.t.o r.t.o v.t.o 0.t.o tests.t.o
 	$(CC) $(LOADLIBES) $(LDFLAGS) $^ -o $@
 test: k_test

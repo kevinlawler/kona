@@ -180,7 +180,7 @@ extern K KFIXED;
 I kinit();
 V ptf(V v);
 int main(int argc,S *argv);
-#if defined(NDEBUG)
+#if defined(DEBUG)
 void tf(N n);
 extern I kreci;
 extern V krec[1000000];

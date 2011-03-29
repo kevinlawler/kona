@@ -12,11 +12,11 @@
 
 K XDB(S t) //pure debug function to suppress memory leaks for lazily cached functions
 { 
-#ifdef NDEBUG
+#ifdef DEBUG
 I a=kreci;
 #endif
 K z=X(t);
-#ifdef NDEBUG
+#ifdef DEBUG
 kreci=a;
 #endif
 R z;
