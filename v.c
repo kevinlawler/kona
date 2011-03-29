@@ -895,7 +895,46 @@ K what_triadic(K a, K b, K c)//TODO: 0i -0i 0n
   R z;
 }
 
-K what(K a, K b){R 7==a->t?what_triadic(a,b,0):find(a,b);}
+K qrand(K a,K b)
+{
+  I at=a->t,an=a->n,bt=b->t,bn=b->n;
+  K y;
+  P(1!=ABS(at)||(1!=bt&&2!=bt),IE)
+  I c=*kI(a),n=ABS(c);
+  P(1==bt && c<0 && *kI(b) < -c,LE)
+  P(1==bt && *kI(b)<0,DOE)
+
+  I j=0,k,s;
+  U(y=newK(1==bt?-1:-2,n))
+
+  if(2==bt){F f=*kF(b);DO(n,kF(y)[i]=RF()*f) R y;}
+  I d=*kI(b);
+  if(c>=0)DO(n,kI(y)[i]=d*RF())    //this could be better (small numerical error)
+  else //deal
+  {
+    vitter(kI(y),y->n,d); //Vitter's algorithm
+    for(j=n-1;j>0;j--){k=(1+j)*RF();s=kI(y)[j];kI(y)[j]=kI(y)[k];kI(y)[k]=s;} //Knuth Algorithm 3.4.2P
+  }
+  R y;
+}
+
+K sample(K x,K y)
+{
+  K a,b,z;
+  U(b=Ki(countI(y)))
+  a=qrand(x,b);
+  M(a,b) cd(b);
+  z=at_verb(y,a);
+  cd(a);
+  R z;
+}
+
+K what(K x, K y)
+{
+  if(7==xt)R what_triadic(x,y,0);
+  if(1==xt) R atomI(y)?qrand(x,y):sample(x,y); 
+  R find(x,y);
+}
 //////////////////////////////////////////////////////////////////////////
 
 
