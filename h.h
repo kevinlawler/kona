@@ -238,6 +238,7 @@ extern V vt_[];
 K _abs(K a);
 I net(K x);
 K _bd(K x);
+K _ceiling(K x);
 K _ci(K a);
 K _db(K x);
 K _dj(K a);

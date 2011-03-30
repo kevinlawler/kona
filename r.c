@@ -41,7 +41,7 @@ S_TRIAD(ssr, "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\
 #define W(x)      x
 #define _SYSTEMN  W(T) W(a) W(d) W(f) W(h) W(i) W(k) W(m) W(n) W(p) W(s) W(t) W(u) W(v) W(w)
 #define _MATH     W(acos) W(asin) W(atan) W(ceil) W(cos) W(cosh) W(exp) W(floor) W(log) W(sin) W(sinh) W(sqr) W(sqrt) W(tan) W(tanh)
-#define _SYSTEM1  _MATH W(abs) W(bd) W(ci) W(db) W(dj) W(exit) W(getenv) W(gtime) W(host) W(ic) W(inv) W(jd) W(lt) W(ltime) W(size) 
+#define _SYSTEM1  _MATH W(abs) W(bd) W(ceiling) W(ci) W(db) W(dj) W(exit) W(getenv) W(gtime) W(host) W(ic) W(inv) W(jd) W(lt) W(ltime) W(size) 
 #define _SYSTEM2  W(bin) W(binl) W(di) W(dot) W(draw) W(dv) W(dvl) W(in) W(lin) W(lsq) W(mul) W(setenv) W(sm) W(ss) W(sv) W(vs)
 #define _SYSTEM3  W(ssr)
 
@@ -105,6 +105,20 @@ K _bd(K x)//This differs from K3.2 in order to support 64-bit
   wrep(x,sizeof(M1)+(V)m,0); //assert #bytes in x or z couldn't change
   R z; 
 } 
+
+K _ceiling(K a)//Copy-paste of floor_verb
+{
+  I at=a->t, an=a->n;
+  P(2 <ABS(at),TE)
+  if(1==ABS(at))R ci(a);
+
+  //TODO: oom
+  K z=newK(at?SIGN(at):0,an);//Compress F {-2,2} into I {-1,1}
+  F e,f;
+  if(2==ABS(at)) DO(an, e=kF(a)[i]; f=FF(e); kI(z)[i]=(f>0&&!FC(f,1))||(f<0&&!FC(f,0))?floor(e):ceil(e))
+  else if(!at) DO(an, kK(z)[i]=_ceiling(kK(a)[i]))
+  R z;
+}
 
 K _ci(K a)
 {
