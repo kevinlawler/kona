@@ -320,6 +320,14 @@ I tests02()
   TC(13, ({x(|+\\)\\1 1} 5)[5;0])
   TC( (.[.:;,"@[a-b]";:]) , (1;"type") ) //specific err not important
 
+  TC( 5, _ceiling 4.6)
+  TC(-4, _ceiling -4.6)
+  TC( 5, _ceiling 5.0)
+  TC( 2, _ceiling 1.001)
+  TC( 2, _ceiling 1.0000001)
+  TC( 1, _ceiling 1.00000000000000000001)
+  TC( 1, _ceiling 0.00000000000000000001) //per defn. as -_-
+ 
 }
 
 I tests01()
@@ -547,18 +555,12 @@ I testsBook()
   TC(`a`b`c,+`a`b`c)
   TC(4, _ 4.6)
   TC(-5, _ -4.6)
-  TC(5, _ceiling 4.6)
-  TC(-4, _ceiling -4.6)
-  TC(5, _ceiling 5.0)
   TC(0, 2=1.999)
   TC(1, 2=1.9999999999999999999)
   TC(0, 1=1.001)
   TC(1, 1=1.00000000000000000001)
   TC(1, _ 1.999)
   TC(2, _ 1.999999999999999999)
-  TC(2, _ceiling 1.001)
-  TC(2, _ceiling 1.0000001)
-  TC(1, _ceiling 1.00000000000000000001)
   TC((,"0";,"9") , $ 0 9)
   TC("123", $"123")
   TC("1.2e-34", $ 1.2e-34)
