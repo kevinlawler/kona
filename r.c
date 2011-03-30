@@ -106,19 +106,7 @@ K _bd(K x)//This differs from K3.2 in order to support 64-bit
   R z; 
 } 
 
-K _ceiling(K a)//Copy-paste of floor_verb
-{
-  I at=a->t, an=a->n;
-  P(2 <ABS(at),TE)
-  if(1==ABS(at))R ci(a);
-
-  //TODO: oom
-  K z=newK(at?SIGN(at):0,an);//Compress F {-2,2} into I {-1,1}
-  F e,f;
-  if(2==ABS(at)) DO(an, e=kF(a)[i]; f=FF(e); kI(z)[i]=(f>0&&!FC(f,1))||(f<0&&!FC(f,0))?floor(e):ceil(e))
-  else if(!at) DO(an, kK(z)[i]=_ceiling(kK(a)[i]))
-  R z;
-}
+K _ceiling(K a){R floor_ceil(a,ceil);}
 
 K _ci(K a)
 {
