@@ -318,6 +318,7 @@ I tests02()
   TC( (@[.:;"5 (a:5)/1";:] ), (1;"type") )  
 
   TC(13, ({x(|+\\)\\1 1} 5)[5;0])
+  TC( (.[.:;,"@[a-b]";:]) , (1;"type") ) //specific err not important
 
 }
 
