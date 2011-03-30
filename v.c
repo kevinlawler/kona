@@ -1233,19 +1233,22 @@ K shape(K a) //TODO: Thoroughly test this //TODO: oom
   R z;//could instead shrink p into z
 }
 
-K floor_verb(K a)//K3.2  "_ -5 + 1.0 * 1 + -OI" yields -0I not Domain Error
+K floor_ceil(K a, F(*g)(F))
 {
   I at=a->t, an=a->n;
+  F(*h)(F)=g==ceil?floor:ceil;
   P(2 <ABS(at),TE)
   if(1==ABS(at))R ci(a);
 
   //TODO: oom
   K z=newK(at?SIGN(at):0,an);//Compress F {-2,2} into I {-1,1}
   F e,f;
-  if(2==ABS(at)) DO(an, e=kF(a)[i]; f=FF(e); kI(z)[i]=(f>0&&!FC(f,1))||(f<0&&!FC(f,0))?ceil(e):floor(e))
-  else if(!at) DO(an, kK(z)[i]=floor_verb(kK(a)[i]))
-  R z; 
+  if(2==ABS(at)) DO(an, e=kF(a)[i]; f=FF(e); kI(z)[i]=(f>0&&!FC(f,1))||(f<0&&!FC(f,0))?h(e):g(e))
+  else if(!at) DO(an, kK(z)[i]=floor_ceil(kK(a)[i],g))
+  R z;
 }
+
+K floor_verb(K a){R floor_ceil(a,floor);}//K3.2  "_ -5 + 1.0 * 1 + -OI" yields -0I not Domain Error
 
 K dp(K*z,K(*f)(K,K),K x,K y) //dyad promote
 {
