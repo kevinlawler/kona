@@ -749,19 +749,32 @@ cleanup:
   }
 
   if(2 > k && adverb == over)
-  { //TODO: 'b f/ x'
+  { 
     K u=b,c=0;I flag=0; 
 
-    I useN=0,n=0;
-    if(a && 1 == a->t){useN=1; n=*kI(a);}
+    I useN=0,n=0,useB=0;
+    if(a) if(1 == a->t){useN=1; n=*kI(a);} else if(7==a->t){useB=1;}
     P(n<0,IE)
 
-    if(useN)
+    if(useN) //n f/x
     {
       DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c))
-      c=c?c:b;//mm/o
+      c=c?c:ci(b);
     }
-    else while(1)
+    else if(useB) // b f/x 
+    {
+      I t;
+      do
+      { 
+        K g=vf_ex(&a,u); U(g)
+        t=(g->t==1 && *kI(g));
+        cd(g);
+        if(!t)break;
+        c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c)
+      }while(1);
+      c=c?c:ci(b);
+    }
+    else while(1) // f/x
     {
       if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
       if(u!=b) cd(u);
@@ -793,15 +806,31 @@ cleanup:
   }
 
   if(2 > k && adverb == scan)
-  { //TODO: 'b f\ x'
+  { 
     K u=enlist(b),v,w,c=0,d;I flag=0;//TODO: optimize/memory manage enlists,firsts,reverses here
     U(u);
 
-    I useN=0,n=0;
-    if(a && 1 == a->t){useN=1; n=*kI(a);}
+    I useN=0,n=0,useB=0;
+    if(a) if(1 == a->t){useN=1; n=*kI(a);}else if(7==a->t)useB=1;
     P(n < 0,IE) //mmo
 
     if(useN) DO(n, U(v=reverse(u)) d=first(v); cd(v); c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); u=join(w=u,v); cd(w); cd(v); U(u)) 
+    else if(useB)
+    {
+      I t;
+      do
+      {
+        U(v=reverse(u))
+        d=first(v); cd(v);
+        K g=vf_ex(&a,d); U(g)
+        t=(1==g->t && *kI(g));
+        cd(g);
+        if(!t){cd(d); break;}
+        c=dv_ex(0,p-1,d); cd(d);
+        U(c) U(v=enlist(c)) cd(c);
+        u=join(w=u,v); cd(w); cd(v); U(u) 
+      }while(1);
+    }
     else while(1)
     {
       d=first(v=reverse(u));cd(v);
