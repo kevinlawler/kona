@@ -373,14 +373,14 @@ K promote(K a)//Identity on lists. Lists from vectors. Pseudo-enlist on atoms (a
 { //0 1 2 -> (0;1;2) 
   I at=a->t;
   if(0==at) R ci(a);
-  if(4< at) {K z=newK(0,1); *kK(z)=ci(a); R z;}
-  K z=newK(0,a->n);
+  if(4< at) {K z=newK(0,1); U(z); *kK(z)=ci(a); R z;}
+  K z=newK(0,a->n); U(z);
   K x;
   I v=ABS(at);
-  if     (4==v) DO(a->n, x=newK(v,1); *kS(x)=kS(a)[i]; kK(z)[i]=x ) //mm/o
-  else if(3==v) DO(a->n, x=newK(v,1); *kC(x)=kC(a)[i]; kK(z)[i]=x ) 
-  else if(2==v) DO(a->n, x=newK(v,1); *kF(x)=kF(a)[i]; kK(z)[i]=x ) 
-  else if(1==v) DO(a->n, x=newK(v,1); *kI(x)=kI(a)[i]; kK(z)[i]=x ) 
+  if     (4==v) DO(a->n, x=newK(v,1); M(x,z) *kS(x)=kS(a)[i]; kK(z)[i]=x ) 
+  else if(3==v) DO(a->n, x=newK(v,1); M(x,z) *kC(x)=kC(a)[i]; kK(z)[i]=x ) 
+  else if(2==v) DO(a->n, x=newK(v,1); M(x,z) *kF(x)=kF(a)[i]; kK(z)[i]=x ) 
+  else if(1==v) DO(a->n, x=newK(v,1); M(x,z) *kI(x)=kI(a)[i]; kK(z)[i]=x ) 
   R z;
 }
 
@@ -857,10 +857,13 @@ cleanup:
     else
     {
      //a and b both lists/vectors of size an
-      a=promote(a); //oom
-      b=promote(b); //oom
-      K z = newK(0,a->n); //oom
-      DO(a->n, kK(z)[i]=dv_ex(kK(a)[i],p-1,kK(b)[i])) //oom/err
+      a=promote(a); 
+      b=promote(b); 
+      M(a,b)
+      K z = newK(0,a->n);
+      M(z,a,b)
+      K k;
+      DO(a->n, k=dv_ex(kK(a)[i],p-1,kK(b)[i]); M(k,z,a,b) kK(z)[i]=k) 
       cd(a);
       cd(b);
       R demote(z);
@@ -873,10 +876,10 @@ cleanup:
     if(bt > 0) R dv_ex(0,p-1,b);
     else
     {
-      K z = newK(0,bn),d=0; //oom
+      K z = newK(0,bn),d=0; U(z)
       K g;
-      if(0 >bt) DO(bn, g=newK(ABS(bt),1); memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(0,p-1,g); cd(g); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g
-      if(0==bt) DO(bn, d=dv_ex(0,p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
+      if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(0,p-1,g); cd(g); M(d,z) kK(z)[i]=d) 
+      if(0==bt) DO(bn, d=dv_ex(0,p-1,kK(b)[i]); M(d,z) kK(z)[i]=d)
       R demote(z);
     }
   }

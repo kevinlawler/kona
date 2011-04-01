@@ -1,4 +1,3 @@
-extern V KP[sizeof(V)*8+1]; //KPOOL
 K _0m(K a);
 K _0d(K a,K b);
 I ok_0dw(K b);
@@ -44,6 +43,7 @@ I getdelim(S *s,I *n,I d,FILE *f);
 I getdelim(S *s,I *n,I d,FILE *f);
 I getline(S *s,I *n,FILE *f);
 #endif
+extern V KP[sizeof(V)*8+1];
 extern C errmsg[256];
 K kerr(S s);
 I oerr();
@@ -238,7 +238,7 @@ extern V vt_[];
 K _abs(K a);
 I net(K x);
 K _bd(K x);
-K _ceiling(K x);
+K _ceiling(K a);
 K _ci(K a);
 K _db(K x);
 K _dj(K a);
@@ -351,7 +351,9 @@ I isShallowNumeric(K k);
 F ithFloat(K k,I i);
 F inverter(K a,K b,K c,I index);
 K what_triadic(K a,K b,K c);
-K what(K a,K b);
+K qrand(K a,K b);
+K sample(K x,K y);
+K what(K x,K y);
 I matchI(K a,K b);
 K enlist(K x);
 K grade_updown(K a,I r);

@@ -439,8 +439,9 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
       K args=newK(0,argc);U(args)//Cheating 0-type w/ NULLs 
       kK(args)[0]=itemAtIndex(*p,kI(b)[i%bn]); 
       if(argc > 1) kK(args)[1] = atomI(b)?ci(y):itemAtIndex(y,i%yn); 
-      K r = specialAmendDot(c,args);//mmo
-      updateIndex(p,kI(b)[i%bn],r);//mmo
+      K r = specialAmendDot(c,args);
+      M(r,args)
+      updateIndex(p,kI(b)[i%bn],r);
       cd(r);
       cd(args);
     )
@@ -453,8 +454,9 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
       S u = kS(b)[i%bn];
       kK(args)[0]= ci(*lookupEVOrCreate(p,u)); // ... mm/o? tricky
       if(argc > 1) kK(args)[1] = atomI(b)?ci(y):itemAtIndex(y,i%yn);
-      K r = specialAmendDot(c,args); //oom
-      K *v = EVP(DE(*p,u));  //oom???
+      K r = specialAmendDot(c,args);
+      M(r,args)
+      K *v = EVP(DE(*p,u)); 
       cd(*v);
       *v=r; //mm/o inc/dec r here ??
       cd(args);
@@ -716,6 +718,7 @@ K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
     }
     R demote(d);
   }
+
 
   K q=0, *p=0;
 
