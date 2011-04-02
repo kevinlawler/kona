@@ -337,7 +337,7 @@ K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/director
     else if(-3==at) DO(bn,kC(z)[i]=kC(a)[kI(b)[i]])
     else if(-2==at) DO(bn,kF(z)[i]=kF(a)[kI(b)[i]])
     else if(-1==at) DO(bn,kI(z)[i]=kI(a)[kI(b)[i]])
-    else if( 0==at){DO(bn,kK(z)[i]=ci(kK(a)[kI(b)[i]])) z=collapse(z);}//was demote, but buggy
+    else if( 0==at){DO(bn,kK(z)[i]=ci(kK(a)[kI(b)[i]])) z=collapse(z);}
   }
   else if(4==ABS(bt))
   {
@@ -573,7 +573,7 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
   else if(0 >at)
   {
     if(1==ABS(bt))z=at_verb(a,b);
-    else if(0==bt){P(bn!=1,TE) z=newK(0,bn);DO(bn,kK(z)[i]=at_verb(a,kK(b)[i])) z=collapse(z);} //Note: changed to collapse from demote
+    else if(0==bt){K k; P(bn!=1,TE) z=newK(0,bn);DO(bn,k=at_verb(a,kK(b)[i]); M(k,z) kK(z)[i]=k) z=collapse(z);} 
     else R TE;
   }
   R z;

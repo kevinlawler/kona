@@ -359,7 +359,7 @@ K demote(K a)//Attempt to force unnaturally occurring lists into vectors
   I t=a->t, n=a->n;
   if(0!=t || 1>n) R a;
   I p=kK(a)[0]->t;
-  DO(n, if(p!=kK(a)[i]->t)p=0)
+  DO(n, if(p!=kK(a)[i]->t)p=0) 
   if(!(1<=p && p <= 4))R a;
   K z=newK(-p,n); M(a,z) 
   if     (4==p)DO(n,kS(z)[i]=*kS(kK(a)[i])) //use memcpy instead
@@ -554,7 +554,7 @@ I valence(V p)
   if(adverbClass(p)) R 0;
 
   K v=*(K*)p;
-  if(v->t != 7) R 0;
+  if(!v || v->t != 7) R 0;
 
   //Remember, valence is computed independently of the number of items stored in the conjunction, e.g. +[1;2;3;4;;;] works but +[1;2;3] fails (?)
   V*w=kW(v);
@@ -574,7 +574,7 @@ I valence(V p)
     {
       V*q; I j=0,s;
       do q=kW(v)[i-2-(j++)]; while(*q==each || *q==over || *q==scan);
-      
+
       s=sva(q);
       if(s && !specialValence(q)) R s - ((i-2-j)?0:1); // |+\ or +\   (leaves out |@\ and @\ ...or not...or intentional...?)
 
@@ -987,6 +987,7 @@ K vf_ex(V q, K g)
 
   I k=sva(q);
   I n=-1,j=0;
+  if(!k&&!w){cd(g); R 0;}// (2="2") 2 err
   if(( k || ((K)w)->t==7) && (w && gn > (n=valence(q)) && !(!n && 1>=gn))){VE; GC;} //could remove 1>=gn condition ?
   I argc=0; DO(gn,if(kK(g)[i])argc++)
 
@@ -1258,7 +1259,7 @@ K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: co
   if(bk(*v)) R *v;  // ; case
 
   if(!v[1] && !k){ R ex_(*v,1); }  // n case
-  if(!v[1] && sva(*v)){ R vf_ex(*v,k);}  //TODO: (,/:) and (,\:) both valence 2  //vf_ex must handle adverb and work backwards
+  if(!v[1] && sva(*v)){ R vf_ex(*v,k);}  //TODO: (,/:) and (,\:) both valence 2  
   //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]   
   if(bk(v[1])) R ex_(*v,1);
 
@@ -1409,8 +1410,7 @@ K modified_execute(K x) //TODO: consider: this should be modified to use error t
 {
   //K-Lite manual gives {:[4:x; .x; .[.;x]} as processing function
   if(4==xt || 3==ABS(xt)) R X(CSK(x));
-  if(!xt && xn>0) R vf_ex(addressDot,x);
-  R ci(x);
+  if(!xt && xn>0) R vf_ex(addressDot,x); R ci(x);
 }
 
 
