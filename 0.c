@@ -706,8 +706,7 @@ K popen_charvec(C *cmd)
   P(!f,_n())
   z=newK(0,0); //oom
   while (getline(&s, &n, f) >= 0)
-  { t=memchr(s,'\0',n);
-    if(t)n=t-s;
+  { n=strlenn(s,n);
     l=newK(-3,n-1);
     strncpy(kC(l),s,n-1);
     kap(&z,l);

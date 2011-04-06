@@ -98,6 +98,7 @@ K newEntry(S s);
 K newE(S s,K k);
 S sdup(S s);
 S strdupn(S s,I k);
+I strlenn(S s,I k);
 I FC(F a,F b);
 F FF(F f);
 I StoI(S s,I *n);

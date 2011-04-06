@@ -17,7 +17,7 @@ void boilerplate()
 //Q. What if K is sending a large message to a client or server. Does it block?
 //A. ?
 
-K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
+FILE *loadf(S s)
 {
   FILE*f=fopen(s,"r");
   K p; I len;
@@ -30,6 +30,12 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
     f=fopen(kC(p), "r");
     cd(p);
   }
+  R f;
+}
+
+K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
+{
+  FILE*f=loadf(s);
   P(!f,_n())
   lines(f);
   fclose(f);
