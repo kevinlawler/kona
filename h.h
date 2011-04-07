@@ -38,6 +38,8 @@ K backslash_t(S s);
 K workspace(S s);
 I expander(S *s,I n);
 I appender(S *s,I *n,S t,I k);
+I getdelim_(S *s,I *n,I d,FILE *f);
+I getline_(S *s,I *n,FILE *f);
 #if defined(__MACH__) || defined(__OpenBSD__)
 I getdelim(S *s,I *n,I d,FILE *f);
 I getdelim(S *s,I *n,I d,FILE *f);

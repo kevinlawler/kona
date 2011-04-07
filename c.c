@@ -17,19 +17,24 @@ void boilerplate()
 //Q. What if K is sending a large message to a client or server. Does it block?
 //A. ?
 
+I filexist(S s){FILE *f=fopen(s,"r"); if(f){fclose(f); R 1;}else R 0;}
+
+K filename(S s)
+{
+  S z; K p;
+  I b=!filexist(s),n=strlen(s);
+  U(p=newK(-3,n+2*b))
+  strcpy(kC(p),s);
+  if(b)strcat(kC(p)+n,".k");
+  R p;
+}
+
 FILE *loadf(S s)
 {
-  FILE*f=fopen(s,"r");
-  K p; I len;
-  if (!f)
-  {
-    len=strlen(s);
-    U(p=newK(-3,len+2))
-    strcpy(kC(p),s);
-    strcat(kC(p)+len, ".k");
-    f=fopen(kC(p), "r");
-    cd(p);
-  }
+  FILE *f;
+  K p=filename(s);
+  f=fopen(kC(p),"r");
+  cd(p);
   R f;
 }
 
@@ -42,7 +47,28 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   R _n();
 }
 
-K precision(UI n) {if(n>PPMAX)R DOE; PPON=!!n; PP=PPON?n:PPMAX; R _n();}
+K backslash_s(S s)
+{
+  I n,m; S t,u=0;
+  K x=_0m(filename(s));
+  DO(xn,
+     n=kK(x)[i]->n; t=kC(kK(x)[i]);
+     O("%s ",t);
+     if(getline_(&u,&m,stdin)==-1)break;
+     if(m==1 && *u=='\n'){
+       show(ex(wd(t,n)));
+       if(i==_i-1)break;
+       if(getline_(&u,&m,stdin)==-1)break;
+       if(m==1 &&  *u=='\n')continue;
+       else if(m==2 && *u=='\\')break;
+     }
+     else if(m==2 && *u=='\\')break;
+  )
+  free(u);
+  R _n();
+}
+
+K precision(UI n) {if(n>PPMAX)R DOE; PPON=n!=0; PP=PPON?n:PPMAX; R _n();}
 
 K precision_(void){R PPON?Ki(PP):Ki(0);}
 
@@ -229,7 +255,7 @@ K backslash(S s, I n)
       CS('m',R NYI) //shows nonstandard system commands
       CS('p',if(*t){I p; P(!StoI(t,&p),TE); R precision(p);} else R precision_())
       CS('r',if(*t){I r; P(!StoI(t,&r),TE); seedPRNG(r); R _n();} else R Ki(SEED))
-      CS('s',R NYI)
+      CS('s',R backslash_s(t))
       CS('t',R backslash_t(t)) //TODO: also \t [digits]
       CS('v',R NYI)
       CS('w',R workspace(s)) //used,allocated,mapped. lfop: Linux & 'ps' use /proc/self/stat or /proc/<MY_PID>/stat
