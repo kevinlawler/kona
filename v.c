@@ -1490,8 +1490,8 @@ K enumerate(K a)
   else if(5==t){I n=a->n; z=newK(-4,n);U(z) DO(n, kS(z)[i]=ES(DI(a,i)))}//TODO: test this accessor composition
   else if(-3==t || 3==t){ return enumerate_charvec(kC(a)); }
   else if(4==t)R NYI; //TODO: 4==t enumerate dictionary of sym on k-tree, other sym: nil =Kn()
-  else if(1==t){I n=*kI(a); P(n<0,DOE) z=newK(-1,n); U(z) DO(n,kI(z)[i]=i)}
-  else R DOE;//Domain Error? Type Error on '!1 2 3'  Int Error on '!4.0'
+  else if(1==t || 2==t){I n= t==1?*kI(a):(I)*kF(a); P(n<0,DOE) z=newK(-1,n); U(z) DO(n,kI(z)[i]=i)}//could instead be (in)?tolerant ceil/floor
+  else R DOE;//Domain Error? Type Error on '!1 2 3' 
   R z;
 }
 
