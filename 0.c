@@ -19,11 +19,9 @@ K _0m(K a)
   P(4!=t && 3!=ABS(t), TE)
 
   I b=0,s=0;
-  S u,v=0;
+  S v=0;
   if(4==t && !**kS(a)){
-    if(getdelim(&v,&s,EOF,stdin)<0)GC;
-    u=memchr(v,'\0',s);
-    if(u)s=u-v;
+    if(getdelim_(&v,&s,EOF,stdin)==-1)GC;
     b=1;
   }
   else
