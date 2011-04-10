@@ -189,7 +189,7 @@ K dollar(K a, K b) //form/format_dyadic
     {
       K c,d;
       U(c=Ki(f))
-      d=formatF(2==bt?*kF(b):*kI(b), ((I)abs(f*10))%10, signbit(f)?2:1);
+      d=formatF(2==bt?*kF(b):*kI(b), ((I)tround(fabs(f)*10))%10, signbit(f)?2:1);
       if(d)z=dollar(c,d);
       cd(c);cd(d);
       R z;
@@ -1235,6 +1235,8 @@ K shape(K a) //TODO: Thoroughly test this //TODO: oom
   cd(p);
   R z;//could instead shrink p into z
 }
+
+F tround(F f){F d=FF(f); R (d>0&&!FC(d,1))||(d<0&&!FC(d,0))?ceil(f):floor(f);}
 
 K floor_ceil(K a, F(*g)(F))
 {

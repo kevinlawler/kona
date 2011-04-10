@@ -378,6 +378,7 @@ K take_reshape(K a,K b);
 void shapeCheck(K a,K p,I d);
 I firstDepth(K x);
 K shape(K a);
+F tround(F f);
 K floor_ceil(K a,F(*g)(F));
 K floor_verb(K a);
 K dp(K *z,K(*f)(K,K),K x,K y);
