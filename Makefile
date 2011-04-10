@@ -1,6 +1,5 @@
 PREFIX = /usr/local
-CFLAGS = -m64
-LDFLAGS = -m64 -lm
+LDFLAGS = -lm
 PRODFLAGS = -O3
 DEVFLAGS = -O0 -g3 -DDEBUG
 
