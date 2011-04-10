@@ -126,7 +126,8 @@ I cl2(I v) //optimized 64-bit ceil(log_2(I))
     if(!v)R -1;// no bits set
     I e = 0;
     if(v & (v - 1ULL))e=1; //round up if not a power of two
-    if(v & 0xFFFFFFFF00000000ULL){e+=32;v>>=32;}
+    if (sizeof(I) >= 8)    //64-bit only
+            if(v & 0xFFFFFFFF00000000ULL){e+=32;v>>=32;}
     if(v & 0x00000000FFFF0000ULL){e+=16;v>>=16;}
     //short CL2_LUT[1<<16]; DO(1<<16,if(i) CL2_LUT[i]=log2(i));
     //to use lookup table: e+=CL2_LUT[v] and comment out below. 
@@ -286,7 +287,7 @@ S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be c
 S spn(S s,I n){I k=0;while(k<n && s[k])k++; S u=strdupn(s,k); if(!u)R 0; S v=sp(u); free(u); R v;} //safer/memory-efficient strdupn
 
 //pt(N t){N l=t->c[0],r=t->c[1];O("node: %s  balance: %d\n", t->k, t->b);O(" Lchild: %s\n",l?l->k:"null");O(" Rchild: %s\n",r?r->k:"null");if(l)pt(l);if(r)pt(r);}
-I rp2(I v){v--;v|=v>>1;v|=v>>2;v|=v>>4;v|=v>>8;v|=v>>16;v|=v>>32;v++;R MAX(1,v);}//round up to integer power of 2 (fails on upper 1/4 signed)
+I rp2(I v){v--;v|=v>>1;v|=v>>2;v|=v>>4;v|=v>>8;v|=v>>16;if(sizeof(I)>=8)v|=v>>32;v++;R MAX(1,v);}//round up to integer power of 2 (fails on upper 1/4 signed)
 
 K kclone(K a)//Deep copy -- eliminate where possible
 {
