@@ -125,6 +125,14 @@ K backslash(S s, I n)
       "\\'      adverb help\n"
       "\\:      I/O verb help\n"
       "\\_      reserved word help\n"
+      "\\.      assignment help\n"
+      "\\d [todo]   directory command (todo) \n" 
+      "\\l f    load script f or f.k\n"
+      "\\p [n]  show/set print precision (0=full)\n"
+      "\\r [s]  show/set random seed\n" 
+      "\\s f    step script f or f.k\n" 
+      "\\t [e]  measure runtime of some k expression\n"
+      "\\w      show workspace resources used\n"
       "\\[cmd]  system command (also \\[ cmd]), \\echo hello\n"
       "\\\\      exit (or ctrl+d)\n"
     );
@@ -364,7 +372,7 @@ K backslash(S s, I n)
       CS('a',R NYI)
       CS('b',R NYI)
       CS('c',R NYI)
-      CS('d',R NYI)
+      CS('d',R NYI) // have some functionality for \d ..  (possibly \d ^)
       CS('e',R NYI)
       CS('i',R NYI)
       CS('l',R load(t))
