@@ -189,7 +189,7 @@ K dollar(K a, K b) //form/format_dyadic
     {
       K c,d;
       U(c=Ki(f))
-      d=formatF(2==bt?*kF(b):*kI(b), ((I)abs(f*10))%10, signbit(f)?2:1);
+      d=formatF(2==bt?*kF(b):*kI(b), (I)(((f<0?-f:f)+0.0001)*10)%10, signbit(f)?2:1);
       if(d)z=dollar(c,d);
       cd(c);cd(d);
       R z;
