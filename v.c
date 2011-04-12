@@ -1283,7 +1283,7 @@ K equals(K a, K b)
   else if(1==AT && 2==BT) DO(zn, kI(z)[i]=FC(kI(a)[i%an],kF(b)[i%bn])?0:1)
   else if(1==AT && 1==BT) SCALAR_OP_CASE(EQ, kI(z), kI(a), kI(b))
   else if(3==AT && 3==BT) SCALAR_OP_CASE(EQ, kI(z), kC(a), kC(b))
-  else if(4==AT && 4==BT) SCALAR_OP_CASE(EQ, kI(z), kS(a), kS(b)) //TODO: works because of interning
+  else if(4==AT && 4==BT) SCALAR_OP_CASE(EQ, kI(z), kS(a), kS(b)) //works because of interning
   else if(0==at || 0==bt) dp(&z,equals,a,b);
 #undef EQ
   R z;
