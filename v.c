@@ -39,6 +39,12 @@
    else if (1==ABS(at) && 1==ABS(bt)) { SCALAR_EXPR_CASE(expr,kI(z),kI(a),kI(b),vx,vy) }  \
    else if (0==at || 0==bt) { dp(&z,verb,a,b); }
 
+/* Macro case: N:N, 1:N, N:1 implicit looping for fun call, w/ optional suffix */
+#define SCALAR_EXPR_FUN(fun, cres, ca, cb, post)                       \
+   if (an==bn) { DO(zn, cres [i]= fun (ca [i], cb [i]) post) }     \
+   else if (an==1) { DO(zn, cres [i]= fun (ca [0], cb [i]) post) } \
+   else /* bn==1 */ { DO(zn, cres [i]= fun (ca [i], cb [0]) post) }
+
 
 S CSK(K x){ R !x?0:4==xt?*kS(x):3==ABS(xt)?kC(x):0;}//non-allocating CSTRING from K. assumes +4,+-3 types are null-terminated
 
@@ -1278,9 +1284,9 @@ K equals(K a, K b)
   I zn=at>0?bn:an;
   K z=newK(t,zn); //oom
 #define EQ(x, y) (x) == (y)
-  if     (2==AT && 2==BT) DO(zn, kI(z)[i]=FC(kF(a)[i%an],kF(b)[i%bn])?0:1)
-  else if(2==AT && 1==BT) DO(zn, kI(z)[i]=FC(kF(a)[i%an],kI(b)[i%bn])?0:1)
-  else if(1==AT && 2==BT) DO(zn, kI(z)[i]=FC(kI(a)[i%an],kF(b)[i%bn])?0:1)
+  if     (2==AT && 2==BT) SCALAR_EXPR_FUN(FC, kI(z), kF(a), kF(b), ?0:1)
+  else if(2==AT && 1==BT) SCALAR_EXPR_FUN(FC, kI(z), kF(a), kI(b), ?0:1)
+  else if(1==AT && 2==BT) SCALAR_EXPR_FUN(FC, kI(z), kI(a), kF(b), ?0:1)
   else if(1==AT && 1==BT) SCALAR_OP_CASE(EQ, kI(z), kI(a), kI(b))
   else if(3==AT && 3==BT) SCALAR_OP_CASE(EQ, kI(z), kC(a), kC(b))
   else if(4==AT && 4==BT) SCALAR_OP_CASE(EQ, kI(z), kS(a), kS(b)) //works because of interning
