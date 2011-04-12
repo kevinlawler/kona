@@ -1322,34 +1322,55 @@ I randomBits(){I s;I f=open("/dev/urandom",0);read(f,&s,sizeof(s));close(f);R s;
 void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);}
-I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
-I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
+
+I wds(K*a,FILE*f)
 {
-  S s=0; I b=0,c=0,m=0;
-  K k; F d;
+  S s=0,t=0; I b=0,c=0,m=0,n=0,v=0;
+  K z=0; PDA p=0;
+  I o=isatty(STDIN)&&f==stdin;
+  if(-1==(c=getline_(&s,&n,f)))GC;
+  //while(n==1&&*s=='\n')if(-1==(c=getline_(&s,&n,f)))GC;
+  appender(&t,&m,s,n);
+  while(1==(v=complete(t,m,&p,0)))
+  { b=parsedepth(p);
+    if(o)prompt(b);
+    if(-1==(c=getline_(&s,&n,f)))GC;
+    appender(&t,&m,s,n);
+  }
+  SW(v){CS(2,show(kerr("unmatched"));GC) CS(3,show(kerr("nest")); GC)}
+  z=newK(-3,m-1);
+  strncpy(kC(z),t,m-1);
+cleanup:
+  if(s)free(s);
+  if(t)free(t);
+  if(p)pdafree(p);
+  if((v||c==-1)&&z){cd(z); *a=0;}
+  else *a=z;
+  R v?-2:c; // -2 error, -1 EOF
+}
 
-  I o = isatty(STDIN) && f==stdin; //display results to stdout?
+I wdss(K*a,FILE*f)
+{
+  I c=0;
+  K k=0,z=newK(0,0);
+  while(0<(c=wds(&k,f))){kap(&z,k); cd(k);}
+  *a=z;
+  R c;
+}
 
-  if(-1==(c=getline(&s,&m,f))) GC;
-  appender(a,n,s,c);//"strcat"(a,s)
-  I v=complete(*a,*n,p,0); //will allocate if p is null
-  b=parsedepth(*p);
-  if(v==3){show(kerr("nest")); GC;} 
-  if(v==2){show(kerr("unmatched")); GC;}
-  if(v==1) goto done;//generally incomplete
-  if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
-  RTIME(d,k=ex(wd(*a,*n)))
+I lines(FILE*f){I a,c=0; while(0<(a=line(f)))c+=a; R c;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
+I line(FILE*f)
+{
+  K k=0,x=0; F d;
+  I c,o=isatty(STDIN)&&f==stdin;
+  if(0>(c=wds(&x,f)))goto done;
+  RTIME(d,k=ex(wd(kC(x),xn)));
 #ifdef DEBUG
   if(o&&k)O("Elapsed: %.7f\n",d);
 #endif
-  if(o)show(k);
-  cd(k);
-cleanup:
-  if(*p)pdafree(*p);*p=0;
-  if(*a)free(*a);*a=0;*n=0;
-  if(s)free(s);s=0;
 done:
-  if(o)prompt(b); 
+  if(x)cd(x); if(k)cd(k);
+  if(o){if(k)show(k); prompt(0);}
   R c;
 }
 
@@ -1478,8 +1499,8 @@ I attend() //K3.2 uses fcntl somewhere
       if (FD_ISSET(i, &read_fds))
         if(i==STDIN)
         {
-          nbytes=line(stdin,&a,&n,&q);
-          if(nbytes<=0)
+          nbytes=line(stdin);
+          if(nbytes<=0 && nbytes!=-2)
             if(!PORT) exit(0); //Catch CTRL+D 
             else FD_CLR(i,&master); 
         }

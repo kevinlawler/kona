@@ -47,41 +47,6 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   R _n();
 }
 
-I wds(K*a,FILE*f)
-{
-  S s=0,t=0; I b=0,c=0,m=0,n=0,v=0;
-  K z=0; PDA p=0;
-  I o=isatty(STDIN)&&f==stdin;
-  if(-1==(c=getline_(&s,&n,f)))GC;
-  while(n==1&&*s=='\n')
-      if(-1==(c=getline_(&s,&n,f)))GC;
-  appender(&t,&m,s,n);
-  while(1==(v=complete(t,m,&p,0)))
-  { b=parsedepth(p);
-    if(o)prompt(b);
-    if(-1==(c=getline_(&s,&n,f)))GC;
-    appender(&t,&m,s,n);
-  }
-  SW(v){CS(2,show(kerr("unmatched"));GC) CS(3,show(kerr("nest")); GC)}
-  z=newK(-3,m-1);
-  strncpy(kC(z),t,m-1);
-cleanup:
-  if(s)free(s);
-  if(t)free(t);
-  if((v||c==-1)&&z){cd(z); *a=0;}
-  else *a=z;
-  R v?-2:c; // -2 error, -1 EOF
-}
-
-I wdss(K*a,FILE*f)
-{
-  I c=0;
-  K k=0,z=newK(0,0);
-  while(0<(c=wds(&k,f))){kap(&z,k); cd(k);}
-  *a=z;
-  R c;
-}
-
 K backslash_s(S s)
 {
   S t,u=0; I c,n,m=0;
@@ -105,6 +70,7 @@ K backslash_s(S s)
      if(k)cd(k);
   );
 cleanup:
+  fclose(f);
   if(u)free(u);
   if(z)cd(z);
   R _n();
