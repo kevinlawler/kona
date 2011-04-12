@@ -1049,7 +1049,7 @@ K lessmore(K a, K b, I x)
     else if(2==AT && 1==BT) DO(zn, h[i]=0<FC(kF(a)[i%an],kI(b)[i%bn]))
     else if(1==AT && 2==BT) DO(zn, h[i]=0<FC(kI(a)[i%an],kF(b)[i%bn]))
     else if(1==AT && 1==BT) SCALAR_OP_CASE(GT, kI(z), kI(a), kI(b))
-    else if(3==AT && 3==BT) DO(zn, h[i]=kC(a)[i%an]>kC(b)[i%bn])   
+    else if(3==AT && 3==BT) SCALAR_OP_CASE(GT, kI(z), kC(a), kC(b))
     else if(4==AT && 4==BT) DO(zn, h[i]=0<SC(kS(a)[i%an],kS(b)[i%bn]))
 #undef GT
   }
@@ -1282,8 +1282,8 @@ K equals(K a, K b)
   else if(2==AT && 1==BT) DO(zn, kI(z)[i]=FC(kF(a)[i%an],kI(b)[i%bn])?0:1)
   else if(1==AT && 2==BT) DO(zn, kI(z)[i]=FC(kI(a)[i%an],kF(b)[i%bn])?0:1)
   else if(1==AT && 1==BT) SCALAR_OP_CASE(EQ, kI(z), kI(a), kI(b))
-  else if(3==AT && 3==BT) DO(zn, kI(z)[i]=kC(a)[i%an]==kC(b)[i%bn]?1:0)   
-  else if(4==AT && 4==BT) DO(zn, kI(z)[i]=kS(a)[i%an]==kS(b)[i%bn]?1:0) //TODO: works because of interning
+  else if(3==AT && 3==BT) SCALAR_OP_CASE(EQ, kI(z), kC(a), kC(b))
+  else if(4==AT && 4==BT) SCALAR_OP_CASE(EQ, kI(z), kS(a), kS(b)) //TODO: works because of interning
   else if(0==at || 0==bt) dp(&z,equals,a,b);
 #undef EQ
   R z;
