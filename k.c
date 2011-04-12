@@ -1369,8 +1369,8 @@ I line(FILE*f)
   if(o&&k)O("Elapsed: %.7f\n",d);
 #endif
 done:
-  if(x)cd(x); if(k)cd(k);
   if(o){if(k)show(k); prompt(0);}
+  if(x)cd(x); if(k)cd(k);
   R c;
 }
 
