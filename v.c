@@ -1030,8 +1030,8 @@ K lessmore(K a, K b, I x)
   // Type Error - No 0-list, Not both numeric, or both char, or both sym
   if(at && bt && !(2>=AT && 2>=BT) && !(3==AT && 3==BT) && !(4==AT && 4==BT) ) R TE;
   I t= (!at||!bt)?0:MIN(at,bt)<0?-1:1;//Any 0-list? Zero. Any vector? -1. Both atoms? 1.
-  I n=at>0?bn:an;
-  K z=newK(t,n);
+  I zn=at>0?bn:an;
+  K z=newK(t,zn);
   U(z)
   I*h=kI(z);
 
@@ -1039,17 +1039,19 @@ K lessmore(K a, K b, I x)
   {
    a=promote(a); b=promote(b); //copy-pasted from dp()
    M(a,b,z);
-   DO(n, if(!(kK(z)[i]=lessmore(kK(a)[i%an],kK(b)[i%b->n],x))){cd(z);z=ME;break;})
+   DO(zn, if(!(kK(z)[i]=lessmore(kK(a)[i%an],kK(b)[i%b->n],x))){cd(z);z=ME;break;})
    cd(a);cd(b); 
   }
   else 
   {
-    if     (2==AT && 2==BT) DO(n, h[i]=0<FC(kF(a)[i%an],kF(b)[i%bn]))
-    else if(2==AT && 1==BT) DO(n, h[i]=0<FC(kF(a)[i%an],kI(b)[i%bn]))
-    else if(1==AT && 2==BT) DO(n, h[i]=0<FC(kI(a)[i%an],kF(b)[i%bn]))
-    else if(1==AT && 1==BT) DO(n, h[i]=kI(a)[i%an]>kI(b)[i%bn])
-    else if(3==AT && 3==BT) DO(n, h[i]=kC(a)[i%an]>kC(b)[i%bn])   
-    else if(4==AT && 4==BT) DO(n, h[i]=0<SC(kS(a)[i%an],kS(b)[i%bn]))
+#define GT(x, y) (x) > (y)
+    if     (2==AT && 2==BT) DO(zn, h[i]=0<FC(kF(a)[i%an],kF(b)[i%bn]))
+    else if(2==AT && 1==BT) DO(zn, h[i]=0<FC(kF(a)[i%an],kI(b)[i%bn]))
+    else if(1==AT && 2==BT) DO(zn, h[i]=0<FC(kI(a)[i%an],kF(b)[i%bn]))
+    else if(1==AT && 1==BT) SCALAR_OP_CASE(GT, kI(z), kI(a), kI(b))
+    else if(3==AT && 3==BT) DO(zn, h[i]=kC(a)[i%an]>kC(b)[i%bn])   
+    else if(4==AT && 4==BT) DO(zn, h[i]=0<SC(kS(a)[i%an],kS(b)[i%bn]))
+#undef GT
   }
   
   R z;
@@ -1273,16 +1275,17 @@ K equals(K a, K b)
   //Type Error - No 0-list, Not both numeric, or both char, or both sym
   if(at && bt && !(2>=AT && 2>=BT) && !(3==AT && 3==BT) && !(4==AT && 4==BT) ) R TE;
   I t= (!at||!bt)?0:MIN(at,bt)<0?-1:1;//Any 0-list? Zero. Any vector? -1. Both atoms? 1.
-  I n=at>0?bn:an;
-  K z=newK(t,n); //oom
-  if     (2==AT && 2==BT) DO(n, kI(z)[i]=FC(kF(a)[i%an],kF(b)[i%bn])?0:1)
-  else if(2==AT && 1==BT) DO(n, kI(z)[i]=FC(kF(a)[i%an],kI(b)[i%bn])?0:1)
-  else if(1==AT && 2==BT) DO(n, kI(z)[i]=FC(kI(a)[i%an],kF(b)[i%bn])?0:1)
-  else if(1==AT && 1==BT) DO(n, kI(z)[i]=kI(a)[i%an]==kI(b)[i%bn]?1:0)
-  else if(3==AT && 3==BT) DO(n, kI(z)[i]=kC(a)[i%an]==kC(b)[i%bn]?1:0)   
-  else if(4==AT && 4==BT) DO(n, kI(z)[i]=kS(a)[i%an]==kS(b)[i%bn]?1:0) //TODO: works because of interning
+  I zn=at>0?bn:an;
+  K z=newK(t,zn); //oom
+#define EQ(x, y) (x) == (y)
+  if     (2==AT && 2==BT) DO(zn, kI(z)[i]=FC(kF(a)[i%an],kF(b)[i%bn])?0:1)
+  else if(2==AT && 1==BT) DO(zn, kI(z)[i]=FC(kF(a)[i%an],kI(b)[i%bn])?0:1)
+  else if(1==AT && 2==BT) DO(zn, kI(z)[i]=FC(kI(a)[i%an],kF(b)[i%bn])?0:1)
+  else if(1==AT && 1==BT) SCALAR_OP_CASE(EQ, kI(z), kI(a), kI(b))
+  else if(3==AT && 3==BT) DO(zn, kI(z)[i]=kC(a)[i%an]==kC(b)[i%bn]?1:0)   
+  else if(4==AT && 4==BT) DO(zn, kI(z)[i]=kS(a)[i%an]==kS(b)[i%bn]?1:0) //TODO: works because of interning
   else if(0==at || 0==bt) dp(&z,equals,a,b);
-
+#undef EQ
   R z;
 }
 
