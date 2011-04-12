@@ -1207,7 +1207,7 @@ K take(K a, K b)
  I n=ABS(*kI(a)), m=MAX(1,bn), k= *kI(a) % m;
  k=k<0?bn+k:0;
  I t=bt<5?-ABS(bt):0;
- K z=newK(t,n);
+ K z=newK(t,n);U(z)
  if     (4==ABS(bt))DO(n,kS(z)[i]=bn?kS(b)[(i+k)%m]:LS) //sp("")
  else if(3==ABS(bt))DO(n,kC(z)[i]=bn?kC(b)[(i+k)%m]:' ')
  else if(2==ABS(bt))DO(n,kF(z)[i]=bn?kF(b)[(i+k)%m]:0.0)
