@@ -18,7 +18,7 @@
 #include <unistd.h>    //sbrk,sysconf
 #include <fcntl.h>     //O_RDWR etc
 #include <pthread.h>
-#include <arpa/inet.h> 
+#include <arpa/inet.h>
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 
 #if defined(__OpenBSD__) || defined(__FreeBSD__)

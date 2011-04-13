@@ -23,15 +23,17 @@ endif
 all: k k_test
 
 k: CFLAGS += $(PRODFLAGS)
-k: k.o c.o getline.o mt.o p.o r.o v.o 0.o
+k: k.o c.o getline.o mt.o p.o r.o v.o va.o vc.o vd.o vf.o vg.o vq.o 0.o
 
 k_test: CFLAGS += $(DEVFLAGS)
-k_test: k.t.o c.t.o getline.t.o mt.t.o p.t.o r.t.o v.t.o 0.t.o tests.t.o
+k_test: k.t.o c.t.o getline.t.o mt.t.o p.t.o r.t.o v.t.o \
+	va.t.o vc.t.o vd.t.o vf.t.o vg.t.o vq.t.o 0.t.o tests.t.o
 	$(CC) $(LOADLIBES) $(LDFLAGS) $^ -o $@
 test: k_test
 
 # Dependencies.
-k.o c.o getline.o mt.o p.o r.o v.o 0.o k.t.o c.t.o getline.t.o mt.t.o p.t.o r.t.o v.t.o 0.t.o tests.t.o: incs.h h.h ts.h Makefile
+k.o c.o getline.o mt.o p.o r.o v.o 0.o k.t.o c.t.o getline.t.o mt.t.o p.t.o r.t.o: incs.h h.h ts.h Makefile
+v.t.o va.t.o vd.t.o vc.t.o vf.t.o vg.t.o vq.t.o 0.t.o tests.t.o: incs.h h.h ts.h Makefile
 
 install:
 	install k $(PREFIX)/bin/k
@@ -46,3 +48,4 @@ TAGS: *.c *.h
 	$(CC) $(CFLAGS) -c $(CPPFLAGS) -o $@ $<
 
 .PHONY: all clean install
+# DO NOT DELETE
