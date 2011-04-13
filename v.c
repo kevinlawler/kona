@@ -1006,12 +1006,12 @@ K lessmore(K a, K b, I x)
   else 
   {
 #define GT(x, y) (x) > (y)
-    if     (2==AT && 2==BT) DO(zn, h[i]=0<FC(kF(a)[i%an],kF(b)[i%bn]))
-    else if(2==AT && 1==BT) DO(zn, h[i]=0<FC(kF(a)[i%an],kI(b)[i%bn]))
-    else if(1==AT && 2==BT) DO(zn, h[i]=0<FC(kI(a)[i%an],kF(b)[i%bn]))
+    if     (2==AT && 2==BT) SCALAR_EXPR_FUN(FC, h, kF(a), kF(b), >0)
+    else if(2==AT && 1==BT) SCALAR_EXPR_FUN(FC, h, kF(a), kI(b), >0)
+    else if(1==AT && 2==BT) SCALAR_EXPR_FUN(FC, h, kI(a), kF(b), >0)
     else if(1==AT && 1==BT) SCALAR_OP_CASE(GT, kI(z), kI(a), kI(b))
     else if(3==AT && 3==BT) SCALAR_OP_CASE(GT, kI(z), kC(a), kC(b))
-    else if(4==AT && 4==BT) DO(zn, h[i]=0<SC(kS(a)[i%an],kS(b)[i%bn]))
+    else if(4==AT && 4==BT) SCALAR_EXPR_FUN(SC, h, kS(a), kS(b), >0)
 #undef GT
   }
   
