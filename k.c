@@ -117,7 +117,6 @@ K newK(I t, I n)
 }
 V kalloc(I k) //bytes. assumes k>0
 {
-  V z;
   I r=lsz(k);
   if(r>KP_MAX)R amem(k);// allocate for objects of sz > 2^KP_MAX
   R unpool(r);
@@ -727,7 +726,6 @@ K dv_ex(K a, V *p, K b)
   k=adverbClass(*p)?adverbClass(*o)?1:valence(*o):valence(*p); //also t7 basic
   
   V adverb=*(V*)*p; //TODO: Implement adverb "Error Reports" error checking from manual
-  I isSimpleVerb = sva(*p); 
   
   //k>2 --- ??? bound for special verbs ?.@ , etc.  ??? k=2 ??? valence is weird here
   //!(adver...  ---- added to let f/[;;;] through
@@ -746,7 +744,7 @@ K dv_ex(K a, V *p, K b)
       if(yt  > 0){z=ci(y); GC;} 
       if(yn == 0) 
       {
-        V **q=(V**)p-1,r; I s=-2==y->t;  
+        V **q=(V**)p-1; I s=-2==y->t;  
         if(VA(*q)) 
           if     (**q==plus)    z= s?Kf(  0):Ki(0);
           else if(**q==max_or)  z= s?Kf(-FI):Ki(0);
@@ -1446,9 +1444,9 @@ I attend() //K3.2 uses fcntl somewhere
   socklen_t addrlen;
 
   int nbytes;
-  char remoteIP[INET6_ADDRSTRLEN];
+  //char remoteIP[INET6_ADDRSTRLEN];
   I yes=1;	// for setsockopt() SO_REUSEADDR, below 
-  int i, j, rv;
+  int i, rv;
   struct addrinfo hints, *ai, *p;
   FD_ZERO(&master);	// clear the master and temp sets
   FD_ZERO(&read_fds);

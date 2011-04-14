@@ -15,8 +15,6 @@ K of2(K d, K *x, K *y, I s)
 
   if(0>=s)R at_verb(d,f); //Is it at_verb or at()...  ?
 
-  K r=y?*y:0; //Don't dereference y if s is too small
-
   K z;
   if(0==ft)
   {
@@ -156,7 +154,6 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
     DO(fn,
       K py=0;
       if(y) py=atomI(f)?y:kK(y)[i%yn];
-      I e = kI(f)[i];
       dot_ref(kK(d)+(kI(f)[i]),z,z+1,s-1,c,py);
     )
     cd(y);
@@ -264,7 +261,7 @@ K make(K a)//Assumes makeable() is true
 { 
   //TODO: this will need to set reference counts on all dictionary entries, etc.
   P(!makeable(a), RE)
-  I t=a->t, n=a->n;
+  I n=a->n;
   K x,y; 
   K z=newK(5,n);
   DO(n, kK(z)[i]=newK(0,3);)
@@ -277,10 +274,10 @@ K makeable(K a) //TODO: this has to be reworked. can't hang out raw in dot_monad
   I t=a->t, n=a->n;
   //All this was moved here from make(). not sure how to handle error checking when it's outside like this
   P(0!=t, 0)
-  K x,y;
+  K x;
   //NB: .(`a`b;`c`d) is also a valid dictionary (sym vectors)
   DO(n, x=kK(a)[i]; if( (0!=x->t && -4!=x->t) || x->n < 2 || 3 < x->n || (-4==x->t && x->n != 2) )R 0)
   DO(n, x=kK(a)[i]; if(0==x->t) if( 4 != kK(x)[0]->t || (3==x->n && 5!=kK(x)[2]->t && 6!=kK(x)[2]->t)) R 0)
   R (K)1;
 }
-K dot_monadic(K x){K d; R 3==ABS(xt)?KX(x):4==xt?ci(*denameS(__d,*kS(x))):5==xt?unmake(x):makeable(x)?make(x):vf_ex(addressDot,x); }  //TODO: mmo. untested everywhere. TODO: esp mmo _() underscore function
+K dot_monadic(K x){R 3==ABS(xt)?KX(x):4==xt?ci(*denameS(__d,*kS(x))):5==xt?unmake(x):makeable(x)?make(x):vf_ex(addressDot,x); }  //TODO: mmo. untested everywhere. TODO: esp mmo _() underscore function

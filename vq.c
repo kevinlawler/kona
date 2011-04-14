@@ -8,7 +8,7 @@
 
 K find(K a, K b)
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
+  I at=a->t, an=a->n, bt=b->t;
   P(at>0,DOE)
   if(-4==at && 4==bt)DO(an, if(kS(a)[i]==*kS(b))R Ki(i)) 
   if(-3==at && 3==bt)DO(an, if(kC(a)[i]==*kC(b))R Ki(i))
@@ -106,7 +106,7 @@ K what_triadic(K a, K b, K c)//TODO: 0i -0i 0n
 
 K qrand(K a,K b)
 {
-  I at=a->t,an=a->n,bt=b->t,bn=b->n;
+  I at=a->t,bt=b->t;
   K y;
   P(1!=ABS(at)||(1!=bt&&2!=bt),IE)
   I c=*kI(a),n=ABS(c);

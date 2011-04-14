@@ -152,7 +152,7 @@ K first(K a)
 
 K reshaper(K a, K b, I d, I f, I* p)
 { //a is non-empty int vector with: (0 0s, 0 -1s),(1 -1),or(1+ 0s)
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
+  I bt=b->t, bn=b->n;
   I v=kI(a)[d];
   I g=!v||a->n==d+1?1:0;//hit bottom?
   I t= (g && bt<5)?-ABS(bt):0;// 2 3 4 0 #/: (_n;{x}) 
@@ -170,7 +170,7 @@ K reshaper(K a, K b, I d, I f, I* p)
 
 K reshape(K a, K b)
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
+  I an=a->n, bn=b->n;
   if(!an)R first(b);//sic
   I ns=0,np=-1,x,y=-1;
   DO(an, if(0>(x=kI(a)[i])){np=i;ns-=x;})//If any <0, only one -1
@@ -182,7 +182,7 @@ K reshape(K a, K b)
 
 K take(K a, K b)
 {
- I at=a->t, an=a->n, bt=b->t, bn=b->n;
+ I bt=b->t, bn=b->n;
  I n=ABS(*kI(a)), m=MAX(1,bn), k= *kI(a) % m;
  k=k<0?bn+k:0;
  I t=bt<5?-ABS(bt):0;
@@ -212,7 +212,6 @@ I firstDepth(K x){R (!x->t&&x->n)?1+firstDepth(*kK(x)):x->t>0?0:1;}//[Internal F
 
 K shape(K a) //TODO: Thoroughly test this //TODO: oom
 { 
-  I at=a->t, an=a->n;
   K b=a, p=newK(-1, firstDepth(a));//Putative list. Mutable, Thrown away
   DO(p->n, kI(p)[i]=b->n; if(i<_i-1)b=*kK(b) )//Construct best-case shape
   shapeCheck(a,p,0);//Punch holes (-1) in shape-list where it fails
@@ -239,7 +238,7 @@ K rotate(K a, K b)
 
 K drop(K a, K b)
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
+  I at=a->t, bt=b->t, bn=b->n;
 
   P(1!=at,IE)
   if(bt>0)R ci(b);//Drop always identity on atoms

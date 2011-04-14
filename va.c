@@ -2,6 +2,7 @@
 #include "scalar.h"
 #include "k.h"
 #include "r.h"
+#include "vc.h"
 
 /* scalar arithmetic verbs */
 
@@ -105,10 +106,7 @@ K min_and(K a, K b)
 {
   SCALAR_INIT(2)
   K z=newK(zt,zn);U(z)
-
-  F f,g; I x,y; 
   SCALAR_OP(MIN,min_and)
-
   R z;
 }
 
@@ -117,7 +115,6 @@ K max_or(K a, K b)
   SCALAR_INIT(2)
   K z=newK(zt,zn);U(z)
 
-  F f,g; I x,y; 
   SCALAR_OP(MAX,max_or)
 
   R z;

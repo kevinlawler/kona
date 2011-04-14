@@ -70,9 +70,10 @@ K _0d(K a,K b) //lfop
 I ok_0dw(K b) //b must be +-3, or 0 containing {+3,-3,()}
 {
   I t=b->t,n=b->n; K k;
-  if(3!=ABS(t)) 
+  if(3!=ABS(t)) {
     if(!t)DO(n, k=kK(b)[i]; if(3!=ABS(k->t) && (t || k->n)) R 0 )
     else R 0;
+  }
   R 1;
 }
 
@@ -95,7 +96,6 @@ K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
 
   if(1==f) //write to stdout
   {
-    I c=0;
     if(3==ABS(t)) write(f,kC(b),s); //This is duplicated but I don't see how to factor it right now (choose write/memcpy funcs?)
     else DO(n, k=kK(b)[i]; if(3==ABS(k->t))write(f,kC(k),k->n); write(f,"\n",1); )
   }
@@ -126,7 +126,7 @@ K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a b
 {
   //may assume !a->t
   K z=0;
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
+  I an=a->n, bt=b->t, bn=b->n;
   P(an!=2,DOE)
   K c=kK(a)[0],d=kK(a)[1];
   I cn=c->n, dn=d->n;
@@ -275,7 +275,6 @@ K _1m_r(I f,V fixed, V v,V aft,I*b) //File descriptor, moving * into mmap, fixed
   if(s<r) R NE; //malformed
   
   K z,x;
-  I c=0;
   if(0==t||5==t){z=newK(t,n); DO(n,x=_1m_r(f,fixed,v+r,aft,&r); if(!x){cd(z);R 0;} kK(z)[i]=x; ) }
   else   //map lists to file. atoms are allocated not mapped
   {
@@ -347,7 +346,6 @@ I wrep(K x,V v,I y)//write representation. see rep(). y in {0,1}->{net, disk}
   if(y){*w=-3; w[1]=1; w[2]=t; w[3]=n;}
   else{ *w=xt; w[1]=xn; }
 
-  V a=w+1+m; //atoms' destination
   V d=w+2+m; //disk/destination for lists/vectors
 
   I e=(2+m)*sizeof(I); if(0!=t&&5!=t&&-4!=t) e=rep(x,y); //don't rep() on nested structures -- O(n^2)
@@ -472,7 +470,7 @@ K _1d_read(K a,K b)
   //Largely copy/pasted from _0d_read
   //may assume !a->t
   K z=0;
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
+  I an=a->n, bt=b->t, bn=b->n;
   P(an!=2,DOE)
   K c=kK(a)[0],d=kK(a)[1];
   I cn=c->n, dn=d->n;
@@ -540,7 +538,7 @@ K _1d_read(K a,K b)
     {
            x=kI(d)[i];
            K q=kK(z)[e++]; 
-           S t,u;
+           S u;
            switch(g=kC(c)[i]) 
            {
              CS(' ', e--) 
@@ -711,7 +709,7 @@ K _3d(K x,K y) //'async' TCP
 
 K popen_charvec(C *cmd)
 {
-  FILE *f; K z; K l; S s=0,t; I n=0;
+  FILE *f; K z; K l; S s=0; I n=0;
   f=popen(cmd,"r");
   P(!f,_n())
   z=newK(0,0); //oom

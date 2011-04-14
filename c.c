@@ -23,7 +23,7 @@ I filexist(S s){FILE *f=fopen(s,"r"); if(f){fclose(f); R 1;}else R 0;}
 
 K filename(S s)
 {
-  S z; K p;
+  K p;
   I b=!filexist(s),n=strlen(s);
   U(p=newK(-3,n+2*b))
   strcpy(kC(p),s);
@@ -86,7 +86,7 @@ I wdss(K*a,FILE*f)
 
 K backslash_s(S s)
 {
-  S t,u=0; I c,n,m=0;
+  S t,u=0; I n,m=0;
   FILE*f=loadf(s);
   K k=0,z=0;
   P(!f,_n());

@@ -79,7 +79,6 @@ K at(K x,K y);
 K math(F(*f)(F),K a);
 K ci(K a);
 F sqr(F x);
-extern _MATH;
 K dot(K a,K b);
 K X(S s);
 #if defined(DEBUG)

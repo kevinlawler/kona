@@ -9,7 +9,7 @@
 
 K itemAtIndex(K a, I i)// Return i-th item from any type as K - TODO: oom wherever this is used
 {
-  I at=a->t, an=a->n;   
+  I at=a->t;
   if( 0< at)R ci(a);
   if(-4==at)R Ks(kS(a)[i]);  //could refactor all this
   if(-3==at)R Kc(kC(a)[i]);
@@ -110,7 +110,7 @@ K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/director
 {//"of" depends on this even though @[d;i] = .[d;,i] <--- that equality doesn't always hold
   if(0==b->t && 0==b->n)R newK(0,0);//Overriding right-arg () 
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
-  K z,e;
+  K z;
 
   if(at==6)//Left side nil (sort of like empty dict?)
   { //K3.2 - complicated functionality. Leads me to believe this part was implemented some other way
