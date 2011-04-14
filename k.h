@@ -237,4 +237,4 @@ extern N SYMBOLS;
 I oerr();
 K kerr(cS s);
 extern C errmsg[256];
-V KP[sizeof(V)*8+1];
+extern V KP[sizeof(V)*8+1];

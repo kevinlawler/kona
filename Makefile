@@ -9,7 +9,7 @@ OBJS= 0.o k.o c.o getline.o mt.o p.o r.o \
       v.o va.o vc.o vd.o vf.o vg.o vq.o
 
 # k_test versions of OBJS
-OBJS_T= $(shell echo ${OBJS} | sed -e "s/.o/.t.o/g")
+OBJS_T= $(shell echo ${OBJS} | sed -e "s/\.o/.t.o/g")
 
 ifeq (linux,$(OS))
 	LDFLAGS += -ldl
