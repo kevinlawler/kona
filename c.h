@@ -18,7 +18,7 @@ K ex(K a);
 K backslash_s(S s);
 K kap(K *a,V v);
 I wdss(K *a,FILE *f);
-K kerr(S s);
+K kerr(cS s);
 K show(K a);
 I parsedepth(PDA p);
 I complete(S a,I n,PDA *q,I *marks);

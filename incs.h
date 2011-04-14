@@ -21,6 +21,8 @@
 
 #include "ts.h" //data types + macros
 
+#define _exit __exit //stdlib.h already defines "_exit" but we need it for reserved r.c's _exit function
+
 extern S vm_s[];
 extern S vd_s[];
 extern S vt_s[];

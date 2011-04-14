@@ -6,6 +6,7 @@ typedef long I; //there are cases where casting pointer arithmetic to signed int
 typedef double F;
 typedef char C; //Store +-3 type '\0' terminated
 typedef C* S;
+typedef const C* cS;
 typedef unsigned char UC;
 typedef unsigned long UI;
 typedef I veci __attribute__ ((vector_size (16)));

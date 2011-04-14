@@ -68,8 +68,7 @@ K math(F(*f)(F), K a)
   else if(2==ABS(at))DO(n, kF(z)[i]=f(kF(a)[i]))
   R z;
 }
-#define _exit   __exit //stdlib.h already defines "_exit" but we need it for reserved _exit function
-K _exit(K a){P(1!=ABS(a->t),TE) exit(*kI(a));} // __exit ; 'LOCAL' for makeheaders 
+Z K _exit(K a){P(1!=ABS(a->t),TE) exit(*kI(a));} // __exit ; 'LOCAL' for makeheaders 
 
 #undef W
 #define W(x) K _##x(K a){R math(x,a);}
@@ -226,7 +225,7 @@ K _lt(K a)
 // see localtime_r ?
   I t=a->t,n=a->n;
   P(1<ABS(t),TE)
-  I b=0; struct tm c;
+  const time_t b=0; struct tm c;
   localtime_r(&b,&c);
   I d=c.tm_gmtoff;
   K z=newK(t,n);
@@ -859,9 +858,11 @@ K _t(){R Ki(time(0) + k_epoch_offset);}
 K _T()
 {
   struct timeval t;
-  gettimeofday(&t,0);
+  time_t tr;
   struct tm u;
-  gmtime_r(&t.tv_sec,&u);
+  gettimeofday(&t,0);
+  tr = t.tv_sec;
+  gmtime_r(&tr,&u);
   R Kf(jdn_from_date(1900+u.tm_year,1+u.tm_mon,u.tm_mday)+((u.tm_hour*60*60 + u.tm_min*60 + u.tm_sec + t.tv_usec/1.0e6)/86400.0));
 }
 K _n(){R ci(NIL);}  

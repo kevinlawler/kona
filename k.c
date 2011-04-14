@@ -29,7 +29,7 @@
 V KP[sizeof(V)*8+1]; //KPOOL
 
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
-extern K kerr(S s){ R snprintf(errmsg,256,"%s",s),(K)0;} 
+extern K kerr(cS s){ R snprintf(errmsg,256,"%s",s),(K)0;} 
 I oerr(){R O("%s %s\n",errmsg,"error");}
 
 N SYMBOLS;//immutable symbol interning

@@ -622,7 +622,7 @@ K _2d(K a,K b)
   P(v<0 || v > 7, VE)
 
   dd(v)
-  S e;
+  cS e;
   V x=dlopen(CSK(a),RTLD_LAZY|RTLD_LOCAL),y;
 
   e=dlerror();
