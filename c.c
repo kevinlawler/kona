@@ -51,33 +51,30 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
 
 K backslash_s(S s)
 {
-  S t,u=0,w=0; I c=0,n,m=0;
+  S t,u=0,w; I c=0,n,m=0,l=0;
   FILE*f=loadf(s);
   K k=0,z=0;
   P(!f,_n());
-  if(0<=wdss(&z,f))GC;
-  DO(z->n,
-     n=kK(z)[i]->n; t=kC(kK(z)[i]);
-     w=s;
-     while(isspace(*w++))c++;
-     if(c==n)continue;
-     O("%s ",t);
-     if(-1==getline_(&u,&m,stdin))GC;
-     if(m==1&&*u=='\n')
-     { show(k=ex(wd(t,n)));
-       if(i==_i-1)GC;
-       if(-1==getline_(&u,&m,stdin))GC;
-       if(m==1&&*u=='\n')continue;
-       else if(m==2&&*u=='\\')GC;
-     }
-     else if(m==2&&*u=='\\')GC;
-     else if(m==2&&*u=='/')continue;
-     if(k)cd(k);
-  );
+  while(0<(c=wds(&k,f)))
+  { n=k->n; t=kC(k);
+    w=s; while(isspace(*w++))l++;
+    if(l==n)continue;
+    O("%s ",t);
+    if(-1==getline_(&u,&m,stdin))GC;
+    if(m==1&&*u=='\n')
+    { show(k=ex(wd(t,n)));
+      if(-1==getline_(&u,&m,stdin))GC;
+      if(m==1&&*u=='\n')continue;
+      else if(m==2&&*u=='\\')GC;
+    }
+    else if(m==2&&*u=='\\')GC;
+    else if(m==2&&*u=='/')continue;
+    if(k)cd(k);
+  }
 cleanup:
   fclose(f);
   if(u)free(u);
-  if(z)cd(z);
+  if(k)cd(k);
   R _n();
 }
 

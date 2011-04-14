@@ -1360,19 +1360,19 @@ cleanup:
   if(p)pdafree(p);
   if((v||c==-1)&&z){cd(z); *a=0;}
   else *a=z;
-  R v?-2:c; // -2 error, -1 EOF
+  R v?-v:c; // -1 EOF, -2 unmatched, -3 nest
 }
 
 I wdss(K*a,FILE*f)
 {
-  I c=0;
+  I c=0,n=0;
   K k=0,z=newK(0,0);
-  while(0<(c=wds(&k,f))){kap(&z,k); cd(k);}
+  while(0<(c=wds(&k,f))){kap(&z,k); cd(k); n++;}
   *a=z;
-  R c;
+  R c==-1?n:c;
 }
 
-I lines(FILE*f){I a,c=0; while(0<(a=line(f)))c+=a; R c;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
+I lines(FILE*f){I c,n=0; while(0<(c=line(f)))n+=c; R n;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 I line(FILE*f)
 {
   K k=0,x=0; F d;
