@@ -51,13 +51,16 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
 
 K backslash_s(S s)
 {
-  S t,u=0; I n,m=0;
+  S t,u=0,w=0; I c=0,n,m=0;
   FILE*f=loadf(s);
   K k=0,z=0;
   P(!f,_n());
-  if(-2==wdss(&z,f))GC;
+  if(0<=wdss(&z,f))GC;
   DO(z->n,
      n=kK(z)[i]->n; t=kC(kK(z)[i]);
+     w=s;
+     while(isspace(*w++))c++;
+     if(c==n)continue;
      O("%s ",t);
      if(-1==getline_(&u,&m,stdin))GC;
      if(m==1&&*u=='\n')

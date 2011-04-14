@@ -1344,7 +1344,6 @@ I wds(K*a,FILE*f)
   K z=0; PDA p=0;
   I o=isatty(STDIN)&&f==stdin;
   if(-1==(c=getline_(&s,&n,f)))GC;
-  //while(n==1&&*s=='\n')if(-1==(c=getline_(&s,&n,f)))GC;
   appender(&t,&m,s,n);
   while(1==(v=complete(t,m,&p,0)))
   { b=parsedepth(p);
@@ -1378,7 +1377,7 @@ I line(FILE*f)
 {
   K k=0,x=0; F d;
   I c,o=isatty(STDIN)&&f==stdin;
-  if(0>(c=wds(&x,f)))goto done;
+  if(0>=(c=wds(&x,f)))goto done;
   RTIME(d,k=ex(wd(kC(x),xn)));
 #ifdef DEBUG
   if(o&&k)O("Elapsed: %.7f\n",d);

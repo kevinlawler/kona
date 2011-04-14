@@ -28,7 +28,7 @@ I complete(S a,I n,PDA *q,I *marks);
 #if defined(__MACH__) || defined(__OpenBSD__)
 I getline(S *s,I *n,FILE *f);
 #endif
-I line(FILE *f,S *a,I *n,PDA *p);
+I line(FILE *f);
 I lines(FILE *f);
 I prompt(I n);
 void init_genrand64(unsigned long long seed);
