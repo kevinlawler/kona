@@ -1,4 +1,7 @@
 #include "incs.h"
+#include "p.h"
+#include "v.h"
+#include "vf.h"
 
 //Parser
 I formed_group(C c){S s="\n \\/\"";R charpos(s,c);} //could be table-lookup instead
@@ -316,7 +319,7 @@ I param_validate(S s,I n) // Works on ([]) and {[]} but pass inside exclusive eg
 I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string length, pos in string, markings; OUT words, current #words; IN locals-storage, names-storage, charfunc/NULL
 {
   V z=0,*p=w+*d; *p=0;
-  I r=1,v=0,y=0,a,b=0,c;S u,e;C h;K g;I l;
+  I r=1,v=0,y=0,a,b=0,c;S u,e;K g;I l;
 
   if(k>=n || !CAPTURE_START(m[k])) R r;
   I M=m[k];

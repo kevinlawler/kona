@@ -1,5 +1,15 @@
 #include "incs.h"
 
+#if defined(__OpenBSD__) || defined(__FreeBSD__)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
+#include "r.h"
+#include "va.h"
+#include "vf.h"
+#include "vg.h"
+
 //Reserved verbs/functions (_verb)
 
 //'S' for [pre-]Scripted. These macros should be refactored/rewritten. Certainly don't need new K every time.
@@ -58,12 +68,11 @@ K math(F(*f)(F), K a)
   else if(2==ABS(at))DO(n, kF(z)[i]=f(kF(a)[i]))
   R z;
 }
-#define _exit   __exit //stdlib.h already defines "_exit" but we need it for reserved _exit function
-LOCAL K _exit(K a){P(1!=ABS(a->t),TE) exit(*kI(a));} // __exit ; 'LOCAL' for makeheaders 
+Z K _exit(K a){P(1!=ABS(a->t),TE) exit(*kI(a));} // __exit ; 'LOCAL' for makeheaders 
 
 #undef W
 #define W(x) K _##x(K a){R math(x,a);}
-_MATH; //all the math functions
+_MATH //all the math functions
 #define QUOTE(x) #x
 #undef W
 #define W(x) QUOTE(x)
@@ -132,7 +141,7 @@ K _db(K x) //see _2m_r (maybe others?) I/O structure similar but not the same
 
 K _dj(K a)
 {
-  I t=a->t,n=a->n,x;
+  I t=a->t,n=a->n;
   P(ABS(t) > 1,TE)
   K z=newK(t,n);
   if(!t) DO(n,kK(z)[i]=_dj(kK(a)[i]))
@@ -142,7 +151,6 @@ K _dj(K a)
 
 K _getenv(K a) //lfop
 {
-  I t=a->t, n=a->n;
   S u=getenv(CSK(a));
   K z; I c;
   if(u) {c=strlen(u); U(z=newK(-3,c)) memcpy(kC(z),u,c);} //sic? Apparently you're not supposed to free(u=getenv())
@@ -216,7 +224,7 @@ K _lt(K a)
 // see localtime_r ?
   I t=a->t,n=a->n;
   P(1<ABS(t),TE)
-  I b=0; struct tm c;
+  const time_t b=0; struct tm c;
   localtime_r(&b,&c);
   I d=c.tm_gmtoff;
   K z=newK(t,n);
@@ -237,7 +245,6 @@ I stat_sz(S u, I*n)
 K _size(K a) 
 {
   I t=a->t, n=0;
-  S u,v;
 
   P(4!=t && 3!=ABS(t),TE)
   P(stat_sz(CSK(a),&n),SE)
@@ -249,14 +256,13 @@ K _size(K a)
 /////////////////////////////////////////
 //K3.2 bug: (0 1;0.0 1.0) _bin 0 1 -> 2   but (0 1;0 1) _bin 0 1 -> 0
 K _bin(K x,K y) 
-{ I yt=y->t,yn=y->n;
-  P(xt>0,RE)
+{ P(xt>0,RE)
   R Ki(binr(x,0,xn-1,y));
 } 
 
 K _draw(K a,K b)
 {
-  I at=a->t,an=a->n,bt=b->t,bn=b->n;
+  I at=a->t,an=a->n,bt=b->t;
   K y,z;
   I c=*kI(b),n=1,j=0,k,s;
   P(1!=ABS(at)||1!=bt,IE)
@@ -671,7 +677,7 @@ void svdcmp(F **a, I m, I n, F *w, F **v, F *t)
 
 K _setenv(K a,K b)
 {
-  I at=a->t, an=a->n, bt=b->t, bn=b->n;
+  I at=a->t, bt=b->t;
   P(at!=4 && bt!=-3,TE)//strictly these types
   I r=setenv(*kS(a),CSK(b),1);
   P(r,SE)
@@ -746,7 +752,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
     r[m]=q-p;//build starting-point index into p of character/wildcard units  eg  p="h[e]llo" => r={0,1,4,5,6}
 
     if('?'==*q){q++; DO(256,occ[i]=m)}
-    else if('['!=*q) occ[*q++]=m; //construct bad char table
+    else if('['!=*q) occ[(I)*q++]=m; //construct bad char table
     else
     {
       q=rangematch(q+1,0,v);
@@ -812,7 +818,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
       i+=m; //for non-overlapping matches 
       //i+=s[0]; //for overlapping matches
     }
-    else i+= MAX(s[j+1],j-occ[t[i+j]]);
+    else i+= MAX(s[j+1],j-occ[(I)t[i+j]]);
   }
 
   free(r);free(f);free(s);
@@ -824,7 +830,7 @@ S rangematch(S p, C t, S r) //BSD.  p pattern t testchar r represented. R 0 on m
 {
 	I n, k=0; //negate, ok
 	C c, d;
-  if(n = '^'==*p) ++p;
+  if((n = '^'==*p)) ++p;
   if(r)DO(256,r[i]=n)
   if(']'==*p){if(']'==t)k=1; if(r)r[(UC)']']=!n; ++p;}
   while(']'!=(c=*p++))
@@ -849,9 +855,11 @@ K _t(){R Ki(time(0) + k_epoch_offset);}
 K _T()
 {
   struct timeval t;
-  gettimeofday(&t,0);
+  time_t tr;
   struct tm u;
-  gmtime_r(&t.tv_sec,&u);
+  gettimeofday(&t,0);
+  tr = t.tv_sec;
+  gmtime_r(&tr,&u);
   R Kf(jdn_from_date(1900+u.tm_year,1+u.tm_mon,u.tm_mday)+((u.tm_hour*60*60 + u.tm_min*60 + u.tm_sec + t.tv_usec/1.0e6)/86400.0));
 }
 K _n(){R ci(NIL);}  
@@ -878,7 +886,7 @@ K _m(){R NYI;}
 /////////////////////////////////////////
 I CIX(K a,I i,K x) //compare a[i] vs x,  a->t <= 0
 {
-  I at=a->t,an=a->n;
+  I at=a->t;
   I t=x->t,r=0;
   K k=0;
 
@@ -904,7 +912,7 @@ I CIX(K a,I i,K x) //compare a[i] vs x,  a->t <= 0
 I binr(K a,I b,I c,K x)
 {
   I i=b+(c-b)/2, r=CIX(a,i,x);//i is sic
-  if(0==r) if(i>0 && !CIX(a,i-1,x))r=1;else R i;
+  if(0==r) { if(i>0 && !CIX(a,i-1,x))r=1;else R i; }
   if(b>=c)R -1==r?1+i:i;//pos if you did insert into list
   R 0<r?binr(a,b,i-1,x):binr(a,i+1,c,x);
 }
