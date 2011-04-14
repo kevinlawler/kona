@@ -1,5 +1,6 @@
 #include "incs.h"
 #include "scalar.h"
+#include "r.h"
 
 /* scalar arithmetic verbs */
 

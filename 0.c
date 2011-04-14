@@ -1,4 +1,16 @@
+#include <dlfcn.h>
 #include "incs.h"
+
+#include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
+
+#if defined(__OpenBSD__) || defined(__FreeBSD__)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
+#include "0.h"
+#include "v.h"
+#include "vf.h"
 
 //Number verbs, monadic & dyadic
 

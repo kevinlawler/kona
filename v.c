@@ -1,6 +1,10 @@
 #include "incs.h"
 #include "scalar.h"
 
+#include "k.h"
+#include "0.h"
+#include "v.h"
+
 /* misc verbs */
 
 K itemAtIndex(K a, I i)// Return i-th item from any type as K - TODO: oom wherever this is used

@@ -1,5 +1,9 @@
 #include "incs.h"
 
+#include "r.h"
+#include "v.h"
+#include "vq.h"
+
 /* question mark - find/function_inverse - what dyadic triadic */
 
 K find(K a, K b)

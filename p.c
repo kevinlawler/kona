@@ -1,4 +1,7 @@
 #include "incs.h"
+#include "p.h"
+#include "v.h"
+#include "vf.h"
 
 //Parser
 I formed_group(C c){S s="\n \\/\"";R charpos(s,c);} //could be table-lookup instead

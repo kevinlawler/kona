@@ -2,6 +2,23 @@
 //todo abbreviations: mm/o = memory manage/optimize   lfop = localize for other platforms (eg needs ifdef changes)   oom = handle out-of-memory
 #include "incs.h"
 
+#include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
+
+#if defined(__OpenBSD__) || defined(__FreeBSD__)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
+#include "k.h"
+#include "tests.h"
+#include "v.h"
+#include "va.h"
+#include "vc.h"
+#include "vd.h"
+#include "vf.h"
+#include "vg.h"
+#include "vq.h"
+
 //Notes on memory manager: seems like atoms (and small lists?) are not released
 //by K4 (see Skelton's remark: only contiguous arrays greater than 32MB are
 //returned to OS). Also: " Why do you think it is memory fragmentation? The

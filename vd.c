@@ -1,5 +1,11 @@
 #include "incs.h"
 
+#include "k.h"
+#include "p.h"
+#include "r.h"
+#include "v.h"
+#include "vd.h"
+
 /* dot monadic, dyadic, triadic, tetradic */
 
 K of2(K d, K *x, K *y, I s)

@@ -1,4 +1,7 @@
 #include "incs.h"
+#include "tests.h"
+#include "k.h"
+
 //  Note:
 //  
 //  To test out-of-memory handling on determininistic calls, execute the string

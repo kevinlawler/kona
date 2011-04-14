@@ -1,5 +1,15 @@
 #include "incs.h"
 
+#if defined(__OpenBSD__) || defined(__FreeBSD__)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
+#include "r.h"
+#include "va.h"
+#include "vf.h"
+#include "vg.h"
+
 //Reserved verbs/functions (_verb)
 
 //'S' for [pre-]Scripted. These macros should be refactored/rewritten. Certainly don't need new K every time.
@@ -59,7 +69,7 @@ K math(F(*f)(F), K a)
   R z;
 }
 #define _exit   __exit //stdlib.h already defines "_exit" but we need it for reserved _exit function
-LOCAL K _exit(K a){P(1!=ABS(a->t),TE) exit(*kI(a));} // __exit ; 'LOCAL' for makeheaders 
+K _exit(K a){P(1!=ABS(a->t),TE) exit(*kI(a));} // __exit ; 'LOCAL' for makeheaders 
 
 #undef W
 #define W(x) K _##x(K a){R math(x,a);}

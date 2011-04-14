@@ -1,5 +1,7 @@
 #include "incs.h"
 
+#include "c.h"
+
 void boilerplate()
 {
  if(!isatty(STDOUT) || !isatty(STDIN)) R;

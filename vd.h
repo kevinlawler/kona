@@ -1,0 +1,23 @@
+/* This file was automatically generated.  Do not edit! */
+K dot_monadic(K x);
+K unmake(K a);
+K makeable(K a);
+K make(K a);
+K *denameS(S dir_string,S t);
+I isColonDyadic(K x);
+K dot_tetradic(K a,K b,K c,K y);
+K dot_tetradic_2(K *g,K b,K c,K y);
+K DI(K d,I i);
+K *EVP(K e);
+K *lookupEVOrCreate(K *p,S k);
+I atomI(K a);
+K at_ref(K *p,K b,K c,K y);
+K specialAmendDot(K c,K args);
+I countI(K a);
+K dot_ref(K *p,K *x,K *z,I s,K c,K y);
+K dot(K a,K b);
+K at(K x,K y);
+K of(K a,K b);
+K lookup(K a,S b);
+K at_verb(K a,K b);
+K of2(K d,K *x,K *y,I s);
