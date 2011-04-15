@@ -17,6 +17,41 @@ I vn_ct, vm_ct, vd_ct, vt_ct;
 I adverb_ct;
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
+
+I wds(K*a,FILE*f)
+{
+  S s=0,t=0; I b=0,c=0,m=0,n=0,v=0;
+  K z=0; PDA p=0;
+  I o=isatty(STDIN)&&f==stdin;
+  if(-1==(c=getline_(&s,&n,f)))GC;
+  appender(&t,&m,s,n);
+  while(1==(v=complete(t,m,&p,0)))
+  { b=parsedepth(p);
+    if(o)prompt(b);
+    if(-1==(c=getline_(&s,&n,f)))GC;
+    appender(&t,&m,s,n);
+  }
+  SW(v){CS(2,show(kerr("unmatched"));GC) CS(3,show(kerr("nest")); GC)}
+  z=newK(-3,m-1);
+  strncpy(kC(z),t,m-1);
+cleanup:
+  if(s)free(s);
+  if(t)free(t);
+  if(p)pdafree(p);
+  if((v||c==-1)&&z){cd(z); *a=0;}
+  else *a=z;
+  R v?-v:c; // -1 EOF, -2 unmatched, -3 nest
+}
+
+I wdss(K*a,FILE*f)
+{
+  I c=0,n=0;
+  K k=0,z=newK(0,0);
+  while(0<(c=wds(&k,f))){kap(&z,k); cd(k); n++;}
+  *a=z;
+  R c==-1?n:c;
+}
+
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));R 0;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
 {

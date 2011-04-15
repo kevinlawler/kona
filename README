@@ -1,4 +1,4 @@
-#To compile (OS X/Linux/OpenBSD):
+#To compile (OS X/Linux/BSD):
 make           #gmake on OpenBSD
 
 #To start the interpreter
