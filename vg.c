@@ -1,6 +1,7 @@
 #include "incs.h"
 #include "k.h"
 #include "v.h"
+#include "vc.h"
 
 /* grade / grouping / sorting / shape verbs */
 
