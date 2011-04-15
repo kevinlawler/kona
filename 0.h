@@ -48,7 +48,6 @@ K formKiCS(S s);
 S strdupn(S s,I k);
 I charpos(S s,C c);
 I stringHasChar(S s,C c);
-K at(K x,K y);
 K _n();
 I ok_0dw(K b);
 K _0d_read(K a,K b);

@@ -13,16 +13,10 @@ void finally();
 I kinit();
 extern K KFIXED;
 K load(S s);
-I attend();
-I ksender(I sockfd,K y,I t);
-K modified_execute(K x);
-K _db(K x);
 K read_tape(I i,I type);
-extern fd_set master;
-I close_tape(I i);
 I wipe_tape(I i);
-extern M0 CP[FD_SETSIZE];
-void *get_in_addr(struct sockaddr *sa);
+I attend();
+extern fd_set master;
 I parsedepth(PDA p);
 I complete(S a,I n,PDA *q,I *marks);
 #if defined(__MACH__) || defined(__OpenBSD__)
