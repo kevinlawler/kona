@@ -4,6 +4,7 @@
 
 #include "k.h"
 #include "kex.h"
+#include "km.h"
 
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type
 //TODO: consider merging dv_ex with vf_ex

@@ -2,6 +2,7 @@
 #include "scalar.h"
 
 #include "k.h"
+#include "km.h"
 #include "0.h"
 #include "v.h"
 

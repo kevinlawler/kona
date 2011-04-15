@@ -1,5 +1,6 @@
 #include "incs.h"
 #include "k.h"
+#include "km.h"
 #include "vf.h"
 
 /* format */

@@ -3,6 +3,7 @@
 #include "incs.h"
 
 #include "k.h"
+#include "km.h"
 #include "ko.h"
 
 K kclone(K a)//Deep copy -- eliminate where possible

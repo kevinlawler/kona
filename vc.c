@@ -1,7 +1,9 @@
 #include "incs.h"
 #include "scalar.h"
 #include "k.h"
+#include "km.h"
 #include "ko.h"
+#include "vc.h"
 
 /* comparison verbs */
 
