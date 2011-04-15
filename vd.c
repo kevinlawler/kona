@@ -121,13 +121,13 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
     U(r)
     cd(*p); 
     *p=r;
-    R;
+    R NULL;
   }
   //these may turn out to be the "ELSE" case
   if((1 <= dt && dt <= 4) || 7==dt || 7==ft) R RE;
   else if(6==dt && (0 >= ft)) R XE;
   else if(6==dt && 6 != ft && 4 != ft) R TE;
-  if(5==dt && 123 == ft) R ; //TODO: Fill in dict errors
+  if(5==dt && 123 == ft) R NULL; //TODO: Fill in dict errors
   //TODO: full error chart. at_ref will account for some of it
 
   if(0>=s) at_ref(p,f,c,y); //what errors will this take care of ?
@@ -177,14 +177,14 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
   }
   else if(6==ft)
   {
-    if(6==dt) R; //identity
+    if(6==dt) R NULL; //identity
     if(y && !atomI(y) &&  yn != d->n) R LE;
     if(y) U(y=promote(y))
     if(5==dt) DO(d->n, dot_ref(EVP(DI(d,i)),z,z+1,s-1,c,y?kK(y)[i%yn]:0))
     if(0>=dt) { K k=Ki(0); M(k,y?y:k);  DO(countI(d), *kI(k)=i; dot_ref(p,&k,z,s,c,y?kK(y)[i%yn]:0)) cd(k); }
     cd(y);
   }
-
+  R 0;
 }
 
 K dot_tetradic_2(K *g, K b, K c, K y)

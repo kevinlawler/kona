@@ -1,7 +1,7 @@
 PREFIX = /usr/local
 LDFLAGS = -lm
-PRODFLAGS = -O3
-DEVFLAGS = -O3 -g3 -DDEBUG #-Wall
+PRODFLAGS = -O3 #-pg -g3
+DEVFLAGS = -O3 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int
 
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
@@ -30,10 +30,11 @@ all: k k_test
 
 k: CFLAGS += $(PRODFLAGS)
 k: $(OBJS)
+	$(CC) ${CFLAGS} $(LDFLAGS) $^ -o $@
 
 k_test: CFLAGS += $(DEVFLAGS)
 k_test: $(OBJS_T) tests.t.o
-	$(CC) $(LOADLIBES) $(LDFLAGS) $^ -o $@
+	$(CC) ${CFLAGS} $(LDFLAGS) $^ -o $@
 
 test: k_test
 

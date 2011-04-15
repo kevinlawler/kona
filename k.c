@@ -161,6 +161,7 @@ I repool(V v,I r)//assert r < KP_MAX
   memset(v,0,1<<r);
   *(V*)v=KP[r];
   KP[r]=v;
+  R 0;
 }
 I kexpander(K*p,I n) //expand only. 
 {
@@ -630,6 +631,7 @@ int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: mon
     if(!kapn(u,b,n)); //todo: err handling
   }
   va_end (args);
+  R 0;
 }
 
 #define O_(...) splitprint(u,__VA_ARGS__)
@@ -1336,8 +1338,8 @@ K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: co
 I randomBits(){I s;I f=open("/dev/urandom",0);read(f,&s,sizeof(s));close(f);R s;} //lfop
 void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
 
-I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);}
-I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
+I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
+I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));R 0;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
 {
   S s=0; I b=0,c=0,m=0;
@@ -1372,8 +1374,8 @@ void *get_in_addr(struct sockaddr *sa) { if (sa->sa_family == AF_INET) R &(((str
 
 M0 CP[FD_SETSIZE]; //Connection Pool (large array)
 
-I wipe_tape(I i) { if(CP[i].k)cd(CP[i].k); memset(&CP[i],0,sizeof(CP[0])); } //safe to call >1 time
-I close_tape(I i) { wipe_tape(i); close(i); FD_CLR(i, &master); }
+I wipe_tape(I i) { if(CP[i].k)cd(CP[i].k); memset(&CP[i],0,sizeof(CP[0])); R 0;} //safe to call >1 time
+I close_tape(I i) { wipe_tape(i); close(i); FD_CLR(i, &master); R 0;}
 
 K read_tape(I i, I type) // type in {0,1} -> {select loop, 4: resp reader}
 {
@@ -1528,6 +1530,7 @@ I args(int n,S*v)
     CSR(':',)CS('?', O("%c ",optopt); show(kerr("opt")))
   }
   while(optind < n) load(v[optind++]);
+  R 0;
 }
 
 K KFIXED;

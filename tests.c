@@ -19,7 +19,7 @@ I tests=0;
 I test_print=0;
 F testtime;
 
-S ts(I x){ switch(x){CS(0,R "fail";) CS(1,R "OK")  CS(2,R "skipped")}}
+S ts(I x){ switch(x){CS(0,R "fail";) CS(1,R "OK")  CS(2,R "skipped")}; R 0;}
 I tp(I x){ switch(x){CS(0,failed++)  CS(1,passed++)CS(2,skipped++)} tests++; R x;} //process the test
 
 I tc(S a, S b) //test comparison .  R 0,1,2
@@ -342,7 +342,7 @@ I tests02()
   TC_("(0;1 2)", "@[.:;\"1 2(+\\:)'1 2\";:]")
   TC_("(1;\"valence\")", "@[.:;\"1 2(+\\\\:)'1 2\";:]")
   TC_("(1;\"type\")", "@[.:;\"(2=\\\"2\\\") 2\";:]")
- 
+  R 0; 
 }
 
 I tests01()
@@ -466,6 +466,7 @@ I tests01()
   TC(5#45 , f:|/0(0|+)\\; a:!10; (f (!10); f[!10]; f a; f @ a; f .,a) )
   TC(2,."0+0\n1+1")
   TC_("4",".\"1+1\\n2+2\"")
+  R 0;
 }
 
 
@@ -797,6 +798,7 @@ I testsBook()
 
   //Regressions
   TC(2, _2.5)
+  R 0;
 }
 
 
