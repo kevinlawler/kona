@@ -2,7 +2,6 @@
 K _dot_t();
 double genrand64_real2(void);
 I KC(K a,K b);
-I KC(K a,K b);
 I FC(F a,F b);
 I CIX(K a,I i,K x);
 K _m();
