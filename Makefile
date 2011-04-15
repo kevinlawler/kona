@@ -6,7 +6,7 @@ DEVFLAGS = -O3 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
 OBJS= 0.o c.o getline.o mt.o p.o r.o \
-      k.o kn.o    \
+      k.o kc.o kex.o kn.o kv.o   \
       v.o va.o vc.o vd.o vf.o vg.o vq.o
 
 # k_test versions of OBJS

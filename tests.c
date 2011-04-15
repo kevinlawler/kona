@@ -65,7 +65,7 @@ I test()
   testsIO();  //could become slow - in the future may not want to test by default
   K x; x=_(567);if(!tp(x && *kI(x)==567))fprintf(stderr,"\n\nK string execution broken\n\n"); cd(x);
 
-done:
+//done:
   testtime=(clock()-testtime)/CLOCKS_PER_SEC;
   F rate=passed/((F)tests-skipped); 
   O("Test pass rate: %.4f, Total: %ld, Passed: %ld, Skipped: %ld, Failed: %ld, Time: %fs\n", rate,tests,passed,skipped,failed,testtime);

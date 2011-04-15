@@ -1,51 +1,15 @@
 /* This file was automatically generated.  Do not edit! */
+extern K KFIXED;
+void finally();
 #if defined(DEBUG)
 I CV(K v);
 void tf(N n);
 #endif
+I attend();
 void boilerplate();
+I kinit();
 int main(int argc,S *argv);
 V ptf(V v);
-K _dot_t();
-I test();
-extern V vn_[];
-void finally();
-I kinit();
-extern K KFIXED;
-K load(S s);
-K read_tape(I i,I type);
-I wipe_tape(I i);
-I attend();
-extern fd_set master;
-I parsedepth(PDA p);
-I complete(S a,I n,PDA *q,I *marks);
-#if defined(__MACH__) || defined(__OpenBSD__)
-I getline(S *s,I *n,FILE *f);
-#endif
-I line(FILE *f,S *a,I *n,PDA *p);
-I lines(FILE *f);
-I prompt(I n);
-void init_genrand64(unsigned long long seed);
-void seedPRNG(I s);
-I randomBits();
-K of(K a,K b);
-K dot_tetradic_2(K *g,K b,K c,K y);
-K itemAtIndex(K a,I i);
-K bv_ex(V *p,K k);
-K ex1(V *w,K k);
-K ex0(V *v,K k,I r);
-V ex_(V a,I r);
-K wd_(S s,I n,K *dict,K func);
-K DI(K d,I i);
-K ex2(V *v,K k);
-K dot_tetradic(K a,K b,K c,K y);
-K at_tetradic(K a,K b,K c,K y);
-K what_triadic(K a,K b,K c);
-K drop(K a,K b);
-I atomI(K a);
-I matchI(K a,K b);
-K vf_ex(V q,K g);
-K dv_ex(K a,V *p,K b);
 extern S vm_s[];
 extern S vd_s[];
 extern S vt_s[];
@@ -57,6 +21,7 @@ I isescape(UC c);
 I valence(V p);
 I specialValence(V p);
 I adverbClass(V p);
+extern I vn_ct,vm_ct,vd_ct,vt_ct;
 extern V vt_[];
 extern V vd_[];
 extern V vm_[];
