@@ -1,7 +1,7 @@
 PREFIX = /usr/local
 LDFLAGS = -lm
 PRODFLAGS = -O3 #-pg -g3
-DEVFLAGS = -O3 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int -Wall
+DEVFLAGS = -O3 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
 
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
