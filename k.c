@@ -1,4 +1,3 @@
-
 //64-bit single-threaded implementation of K3.2.  Version is Kona 3.2.0
 //todo abbreviations: mm/o = memory manage/optimize   lfop = localize for other platforms (eg needs ifdef changes)   oom = handle out-of-memory
 #include "incs.h"
