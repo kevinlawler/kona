@@ -1,7 +1,7 @@
 PREFIX = /usr/local
 LDFLAGS = -lm
 PRODFLAGS = -O3 #-pg -g3
-DEVFLAGS = -O3 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
+DEVFLAGS = -O3 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int -Wall
 
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
@@ -74,7 +74,7 @@ va.c: scalar.h r.h vc.h
 vc.c: scalar.h km.h ko.h vc.h
 vd.c: km.h p.h r.h v.h vd.h
 vf.c: km.h vf.h
-vg.c: km.h v.h vc.h
+vg.c: kg.h km.h v.h vc.h
 vq.c: r.h v.h vq.h
 
 # DO NOT DELETE
