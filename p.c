@@ -356,8 +356,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       {
                         V*zp=kW(z);
                         while(*zp && !bk(*zp))zp++;
-                        if(!bk(*zp)){cd(g);cd(z); R (I)PE;} //check that at least one ; is present
                         SW(s[k-1]){CS(':',b=4) CS('f',b=5) CS('e',b=6) CS('o',b=7)  }  //: if while do
+                        if(b!=6&&!bk(*zp)){cd(g);cd(z); R (I)PE;} //check that at least one ; is present
                         ((K)z)->n=b;
                         cd(g);
                         goto grabdone;

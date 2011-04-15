@@ -1,3 +1,4 @@
+
 //64-bit single-threaded implementation of K3.2.  Version is Kona 3.2.0
 //todo abbreviations: mm/o = memory manage/optimize   lfop = localize for other platforms (eg needs ifdef changes)   oom = handle out-of-memory
 #include "incs.h"
@@ -1135,8 +1136,9 @@ K ex(K a){ U(a); K z=ex_(&a,0); cd(a);R z;} //Input is 7-0 type from wd()
 
 K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
-  I n=0, e=1, i,a;
+  I n=0, e=1, i,a,b;
   while(v[n])if(bk(v[n++]))e++;
+  b=e>1;
 
   K z=0, x;
 
@@ -1144,7 +1146,7 @@ K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/retu
   {
     CS(0, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){cd(z); U(x=ex1(v+1+i,0)) z=bk(x)?_n():x;})//  c:9;a+b;c:1 
     CS(4, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){U(x=ex1(v+1+i,0)) x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); if(i==n) R x; if(xt!=1){cd(x);R TE;} a=*kI(x);cd(x); if(a)R ex1(v+i+1,0); else while(i<n&&!bk(v[i]))i++; } R _n())
-    CSR(5,)CSR(6,)CS(7, do{U(x=ex1(v,0)) x=bk(x)?_n():x; if(xt!=1){cd(x);R TE;}a=*kI(x);cd(x);i=0;while(++i<n&&!bk(v[i])); if(i>=n)break;SW(r){CSR(5,)CS(6,if(a)cd(ex0(v+i+1,0,0)))CS(7,DO2(a,cd(ex0(v+i+1,0,0))))}}while(6==r && a); R _n())
+    CSR(5,)CSR(6,)CS(7, do{U(x=ex1(v,0)) x=bk(x)?_n():x; if(xt!=1){cd(x);R TE;}a=*kI(x);cd(x);i=0;if(b){while(++i<n&&!bk(v[i])); if(i>=n)break;}SW(r){CSR(5,)CS(6,if(a&&b)cd(ex0(v+i+1,0,0)))CS(7,DO2(a,cd(ex0(v+i+1,0,0))))}}while(6==r && a); R _n())
     CD: z=newK(0,n?e:0); if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){x=ex1(v+1+i,0); M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}// (c:9;a+b;c:1) oom
   }
 
