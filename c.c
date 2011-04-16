@@ -1,5 +1,6 @@
 #include "incs.h"
 
+#include "k.h"
 #include "c.h"
 
 void boilerplate()
@@ -53,7 +54,7 @@ K backslash_s(S s)
 {
   S t,u=0,w; I c=0,n,m=0,l=0;
   FILE*f=loadf(s);
-  K k=0,z=0;
+  K k=0;
   P(!f,_n());
   while(0<(c=wds(&k,f)))
   { n=k->n; t=kC(k);

@@ -1,6 +1,9 @@
 #include "incs.h"
 #include "scalar.h"
 #include "k.h"
+#include "km.h"
+#include "ko.h"
+#include "vc.h"
 
 /* comparison verbs */
 
@@ -10,6 +13,7 @@ K dp(K*z,K(*f)(K,K),K x,K y) //dyad promote
    M(x,y,*z)
    DO((*z)->n, if(!(kK(*z)[i]=f(kK(x)[i%xn],kK(y)[i%y->n]))){cd(*z);*z=ME;break;})
    cd(x);cd(y); 
+   R 0;
 }
 
 K equals(K a, K b)

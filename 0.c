@@ -9,6 +9,8 @@
 #endif
 
 #include "0.h"
+#include "k.h"
+#include "km.h"
 #include "v.h"
 #include "vf.h"
 
