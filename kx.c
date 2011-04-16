@@ -3,7 +3,7 @@
 #include "incs.h"
 
 #include "k.h"
-#include "kex.h"
+#include "kx.h"
 #include "km.h"
 
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type

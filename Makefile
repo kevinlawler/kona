@@ -6,7 +6,7 @@ DEVFLAGS = -O0 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
 OBJS= 0.o c.o getline.o mt.o p.o r.o \
-      k.o kc.o kex.o kg.o km.o kn.o ko.o ks.o \
+      k.o kc.o kx.o kg.o km.o kn.o ko.o ks.o \
       v.o va.o vc.o vd.o vf.o vg.o vq.o
 
 # k_test versions of OBJS
@@ -58,9 +58,9 @@ TAGS: *.c *.h
 0.c: 0.h km.h v.h vf.h
 c.c: c.h
 getline.c: 0.h getline.h
-k.c: r.h kc.h kex.h kg.h km.h kn.h ko.h ks.h tests.h v.h va.h vc.h vd.h vf.h vg.h vq.h
+k.c: r.h kc.h kx.h kg.h km.h kn.h ko.h ks.h tests.h v.h va.h vc.h vd.h vf.h vg.h vq.h
 kc.c: kc.h
-kex.c: kex.h km.h
+kx.c: kx.h km.h
 kg.c: kg.h km.h
 km.c: km.h
 kn.c: kn.h
