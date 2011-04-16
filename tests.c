@@ -187,6 +187,10 @@ I tests02()
   TC(30,a:10;if[1;a:20;a:30;];a)
   TC(_n,i:0;while[7>i;0+0;i+:1])
   TC(7,i:0;while[7>i;0+0;i+:1];i)
+  TC(5,i:0;while[5>i+:1];i)
+  
+
+
   TC(_n,do[5;0])
   TC(7,i:0;do[7;0+0;i+:1;];i)
 
