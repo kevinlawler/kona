@@ -63,11 +63,13 @@ K mod(K a, K b) //In K4: {x-y*x div y}
   K z=newK(t,an); U(z)
   I c,d,e; F f,g,h;
   #define FMOD h=g?f-g*floor(f/g):f; kF(z)[i]=h;
-  if     (2==ABS(at) && 2==bt) DO(an, f=kF(a)[i]; g=*kF(b); FMOD)
-  else if(2==ABS(at) && 1==bt) DO(an, f=kF(a)[i]; g=*kI(b); FMOD)
-  else if(1==ABS(at) && 2==bt) DO(an, f=kI(a)[i]; g=*kF(b); FMOD)
-  else if(1==ABS(at) && 1==bt) DO(an, c=kI(a)[i]; d=*kI(b); e=d?c-d*floor(c/(F)d):c; kI(z)[i]=e) //TODO: casting to F is slow/wrong for big#
-  else if(0==at) DO(an, if(!(kK(z)[i]=mod(kK(a)[i],b))){cd(z);R 0;}) 
+  if     (2==ABS(at) && 2==bt) { g=*kF(b); DO(an, f=kF(a)[i]; FMOD) }
+  else if(2==ABS(at) && 1==bt) { g=*kI(b); DO(an, f=kF(a)[i]; FMOD) }
+  else if(1==ABS(at) && 2==bt) { g=*kF(b); DO(an, f=kI(a)[i]; FMOD) }
+  else if(1==ABS(at) && 1==bt) {
+    d=*kI(b); //TODO: casting to F is slow/wrong for big#
+    DO(an, c=kI(a)[i]; e=d?c-d*floor(c/(F)d):c; kI(z)[i]=e)
+  } else if(0==at) DO(an, if(!(kK(z)[i]=mod(kK(a)[i],b))){cd(z);R 0;}) 
   R z;
 }
 
