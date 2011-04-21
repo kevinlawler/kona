@@ -18,7 +18,8 @@ I adverb_ct;
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
 
-I wds(K*a,FILE*f)
+I wds(K* a,FILE*f){R wds_(a,f,0);}
+I wds_(K*a,FILE*f,I l)
 {
   S s=0,t=0; I b=0,c=0,m=0,n=0,v=0;
   K z=0; PDA p=0;
@@ -27,7 +28,7 @@ I wds(K*a,FILE*f)
   appender(&t,&m,s,n);
   while(1==(v=complete(t,m,&p,0)))
   { b=parsedepth(p);
-    if(o)prompt(b);
+    if(o)prompt(b+l);
     if(-1==(c=getline_(&s,&n,f)))GC;
     appender(&t,&m,s,n);
   }
