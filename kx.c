@@ -403,6 +403,7 @@ K vf_ex(V q, K g)
       if(!(fw=kV(f)[CACHE_WD]))
       {
         K fc = kclone(f); //clone the function to pass for _f
+        cd(kV(fc)[CONJ]);kV(fc)[CONJ]=0;
         kV(fc)[DEPTH]++;
         fw = wd_(kC(o),o->n,&tree,fc);
         kV(f)[CACHE_WD]=fw;
