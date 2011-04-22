@@ -198,8 +198,7 @@ I kinit() //oom (return bad)
   kerr("undescribed");//initialize errmsg string to be non-null for more useful reporting
   SYMBOLS=newN(); //Initialize intern pool 
   seedPRNG(randomBits()); 
-  KFIXED=newK(0,0);
-  kap(&KFIXED,NIL=Kn());cd(NIL);
+  KFIXED=newK(0,0); kap(&KFIXED,NIL=Kn());cd(NIL);
   __d = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
 #ifdef DEBUG
   test();

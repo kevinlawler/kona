@@ -33,7 +33,7 @@ K cd(K a)
   #ifdef DEBUG
   DO(kreci, if(a==krec[i]){krec[i]=0; break; })
   #endif 
-  if(7==a->t){ DO(-1+TYPE_SEVEN_SIZE,cd(kV(a)[1+i]))} //-4 special trick: don't recurse on V members. assumes sizeof S==K==V
+  if(7==a->t){ DO(-2+TYPE_SEVEN_SIZE,cd(kV(a)[2+i]))} //-4 special trick: don't recurse on V members. assumes sizeof S==K==V.  (don't free CONTEXT or DEPTH)
   if(0==a->t || 5==a->t) DO(a->n, cd(kK(a)[a->n-i-1]))
   #ifdef DEBUG
   if(0)R 0; //for viewing K that have been memory leaked

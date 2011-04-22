@@ -226,7 +226,7 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   if(4==ABS(t)) if(!a->n) O_("0#`");  
                 else 
                 { I ss=0,sl;S str;
-                  DO(a->n, CPMAX str=kS(a)[i]; sl=strlen(str);ss=simpleString(str);
+                  DO(a->n, CPMAX str=kS(a)[i];if(!str)continue; sl=strlen(str);ss=simpleString(str);
                            O_("`"); if(!ss) O_("\""); DO2(sl, O_("%c", str[j] )) O_(i<_i-1?" ":""); if(!ss) O_("\""); 
                     ) 
                 }
@@ -278,9 +278,9 @@ int main(int argc,S*argv)
   R 0;
 }
 
+I kreci=0;  //should be inside DEBUG case but needed in r.c cached verbs, at least until caching method changes
 #ifdef DEBUG
 void tf(N n){if(!n)R;DO(2,tf(n->c[i]))free(n->k);repool(n,lsz(sizeof(Node))); } //tree free
-I kreci=0; 
 V krec[1000000];
 I CV(K v) { V a[1000]; I n=0; while(v) { dd(v); a[n++]=v; DO(n, DO2(n-i-1, if(a[i]==a[i+j+1]) R 1;)) if(!(7==v->t && 0==v->n)) R 0; V q=kW(v)[0]; v=0; if(q) v= *(K*)q; } R 0; }//seven_type contains cycle?
 #endif
@@ -288,7 +288,7 @@ I CV(K v) { V a[1000]; I n=0; while(v) { dd(v); a[n++]=v; DO(n, DO2(n-i-1, if(a[
 void finally()
 {
 #ifdef DEBUG   
-tf(SYMBOLS); cd(KTREE); cd(KFIXED);
+tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
 //valgrind --leak-check=full --show-reachable=yes /tmp/a.out
 #endif
 }

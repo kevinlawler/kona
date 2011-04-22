@@ -52,6 +52,7 @@ K kclone(K a)//Deep copy -- eliminate where possible
       CS(3,M(z,kv=kclone((K)kV(a)[CODE])))
     }
     kV(z)[CODE]=kv;
+    kV(z)[DEPTH]=kV(a)[DEPTH];   
     kV(z)[CONTEXT]=kV(a)[CONTEXT];   
     cd(kV(z)[PARAMS]); kV(z)[PARAMS]=kclone(kV(a)[PARAMS]); //oom ; fill instead of kclone?
     cd(kV(z)[LOCALS]); kV(z)[LOCALS]=kclone(kV(a)[LOCALS]); //oom ; fill instead of kclone?

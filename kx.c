@@ -385,13 +385,33 @@ K vf_ex(V q, K g)
       }
     )
     CS(3, //Executing a {} character function such as {1+1}, {x+y+z-1}, or {[a;b] a+b}
-      tree=newK(5,p->n+s->n); if(!tree) GC; //note: cleanup is unusual -- could turn into double labels
-      DO(tree->n, if(!(kK(tree)[i]=newK(0,3))){cd(tree); GC;}) //shallow dict copy -- dictionary entry pool?
-      DO(tree->n, DO2(3, kK(DI(tree,i))[j] = ci(kK((i<p->n?DI(p,i):DI(s,i-p->n)))[j])))//shallow copy
-      I j=0; K*e;
-      DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; if(r && i<r->n) *e=ci(kK(r)[i]); if(!*e && j<g->n) *e=ci(kK(g)[j++])) //merge in
-      z=ex(wd_(kC(o),o->n,&tree,f)); 
-      cd(tree);
+
+      if(((I)kV(f)[DEPTH]) > 500){kerr("stack"); GC; }
+
+      I j=0; K*e; K fw;
+
+      if(!(tree=kV(f)[CACHE_TREE]))  //could merge this and and CACHE_WD check by duplicating the arg merge DO
+      {
+        tree=newK(5,p->n+s->n); if(!tree) GC; //note: cleanup is unusual -- could turn into double labels
+        DO(tree->n, if(!(kK(tree)[i]=newK(0,3))){cd(tree); GC;}) //shallow dict copy -- dictionary entry pool?
+        DO(tree->n, DO2(3,  kK(DI(tree,i))[j] = ci(kK((i<p->n?DI(p,i):DI(s,i-p->n)))[j])))//shallow copy
+        kV(f)[CACHE_TREE]=tree;
+      }
+
+      DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; if(r && i<r->n) *e=ci(kK(r)[i]); if(!*e && j<g->n) *e=ci(kK(g)[j++])) //merge in: CONJ with function args
+
+      if(!(fw=kV(f)[CACHE_WD]))
+      {
+        K fc = kclone(f); //clone the function to pass for _f
+        kV(fc)[DEPTH]++;
+        fw = wd_(kC(o),o->n,&tree,fc);
+        kV(f)[CACHE_WD]=fw;
+        cd(fc);
+      }
+
+      ci(fw);
+      z=ex(fw); 
+      DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; )
     )
   }
 
