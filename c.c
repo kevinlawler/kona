@@ -50,32 +50,48 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   R _n();
 }
 
+I stepopt(S s,I n)
+{
+  if(n==1&&*s=='\n')R 0;
+  else if((n==1&&*s=='/')||(n==2&&*s=='/'&&s[1]=='\n'))R 1;
+  else if((n==1&&*s=='\\')||(n==2&&*s=='\\'&&s[1]=='\n'))R 2;
+  else R 3;
+}
+
 K backslash_s(S s)
 {
-  S t,u=0,w; I c=0,n,m=0,l=0;
+  S t,u=0,w; I c=0,d,n,m=0,l=0;
   FILE*f=loadf(s);
-  K k=0;
+  K k=0,y=0,z=0;
   P(!f,_n());
-  while(0<(c=wds(&k,f)))
-  { n=k->n; t=kC(k);
-    w=s; while(isspace(*w++))l++;
-    if(l==n)continue;
+  while(0<(c=wds(&y,f)))
+  { n=y->n; t=kC(y);
+    w=t; while(isspace(*w++))l++;
+    if(l==n||!n){if(y)cd(y); y=0; continue;}
     O("%s ",t);
     if(-1==getline_(&u,&m,stdin))GC;
-    if(m==1&&*u=='\n')
-    { show(k=ex(wd(t,n)));
-      if(-1==getline_(&u,&m,stdin))GC;
-      if(m==1&&*u=='\n')continue;
-      else if(m==2&&*u=='\\')GC;
-    }
-    else if(m==2&&*u=='\\')GC;
-    else if(m==2&&*u=='/')continue;
-    if(k)cd(k);
+    d=stepopt(u,m);
+    if(d==1){if(y)cd(y); y=0; continue;}else if(d==2)GC;
+    show(k=ex(wd(t,n)));
+    if(k){cd(k); k=0;}
+    if(y){cd(y); y=0;}
+    do{
+      prompt(1);
+      if(0>wds_(&z,stdin,1))GC;
+      w=kC(z); l=z->n;
+      d=stepopt(w,l);
+      if(d==1){if(z)cd(z); z=0; break;}else if(d==2)GC;
+      show(k=ex(wd(w,l)));
+      if(k){cd(k); k=0;}
+      if(z){cd(z); z=0;}
+    }while(d==0||d==3);
   }
 cleanup:
   fclose(f);
   if(u)free(u);
   if(k)cd(k);
+  if(y)cd(y);
+  if(z)cd(z);
   R _n();
 }
 
