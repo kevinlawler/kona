@@ -35,8 +35,8 @@ K _0m(K a)
   I b=0,s=0;
   S v=0;
   if(4==t && !**kS(a)){
-    if(getdelim_(&v,&s,EOF,stdin)==-1)GC;
-    b=1;
+    b=getdelim_(&v,&s,EOF,stdin);
+    if(b==-1||!b)GC;
   }
   else
   {
