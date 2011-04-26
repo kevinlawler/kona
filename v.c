@@ -149,6 +149,7 @@ K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/director
     else R TE; // Type{3,4}/Rank{1,2} Error
   }
   else if(0==bt){z=newK(0,bn);U(z)  DO(bn,M(z,kK(z)[i]=at_verb(a,kK(b)[i]))) }
+  else if(isDotDyadic(b) && at==5){z=newK(0,an); DO(an, kK(z)[i]=ci(*EAP(DI(a,i))))}
   else R TE;
 
   R z;
@@ -197,7 +198,9 @@ I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
   R 0;
 }
 
-I isColonDyadic(K x){R xt==7 && kW(x)[0] ==addressColon && !kW(x)[1];}
+I isVerbDyadic(K x,V v){R xt==7 && kW(x)[0]==v && !kW(x)[1];}
+I isColonDyadic(K x){R isVerbDyadic(x,addressColon);}
+I isDotDyadic(K x)  {R isVerbDyadic(x,addressDot);}
 
 K specialAmendDot(K c, K args) //If c is like colon_dyadic return args@1, else dot
 {
