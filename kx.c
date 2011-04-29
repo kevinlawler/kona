@@ -599,7 +599,7 @@ K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: co
   {
     K a=0,b=0,c=0,d=0;
     K*w=*v;
-    a=*w;
+    U(a=*w);
     if(7==a->t && 0==a->n && (b=kV(a)[CONJ]) && 7==b->t && 0==b->n ) 
     {
       U(b=ex_(kV(a)+CONJ,2))
