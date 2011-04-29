@@ -352,12 +352,14 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       V*o = kW(g);
 
                       z=wd_(s+k+1,r-2,dict,func);
+                      if(!z){cd(g); R PE;}
                       //g o z   oom: you can return 0 but catch above?
 
                       if(MARK_CONDITIONAL==ABS(m[k-1]))
                       {
                         V*zp=kW(z);
                         while(*zp && !bk(*zp))zp++;
+
                         SW(s[k-1]){CS(':',b=4) CS('f',b=5) CS('e',b=6) CS('o',b=7)  }  //: if while do
                         //if(b!=6&&!bk(*zp)){cd(g);cd(z); R (I)PE;} //check that at least one ; is present | commented on trial basis
                         ((K)z)->n=b;
