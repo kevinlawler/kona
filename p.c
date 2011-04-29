@@ -352,6 +352,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       V*o = kW(g);
 
                       z=wd_(s+k+1,r-2,dict,func);
+                      if(!z){cd(g); R (I)PE;}
                       //g o z   oom: you can return 0 but catch above?
 
                       if(MARK_CONDITIONAL==ABS(m[k-1]))
