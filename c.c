@@ -3,6 +3,12 @@
 #include "k.h"
 #include "c.h"
 
+Z I filexist(S s);
+Z K backslash_s(S s);
+Z K backslash_t(S s);
+Z K precision_(void);
+Z K workspace(S s);
+
 void boilerplate()
 {
  if(!isatty(STDOUT) || !isatty(STDIN)) R;
@@ -58,7 +64,7 @@ I stepopt(S s,I n)
   else R 3;
 }
 
-K backslash_s(S s)
+Z K backslash_s(S s)
 {
   S t,u=0,w; I c=0,d,n,m=0,l=0;
   FILE*f=loadf(s);
@@ -379,7 +385,7 @@ K backslash(S s, I n)
 }
 
 
-K backslash_t(S s)
+Z K backslash_t(S s)
 {
   I d=clock(); 
   cd(X(s));
@@ -391,7 +397,7 @@ K backslash_t(S s)
 #ifdef __MACH__
 #include <mach/mach_types.h> 
 #endif
-K workspace(S s)
+Z K workspace(S s)
 {
   K z=newK(-1,3); U(z)
 
