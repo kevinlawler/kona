@@ -6,7 +6,8 @@
 #include "vf.h"
 
 //Parser
-I formed_group(C c){S s="\n \\/\"";R charpos(s,c);} //could be table-lookup instead
+
+Z I formed_group(C c){S s="\n \\/\"";R charpos(s,c);} //could be table-lookup instead
 S formed_dfa = 
 // n_\/"*  newline,quote,space,\,/,else (formed_group)
   "023451" //0 OK-NEWLINE
@@ -64,7 +65,7 @@ I complete(S a, I n, PDA *q, I *marks) //well-formed or incomplete codeblock? al
 }
 
 
-I mark_symbol(S s,I n,I i,I*m) //this is probably pretty close to the convention for 'names'
+Z I mark_symbol(S s,I n,I i,I*m) //this is probably pretty close to the convention for 'names'
 {
   if(m[i] || '`'!=s[i]) R 0;//#spaces marked
   I adot=0,j=0,k;
@@ -90,10 +91,10 @@ I mark_symbol(S s,I n,I i,I*m) //this is probably pretty close to the convention
   R j+1;
 }
 
-I isalnum_(C c){R isalnum(c) || '_'==c;} 
-I isalnumdot_(C c){R isalnum_(c) || '.'==c;} 
+Z I isalnum_(C c){R isalnum(c) || '_'==c;} 
+Z I isalnumdot_(C c){R isalnum_(c) || '.'==c;} 
 
-I mark_name(S s,I n,I i,I*m)
+Z I mark_name(S s,I n,I i,I*m)
 {
   I c=0;
   if(m[i])R 0;
@@ -117,7 +118,7 @@ I mark_name(S s,I n,I i,I*m)
 #define EAT(x) while(i+c<n&&!m[i+c]&&x(s[i+c]))c++;
 #define EAT_DIGITS EAT(isdigit) //doesn't need !m[i+c] check
 #define EAT_SPACES EAT(isspace) //does
-I mark_number(S s,I n,I i,I*m)
+Z I mark_number(S s,I n,I i,I*m)
 {
   I c=0;
   if(m[i])R 0;
@@ -147,9 +148,9 @@ I mark_number(S s,I n,I i,I*m)
   if(c) EAT_SPACES
   R c;
 }
-I mark_adverb(S s,I n,I i,I*m){C c=s[i]; R m[i]?0:c=='/'||c=='\\'||c=='\''?i<n-1&&s[i+1]==':'?2:1:0;}
+Z I mark_adverb(S s,I n,I i,I*m){C c=s[i]; R m[i]?0:c=='/'||c=='\\'||c=='\''?i<n-1&&s[i+1]==':'?2:1:0;}
 
-I mark_verb(S s,I n,I i,I*m)
+Z I mark_verb(S s,I n,I i,I*m)
 {
   I c=0;
 
@@ -168,7 +169,7 @@ I mark_verb(S s,I n,I i,I*m)
   R c;
 }
 
-I mark_conditional(S s,I n,I k,I*m) // :[1;`true;`false]
+Z I mark_conditional(S s,I n,I k,I*m) // :[1;`true;`false]
 {
   S t[]={"if","do","while"};
   if(s[k]==':' && s[k+1]=='[' && !m[k])R 1; // :[1;`true;`false]
@@ -176,8 +177,8 @@ I mark_conditional(S s,I n,I k,I*m) // :[1;`true;`false]
   R 0;
 }
 
-I mark_end(S s,I n,I i,I*m){C c=s[i]; R m[i]?0:c==';'||c=='\n'?1:0;} // ?windows may need \r,\n to be -MARK_END,MARK_END
-I mark_ignore(S s,I n,I i,I*m){C c=s[i]; R m[i]?0:isspace(c)?1:0;}
+Z I mark_end(S s,I n,I i,I*m){C c=s[i]; R m[i]?0:c==';'||c=='\n'?1:0;} // ?windows may need \r,\n to be -MARK_END,MARK_END
+Z I mark_ignore(S s,I n,I i,I*m){C c=s[i]; R m[i]?0:isspace(c)?1:0;}
 
 //// 9 uses of colon: /////////////////
 //amend/assignment  a[]+:9
@@ -205,7 +206,7 @@ enum mark_members{MARK_UNMARKED,MARK_IGNORE,MARK_BRACKET,MARK_END,MARK_PAREN,MAR
 
 //A mild overcount of the number of words that need to be added to the wordlist. Off by O(1) at most (?)
 //Corrected soon after. No sense in duplicating logic here: let the word-converter decide the true count
-I overcount(I*m,I n) {I c=0,p=0;DO(n, if( WORD_START(m[i]) && !(m[i]==p && GREEDY_START(p))){p=m[i];c++;}) R c; }
+Z I overcount(I*m,I n) {I c=0,p=0;DO(n, if( WORD_START(m[i]) && !(m[i]==p && GREEDY_START(p))){p=m[i];c++;}) R c; }
 
 I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 #define marker(a,b) DO(n,i+=max(0,-1+mark(m+i,a(s,n,i,m),b))) 
@@ -278,8 +279,8 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
   R v; 
 }
 
-I isodigit(C c){R isdigit(c) && c<'8';} // is octal digit
-I odigitlen3(S s){I i=0;while(s[i]&&isodigit(s[i])&&i<3)i++;R i;} // 0-3 consecutive octal digits
+Z I isodigit(C c){R isdigit(c) && c<'8';} // is octal digit
+Z I odigitlen3(S s){I i=0;while(s[i]&&isodigit(s[i])&&i<3)i++;R i;} // 0-3 consecutive octal digits
 
 C unescape(S s, I*k) //*k - return is composed of how many [escaped] chars
 {
@@ -293,8 +294,8 @@ C unescape(S s, I*k) //*k - return is composed of how many [escaped] chars
   R (C) (UC) MIN(a,255);
 }
 //assumes s[0:n-1] could be the inside, [exclusive] of any complete MARK_QUOTE token ; checks !isodigit(s[n])
-I unescaped_size(S s,I n){I k=0;DO(n,k++;if('\\'==s[i])i+=max(1,odigitlen3(s+i+1)))R k;}
-I unescaped_fill(S d, S s, I n){I k=0,q;DO(n,d[k++]=unescape(s+i,&q);i+=q-1) R k;} 
+Z I unescaped_size(S s,I n){I k=0;DO(n,k++;if('\\'==s[i])i+=max(1,odigitlen3(s+i+1)))R k;}
+Z I unescaped_fill(S d, S s, I n){I k=0,q;DO(n,d[k++]=unescape(s+i,&q);i+=q-1) R k;} 
 
 S param_dfa = 
 // a!;w]*  alpha,digit/underscore,semicolon,whitespace,right-bracket,else
@@ -305,8 +306,8 @@ S param_dfa =
 //"444444" //Accept
 //"555555" //Reject
 ;
-I param_gp(C c){R isalpha(c)?0:isdigit(c)||'_'==c?1:';'==c?2:isspace(c)?3:']'==c?4:5;}
-I param_validate(S s,I n) // Works on ([]) and {[]} but pass inside exclusive eg "{..[.].}" -> "..[.]."
+Z I param_gp(C c){R isalpha(c)?0:isdigit(c)||'_'==c?1:';'==c?2:isspace(c)?3:']'==c?4:5;}
+Z I param_validate(S s,I n) // Works on ([]) and {[]} but pass inside exclusive eg "{..[.].}" -> "..[.]."
 { //1-no params, 1-params-ok, 2-params-fail. Cannot assume enclosures are matched ( eg "{[}" )
   S u=s+n;
   while(s<u && isspace(*s) && '\n'!=*s)s++;

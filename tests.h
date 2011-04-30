@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 K _ceiling(K a);
 K _size(K a);
 K _abs(K a);
@@ -8,10 +7,6 @@ K _db(K x);
 K _jd(K a);
 K _f();
 K _n();
-I testsIO();
-I tests02();
-I tests01();
-I testsBook();
 I test();
 #if defined(DEBUG)
 extern V krec[1000000];
