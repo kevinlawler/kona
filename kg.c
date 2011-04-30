@@ -6,6 +6,8 @@
 #include "kg.h"
 #include "km.h"
 
+Z I mergerComparer(K a, I r, I i, I j);
+
 I FC(F a, F b)//Floating-Point Compare
 {
   F E=0.00000000000000000001; //This value seems to work, might should be a different one though
@@ -65,7 +67,7 @@ K charGrade(K a, I r)
   cd(d);
   R s;
 }
-I mergerComparer(K a, I r, I i, I j)//Could unroll this
+Z I mergerComparer(K a, I r, I i, I j)//Could unroll this
 {
   I t=a->t; 
   //-3 has its own sort, won't be merged

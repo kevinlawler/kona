@@ -8,6 +8,10 @@
 
 /* misc verbs */
 
+Z I updateIndex(K *p,I x,K r);
+Z K lookupEntryOrCreate(K *p,S k);
+Z S notsp(S a);
+
 K itemAtIndex(K a, I i)// Return i-th item from any type as K - TODO: oom wherever this is used
 {
   I at=a->t;
@@ -85,7 +89,7 @@ K* denameRecurse(K*p,S t,I create)
   R denameRecurse(p,t,create);
 }
 
-K lookupEntryOrCreate(K *p, S k) //****only *dict or *_n are passed to here
+Z K lookupEntryOrCreate(K *p, S k) //****only *dict or *_n are passed to here
 {
   K a=*p, x;
 
@@ -167,7 +171,7 @@ K at(K x, K y)
   R z;
 }
 
-I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
+Z I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
 {
   I pt=(*p)->t, rt=r->t;
 
@@ -290,7 +294,7 @@ K at_tetradic(K a, K b, K c, K y)
 K colon_monadic(K a){R ci(a);}
 K colon_dyadic(K a, K b){R ci(b);}
 
-S notsp(S a)
+Z S notsp(S a)
 {//In terms of interned S:  Output `x. for input `x
   I b=strlen(a);
   S c=strcpy(malloc(b+2),a);

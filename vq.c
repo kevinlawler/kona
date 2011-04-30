@@ -40,7 +40,7 @@ F num_ex(K a, F x)//f-> monadic, numeric in&out
   R y;
 }
 
-I isShallowNumeric(K k)
+Z I isShallowNumeric(K k)
 {
   if(ABS(k->t) > 2) R 0;
   if(0==k->t) DO(k->n, I t=kK(k)[i]->t; if(t!=1 && t!=2) R 0)
@@ -104,7 +104,7 @@ K what_triadic(K a, K b, K c)//TODO: 0i -0i 0n
   R z;
 }
 
-K qrand(K a,K b)
+Z K qrand(K a,K b)
 {
   I at=a->t,bt=b->t;
   K y;

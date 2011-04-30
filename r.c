@@ -12,6 +12,12 @@
 
 //Reserved verbs/functions (_verb)
 
+Z I CIX(K a,I i,K x);
+Z I binr(K a,I b,I c,K x);
+Z I date_from_jdn(I j);
+Z I jdn_from_date(I year,I month,I day);
+Z S rangematch(S p,C t,S r);
+
 //'S' for [pre-]Scripted. These macros should be refactored/rewritten. Certainly don't need new K every time.
 //The a=kreci stuff is a kluge we use since f##_KVAR == vs_KVAR (and KFIXED) live outside the test framework 
 #define S_MONAD_(f,v,t) K v; K f(K x){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,v);cd(v);} K k=newK(0,1); U(k) kK(k)[0]=x; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
@@ -815,7 +821,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
 }
 
 
-S rangematch(S p, C t, S r) //BSD.  p pattern t testchar r represented. R 0 on malformed/mismatch
+Z S rangematch(S p, C t, S r) //BSD.  p pattern t testchar r represented. R 0 on malformed/mismatch
 {
 	I n, k=0; //negate, ok
 	C c, d;
@@ -873,7 +879,7 @@ K _m(){R NYI;}
 /////////////////////////////////////////
 //Utility Functions /////////////////////
 /////////////////////////////////////////
-I CIX(K a,I i,K x) //compare a[i] vs x,  a->t <= 0
+Z I CIX(K a,I i,K x) //compare a[i] vs x,  a->t <= 0
 {
   I at=a->t;
   I t=x->t,r=0;
@@ -898,7 +904,7 @@ I CIX(K a,I i,K x) //compare a[i] vs x,  a->t <= 0
   R r;
 }
 
-I binr(K a,I b,I c,K x)
+Z I binr(K a,I b,I c,K x)
 {
   I i=b+(c-b)/2, r=CIX(a,i,x);//i is sic
   if(0==r) { if(i>0 && !CIX(a,i-1,x))r=1;else R i; }
@@ -916,7 +922,7 @@ K _dot_t()
   return Kf(k_epoch_offset + (F)t.tv_sec + (F)t.tv_usec/1.0e6);
 }
 
-I jdn_from_date(I year, I month, I day) //This and the other one Fair Use / Boost License Claus Tondering
+Z I jdn_from_date(I year, I month, I day) //This and the other one Fair Use / Boost License Claus Tondering
 {
   I a = (14-month)/12;
   I y = year+4800-a;
@@ -924,7 +930,7 @@ I jdn_from_date(I year, I month, I day) //This and the other one Fair Use / Boos
   R day + (153*m+2)/5 + y*365 + y/4 - y/100 + y/400 - 32045 - 2464329; //Last constant shifts day 0 to 20350101 epoch
 }
 
-I date_from_jdn(I j)
+Z I date_from_jdn(I j)
 {
   I b, c, d, e, m;
   I year,month,day;

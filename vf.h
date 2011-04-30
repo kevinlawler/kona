@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 K enlist(K x);
 K demote(K a);
 K cd(K a);
@@ -9,23 +8,17 @@ I FC(F a,F b);
 F FF(F f);
 F tround(F f);
 I charpos(S s,C c);
-I TNI(I p,C h);
 extern I PP;
 K kclone(K a);
 K at(K x,K y);
 K format(K a);
-K formatI(I x);
-K formatF(F x,I y,I c);
 K newK(I t,I n);
-K formatS(S x);
 K Kf(F x);
 extern F ni[];
 K formKfCS(S s);
 K Ki(I x);
 extern I NI[];
-I parseNI(S s,I n);
 K formKiCS(S s);
 K Ks(S x);
 S sp(S k);
-K formKsCS(S s);
 S CSK(K x);

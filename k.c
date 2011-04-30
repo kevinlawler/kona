@@ -22,7 +22,10 @@
 
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
 extern K kerr(cS s){ R snprintf(errmsg,256,"%s",s),(K)0;} 
-I oerr(){R O("%s %s\n",errmsg,"error");}
+Z I oerr(){R O("%s %s\n",errmsg,"error");}
+
+Z K XN(S s,I n);
+
 
 N SYMBOLS;//immutable symbol interning
 K KTREE;  //dictionary, the main/global variable storage area
@@ -41,7 +44,7 @@ I max(I a,I b){R a>b?a:b;}
 I min(I a,I b){R a<b?a:b;}
 
 K X(S s){R XN(s,strlen(s));}  
-K XN(S s,I n){R ex(wd(s,n));} //asserts ex(x) has first-line U(x)
+Z K XN(S s,I n){R ex(wd(s,n));} //asserts ex(x) has first-line U(x)
 K KX(K x){R XN(CSK(x),xn);}  //assumes 3==ABS(xt)
 
 //TODO: open() can set errno, everywhere
@@ -96,7 +99,6 @@ I charsVerb(C c)  {R charpos(vc,c);}
 
 C adverbsChar(V p) { R in(p,adverbs)?ac[diff(p,adverbs)%3]:'\0';}
 
-I isCharAdverb(C c){R stringHasChar(ac,c);}
 I charsAdverb(C c) {R charpos(ac,c);}
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
@@ -114,7 +116,7 @@ I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class i
 }
 I adverbClass(V p) { R in(p,adverbs)? 1+diff(p,adverbs)/3: 0; } //0: not an adverb, 1: / \ ', 2: /: \: ':
 
-I specialValence(V p){ R (p==addressSSR||p==addressWhat)?3:(p==addressAt||p==addressDot)?4:0;}
+Z I specialValence(V p){ R (p==addressSSR||p==addressWhat)?3:(p==addressAt||p==addressDot)?4:0;}
 I valence(V p)
 {
   I a,i;
@@ -170,8 +172,8 @@ I valence(V p)
 
 I VA(V p){R sva(p) || adverbClass(p);}  //Verb or Adverb?
 
-I isescape(UC c) {R (c=='"'||c=='\\'||c=='\b'||c=='\n'||c=='\r'||c=='\t');}
-I needspt0(F f){if(isnan(f)||-FI==f||FI==f)R 0; Z C b[512];snprintf(b,512,"%.*g",(int)PP,f); R !stringHasChar(b,'.') && !stringHasChar(b,'e');}//no better way I know
+Z I isescape(UC c) {R (c=='"'||c=='\\'||c=='\b'||c=='\n'||c=='\r'||c=='\t');}
+Z I needspt0(F f){if(isnan(f)||-FI==f||FI==f)R 0; Z C b[512];snprintf(b,512,"%.*g",(int)PP,f); R !stringHasChar(b,'.') && !stringHasChar(b,'e');}//no better way I know
 
 int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: monadic (_5m)
 {
@@ -267,8 +269,6 @@ K show(K a)
   R a;
 }
 
-V ptf(V v){ R 0;} //delme
-
 int main(int argc,S*argv)
 {
   kinit();
@@ -282,7 +282,7 @@ I kreci=0;  //should be inside DEBUG case but needed in r.c cached verbs, at lea
 #ifdef DEBUG
 void tf(N n){if(!n)R;DO(2,tf(n->c[i]))free(n->k);repool(n,lsz(sizeof(Node))); } //tree free
 V krec[1000000];
-I CV(K v) { V a[1000]; I n=0; while(v) { dd(v); a[n++]=v; DO(n, DO2(n-i-1, if(a[i]==a[i+j+1]) R 1;)) if(!(7==v->t && 0==v->n)) R 0; V q=kW(v)[0]; v=0; if(q) v= *(K*)q; } R 0; }//seven_type contains cycle?
+/* Z I CV(K v) { V a[1000]; I n=0; while(v) { dd(v); a[n++]=v; DO(n, DO2(n-i-1, if(a[i]==a[i+j+1]) R 1;)) if(!(7==v->t && 0==v->n)) R 0; V q=kW(v)[0]; v=0; if(q) v= *(K*)q; } R 0; }//seven_type contains cycle? */
 #endif
 
 void finally()

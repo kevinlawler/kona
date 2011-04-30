@@ -9,6 +9,9 @@
 
 /* dot monadic, dyadic, triadic, tetradic */
 
+Z K dot_ref(K *p,K *x,K *z,I s,K c,K y);
+Z K makeable(K a);
+
 K of2(K d, K *x, K *y, I s)
 {
   K f=*x;
@@ -269,8 +272,8 @@ K make(K a)//Assumes makeable() is true
   DO(n, x=kK(z)[i]; y=kK(a)[i]; DO2(y->n,kK(x)[j]=y->t?Ks(kS(y)[j]):ci(kK(y)[j])) if(y->n<3)kK(x)[2]=_n())  //oom
   R z;
 }
-K unmake(K a){K z=kclone(a); z->t=0; R z;}//TODO: deep clone inefficient
-K makeable(K a) //TODO: this has to be reworked. can't hang out raw in dot_monadic as it is currently
+Z K unmake(K a){K z=kclone(a); z->t=0; R z;}//TODO: deep clone inefficient
+Z K makeable(K a) //TODO: this has to be reworked. can't hang out raw in dot_monadic as it is currently
 {
   I t=a->t, n=a->n;
   //All this was moved here from make(). not sure how to handle error checking when it's outside like this

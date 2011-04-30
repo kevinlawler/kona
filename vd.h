@@ -1,9 +1,6 @@
-/* This file was automatically generated.  Do not edit! */
 K KX(K x);
 K dot_monadic(K x);
-K unmake(K a);
 K Ks(S x);
-K makeable(K a);
 K make(K a);
 K kclone(K a);
 extern S __d;
@@ -21,7 +18,6 @@ K at_ref(K *p,K b,K c,K y);
 I args(int n,S *v);
 K specialAmendDot(K c,K args);
 I countI(K a);
-K dot_ref(K *p,K *x,K *z,I s,K c,K y);
 K vf_ex(V q,K g);
 K dot(K a,K b);
 K collapse(K x);
