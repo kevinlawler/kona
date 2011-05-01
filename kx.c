@@ -5,10 +5,18 @@
 #include "k.h"
 #include "kx.h"
 #include "km.h"
+#include "v.h"
+
+Z K bv_ex(V *p,K k);
+Z K dv_ex(K a,V *p,K b);
+Z K ex0(V *v,K k,I r);
+Z K ex2(V *v,K k);
+Z V ex_(V a,I r);
+
 
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type
 //TODO: consider merging dv_ex with vf_ex
-K dv_ex(K a, V *p, K b) 
+Z K dv_ex(K a, V *p, K b) 
 {
   if(!p || !*p) R 0; //TODO: ???
   if(!b) R kerr("undefined"); //TODO: Projection?  'u v\' 
@@ -422,7 +430,7 @@ cleanup:
 }
 
 //Could probably fold ex0 into this function
-V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
+Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 {
   K x,y=0,z;
 
@@ -445,7 +453,7 @@ V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
 K ex(K a){ U(a); K z=ex_(&a,0); cd(a);R z;} //Input is 7-0 type from wd()
 
-K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
+Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
   I n=0, e=1, i,a,b;
   while(v[n])if(bk(v[n++]))e++;
@@ -491,7 +499,7 @@ K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/retu
   R z;
 }
 
-K bv_ex(V*p,K k)
+Z K bv_ex(V*p,K k)
 {
   V q=*(V*)*p;
   K x;
@@ -579,7 +587,7 @@ K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (ful
   R a;
 }
 
-K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: conjunction?
+Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: conjunction?
 {
   K t0,t2,t3,e,u;
   I i=0;

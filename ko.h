@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 K at(K x,K y);
 K promote(K a);
 K demote(K a);

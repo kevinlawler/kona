@@ -12,12 +12,16 @@
 #include "k.h"
 #include "kn.h"
 
+Z I close_tape(I i);
+Z K modified_execute(K x);
+
+
 void *get_in_addr(struct sockaddr *sa) { if (sa->sa_family == AF_INET) R &(((struct sockaddr_in*)sa)->sin_addr);R  &(((struct sockaddr_in6*)sa)->sin6_addr); } // get sockaddr, IPv4 or IPv6
 
 M0 CP[FD_SETSIZE]; //Connection Pool (large array)
 
 I wipe_tape(I i) { if(CP[i].k)cd(CP[i].k); memset(&CP[i],0,sizeof(CP[0])); R 0;} //safe to call >1 time
-I close_tape(I i) { wipe_tape(i); close(i); FD_CLR(i, &master); R 0;}
+Z I close_tape(I i) { wipe_tape(i); close(i); FD_CLR(i, &master); R 0;}
 
 K read_tape(I i, I type) // type in {0,1} -> {select loop, 4: resp reader}
 {
@@ -67,7 +71,7 @@ cleanup:
   R (K)-1;
 }
 
-K modified_execute(K x) //TODO: consider: this should be modified to use error trap. _4d should be modified to expect error trap output. 
+Z K modified_execute(K x) //TODO: consider: this should be modified to use error trap. _4d should be modified to expect error trap output. 
 {
   //K-Lite manual gives {:[4:x; .x; .[.;x]} as processing function
   if(4==xt || 3==ABS(xt)) R X(CSK(x));

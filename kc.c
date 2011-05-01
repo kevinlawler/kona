@@ -12,6 +12,9 @@
 #include "k.h"
 #include "kc.h"
 
+Z I randomBits();
+Z I wdss(K *a,FILE *f);
+
 //0: not a verb pointer, 1: monadic, 2: dyadic, 3: triadic
 I vn_ct, vm_ct, vd_ct, vt_ct;
 I adverb_ct;
@@ -44,7 +47,7 @@ cleanup:
   R v?-v:c; // -1 EOF, -2 unmatched, -3 nest
 }
 
-I wdss(K*a,FILE*f)
+Z I wdss(K*a,FILE*f)
 {
   I c=0,n=0;
   K k=0,z=newK(0,0);
@@ -212,5 +215,5 @@ I kinit() //oom (return bad)
   R 0;
 }
 
-I randomBits(){I s;I f=open("/dev/urandom",0);read(f,&s,sizeof(s));close(f);R s;} //lfop
+Z I randomBits(){I s;I f=open("/dev/urandom",0);read(f,&s,sizeof(s));close(f);R s;} //lfop
 void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}

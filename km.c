@@ -14,6 +14,15 @@
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
 V KP[sizeof(V)*8+1]; //KPOOL
 
+Z I cl2(I v);
+Z I kexpander(K *p,I n);
+Z I nearest(I i,I m);
+Z K kapn_(K *a,V *v,I n);
+Z V amem(I k);
+Z V kalloc(I k);
+Z V unpool(I r);
+
+
 I OOM_CD(I g, ...) //out-of-memory count-decrement 
 { va_list a; V v,o=(V)-1;
   va_start(a,g);while(o!=(v=va_arg(a,V)))if(!v)g=1; va_end(a);
@@ -51,7 +60,7 @@ K ci(K a){if(a)a->c++; R a;}
 I bp(I t) {SW(ABS(t)){CSR(1, R sizeof(I)) CSR(2, R sizeof(F)) CSR(3, R sizeof(C)) default: R sizeof(V); } } //Default 0/+-4/5/6/7  (assumes sizeof(K)==sizeof(S)==...)
 I sz(I t,I n){R 3*sizeof(I)+(7==t?TYPE_SEVEN_SIZE:n)*bp(t)+(3==ABS(t));} //not recursive. assert sz() > 0:  Everything gets valid block for simplified munmap/(free)
 I PG(){R sysconf(_SC_PAGE_SIZE);} //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
-I nearest(I i,I m){I k=i%m;R k?i+m-k:i;} //up 0,8,...,8,16,16,...
+Z I nearest(I i,I m){I k=i%m;R k?i+m-k:i;} //up 0,8,...,8,16,16,...
 #define nearPG(i) nearest((i),PG())
 //#define nearI(i) nearest((i),sizeof(I))
 
@@ -73,14 +82,14 @@ K newK(I t, I n)
   #endif
   R z;
 }
-V kalloc(I k) //bytes. assumes k>0
+Z V kalloc(I k) //bytes. assumes k>0
 {
   I r=lsz(k);
   if(r>KP_MAX)R amem(k);// allocate for objects of sz > 2^KP_MAX
   R unpool(r);
 }
-V amem(I k){K z;if(MAP_FAILED==(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME; R z;}
-V unpool(I r)
+Z V amem(I k){K z;if(MAP_FAILED==(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME; R z;}
+Z V unpool(I r)
 {
   V*z;
   V*L=((V*)KP)+r;
@@ -95,7 +104,7 @@ V unpool(I r)
   R z;
 }
 
-I cl2(I v) //optimized 64-bit ceil(log_2(I)) 
+Z I cl2(I v) //optimized 64-bit ceil(log_2(I)) 
 {
     if(!v)R -1;// no bits set
     I e = 0;
@@ -121,7 +130,7 @@ I repool(V v,I r)//assert r < KP_MAX
   KP[r]=v;
   R 0;
 }
-I kexpander(K*p,I n) //expand only. 
+Z I kexpander(K*p,I n) //expand only. 
 {
   K a=*p;
   V v; I c=sz(a->t,a->n),d=sz(a->t,n),e=nearPG(c),f=d-e;
@@ -142,7 +151,7 @@ I kexpander(K*p,I n) //expand only.
   R 1;
 }
 
-K kapn_(K *a,V *v,I n)
+Z K kapn_(K *a,V *v,I n)
 {
   if(!a||!n)R 0;
   K k=*a;

@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 K of(K a,K b);
 K dot_tetradic_2(K *g,K b,K c,K y);
 extern V ends[];
@@ -9,17 +8,12 @@ extern I adverb_ct;
 extern V adverbs[];
 K kap(K *a,V v);
 K itemAtIndex(K a,I i);
-K bv_ex(V *p,K k);
 K ex1(V *w,K k);
-K ex0(V *v,K k,I r);
 K _n();
 I bk(V p);
-V ex_(V a,I r);
 K wd_(S s,I n,K *dict,K func);
 K ex(K a);
-K *EVP(K e);
 K DI(K d,I i);
-K ex2(V *v,K k);
 K kclone(K a);
 K Kv();
 K dot_tetradic(K a,K b,K c,K y);
@@ -60,4 +54,3 @@ I valence(V p);
 I sva(V p);
 I adverbClass(V p);
 K kerr(cS s);
-K dv_ex(K a,V *p,K b);

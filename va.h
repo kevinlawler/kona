@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 K floor_verb(K a);
 I FC(F a,F b);
 F FF(F f);
