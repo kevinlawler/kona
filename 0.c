@@ -27,6 +27,19 @@
 // (type;width)1:f        fixedwidth data(cbsijfd IFCSDTZMm)
 // Blank skips. S strips. f can be (f;index;length).
 
+/* prototypes */
+Z K _0d_write(K a,K b);
+Z K _0d_read(K a,K b);
+Z K _1m_r(I f,V fixed, V v,V aft,I*b);
+Z K _1d_char(K x,K y);
+Z K _1d_read(K a,K b);
+Z K _1d_write(K x,K y);
+Z I disk(K x);
+Z I rrep_4(S *z,S a,S t);
+Z K readVector(K x,I t);
+Z I sendall(I s,S b,I k);
+
+
 K _0m(K a)
 {
   I t=a->t;
@@ -69,7 +82,7 @@ K _0d(K a,K b) //lfop
   R TE;
 }
 
-I ok_0dw(K b) //b must be +-3, or 0 containing {+3,-3,()}
+Z I ok_0dw(K b) //b must be +-3, or 0 containing {+3,-3,()}
 {
   I t=b->t,n=b->n; K k;
   if(3!=ABS(t)) {
@@ -79,7 +92,7 @@ I ok_0dw(K b) //b must be +-3, or 0 containing {+3,-3,()}
   R 1;
 }
 
-K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
+Z K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
 {
   I t=b->t, n=b->n;
   K k;
@@ -124,7 +137,7 @@ K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
   R _n();
 }
 
-K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a bad length for `f
+Z K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a bad length for `f
 {
   //may assume !a->t
   K z=0;
@@ -258,7 +271,7 @@ K _1m(K x) //Keeps binary files mapped
   R z;
 } 
 
-K _1m_r(I f,V fixed, V v,V aft,I*b) //File descriptor, moving * into mmap, fixed * to last mmapped+1, bytes read
+Z K _1m_r(I f,V fixed, V v,V aft,I*b) //File descriptor, moving * into mmap, fixed * to last mmapped+1, bytes read
 {
   I s=aft-v; //subtle but signed not big enough to hold max difference here
   if(s < 4*sizeof(I)) R NE; // file is malformed
@@ -307,7 +320,7 @@ K _1d(K x,K y)
 }
 
 //TODO: for testing this, use 1:write and 2:read (or 1:read) to confim items are the same before write & after read
-K _1d_write(K x,K y)
+Z K _1d_write(K x,K y)
 {
   //Note: all file objects must be at least 4*sizeof(I) bytes...fixes bugs in K3.2, too
   //K3.2 Bug - "a"1:`a;2:"a" or 1:"a" - wsfull, tries to read sym but didn't write enough bytes?
@@ -364,7 +377,7 @@ I wrep(K x,V v,I y)//write representation. see rep(). y in {0,1}->{net, disk}
   R e+r;
 }
 
-I disk(K x){R rep(x,1);}//how many bytes does this take on disk?
+Z I disk(K x){R rep(x,1);}//how many bytes does this take on disk?
 I rep(K x,I y) //#bytes in certain net/disk representations 
 {
   //Notes on verbs/functions: (changes must go to rep(),wrep(),and rrep()
@@ -442,7 +455,7 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
   R z;
 }
 
-I rrep_4(S*z,S a,S t) //type4 reader for 2: monadic
+Z I rrep_4(S*z,S a,S t) //type4 reader for 2: monadic
 {
   S d=a; 
   while(a<t && *a)a++;
@@ -454,15 +467,12 @@ I rrep_4(S*z,S a,S t) //type4 reader for 2: monadic
 }
 
 
-
-
-
 //From http:/kx.com/q/c/c/readme.txt
 //type: KBGHIJEFSCDTZ
 //base: KGGHIJEFSCIIF
 //size: *1124848*1448
 
-K _1d_read(K a,K b)
+Z K _1d_read(K a,K b)
 {
   S types = "cbsijfdmIFCSDZM"; //Help has this with space ' ' as full list (with 'm' at end)? But "@cbsifdMmDTZIFSCY" (and N in k20.dll) from strings. Manual has outdated "cbsifd CS"
   I fixed[] = {sizeof(C),sizeof(int8_t),sizeof(int16_t),sizeof(int32_t), //1,1,2,4,8,4,8 on 64-bit arch
@@ -568,7 +578,7 @@ K _1d_read(K a,K b)
   R z;
 }
 
-K _1d_char(K x, K y)
+Z K _1d_char(K x, K y)
 {
   C a=*kC(x);
   if('c'==a) R readVector(y,-3);
@@ -684,7 +694,7 @@ K _3m(K x)
 }
 
 
-I sendall(I s,S b,I k){I t=0,r=k,n;while(t<k){n=send(s,b+t,r,0);if(-1==n)break;t+=n;r-=n;}R -1==n?n:0;}//from beej
+Z I sendall(I s,S b,I k){I t=0,r=k,n;while(t<k){n=send(s,b+t,r,0);if(-1==n)break;t+=n;r-=n;}R -1==n?n:0;}//from beej
 
 I ksender(I sockfd,K y,I t)
 {
@@ -822,7 +832,7 @@ K _5d(K x,K y)
 }
 
 K _6m(K x) { R readVector(x,-3);} //Believe 6:"file.K" to be equivalent to "c"1:"file.K"
-K readVector(K x,I t)//This is largely copy/pasted from 0:. Written only for -1,-2,-3
+Z K readVector(K x,I t)//This is largely copy/pasted from 0:. Written only for -1,-2,-3
 {
   P(4!=xt && 3!=ABS(xt), TE)
 

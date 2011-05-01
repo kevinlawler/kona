@@ -5,9 +5,12 @@
 
 /* format */
 
+Z I TNI(I p,C h);
+Z I parseNI(S s,I n);
+
 S CSK(K x){ R !x?0:4==xt?*kS(x):3==ABS(xt)?kC(x):0;}//non-allocating CSTRING from K. assumes +4,+-3 types are null-terminated
 
-K formKsCS(S s) 
+Z K formKsCS(S s) 
 {
   //Could remove this function. It's equivalent to Ks(sp(s))
   S t=sp(s);
@@ -53,13 +56,13 @@ K formKfCS(S s) // 0.0 $ "123\000456\000" is 123 ('\0' char)
   R Kf(r); //oom
 }
 
-K formatS(S x)
+Z K formatS(S x)
 { I n=strlen(x);
   K z=newK(-3,n);
   if(z)sprintf(kC(z),"%s",x); //OK since 3/-3 is null-terminated
   R z;
 }
-K formatF(F x, I y, I c)
+Z K formatF(F x, I y, I c)
 { 
   S b= 0==c?"%.*g":1==c?"%.*f":"%.*e";// %#.*g ?? 
   I n=snprintf(0,0,b,y,x);  
@@ -67,7 +70,7 @@ K formatF(F x, I y, I c)
   if(z)sprintf(kC(z),b,y,x);
   R z;
 }
-K formatI(I x)
+Z K formatI(I x)
 { I n=snprintf(0,0,"%ld",x); 
   K z=newK(-3,n);
   if(z)sprintf(kC(z),"%ld",x);
@@ -94,7 +97,7 @@ K format(K a)
 
 I NI[]={0,IN,-II,II,II,-II,II};  //0N,-0I,0I,0n,-0i,0i maps to I
 F ni[]={0,FN,-FI,FI,FN,-FI,FI};  //maps to F
-I TNI(I p,C h) //transition function for parsing 0N -0I 0I 0n ...
+Z I TNI(I p,C h) //transition function for parsing 0N -0I 0I 0n ...
 {
   I c=isblank(h)?0:charpos(" -0NIni",h); //character classes
   if(0==c &&  7>=p)         R   p;
@@ -108,7 +111,7 @@ I TNI(I p,C h) //transition function for parsing 0N -0I 0I 0n ...
   R 10;
 }
 
-I parseNI(S s,I n){I i=0,p=0; while(i<n && *s)p=TNI(p,*s++); R p<7?p:0;}
+Z I parseNI(S s,I n){I i=0,p=0; while(i<n && *s)p=TNI(p,*s++); R p<7?p:0;}
 F tround(F f){F d=FF(f); R (d>0&&!FC(d,1))||(d<0&&!FC(d,0))?ceil(f):floor(f);}
 
 //TODO: Really weird:  run '`g $ 99' run '. _d' see entry '(`s4;99;) in the `.k K-Tree

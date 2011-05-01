@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 void init_genrand64(unsigned long long seed);
 extern I SEED;
 K _dot_t();
@@ -14,7 +13,6 @@ S sp(S k);
 extern S __d;
 K Kn();
 extern K NIL;
-I randomBits();
 void seedPRNG(I s);
 N newN();
 extern N SYMBOLS;
@@ -45,7 +43,6 @@ I getline(S *s,I *n,FILE *f);
 I line(FILE *f,S *a,I *n,PDA *p);
 I lines(FILE *f);
 K kap(K *a,V v);
-I wdss(K *a,FILE *f);
 K cd(K a);
 void pdafree(PDA p);
 K newK(I t,I n);

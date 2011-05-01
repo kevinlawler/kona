@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 K promote(K a);
 I bk(V p);
 K join(K a,K b);
@@ -12,12 +11,10 @@ K drop(K a,K b);
 K rotate(K a,K b);
 K _i();
 K shape(K a);
-I firstDepth(K x);
 void shapeCheck(K a,K p,I d);
 K take_reshape(K a,K b);
 K take(K a,K b);
 K reshape(K a,K b);
-K reshaper(K a,K b,I d,I f,I *p);
 K _n();
 K Ki(I x);
 K Kf(F x);
@@ -42,4 +39,3 @@ K mergeGrade(K a,I r);
 K distributionGrade(K a,I r,I u,I v);
 K charGrade(K a,I r);
 K at(K x,K y);
-K grade_updown(K a,I r);

@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 K _p();
 #if defined(__MACH__) || defined(__OpenBSD__)
 I getline(S *s,I *n,FILE *f);

@@ -1,4 +1,3 @@
-/* This file was automatically generated.  Do not edit! */
 I rp2(I v);
 K newE(S s,K k);
 K newEntry(S s);
@@ -21,15 +20,8 @@ N newN();
 K kap(K *a,V v);
 K kapn(K *a,V v,I n);
 K _n();
-K kapn_(K *a,V *v,I n);
-I kexpander(K *p,I n);
-I cl2(I v);
-V unpool(I r);
-V amem(I k);
 extern F testtime;
-V kalloc(I k);
 K newK(I t,I n);
-I nearest(I i,I m);
 I bp(I t);
 K ci(K a);
 I repool(V v,I r);
@@ -43,5 +35,5 @@ extern I kreci;
 K show(K a);
 extern I tests;
 K cd(K a);
-I OOM_CD(I g,...);
 extern V KP[sizeof(V)*8+1];
+I OOM_CD(I g, ...);

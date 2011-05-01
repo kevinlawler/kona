@@ -11,6 +11,11 @@
 //  This will be significantly slower.
 //
 
+Z I testsIO();
+Z I tests02();
+Z I tests01();
+Z I testsBook();
+
 #define TC_(x, y ) {S s=ts(tp(tc(x, y))); if(test_print) fprintf(stderr, "%s:%u: TC( " x " , " y " ) ... %s\n", __FILE__, __LINE__,s); test_print=0; }
 #define TC(x,...) TC_(#x,#__VA_ARGS__)
 
@@ -75,14 +80,14 @@ I test()
   R r;
 }
 
-I testsIO()
+Z I testsIO()
 {
   return 0;
   //binary - 1: 2:
   TC(1,t:`testfile00; a:(1;1.0;"c";`d;1 2;3.0 4.0;"ef";`g`h;();(1;`z)); t 1: a;  &/ a ~/: (1:t;2:t)) //leaves a file
 }
  
-I tests02()
+Z I tests02()
 {
   TC(`b,(`a`b)[1])
   TC(2, {1+1} 0)
@@ -359,7 +364,7 @@ I tests02()
   R 0; 
 }
 
-I tests01()
+Z I tests01()
 {
   //Backslashes must be represented as \\, percent-signs as %%
   //For ' and // use TC_("string","string")
@@ -484,7 +489,7 @@ I tests01()
 }
 
 
-I testsBook()
+Z I testsBook()
 {
   //K Manual 2.0 compliance
   TC(1 0 1 0 0 2 0 1 2 1,A.I:1 2 3;A.F:2 5 7;B.F: 5 2 5 2 2 7 2 5 7 5; A.F ?/: B.F )

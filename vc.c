@@ -7,6 +7,8 @@
 
 /* comparison verbs */
 
+Z K lessmore(K a,K b,I x);
+
 K dp(K*z,K(*f)(K,K),K x,K y) //dyad promote
 {
    x=promote(x); y=promote(y);
@@ -75,7 +77,7 @@ I matchI(K a, K b)
 
 K match(K a, K b){R Ki(matchI(a,b));}
 
-K lessmore(K a, K b, I x)
+Z K lessmore(K a, K b, I x)
 {
 
   if (!x){K c=a;a=b;b=c; } //NB: If primitives modify a but not b (or vice-versa. e.g. reuse of refcount 1 objects) 

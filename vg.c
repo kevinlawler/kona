@@ -17,7 +17,7 @@
 //inputting the same collection of functions each time but in a different order
 //if the sort order changes for each instance then sorting is probably based on pointer/reference value
 //if that fails then it may be necessary to look at distinctions between wordfunc,charfunc, valence, proj, etc
-K grade_updown(K a, I r)
+Z K grade_updown(K a, I r)
 {
   I at=a->t, an=a->n;
   P(0< at, RE)
@@ -153,7 +153,7 @@ K first(K a)
   R ci(a);//Atoms
 }
 
-K reshaper(K a, K b, I d, I f, I* p)
+Z K reshaper(K a, K b, I d, I f, I* p)
 { //a is non-empty int vector with: (0 0s, 0 -1s),(1 -1),or(1+ 0s)
   I bt=b->t, bn=b->n;
   I v=kI(a)[d];
@@ -211,7 +211,7 @@ void shapeCheck(K a, K p, I d)
   else if(at && d < p->n-1) kI(p)[d+1]=-1;//Another case of p being too long 
   else if(!at && an && kI(p)[d]!=-1 && d < p->n-1) DO(an, shapeCheck(kK(a)[i],p,d+1))
 }
-I firstDepth(K x){R (!x->t&&x->n)?1+firstDepth(*kK(x)):x->t>0?0:1;}//[Internal Function]
+Z I firstDepth(K x){R (!x->t&&x->n)?1+firstDepth(*kK(x)):x->t>0?0:1;}//[Internal Function]
 
 K shape(K a) //TODO: Thoroughly test this //TODO: oom
 { 
