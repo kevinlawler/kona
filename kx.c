@@ -26,7 +26,7 @@ Z K dv_ex(K a, V *p, K b)
   //Arity of V?A_1...A_n-1 for X V?A_1...A_n Y; 0 for X Y, X A Y
   I k=adverbClass(*p)?adverbClass(*o)?1:sva(*o):sva(*p);
   k=adverbClass(*p)?adverbClass(*o)?1:valence(*o):valence(*p); //also t7 basic
-  
+
   V adverb=*(V*)*p; //TODO: Implement adverb "Error Reports" error checking from manual
   
   //k>2 --- ??? bound for special verbs ?.@ , etc.  ??? k=2 ??? valence is weird here

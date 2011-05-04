@@ -149,7 +149,7 @@ I valence(V p)
       do q=kW(v)[i-2-(j++)]; while(*q==each || *q==over || *q==scan);
 
       s=sva(q);
-      if(s && !specialValence(q)) R s - ((i-2-j)?0:1); // |+\ or +\   (leaves out |@\ and @\ ...or not...or intentional...?)
+      if(s && !specialValence(q)) R s - ((i-2-j >= 0)?1:0); // |+\ or +\   (leaves out |@\ and @\ ...or not...or intentional...?)
 
       if(j<i-2 ) R valence(q)-1; //eg  f:...0(0|+)\ (the zero binds on the left) 
       else 
