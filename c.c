@@ -116,7 +116,7 @@ K backslash(S s, I n)
       "\\'      adverb help\n"
       "\\:      I/O verb help\n"
       "\\_      reserved word help\n"
-      "\\.      assignment help\n"
+      "\\.      assignment/amend, function, control flow help\n"
       "\\d [todo]   directory command (todo) \n" 
       "\\l f    load script f or f.k\n"
       "\\p [n]  show/set print precision (0=full)\n"
@@ -212,7 +212,46 @@ K backslash(S s, I n)
               ":          overloaded with many operations. \n"
               );
       )
-      CS('.',R NYI)
+      CS('.',
+             O(
+              "Assign/Amend, Functions, Control Flow \n"
+              "\nAssign/Amend (see https://github.com/kevinlawler/kona/wiki/Amend)\n"
+              "a:1 is assignment\n"
+              "a::1 is global assignment (works in functions)\n"
+              "a+:1 is like a+=1, works in general\n"
+              "a-: negates a in place, works in general\n"
+              "a[]:1 sets all the entries of a to 1\n"
+              "a[0]:1 sets the 0th entry of a to 1\n"
+              "a[0;1]+:2 increments the 0th entry's 1st entry by 2\n"
+              ".[a;();+;1] returns a+1 but does not affect a on the K Tree\n" 
+              ".[`a;();+;1] updates a in place, returns `a\n"
+              "\nAmend Equivalence\n" 
+              "@[a;b;c;d] is .[a;,b;c;d]\n"
+              "a:1        is .[`a;();:;1]\n"
+              "a+:1       is .[`a;();+;1]\n"
+              "a-:        is .[`a;();-:]\n"
+              "a[]:1      is .[`a;_n;:;1]\n"
+              "a[0]:1     is .[`a;0;:;1] or .[`a;,0;:;1] \n"
+              "a[0;1]+:2  is .[`a;0 1;+;2]\n"
+              "\nError Trap\n"
+              "@[a;b;:] and .[a;b;:] are error trap\n"
+              "\nFunctions\n"
+              "f:{[a;b;c] a+b+c} defines a function. f[1;2;3] yields 6\n"
+              "Functions may be anonymous.\n"
+              "Functions may have default arguments x,y,z.\n"
+              "So {x^2} 3 conveniently yields 9\n"
+              "\nControl Flow\n"
+              ":[x1;t1;x2;t2;...;xn;tn;else] evaluate xi until true and return ti, otherwise return else \n"
+              "    :[0;10;0;20;1;30;40] yields 30\n"
+              "if[x;e1;...;en] if x then evaluate all e. if[j>i;a:1;b:2] \n"
+              "do[m;e1;...;em] do all e n times. do[100;f[i];i+:1] \n"
+              "while[x;e1;...;en] while x do e.  while[a>b; f a; a-:1] \n"
+              "/ starts a comment. Must begin a line or have a space before\n"
+              "\\ is trace when beginning an expression inside a function (todo)\n"
+              ": is early return when beginning an expression inside a function (todo)\n"
+              "' is signal (todo)\n"
+              );
+      )
       CS('_',
              O(
               "Constants:\n"
