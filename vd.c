@@ -129,8 +129,8 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
   }
   //these may turn out to be the "ELSE" case
   if((1 <= dt && dt <= 4) || 7==dt || 7==ft) R RE;
-  else if(6==dt && (0 >= ft)) R XE;
-  else if(6==dt && 6 != ft && 4 != ft) R TE;
+  else if(6==dt && (0 >= ft) && -4 != ft) R XE;
+  else if(6==dt && 6 != ft && 4 != ABS(ft)) R TE;
   if(5==dt && 123 == ft) R NULL; //TODO: Fill in dict errors
   //TODO: full error chart. at_ref will account for some of it
 
