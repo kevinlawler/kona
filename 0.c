@@ -47,9 +47,10 @@ K _0m(K a)
 
   I b=0,s=0;
   S v=0;
+  K z;
   if(4==t && !**kS(a)){
     b=getdelim_(&v,&s,EOF,stdin);
-    if(b==-1||!b)GC;
+    if(b==-1){z=newK(0,0); GC;}
   }
   else
   {
@@ -62,7 +63,7 @@ K _0m(K a)
   I c=s?1:0,d=0,e;
   DO(s, if('\n'==v[i] && i < s-1)c++) //1st run: count \n
   K k;
-  K z=newK(0,c);
+  z=newK(0,c);
   if(!z) GC;
   DO(s, if('\n'!=v[i])kK(z)[d]=(V)1+(I)kK(z)[d]; else d++) //2nd run: count lengths (cheat & use pointers' space)
   DO(c,e=(I)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
@@ -70,7 +71,7 @@ K _0m(K a)
   DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n;) //3rd run: populate 
 
 cleanup:
-  if(b&&v)free(v);else munmap(v,s);
+  if(v){if(b)free(v);else munmap(v,s);}
   R z;
 }
 
