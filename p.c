@@ -337,6 +337,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
     CS(MARK_CONDITIONAL, z=addressColon)//dummy value
     CS(MARK_PAREN  ,  z=wd_(s+k+1,r-2,dict,func)) //oom. currently z->t==7 z->n==0.  //Execution will know this is paren (for rev order) because of its depth
     CS(MARK_BRACKET,  
+
                       if(!*d || bk(p[-1]))
                         if(func && !k) R r; //Ignore function params. k because no {[a;b][c;d]}
                         else R (I)PE;// [1;2] on a line by itself
@@ -382,8 +383,11 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                                                          //  the line can be left out without ill effects assuming it's OK to let the parent free the objects (it may not be)
                                                          //  probably best to simply implement realloc-shrink for anonymous mmap
                        K temp=DI(*locals,(*locals)->n-1); //This is a replacement for above. It can be optimized(?) since it leaves an empty dict entry on *locals
-                       cd(kK(temp)[1]);
-                       kK(temp)[1]=0;
+                       if(temp)
+                       {
+                         cd(kK(temp)[1]);
+                         kK(temp)[1]=0;
+                       }
                        *o=EVP(q);
                       }
                       else if(7==(*f)->t && 3==(*f)->n) ;// for {} function add args to local dictionary (huh??)
