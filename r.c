@@ -221,7 +221,10 @@ K _lt(K a)
   P(1<ABS(t),TE)
   const time_t b=0; struct tm c;
   localtime_r(&b,&c);
+#if defined(__CYGWIN__) || defined(__WIN32)
+#else
   I d=c.tm_gmtoff;
+#endif
   K z=newK(t,n);
   if(!t) DO(n,kK(z)[i]=_lt(kK(a)[i]))
   else DO(n,kI(z)[i]=kI(a)[i]+d)
