@@ -222,6 +222,7 @@ K _lt(K a)
   const time_t b=0; struct tm c;
   localtime_r(&b,&c);
 #if defined(__CYGWIN__) || defined(__WIN32)
+  I d=_timezone;
 #else
   I d=c.tm_gmtoff;
 #endif
