@@ -50,6 +50,7 @@ K _0m(K a)
   K z;
   if(4==t && !**kS(a)){
     b=getdelim_(&v,&s,EOF,stdin);
+    freopen(0,"r",stdin);
     if(b==-1){z=newK(0,0); GC;}
   }
   else
