@@ -535,6 +535,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       I name_bracket_assign=0;
                       I modifier_colon = k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r];
 
+                      if(k-i > 0) if(MARK_VERB ==  ABS(m[k-i-1])) i++; 
                       if(k-i > 0) if(MARK_BRACKET ==  ABS(m[k-i-1])) while(m[k-i] != -MARK_BRACKET) i++; 
                       if(k-i > 0) if(MARK_NAME == ABS(m[k-i-1])) name_bracket_assign = 1; //(no adverb, assigning to non-names, etc)
                       if(!is_colon && !(k+1<n && ':'==s[k+1] && -MARK_VERB==m[k+1] ))name_bracket_assign=0;
@@ -551,7 +552,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       if(is_colon && !modifier_colon)
                       { 
                         a=2;
-                        //TODO:   a _abs:      <--- parse error  (check behind, in( ,vd_) or in( ,vm_) or in(  ) 
+                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R PE; // +:: or 4:: :  or a _abs:  (trailing dyadic :)
                       }
                       else if(name_bracket_assign) a=y_present?2:1;
                       else if(modifier_colon){m[k+r]*=-1; r++; a=1; grab=1;} //grab monad ':' sign

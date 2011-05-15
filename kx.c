@@ -19,7 +19,7 @@ Z V ex_(V a,I r);
 Z K dv_ex(K a, V *p, K b) 
 {
   if(!p || !*p) R 0; //TODO: ???
-  if(!b) R kerr("undefined"); //TODO: Projection?  'u v\' 
+  U(b)
 
   V *o = p-1;
 

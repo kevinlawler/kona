@@ -366,6 +366,18 @@ Z I tests02()
   TC_("10#2", "{x+1}'10#1")
   TC_("c:{&:'y(?,/(1!)\\'1,')/,&x-y}; {x@<x}@c[4;2]","(0 1;0 2;0 3;1 2;1 3;2 3)")
 
+  TC(:,:)
+  TC(::,::)
+  TC(::::,::::)
+  TC(5:(:), ,":")
+  TC(5:(::), "::")
+  TC(5:(::::), "::::") 
+  TC_("(1;\"parse\")", "@[.:;\":::\";:]")  //:::, :::::, and so on return parse error (monadic colons ending in dyadic) with
+  TC_("(1;\"parse\")", "@[.:;\":::::\";:]")//more elborate code you could handle these cases, but that seems pointless
+  TC_("(1;\"parse\")", "@[.:;\":::5::::\";:]") 
+  TC_("(1;\"parse\")", "@[.:;\"a _abs: \";:]") //more generally PE for anything not assignment ending in dyadic colon (except a solitary dyadic colon)
+  TC_("(1;\"parse\")", "@[.:;\"4:::\";:]")
+
   R 0; 
 }
 
