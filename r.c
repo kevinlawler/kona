@@ -35,8 +35,8 @@ S_DYAD(dvl,  "{x@&(#y)=y?/:x}" )
 S_DYAD(di,   "{:[@x;._f[. x;(!x)?/:y];x@&@[(#x)#1;y;:;0]]}") 
 S_DYAD(dot,  "+/*") //reimplementing this would make matrix math faster. See SSE dot call
 S_DYAD(dv,   "{x _dvl ,y}") 
-S_DYAD(in,   "{:[:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}") 
-S_DYAD(lin,  "{(#y)>y?/:x}") 
+S_DYAD(in,   "{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}") 
+S_DYAD(lin,  "{_in[;y]/:x}") 
 S_DYAD(mul,  "{x _dot\\:y}") 
 S_DYAD(sv,   "{{z+y*x}/[0;x;y]}")  
 S_DYAD(vs,   "{:[(1<_abs 4:y)|(~1=_abs 4:x);_n;:[@x;{(1_|{ _ y % x}[x]\\y)!x}[x;y]; {|(-1 _ j)-a*1 _ j:y(_%)\\a:|x}[x;y]]]}") //Working subfunction constants would remove [x] projection. Second part from K2 manual. The type checking at the beginning is a kluge until type checking inside functions doesn't crash
