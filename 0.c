@@ -39,6 +39,13 @@ Z I rrep_4(S *z,S a,S t);
 Z K readVector(K x,I t);
 Z I sendall(I s,S b,I k);
 
+Z V freopen_stdin() {
+#if defined(__OpenBSD__)
+  return freopen("/dev/stdin","r",stdin);
+#else
+  return freopen(0,"r",stdin);
+#endif
+}
 
 K _0m(K a)
 {
@@ -50,7 +57,7 @@ K _0m(K a)
   K z;
   if(4==t && !**kS(a)){
     b=getdelim_(&v,&s,EOF,stdin);
-    freopen(0,"r",stdin);
+    P(freopen_stdin() == NULL, FE)
     if(b==-1){z=newK(0,0); GC;}
   }
   else
