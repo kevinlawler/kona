@@ -1,6 +1,6 @@
 To compile (OS X/Linux/BSD/Cygwin):
 
-    make           #gmake on OpenBSD
+    make           #gmake on BSD
 
 To start the interpreter
 
