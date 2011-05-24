@@ -535,7 +535,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       I name_bracket_assign=0;
                       I modifier_colon = k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r];
 
-                      if(k-i > 0) if(MARK_VERB ==  ABS(m[k-i-1])) i++; 
+                      if(k-i > 0) if(is_colon && MARK_VERB == ABS(m[k-i-1])) i++; 
                       if(k-i > 0) if(MARK_BRACKET ==  ABS(m[k-i-1])) while(m[k-i] != -MARK_BRACKET) i++; 
                       if(k-i > 0) if(MARK_NAME == ABS(m[k-i-1])) name_bracket_assign = 1; //(no adverb, assigning to non-names, etc)
                       if(!is_colon && !(k+1<n && ':'==s[k+1] && -MARK_VERB==m[k+1] ))name_bracket_assign=0;

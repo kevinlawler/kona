@@ -378,6 +378,9 @@ Z I tests02()
   TC_("(1;\"parse\")", "@[.:;\"a _abs: \";:]") //more generally PE for anything not assignment ending in dyadic colon (except a solitary dyadic colon)
   TC_("(1;\"parse\")", "@[.:;\"4:::\";:]")
 
+  TC(2,a:2 3;a@*:0) 
+  TC(0=#:,a:0;a=#:)
+
   R 0; 
 }
 
