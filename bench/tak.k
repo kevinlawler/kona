@@ -1,4 +1,5 @@
 / tak benchmark
+/ Measures the cost of recursive function calls.
 
 / (defun tak (x y z)
 /   (if (< y x)
