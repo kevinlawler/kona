@@ -11,11 +11,12 @@ typedef enum { TL, TI, TF, TC, TS, TD, TN, TFun, TAny,
 typedef enum verb_flags {
         VF_NONE,
         VF_SIZE,                /* return size known before running */
-        VF_SAME_SIZE,           /* same return size as argument(s), implies VF_SIZE */
+        VF_SAME_SIZE,           /* same return size as larger argument, implies VF_SIZE */
         VF_EXPANDER,            /* tends to expand input */
         VF_REDUCER,             /* tends to reduce input */
         VF_REARRANGE,           /* rearranges input (same size) */
         VF_MUTATES,             /* modifies input in place */
+        VF_NYI,                 /* not yet implemented */
         /* other attributes? */
 } verb_flags;
 

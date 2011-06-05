@@ -2,6 +2,10 @@
 
 #include "vtab.h"
 
+/* These are just notes so far, for brainstorming about optimizations. Not
+ * actually compiled, yet. Eventually, this may drive verb dispatch. */
+
+
 /* Tags:
  * ATOM: atom / list distinction is significant
  * BOOL: special case for boolean vectors
@@ -96,7 +100,7 @@ m_table(m_caret) = {
         { TF, shape, TI, 0 },
         { TC, shape, TI, 0 },
         { TS, shape, TI, 0 },
-        { TD, shape, TI, 0 },
+        { TD, shape, TI, 0 }, /* DICT */
         { TN, shape, TI, 0 },
         { TF, shape, TI, 0 },
         EOV
@@ -108,7 +112,7 @@ m_table(m_excl) = {
         { TFA, enumerate, TI, 0 },
         { TCA, ls_directory, TL, 0 },    /* currently called "enumerate_charvec" */
 /*  NYI { TS, enumerate dictionary of sym on k-tree, TL, 0 }, */
-        { TD, keys, TS, 0 },
+        { TD, keys, TS, 0 }, /* DICT */
         { TN, enumerateN, TD, 0 },
 // { TF, funcname, Tr, 0 },
         EOV
@@ -139,7 +143,7 @@ m_table(m_tilde) = {
 
 m_table(m_at) = {
         eachL1Same(atom, VF_REDUCER, VF_SIZE),
-        { TD, atom, TI, VF_REDUCER, VF_SIZE },
+        { TD, atom, TI, VF_REDUCER, VF_SIZE }, /* DICT */
         { TN, atom, TI, VF_REDUCER, VF_SIZE },
         { TF, atom, TI, VF_REDUCER, VF_SIZE },
         EOV
@@ -177,15 +181,15 @@ m_table(m_dollar) = {                  /* ATOM/list affects return type, C or L-
         { TF, formatF, TL, 0 },
         { TC, identity, TL, 0 },
         { TS, formatS, TL, 0 },
-        { TD, funcname, Tr, 0 }, /* FIXME "Beats me -- this has a similar signature to a _hash" */
+        { TD, funcname, Tr, 0 }, /* FIXME "Beats me -- this has a similar signature to a _hash" DICT */
         EOV
 };
 
 m_table(m_dot) = { /* are these correct? */
-        { TL, make_dict, TD, 0 },
+        { TL, make_dict, TD, 0 }, /* DICT */
         { TC, eval, TAny, 0 },
-        { TS, dump_tree, TD, 0 },
-        { TD, unmake_dict, TL, 0 },
+        { TS, dump_tree, TD, 0 }, /* DICT */
+        { TD, unmake_dict, TL, 0 }, /* DICT */
         EOV
 };
 
