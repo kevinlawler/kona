@@ -475,7 +475,8 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
   if(k)
   {
     I j=valence(&z);
-    if(!j && 0==k->t) DO(k->n,if(!kK(k)[i])kK(k)[i]=_n()) //Fill in 0-type NULLs with Kn()
+
+    if(!j && 0==k->t) DO(k->n,if(!kK(k)[i])kK(k)[i]=_n()) //Fill in 0-type NULLs with _n
 
     if(z->t!=7 ||z->n!=1||(j<k->n && !(0==j && k->n==1))) { x=vf_ex(&z,k); cd(z); R z=x;} //(0==j untested) project if necessary, reuse vf_ex.
     else // checking if looks like f'[] or f/[] or ...
@@ -486,9 +487,14 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
 
       if(k->n >1 && !sva(*q) && adverbClass(*q) )
       {
-        x=bv_ex(q,k);
-        cd(z);
-        R x;
+        I proj=0;
+        DO(k->n, if(!kK(k)[i])proj=1) 
+        if(!proj) //***** could be the _n() <-> ;;; replacement above *****
+        {
+          x=bv_ex(q,k);
+          cd(z);
+          R x;
+        }
       }
       /////////////////////////
       x=vf_ex(&z,k); cd(z); z=x; //copy/paste
@@ -507,6 +513,14 @@ Z K bv_ex(V*p,K k)
   //assert 0!=k->n
   //assert k==b->n (otherwise, projection/VE, which shouldn't reach here)
   I n=0;
+
+  if(0 && !adverbClass(*p) && valence(*p) < 3)
+  {
+    er(AAAA)
+    if(k->n < 2) { er(aaa) R VE; }
+    R dv_ex(kK(k)[0],p,kK(k)[1]);
+  }
+
   if(over==q)
   {
     DO(k->n-1, x=kK(k)[i+1]; if(!x->n)R ci(*kK(k)); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return x_0 if any empty list x_{i>0}
@@ -523,7 +537,7 @@ Z K bv_ex(V*p,K k)
 
   if(scan==q)
   {
-    DO(k->n-1, x=kK(k)[i+1]; if(!x->n)R ci(*kK(k)); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return x_0 if any empty list x_{i>0}
+    DO(k->n-1, x=kK(k)[i+1]; if(!x)continue; if(!x->n)R ci(*kK(k)); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return x_0 if any empty list x_{i>0}
     if(!n) R bv_ex(p-1,k); //  {x+y+z}\[1;1;1] yields 1 but {x+y+z}\[1;1;1 1] yields (1 1;3 3;5 5)  
     n=MAX(1,n);//if nothing was a list set to 1
     K z=newK(0,1); 
@@ -540,7 +554,7 @@ Z K bv_ex(V*p,K k)
 
   if(each==q)
   {
-    DO(k->n, x=kK(k)[i]; if(!x->n)R newK(0,0); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return () on any empty list
+    DO(k->n, x=kK(k)[i];if(!x)continue; if(!x->n)R newK(0,0); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return () on any empty list
     n=MAX(1,n);//if nothing was a list set to 1
     K z=newK(0,n), g=newK(0,k->n); M(g,z)//break [;;...] into subpieces for f, store in g
     DO(n, K x; DO2(k->n, x=itemAtIndex(kK(k)[j],i); M(x,g,z) kK(g)[j]=x) x=bv_ex(p-1,g); M(x,z,g) kK(z)[i]=x; DO2(k->n, cd(kK(g)[j]); kK(g)[j]=0))//sic =0
