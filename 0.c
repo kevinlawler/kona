@@ -666,7 +666,7 @@ K _3m(K x)
   if(1==xt){I i=close(*kI(x)); R i?DOE:_n();} // 3: 1
   else P(xt|| xn!=2 || kK(x)[0]->t!=4 || kK(x)[1]->t!=1, TE)
   //3:`"999.999.999.999",1234   // same host: 3:`,1234
-  S host=CSK(*kK(x));
+  S host=CSK(*kK(x)), errstr;
   char port[256];
   snprintf(port,256,"%ld",*kI(kK(x)[1]));
 
@@ -681,10 +681,10 @@ K _3m(K x)
   // loop through all the results and connect to the first we can
   for(p = servinfo; p != NULL; p = p->ai_next) 
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {  continue; } //perror("client: socket");
-    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) { close(sockfd);  continue; } //perror("client: connect");
+    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) { errstr=strerror(errno); close(sockfd);  continue; } //perror("client: connect");
     else break;
 
-  if (p == NULL) { fprintf(stderr, "conn: failed to connect\n");freeaddrinfo(servinfo); R DOE; }
+  if (p == NULL) { fprintf(stderr, "conn: failed to connect (%s)\n", errstr);freeaddrinfo(servinfo); R DOE; }
 
   //char s[INET6_ADDRSTRLEN];
   //inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
