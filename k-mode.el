@@ -178,11 +178,6 @@
 ;; comint
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(print k-process)
-(print (k-proc))
-
-(print (process-status k-process))
-
 (defun k-proc ()
   "Get k process."
   (get-process k-program-name))
