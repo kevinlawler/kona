@@ -37,6 +37,11 @@
 
 (defvar k-program-name "k" "k executable name.")
 
+(defvar k-prompt-string "  "
+  "String printed by interpreter to represent a ready prompt.")
+
+(defvar k-process nil "Current k comint process, if any.")
+
 (defvar k-mode-map
   (let ((m (make-sparse-keymap)))
     (define-key m (kbd "C-c C-e") 'k-send)    ;eval region or line
@@ -173,6 +178,11 @@
 ;; comint
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(print k-process)
+(print (k-proc))
+
+(print (process-status k-process))
+
 (defun k-proc ()
   "Get k process."
   (get-process k-program-name))
@@ -185,29 +195,36 @@
   "Switch to a k process, or spawn a new one if not running.
 Universal argument switches to it in another window."
   (interactive "P")
-  (let* ((kbuf (k-proc-buffer))
-         (kproc (k-proc)))
-    (unless (and kbuf kproc)
-      (setq kbuf (make-comint k-program-name k-program-name))
+  (let* ((kproc (or (k-proc)
+                    (make-comint k-program-name k-program-name)))
+         (kbuf (k-proc-buffer)))
+    (when kbuf
       (with-current-buffer kbuf
         (add-hook 'comint-output-filter-functions
                   'k-comint-output-filter nil t)))
-    (unless (equal (current-buffer) kbuf)
-      (if uarg
-          (switch-to-buffer-other-window kbuf)
-          (switch-to-buffer kbuf)))))
+  (unless (equal (current-buffer) kbuf)
+    (if uarg
+        (switch-to-buffer-other-window kbuf)
+        (switch-to-buffer kbuf)))
+  kproc))
 
 (defun k-send-str (s)
   "Send string to the k process, if existing."
   ;; TODO: print comint result in minibuf?
-  (let ((kproc (k-proc))
+  (let ((kproc (or (k-proc) (switch-to-k t)))
         (kbuf (k-proc-buffer)))
     (when (and kproc s)
       (comint-send-string kproc s))))
             
 (defun k-comint-output-filter (s)
   "Print output from code sent to k in the minibuffer."
-  (princ (substring s 0 -3)))  ; -3 for \n(space space)
+  ;; TODO How do we check if *k* buffer is visible? Can't use
+  ;; (current-buffer) because it's always current during the callback.
+  ;; It's kind of annoying to show the result in the minibuffer when
+  ;; it's already on-screen.
+  (let ((drop (min (length s)
+                   (+ 1 (length k-prompt-string)))))
+    (princ (substring s 0 (- drop)))))
 
 (defun k-send-region (start end)
   "Send region to k process."
