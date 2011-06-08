@@ -723,17 +723,19 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
 
   if(x || y)
   {
-    a=x?promote(a):a;//mm/o (unnecessary for t=0)
-    b=y?promote(b):b;//mm/o (unnecessary for t=0)
+    a=x?promote(a):ci(a);
+    b=y?promote(b):ci(b);
+    M(a,b)
     K z=newK(0,x?a->n:b->n);
-    DO(z->n, kK(z)[i]=_ss(x?kK(a)[i]:a,y?kK(b)[i]:b))
+    DO(z->n, M(a,b,z,kK(z)[i]=_ss(x?kK(a)[i]:a,y?kK(b)[i]:b)))
+    cd(a);cd(b);
     R demote(z);
   }
 
   S t=CSK(a),p=CSK(b); //t text, p pattern
 
   I lp=strlen(p); 
-  if(!lp) R 0; //TODO: length error mm/o
+  if(!lp)R LE;
   I *r=malloc(lp*sizeof(I)); //oom
 
   I n=3==ABS(a->t)?a->n:strlen(t);
@@ -755,10 +757,10 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
     else
     {
       q=rangematch(q+1,0,v);
-      if(!q) R 0; //TODO: err, free(p)
+      if(!q){free(p); R DOE;} 
       I any=0;
       DO(256,if(v[i]){occ[i]=m;any=1;})
-      if(!any) R 0; //TODO: !0 or length err (as in "")? this pattern matches nothing (like "[^\000-\377]"). R 0 here saves '?' logic later
+      if(!any){free(p); R newK(-1,0);} //!0 or length err (as in "")? this pattern matches nothing (like "[^\000-\377]"). R here saves '?' logic later
     }
     m++;
   }
