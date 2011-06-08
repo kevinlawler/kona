@@ -559,7 +559,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       if(is_colon && !modifier_colon)
                       { 
                         a=2;
-                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R PE; // +:: or 4:: :  or a _abs:  (trailing dyadic :)
+                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R (I)PE; // +:: or 4:: :  or a _abs:  (trailing dyadic :)
                       }
                       else if(name_bracket_assign) a=y_present?2:1;
                       else if(modifier_colon){m[k+r]*=-1; r++; a=1; grab=1;} //grab monad ':' sign
