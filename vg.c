@@ -200,7 +200,7 @@ K take(K a, K b)
 }
 K take_reshape(K a, K b)
 { //K3.2 will accept empty lists that aren't type -1 (as left arg)
-  P(!a->n && 1!=ABS(a->t),IE)
+  P(a->n && 1!=ABS(a->t),IE)
   R 0<a->t?take(a,b):reshape(a,b);
 }
 
