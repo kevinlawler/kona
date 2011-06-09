@@ -9,11 +9,18 @@
 #include <netinet/in.h>
 #endif
 
+#include <signal.h>
+
 #include "k.h"
 #include "kc.h"
 
 Z I randomBits();
 Z I wdss(K *a,FILE *f);
+
+I interrupted = 0;
+
+Z void handle_SIGINT(I sig) { interrupted = 1; }
+
 
 //0: not a verb pointer, 1: monadic, 2: dyadic, 3: triadic
 I vn_ct, vm_ct, vd_ct, vt_ct;
@@ -107,6 +114,12 @@ I attend() //K3.2 uses fcntl somewhere
   FD_ZERO(&master);	// clear the master and temp sets
   FD_ZERO(&read_fds);
 
+  // set up SIGINT handler, so C-c can break infinite loops cleanly
+  struct sigaction sa;
+  sa.sa_handler = handle_SIGINT;
+  sa.sa_mask = SIG_DFL;
+  sigaction(SIGINT, &sa, NULL);
+
   // get us a socket and bind it 
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC; 
@@ -143,7 +156,11 @@ I attend() //K3.2 uses fcntl somewhere
   for(;;) // main loop  
   {
     read_fds = master; // copy it 
-    if (-1==select(fdmax+1,&read_fds,0,0,0)){perror("select");exit(4);} //null timeval -> select blocks
+    if (-1==select(fdmax+1,&read_fds,0,0,0)) //null timeval -> select blocks
+    {
+      if (errno == EINTR) errno = 0;   //ignore, was interrupted by C-c
+      else {perror("select");exit(4);}
+    }
     // run through the existing connections looking for data to read 
     for(i = 0; i <= fdmax; i++) 
       if (FD_ISSET(i, &read_fds))

@@ -3,6 +3,7 @@
 #include "incs.h"
 
 #include "k.h"
+#include "kc.h"
 #include "kx.h"
 #include "km.h"
 #include "v.h"
@@ -312,6 +313,8 @@ K vf_ex(V q, K g)
 
   K a=0,b=0,c=0,d=0;
   if(gn >0) a=kK(g)[0]; if(gn >1) b=kK(g)[1]; if(gn >2) c=kK(g)[2]; if(gn >3) d=kK(g)[3];
+
+  if (interrupted) {interrupted=0; BE; GC;}
 
   //valence overloaded verbs 
   if(gn > 2 && (w==what || w==_ssr)){ z=(w==what?what_triadic:_ssr)(a,b,c); GC; }

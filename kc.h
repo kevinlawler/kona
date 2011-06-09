@@ -57,3 +57,4 @@ I wds_(K *a,FILE *f,I l);
 I prompt(I n);
 extern I adverb_ct;
 extern I vn_ct,vm_ct,vd_ct,vt_ct;
+extern I interrupted;
