@@ -158,9 +158,10 @@ I attend() //K3.2 uses fcntl somewhere
     read_fds = master; // copy it 
     if (-1==select(fdmax+1,&read_fds,0,0,0)) //null timeval -> select blocks
     {
-      if (errno == EINTR) errno = 0;   //ignore, was interrupted by C-c
+      if (errno == EINTR) { interrupted = 0; errno = 0; } //ignore, was interrupted by C-c
       else {perror("select");exit(4);}
     }
+    
     // run through the existing connections looking for data to read 
     for(i = 0; i <= fdmax; i++) 
       if (FD_ISSET(i, &read_fds))
