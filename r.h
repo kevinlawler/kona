@@ -82,5 +82,6 @@ K vf_ex(V q,K g);
 K newK(I t,I n);
 K cd(K a);
 extern K KFIXED;
+extern K ARGS;
 K kap(K *a,V v);
 K XDB(S t);

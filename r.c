@@ -878,7 +878,7 @@ K _s(){R NYI;}
 K _p(){R NYI;}
 K _w(){R NYI;}
 K _u(){R NYI;}
-K _a(){R NYI;}
+K _a(){R ARGS;}
 K _k(){R NYI;}
 K _m(){R NYI;}
 
