@@ -189,7 +189,7 @@ I args(int n,S*v)
   while(optind < n) load(v[optind++]);
 
   ARGS=newK(0, n-1);
-  DO(n-1, { len=strlen(v[i+1]); a=newK(-3, len); strncpy(kC(a),v[i+1],len); kI(ARGS)[i]=a;});
+  DO(n-1, { len=strlen(v[i+1]); a=newK(-3, len); strncpy(kC(a),v[i+1],len); kV(ARGS)[i]=a;});
   R 0;
 }
 
