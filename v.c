@@ -319,9 +319,19 @@ K not_attribute(K a)
   R z;
 }
 
+Z K excl_mkdict(K a, K b) //make dict, dyadic `foo`bar`baz!(1 2 3;`a`b`c;"abc") version
+{
+  I n=a->n;
+  K k, v, t, z=newK(5,n);  // key, value, tuple, result
+  DO(n,k=newK(4,1); kS(k)[0]=kS(a)[i]; v=kV(b)[i]; t=newK(0,3);
+      kK(t)[0]=k; kK(t)[1]=v; ci(v); kK(t)[2]=_n(); kK(z)[i]=t;);
+  R z;
+}
+
 K rotate_mod(K a, K b)
 {
   P(b->t > 2,TE)
+  P(4==ABS(a->t) && a->n == b->n, excl_mkdict(a,b));
   P(!(1==a->t || b->t > 0), IE)
   R (b->t < 1)?rotate(a,b):mod(a,b);
 }

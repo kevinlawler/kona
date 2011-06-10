@@ -261,7 +261,9 @@ K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
   R q?q:ci(a);// sym not *p
 }
 
-K make(K a)//Assumes makeable() is true
+//make dict, monadic .((`foo;1 2 3);) variant. Assumes makeable() is true.
+//dicts are currently implemented as an association array (i.e., linear search), should change soon.
+K make(K a)
 { 
   //TODO: this will need to set reference counts on all dictionary entries, etc.
   P(!makeable(a), RE)
