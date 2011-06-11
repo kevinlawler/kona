@@ -343,7 +343,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                         else R (I)PE;// [1;2] on a line by itself
 
                       a=0;
-                      while(adverbClass(p[-1-a]))a++;
+                      while(a < -1+*d && adverbClass(p[-1-a]))a++;
+
 
                       //could perhaps put [] directly on () or {} 7 instead of making new g provided 0==a.
 
@@ -356,6 +357,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       z=wd_(s+k+1,r-2,dict,func);
                       if(!z){cd(g); R (I)PE;}
                       //g o z   oom: you can return 0 but catch above?
+
 
                       if(MARK_CONDITIONAL==ABS(m[k-1]))
                       {
@@ -373,7 +375,12 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
 
                       K* f = p[-1-a];
                       if(!sva(f))
-                      if(MARK_NAME != ABS(m[k-1-a])) //Has form na*[] and not va*[] so move n from the parent to the LOCAL on this BRACKET. NAME special storage case
+
+                      if(MARK_ADVERB==ABS(m[k-1-a]))
+                      {
+                        //do nothing for '[] and ':[]  (and sort of / /: \ \: ... but they don't reach here)
+                      }
+                      else if(MARK_NAME != ABS(m[k-1-a])) //Has form na*[] and not va*[] so move n from the parent to the LOCAL on this BRACKET. NAME special storage case
                       {
                         K q=newE(LS,ci(*f)); //oom
                         kap((K*) kV(g)+LOCALS,q);//oom
@@ -552,7 +559,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       if(is_colon && !modifier_colon)
                       { 
                         a=2;
-                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R PE; // +:: or 4:: :  or a _abs:  (trailing dyadic :)
+                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R (I)PE; // +:: or 4:: :  or a _abs:  (trailing dyadic :)
                       }
                       else if(name_bracket_assign) a=y_present?2:1;
                       else if(modifier_colon){m[k+r]*=-1; r++; a=1; grab=1;} //grab monad ':' sign

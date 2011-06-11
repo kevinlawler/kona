@@ -1,4 +1,4 @@
-To compile (OS X/Linux/BSD/Cygwin):
+To compile (OS X/Linux/BSD):
 
     make           #gmake on BSD
 

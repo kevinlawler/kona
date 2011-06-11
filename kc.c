@@ -174,9 +174,12 @@ I attend() //K3.2 uses fcntl somewhere
 
 }
 
+K ARGS; //saved values from argv[1:]
+
 I args(int n,S*v)
 {
-  I c;
+  K a;
+  I c, len;
   while(-1!=(c=getopt(n,v,":h:i:")))SW(c)
   {
     CS('h',O("%d\n", atoi(optarg)))
@@ -184,6 +187,9 @@ I args(int n,S*v)
     CSR(':',)CS('?', O("%c ",optopt); show(kerr("opt")))
   }
   while(optind < n) load(v[optind++]);
+
+  ARGS=newK(0, n-1);
+  DO(n-1, { len=strlen(v[i+1]); a=newK(-3, len); strncpy(kC(a),v[i+1],len); kV(ARGS)[i]=a;});
   R 0;
 }
 
