@@ -331,7 +331,7 @@ Z K excl_mkdict(K a, K b) //make dict, dyadic `foo`bar`baz!(1 2 3;`a`b`c;"abc") 
 K rotate_mod(K a, K b)
 {
   P(b->t > 2,TE)
-  P(4==ABS(a->t) && a->n == b->n, excl_mkdict(a,b));
+  P(4==ABS(a->t) && 0==b->t && a->n == b->n, excl_mkdict(a,b));
   P(!(1==a->t || b->t > 0), IE)
   R (b->t < 1)?rotate(a,b):mod(a,b);
 }
