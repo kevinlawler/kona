@@ -838,6 +838,8 @@ Z I testsBook()
 
   TC(1, a:`a`b`c!3 3#!9;b:.((`a;0 1 2);(`b;3 4 5);(`c;6 7 8));a~b )
 
+  TC((1;"type") , @[.:;"_sin _sin (;)";:])
+
   //Regressions
   TC(2, _2.5)
   R 0;
