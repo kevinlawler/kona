@@ -15,13 +15,209 @@ Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
 
 
+//TODO: for derived verbs like +/ you can add the sub-pieces in parallel
+Z K over2(K a, V *p, K b)
+{
+  K u=0,v=0;
+  K y=a?v=join(u=enlist(a),b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
+  I yt=y->t, yn=y->n;
+  K z=0,g=0;
+  if(yt  > 0){z=ci(y); GC;}
+  if(yn == 0)
+  {
+    V **q=(V**)p-1; I s=-2==y->t;
+    if(VA(*q))
+      if     (**q==plus)    z= s?Kf(  0):Ki(0);
+      else if(**q==max_or)  z= s?Kf(-FI):Ki(0);
+      else if(**q==times)   z= s?Kf(  1):Ki(1);
+      else if(**q==min_and) z= s?Kf( FI):Ki(1);
+      else  z=LE;
+      GC;
+  }
+  K c=first(y),d;//mm/o
+  //TODO: this reuse of g should be implemented in other adverbs
+  if(0 >yt) DO(yn-1, d=c; if(!g)g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); if(2==g->c){cd(g);g=0;} cd(d); if(!c) GC;) //TODO: oom err/mmo unwind above - oom-g
+  if(0==yt) DO(yn-1, d=c; c=dv_ex(d,p-1,kK(y)[i+1]); cd(d); if(!c) GC;) //TODO: err/mmo unwind above
+  z=c;
+cleanup:
+  if(g)cd(g);
+  if(u)cd(u);
+  if(v)cd(v);
+  R z;
+}
+
+Z K scan2(K a, V *p, K b)
+{
+  K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u); //oom
+  I yt=y->t, yn=y->n;
+  if(yt  > 0 || yn == 0) R y;
+
+  K z=newK(0,yn),c,d;
+  kK(z)[0] = first(y);
+
+  K g;
+  if( 0 >yt) DO(yn-1, d=kK(z)[i]; g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); cd(g); U(c) kK(z)[i+1]=c) //TODO: err/mmo  cd(y) - oom-g
+  if( 0==yt) DO(yn-1, d=kK(z)[i]; c=dv_ex(d,p-1,kK(y)[i+1]); U(c) kK(z)[i+1]=c  ) //TODO: err/mmo  cd(y)
+  cd(y);
+
+  //This was to fix (there may be a better refactoring):  11+\1 -> 12 (1 K) but  11+\1 2 -> 11 12 14 (3 K)
+  if(a&&atomI(b)) { y=z; M(z,u=Ki(1)) M(y,u,z=drop(u,z)) cd(y); cd(u); }
+
+  R collapse(z);
+}
+
+Z K over2l(K a, V *p, K b)
+{
+  K u=b,c=0;I flag=0;
+
+  I useN=0,n=0,useB=0;
+  if(a) if(1 == a->t){useN=1; n=*kI(a);} else if(7==a->t){useB=1;}
+  P(n<0,IE)
+
+  if(useN) //n f/x
+  {
+    DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c))
+    c=c?c:ci(b);
+  }
+  else if(useB) // b f/x
+  {
+    I t;
+    do
+    {
+      K g=vf_ex(&a,u); U(g)
+      t=(g->t==1 && *kI(g));
+      cd(g);
+      if(!t)break;
+      c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c)
+    }while(1);
+    c=c?c:ci(b);
+  }
+  else while(1) // f/x
+  {
+    if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
+    if(u!=b) cd(u);
+    if(flag)break;
+    u=c?c:u;
+    U(c=dv_ex(0,p-1,u))
+  }
+  R c;
+}
+
+Z K scan2l(K a, V *p, K b)
+{
+  K u=enlist(b),v,w,c=0,d;I flag=0;//TODO: optimize/memory manage enlists,firsts,reverses here
+  U(u);
+
+  I useN=0,n=0,useB=0;
+  if(a) if(1 == a->t){useN=1; n=*kI(a);}else if(7==a->t)useB=1;
+  P(n < 0,IE) //mmo
+
+  if(useN) DO(n, U(v=reverse(u)) d=first(v); cd(v); c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); u=join(w=u,v); cd(w); cd(v); U(u))
+  else if(useB)
+  {
+    I t;
+    do
+    {
+      U(v=reverse(u))
+      d=first(v); cd(v);
+      K g=vf_ex(&a,d); U(g)
+      t=(1==g->t && *kI(g));
+      cd(g);
+      if(!t){cd(d); break;}
+      c=dv_ex(0,p-1,d); cd(d);
+      U(c) U(v=enlist(c)) cd(c);
+      u=join(w=u,v); cd(w); cd(v); U(u)
+    }while(1);
+  }
+  else while(1)
+  {
+    d=first(v=reverse(u));cd(v);
+    if(matchI(b,c) || matchI(c,d))flag=1;
+    if(!flag && c)
+    {
+      u=join(v=u,w=enlist(c));
+      cd(v);cd(w);cd(d);
+      d=c;
+    }
+    if(flag){cd(c);cd(d);break;}
+    c=dv_ex(0,p-1,d);cd(d);
+  }
+  R u;
+}
+
+Z K each2l(K a, V *p, K b)
+{
+  I bt=b->t, bn=b->n;
+  if(bt > 0) R dv_ex(0,p-1,b);
+  else
+  {
+    K z = newK(0,bn),d=0; U(z)
+    K g;
+    if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(0,p-1,g); cd(g); M(d,z) kK(z)[i]=d)
+    if(0==bt) DO(bn, d=dv_ex(0,p-1,kK(b)[i]); M(d,z) kK(z)[i]=d)
+    R demote(z);
+  }
+}
+
+Z K eachright2(K a, V *p, K b)
+{
+  I bt=b->t, bn=b->n;
+  if(bt > 0) R dv_ex(a,p-1,b);
+  K z = newK(0,bn), d;
+  K g;
+  if(0 >bt) DO(bn, g=newK(ABS(bt),1); memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(a,p-1,g); cd(g); U(d) kK(z)[i]=d) //TODO: err/mmo oom-g
+  if(0==bt) DO(bn, d=dv_ex(a,p-1,kK(b)[i]); U(d) kK(z)[i]=d)
+  R demote(z);
+}
+
+Z K eachleft2(K a, V *p, K b)
+{
+  if(!a) R VE;
+  I at=a->t, an=a->n;
+  if(at > 0) R dv_ex(a,p-1,b);
+  K z = newK(0,an),d;
+  K g;
+  if(0 >at) DO(an, g=newK(ABS(at),1); memcpy(g->k,((V)a->k)+i*bp(at),bp(at)); d=dv_ex(g,p-1,b); cd(g); U(d) kK(z)[i]=d) //TODO: err/mmo oom-g
+  if(0==at) DO(an, d=dv_ex(kK(a)[i],p-1,b); U(d) kK(z)[i]=d) //TODO: err/mmo
+  R demote(z);
+}
+
+Z K eachpair2(K a, V *p, K b)  //2==k necessary?
+{
+  I bt=b->t, bn=b->n;
+  if(bt >  0) R dv_ex(b,p-1,b);
+  if(bt <= 0)
+  {
+    if     (bn == 0 && !a) R LE;
+    else if(bn == 0 &&  a) R newK(0,0);//TODO: memory manage/ optimize in join with null ptr ?
+    else if(bn < 2) R newK(0,0);//TODO: this newK and the above.....does empty list type depend on input?
+  }
+
+  K z = newK(0,bn-1),d=0; //oom
+  K g,h;
+  if(0 >bt)DO(bn-1, h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(i)*bp(bt),bp(bt)); memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h); cd(g);cd(h);U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
+  if(0==bt)DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
+
+  z=demote(z); //oom
+
+  if(a) //mmo
+  {
+    K u,v;
+    u=enlist(a);//oom
+    v=join(u,z);//oom
+    cd(u);
+    R v;
+  }
+
+  R z;
+}
+
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type
 //TODO: consider merging dv_ex with vf_ex
-Z K dv_ex(K a, V *p, K b) 
+Z K dv_ex(K a, V *p, K b)
 {
   if(!p || !*p) R 0; //TODO: ???
   U(b)
-
   V *o = p-1;
 
   //Arity of V?A_1...A_n-1 for X V?A_1...A_n Y; 0 for X Y, X A Y
@@ -29,233 +225,52 @@ Z K dv_ex(K a, V *p, K b)
   k=adverbClass(*p)?adverbClass(*o)?1:valence(*o):valence(*p); //also t7 basic
 
   V adverb=*(V*)*p; //TODO: Implement adverb "Error Reports" error checking from manual
-  
+
   //k>2 --- ??? bound for special verbs ?.@ , etc.  ??? k=2 ??? valence is weird here
   //!(adver...  ---- added to let f/[;;;] through
-  //if(k>2 && !(adverbClass(*p) && !VA(*o)))k=2; 
-  if(k>2)k=2; 
- 
-  //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
-  if(2==k && adverb == over)
+  //if(k>2 && !(adverbClass(*p) && !VA(*o)))k=2;
+  if(k>2)k=2;
+
+  if(2==k)
   {
-      K u=0,v=0;
-      K y=a?v=join(u=enlist(a),b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
-      I yt=y->t, yn=y->n;
-
-      K z=0,g=0;
-
-      if(yt  > 0){z=ci(y); GC;} 
-      if(yn == 0) 
-      {
-        V **q=(V**)p-1; I s=-2==y->t;  
-        if(VA(*q)) 
-          if     (**q==plus)    z= s?Kf(  0):Ki(0);
-          else if(**q==max_or)  z= s?Kf(-FI):Ki(0);
-          else if(**q==times)   z= s?Kf(  1):Ki(1);
-          else if(**q==min_and) z= s?Kf( FI):Ki(1);
-          else  z=LE;
-          GC;
-      }
-      K c=first(y),d;//mm/o
-      //TODO: this reuse of g should be implemented in other adverbs 
-      if(0 >yt) DO(yn-1, d=c; if(!g)g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); if(2==g->c){cd(g);g=0;} cd(d); if(!c) GC;) //TODO: oom err/mmo unwind above - oom-g
-      if(0==yt) DO(yn-1, d=c; c=dv_ex(d,p-1,kK(y)[i+1]); cd(d); if(!c) GC;) //TODO: err/mmo unwind above
-      z=c;
-cleanup:
-      if(g)cd(g);
-      if(u)cd(u);
-      if(v)cd(v);
-      R z;
-  }
-
-  if(2 > k && adverb == over)
-  { 
-    K u=b,c=0;I flag=0; 
-
-    I useN=0,n=0,useB=0;
-    if(a) if(1 == a->t){useN=1; n=*kI(a);} else if(7==a->t){useB=1;}
-    P(n<0,IE)
-
-    if(useN) //n f/x
-    {
-      DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c))
-      c=c?c:ci(b);
+    if (adverb == over) R over2(a, p, b);
+    if (adverb == scan) R scan2(a, p, b);
+    if (adverb == each) {
+            if(!a) adverb = eachright;
+            else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE;
+            else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
+            else if (a->t > 0) adverb = eachright;
+            else if(b->t > 0) adverb = eachleft;
+            else
+                    {
+                            //a and b both lists/vectors of size an
+                            a=promote(a);
+                            b=promote(b);
+                            M(a,b)
+                                K z = newK(0,a->n);
+                            M(z,a,b)
+                                K k;
+                            DO(a->n, k=dv_ex(kK(a)[i],p-1,kK(b)[i]); M(k,z,a,b) kK(z)[i]=k)
+                                cd(a);
+                            cd(b);
+                            R demote(z);
+                    }
     }
-    else if(useB) // b f/x 
-    {
-      I t;
-      do
-      { 
-        K g=vf_ex(&a,u); U(g)
-        t=(g->t==1 && *kI(g));
-        cd(g);
-        if(!t)break;
-        c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c)
-      }while(1);
-      c=c?c:ci(b);
-    }
-    else while(1) // f/x
-    {
-      if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
-      if(u!=b) cd(u);
-      if(flag)break;
-      u=c?c:u;
-      U(c=dv_ex(0,p-1,u))
-    }
-    R c;
-  }
 
-  if(2==k && adverb == scan)
+    /* if (adverb == eachright) R eachright2(a, p, b); */
+    /* if (adverb == eachleft) R eachleft2(a, p, b); */
+    /* if (adverb == eachpair) R eachpair2(a, p, b); */
+
+  } else if(2 > k)
   {
-    K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u); //oom
-    I yt=y->t, yn=y->n;
-    if(yt  > 0 || yn == 0) R y;
-    
-    K z=newK(0,yn),c,d;
-    kK(z)[0] = first(y);
-
-    K g;
-    if( 0 >yt) DO(yn-1, d=kK(z)[i]; g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); cd(g); U(c) kK(z)[i+1]=c) //TODO: err/mmo  cd(y) - oom-g
-    if( 0==yt) DO(yn-1, d=kK(z)[i]; c=dv_ex(d,p-1,kK(y)[i+1]); U(c) kK(z)[i+1]=c  ) //TODO: err/mmo  cd(y)
-    cd(y);
-
-    //This was to fix (there may be a better refactoring):  11+\1 -> 12 (1 K) but  11+\1 2 -> 11 12 14 (3 K)
-    if(a&&atomI(b)) { y=z; M(z,u=Ki(1)) M(y,u,z=drop(u,z)) cd(y); cd(u); }
-
-    R collapse(z);
+    if (adverb == over) R over2l(a, p, b);
+    if (adverb == scan) R scan2l(a, p, b);
+    if (adverb == each) R each2l(a, p, b);
   }
 
-  if(2 > k && adverb == scan)
-  { 
-    K u=enlist(b),v,w,c=0,d;I flag=0;//TODO: optimize/memory manage enlists,firsts,reverses here
-    U(u);
-
-    I useN=0,n=0,useB=0;
-    if(a) if(1 == a->t){useN=1; n=*kI(a);}else if(7==a->t)useB=1;
-    P(n < 0,IE) //mmo
-
-    if(useN) DO(n, U(v=reverse(u)) d=first(v); cd(v); c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); u=join(w=u,v); cd(w); cd(v); U(u)) 
-    else if(useB)
-    {
-      I t;
-      do
-      {
-        U(v=reverse(u))
-        d=first(v); cd(v);
-        K g=vf_ex(&a,d); U(g)
-        t=(1==g->t && *kI(g));
-        cd(g);
-        if(!t){cd(d); break;}
-        c=dv_ex(0,p-1,d); cd(d);
-        U(c) U(v=enlist(c)) cd(c);
-        u=join(w=u,v); cd(w); cd(v); U(u) 
-      }while(1);
-    }
-    else while(1)
-    {
-      d=first(v=reverse(u));cd(v);
-      if(matchI(b,c) || matchI(c,d))flag=1;
-      if(!flag && c)
-      {
-        u=join(v=u,w=enlist(c));
-        cd(v);cd(w);cd(d);
-        d=c;
-      }
-      if(flag){cd(c);cd(d);break;}
-      c=dv_ex(0,p-1,d);cd(d);
-    }
-    R u;
-  }
-
-  if(2==k && adverb == each)
-  {
-    if(!a) adverb= eachright;
-    else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE; 
-    else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
-    else if (a->t > 0) adverb = eachright;
-    else if(b->t > 0) adverb = eachleft;
-    else
-    {
-     //a and b both lists/vectors of size an
-      a=promote(a); 
-      b=promote(b); 
-      M(a,b)
-      K z = newK(0,a->n);
-      M(z,a,b)
-      K k;
-      DO(a->n, k=dv_ex(kK(a)[i],p-1,kK(b)[i]); M(k,z,a,b) kK(z)[i]=k) 
-      cd(a);
-      cd(b);
-      R demote(z);
-    }
-  }
-
-  if(2 > k && adverb == each)
-  {
-    I bt=b->t, bn=b->n;
-    if(bt > 0) R dv_ex(0,p-1,b);
-    else
-    {
-      K z = newK(0,bn),d=0; U(z)
-      K g;
-      if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(0,p-1,g); cd(g); M(d,z) kK(z)[i]=d) 
-      if(0==bt) DO(bn, d=dv_ex(0,p-1,kK(b)[i]); M(d,z) kK(z)[i]=d)
-      R demote(z);
-    }
-  }
-
-  if(adverb == eachright) // {1}/:!9 is valid
-  {
-    I bt=b->t, bn=b->n;
-    if(bt > 0) R dv_ex(a,p-1,b);
-    K z = newK(0,bn), d;
-    K g;
-    if(0 >bt) DO(bn, g=newK(ABS(bt),1); memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(a,p-1,g); cd(g); U(d) kK(z)[i]=d) //TODO: err/mmo oom-g
-    if(0==bt) DO(bn, d=dv_ex(a,p-1,kK(b)[i]); U(d) kK(z)[i]=d)
-    R demote(z);
-  }
-
-  if(adverb == eachleft)
-  {
-    if(!a) R VE; 
-    I at=a->t, an=a->n;
-    if(at > 0) R dv_ex(a,p-1,b);
-    K z = newK(0,an),d;
-    K g;
-    if(0 >at) DO(an, g=newK(ABS(at),1); memcpy(g->k,((V)a->k)+i*bp(at),bp(at)); d=dv_ex(g,p-1,b); cd(g); U(d) kK(z)[i]=d) //TODO: err/mmo oom-g
-    if(0==at) DO(an, d=dv_ex(kK(a)[i],p-1,b); U(d) kK(z)[i]=d) //TODO: err/mmo
-    R demote(z);
-  }
-
-  if(adverb == eachpair) //2==k necessary?
-  {
-    I bt=b->t, bn=b->n;
-    if(bt >  0) R dv_ex(b,p-1,b);
-    if(bt <= 0)
-    {
-      if     (bn == 0 && !a) R LE; 
-      else if(bn == 0 &&  a) R newK(0,0);//TODO: memory manage/ optimize in join with null ptr ?
-      else if(bn < 2) R newK(0,0);//TODO: this newK and the above.....does empty list type depend on input?
-    }
-
-    K z = newK(0,bn-1),d=0; //oom
-    K g,h;
-    if(0 >bt)DO(bn-1, h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(i)*bp(bt),bp(bt)); memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h); cd(g);cd(h);U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
-    if(0==bt)DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
-
-    z=demote(z); //oom
-
-    if(a) //mmo
-    {
-      K u,v;
-      u=enlist(a);//oom
-      v=join(u,z);//oom
-      cd(u);
-      R v;
-    }
-
-    R z;
-  }
+  if(adverb == eachright) R eachright2(a, p, b);
+  if(adverb == eachleft) R eachleft2(a, p, b);
+  if(adverb == eachpair) R eachpair2(a, p, b);
 
   //this could be better ??
   I gn=0;
