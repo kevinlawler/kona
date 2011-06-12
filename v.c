@@ -322,9 +322,9 @@ K not_attribute(K a)
 Z K excl_mkdict(K a, K b) //make dict, dyadic `foo`bar`baz!(1 2 3;`a`b`c;"abc") version
 {
   I n=a->n;
-  K k, v, t, z=newK(5,n);  // key, value, tuple, result
-  DO(n,k=newK(4,1); kS(k)[0]=kS(a)[i]; v=kV(b)[i]; t=newK(0,3);
-      kK(t)[0]=k; kK(t)[1]=v; ci(v); kK(t)[2]=_n(); kK(z)[i]=t;);
+  K k, v, t, z;
+  U(z=newK(5,n))  // key, value, tuple, result
+  DO(n, M(z,k=Ks(kS(a)[i]),t=newK(0,3),v=ci(kK(b)[i])) kK(t)[0]=k; kK(t)[1]=v; kK(t)[2]=_n(); kK(z)[i]=t;);
   R z;
 }
 
