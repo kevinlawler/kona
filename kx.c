@@ -299,6 +299,7 @@ cleanup:
 //K3.2 Bug - {b:1_,/";a",/:$a:!x; "{[",b,"]a3}[" ,(1_,/";",/:$a ),"]" } 67890  --> Sometimes works, sometimes stack error, sometimes crash
 K vf_ex(V q, K g) 
 {
+  if (interrupted) {interrupted=0; R BE;}
   V w=*(V*)q;
   if(!g)R 0; //??? R w converted to type7...or ?
   K z=0;
@@ -314,7 +315,6 @@ K vf_ex(V q, K g)
   K a=0,b=0,c=0,d=0;
   if(gn >0) a=kK(g)[0]; if(gn >1) b=kK(g)[1]; if(gn >2) c=kK(g)[2]; if(gn >3) d=kK(g)[3];
 
-  if (interrupted) {interrupted=0; BE; GC;}
 
   //valence overloaded verbs 
   if(gn > 2 && (w==what || w==_ssr)){ z=(w==what?what_triadic:_ssr)(a,b,c); GC; }
