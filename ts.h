@@ -70,6 +70,7 @@ typedef struct pda{I i,s,n;S c;}Pda;typedef Pda*PDA; //holds parse state. pos in
 #define VE kerr("valence") 
 #define PE kerr("parse")
 #define IE kerr("int") 
+#define BE kerr("break")
 #define XE kerr("index") 
 #define LE kerr("length") 
 #define RE kerr("rank")
