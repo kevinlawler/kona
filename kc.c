@@ -19,7 +19,7 @@ Z I wdss(K *a,FILE *f);
 
 I interrupted = 0;
 
-Z void handle_SIGINT(I sig) { interrupted = 1; }
+Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 
 //0: not a verb pointer, 1: monadic, 2: dyadic, 3: triadic
@@ -117,7 +117,7 @@ I attend() //K3.2 uses fcntl somewhere
   // set up SIGINT handler, so C-c can break infinite loops cleanly
   struct sigaction sa;
   sa.sa_handler = handle_SIGINT;
-  sa.sa_mask = SIG_DFL;
+  sigemptyset(&sa.sa_mask);
   sigaction(SIGINT, &sa, NULL);
 
   // get us a socket and bind it 
