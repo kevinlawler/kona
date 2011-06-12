@@ -235,32 +235,28 @@ Z K dv_ex(K a, V *p, K b)
   {
     if (adverb == over) R over2(a, p, b);
     if (adverb == scan) R scan2(a, p, b);
-    if (adverb == each) {
-            if(!a) adverb = eachright;
-            else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE;
-            else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
-            else if (a->t > 0) adverb = eachright;
-            else if(b->t > 0) adverb = eachleft;
-            else
-                    {
-                            //a and b both lists/vectors of size an
-                            a=promote(a);
-                            b=promote(b);
-                            M(a,b)
-                                K z = newK(0,a->n);
-                            M(z,a,b)
-                                K k;
-                            DO(a->n, k=dv_ex(kK(a)[i],p-1,kK(b)[i]); M(k,z,a,b) kK(z)[i]=k)
-                                cd(a);
-                            cd(b);
-                            R demote(z);
-                    }
+    if (adverb == each)
+      {
+      if(!a) adverb = eachright;
+      else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE;
+      else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
+      else if (a->t > 0) adverb = eachright;
+      else if(b->t > 0) adverb = eachleft;
+      else
+      {
+        //a and b both lists/vectors of size an
+        a=promote(a);
+        b=promote(b);
+        M(a,b)
+        K z = newK(0,a->n);
+        M(z,a,b)
+        K k;
+        DO(a->n, k=dv_ex(kK(a)[i],p-1,kK(b)[i]); M(k,z,a,b) kK(z)[i]=k)
+        cd(a);
+        cd(b);
+        R demote(z);
+      }
     }
-
-    /* if (adverb == eachright) R eachright2(a, p, b); */
-    /* if (adverb == eachleft) R eachleft2(a, p, b); */
-    /* if (adverb == eachpair) R eachpair2(a, p, b); */
-
   } else if(2 > k)
   {
     if (adverb == over) R over2l(a, p, b);
