@@ -488,9 +488,9 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
       I i=p->n-2; //not the terminating NULL, but the entry before
       V*q=(V*) kK(p)+i;
 
+      I proj=0;
       if(k->n >1 && !sva(*q) && adverbClass(*q) )
       {
-        I proj=0;
         DO(k->n, if(!kK(k)[i])proj=1) 
         if(!proj) //***** could be the _n() <-> ;;; replacement above *****
         {
@@ -517,10 +517,12 @@ Z K bv_ex(V*p,K k)
   //assert k==b->n (otherwise, projection/VE, which shouldn't reach here)
   I n=0;
 
-  if(0 && !adverbClass(*p) && valence(*p) < 3)
+ 
+  
+  //This block may contribute to bv_ex subtriadic problems
+  if(!adverbClass(*p) && valence(*p) < 3)
   {
-    er(AAAA)
-    if(k->n < 2) { er(aaa) R VE; }
+    if(k->n < 2) { R VE; }
     R dv_ex(kK(k)[0],p,kK(k)[1]);
   }
 
