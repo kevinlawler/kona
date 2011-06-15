@@ -8,9 +8,9 @@
 /            (tak (- z 1) x y))
 /       z))
 
-tak:{:[y>x;z;
-       _f[_f[x-1;y;z];
-          _f[y-1;z;x];
+tak:{:[y>x;z
+       _f[_f[x-1;y;z]
+          _f[y-1;z;x]
           _f[z-1;x;y]]]}
 
 / tak[18;12;6]
