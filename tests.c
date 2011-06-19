@@ -126,8 +126,8 @@ Z I tests02()
   TC((2#,(,0;,1)), =:/:(1 2;2 1)) //Nice extension to K3.2, which errs on both =/: and =:/:
 
   //Projections
-  TC(skip, {x}[1;],{x}[1;]) //VE
-  TC(skip, +[1;2;;;],+[1;2;;;]) //VE
+  TC((1;"valence"),@[.:;"{x}[1;]";:])
+  TC((1;"valence"),@[.:;"+[1;2;;;]";:])
   TC(skip, (1;"valence"), .[+[1;2;;;]; 5;:] ) //fill in error trap //this has a problem?  +[1;2;;;;] causing valence when shouldn't?
 
   TC({x+y}[1;],{x+y}[1;])
@@ -163,7 +163,7 @@ Z I tests02()
   TC((.[0 10 100 _; ,!9; :]) , (1;"length"))
   //TC(.[=; 0; :] , (1;"valence") ) // ignore: better to return =[0;] than valence error
   TC((.[.:;,"{_foo[x]}";:]),(1;"reserved"))
-  TC(skip,(.[{_foo[x]};0;:]),(1;"reserved"))//.[NULL;...] errors inside bracket should not be interpreted as projections
+  TC((@[.:;"{_foo[x]} 0";:]),(1;"reserved"))//.[NULL;...] errors inside bracket should not be interpreted as projections
 
   TC(-9131, _jd 20100101)
 
@@ -206,18 +206,17 @@ Z I tests02()
   //Commands
   TC(1, 2<#."\\w") // \w command
 
-  TC(skip, \b,\b) //trap parse errors  (\b  backspace)
+  TC((1;"parse"), @[.:;"\b";:]) //trap parse errors  (\b  backspace)
 
   TC(51, a:101#"1+"; . a) //In debug mode repeating . a;. a; causes execution time to build
 
   TC(6, (+/)[1 2 3])
-  TC(skip, 7, (+/)[1; 1 2 3])
+  TC(7, (+/)[1; 1 2 3])
 
   TC(1,~0.0)
   TC(1,~ -0.0)
 
-  TC(skip, ,\\: 1 2 3, VE) //valence error
-  TC_("skip","(,':)[1 2;3 4] ~ (1 2;4 3)")
+  TC((1;"valence"), @[.:;",\\: 1 2 3";:])
 
   TC(((0 2;0 3);(1 2;1 3)),  0 1 ,/:\\:2 3 )
   TC(((0 2;0 3);(1 2;1 3)),  0 1 ,/:\\:\\:2 3 )
@@ -238,7 +237,7 @@ Z I tests02()
   
   TC(1,&/{x~_db _bd x}/: (+;+:;-;-:)) // handle unreserved monadic,dyadic verbs
 
-  TC(skip, 0 2, .[.:;"1+1";:]) //bug in K3?
+  TC(0 2, @[.:;"1+1";:])
 
   TC(32, (+/ *)[1 2 3;4 5 6])
   TC(32,  1 2 3 _dot 4 5 6)
@@ -278,9 +277,9 @@ Z I tests02()
   TC(1 0 1 1,  2 _vs 11)
   TC(1 1 0 0,  2 _vs 12)
   TC(2 0 1 0, 10 _vs 2010)
-  TC(skip, ((2;2 2);(0;0 0);(1; 1 1);(0;1 2)), 10 _vs (2010;2011 2012)) //broken until {}\[] adverbs fixed? or subfunctions?
+  TC(((2;2 2);(0;0 0);(1; 1 1);(0;1 2)), 10 _vs (2010;2011 2012)) //broken until {}\[] adverbs fixed? or subfunctions?
   TC(skip, 0, (_+[2;]) 11) //segfault
-  TC(skip,   if[1; `0:“bad unicode quotes”]) //segfault
+  TC((1;"parse"),  @[.:;"if[1; `0:“bad unicode quotes”]";:]) 
 
   //f'[x;y;z;...]
   TC_("6", "f:{x+y+z}; f'[1;2;3]")
@@ -392,6 +391,7 @@ Z I tests02()
   TC(skip, 0, {x+y}/[;1])
   TC_("skip","{x+y}'[1;]")
   TC_("skip","3 4 5 , {x+y}'[1;] 2 3 4")
+  TC_("skip","(,':)[1 2;3 4] ~ (1 2;4 3)")
 
   R 0; 
 }
@@ -836,7 +836,7 @@ Z I testsBook()
   TC(("canoe";`dinghy;"kayak";66545;{x+y}) , ("canoe";`dinghy),("kayak";66545;{x+y})   )
   TC(skip, 1++, 1+a:+)  //Should seven_types merge sub-seven_types ?
   TC(skip, +\\(!2;!3))  //error (adverbs check intermediate values)
-  TC((1;"index"), @[.:;"1+/() 1 2 3";:]) //error
+  TC((1;"index"), @[.:;"1+/() 1 2 3";:]) 
 
   TC(640640, f:{:[x!2;x;_ x*0.5]}; (640640<) f/640640)
   TC(320320, f:{:[x!2;x;_ x*0.5]}; (640639<) f/640640)
