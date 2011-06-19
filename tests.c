@@ -836,7 +836,7 @@ Z I testsBook()
   TC(("canoe";`dinghy;"kayak";66545;{x+y}) , ("canoe";`dinghy),("kayak";66545;{x+y})   )
   TC(skip, 1++, 1+a:+)  //Should seven_types merge sub-seven_types ?
   TC(skip, +\\(!2;!3))  //error (adverbs check intermediate values)
-  TC(skip, 1+/() 1 2 3) //error
+  TC((1;"index"), @[.:;"1+/() 1 2 3";:]) //error
 
   TC(640640, f:{:[x!2;x;_ x*0.5]}; (640640<) f/640640)
   TC(320320, f:{:[x!2;x;_ x*0.5]}; (640639<) f/640640)
@@ -854,6 +854,7 @@ Z I testsBook()
 
   //Regressions
   TC(2, _2.5)
+
   R 0;
 }
 
