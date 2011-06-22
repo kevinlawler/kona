@@ -97,7 +97,11 @@ Z V unpool(I r)
   if(!*L)
   {
     U(z=amem(k))
-    if(k<PG){I q=PG/k;V y=z;DO(q-1, *(V*)y=y+k; y+=k) }//Low lanes subdivide pages
+    if(k<PG)
+    { 
+      V y=z;
+      while(y<(V)z+PG+-k){*(V*)y=y+k;y+=k;}
+    }//Low lanes subdivide pages. no divide op
     *L=z;
   }
   z=*L;*L=*z;*z=0;
