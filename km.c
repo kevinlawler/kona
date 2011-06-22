@@ -13,6 +13,7 @@
 #define KP_MIN 5  //2^x, must be at least ceil(lg(sizeof(V)))
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
 V KP[sizeof(V)*8+1]; //KPOOL
+I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
 
 Z I cl2(I v);
 Z I kexpander(K *p,I n);
@@ -47,8 +48,8 @@ K cd(K a)
   #ifdef DEBUG
   if(0)R 0; //for viewing K that have been over-freed
   #endif
-  //assumes seven_type a->k is < PG()
-  I o=((size_t)a)%PG();//file-mapped? 1:
+  //assumes seven_type a->k is < PG
+  I o=((size_t)a)&(PG-1);//file-mapped? 1:
   I k=sz(a->t,a->n), r=lsz(k);
   //assert file-maps have sizeof(V)==o and unpooled blocks never do (reasonable)
   if(sizeof(V)==o || r>KP_MAX)munmap(((V)a)-o,k+o); //(file-mapped or really big) do not go back into pool. 
@@ -59,9 +60,8 @@ K ci(K a){if(a)a->c++; R a;}
 
 I bp(I t) {SW(ABS(t)){CSR(1, R sizeof(I)) CSR(2, R sizeof(F)) CSR(3, R sizeof(C)) default: R sizeof(V); } } //Default 0/+-4/5/6/7  (assumes sizeof(K)==sizeof(S)==...)
 I sz(I t,I n){R 3*sizeof(I)+(7==t?TYPE_SEVEN_SIZE:n)*bp(t)+(3==ABS(t));} //not recursive. assert sz() > 0:  Everything gets valid block for simplified munmap/(free)
-I PG(){R sysconf(_SC_PAGE_SIZE);} //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
 Z I nearest(I i,I m){I k=i%m;R k?i+m-k:i;} //up 0,8,...,8,16,16,...
-#define nearPG(i) nearest((i),PG())
+#define nearPG(i) nearest((i),PG)
 //#define nearI(i) nearest((i),sizeof(I))
 
 //This is an untested idea for avoiding all that goes on in backing out of memory allocations when an error occurs inside a function before everything is done:
@@ -97,7 +97,7 @@ Z V unpool(I r)
   if(!*L)
   {
     U(z=amem(k))
-    if(k<PG()){I q=PG()/k;V y=z;DO(q-1, *(V*)y=y+k; y+=k) }//Low lanes subdivide pages
+    if(k<PG){I q=PG/k;V y=z;DO(q-1, *(V*)y=y+k; y+=k) }//Low lanes subdivide pages
     *L=z;
   }
   z=*L;*L=*z;*z=0;
@@ -122,7 +122,7 @@ Z I cl2(I v) //optimized 64-bit ceil(log_2(I))
 }
 
 
-I lsz(I k){I r=cl2(k); R MAX(KP_MIN,r); } //pool lane from size. Ignore everywhere lanes < KP_MIN
+I lsz(I k){R k<=1<<KP_MIN?KP_MIN:cl2(k);} //pool lane from size. Ignore everywhere lanes < KP_MIN. MAX() was eliminated as an optimization
 I repool(V v,I r)//assert r < KP_MAX 
 {
   memset(v,0,1<<r);

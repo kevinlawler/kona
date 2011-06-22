@@ -305,7 +305,7 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) //File descriptor, moving * into mmap, fix
     S u;
     I length=r;
     I offset=v-fixed+(t>0?3:4)*sizeof(I);
-    I mod = offset % PG(); //offset must be a multiple of the pagesize
+    I mod = offset&(PG-1); //offset must be a multiple of the pagesize
     length+=mod;
     offset-=mod;
     if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,offset))){R SE;}

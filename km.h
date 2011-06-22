@@ -27,7 +27,6 @@ K ci(K a);
 I repool(V v,I r);
 I lsz(I k);
 I sz(I t,I n);
-I PG();
 #if defined(DEBUG)
 extern V krec[1000000];
 extern I kreci;

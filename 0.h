@@ -27,7 +27,6 @@ I sva(V p);
 I rep(K x,I y);
 I wrep(K x,V v,I y);
 K _1d(K x,K y);
-I PG();
 K mod(K a,K b);
 I bp(I t);
 K _2m_r(V v,V aft,I *b);

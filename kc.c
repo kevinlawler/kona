@@ -217,6 +217,8 @@ I kinit() //oom (return bad)
 {
   atexit(finally);
   I i;
+  PG = sysconf(_SC_PAGE_SIZE);
+  if(PG&(PG-1)){er(Pagesize not power of 2); exit(1);}
 #define SETLEN(x) {for(i=0; x[i]; i++)  x##ct = i+1; }
   SETLEN(vn_); SETLEN(vm_); SETLEN(vd_); SETLEN(vt_);
   for(i=0; adverbs[i]; i++) adverb_ct=i+1;  //adverbs not adverb_, make consistent?
