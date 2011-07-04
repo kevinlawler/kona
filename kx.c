@@ -544,9 +544,12 @@ Z K bv_ex(V*p,K k)
     K z=ci(*kK(k));
     K g=newK(0,k->n);
     M(z,g);
-    DO(n,*kK(g)=z; DO2(g->n-1, x=itemAtIndex(kK(k)[j+1],i); M(x,z,g) kK(g)[j+1]=x;)
-         x=bv_ex(p-1,g); M(x,z,g) DO2(g->n, cd(kK(g)[j]); kK(g)[j]=0 ) //set to 0 in case OOM happens
-         z=x) 
+    DO(n, *kK(g)=z;
+          DO2(g->n-1, x=itemAtIndex(kK(k)[j+1],i); M(x,g) kK(g)[j+1]=x;)
+          x=bv_ex(p-1,g);
+          M(x,g)
+          DO2(g->n, cd(kK(g)[j]); kK(g)[j]=0) //set to 0 in case OOM happens
+          z=x) 
     cd(g);
     R z;
   }

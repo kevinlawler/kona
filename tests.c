@@ -380,6 +380,9 @@ Z I tests02()
   TC(2,a:2 3;a@*:0) 
   TC(0=#:,a:0;a=#:)
 
+  TC(_n, do[3;."\" \"_sv 1"]) //bv_ex error mishandling was causing crash
+  TC(_n, do[3;."1_sv \" \""]) //^^
+
   //bv_ex subtriadic
   //bv_ex 1. doesn't seem to handle projectons correcly
   //      2. doesn't let / \ etc handle themselves correctly in the dyadic (monadic, niladic?) case
