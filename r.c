@@ -860,7 +860,6 @@ K _vs(K x,K y) //vector from scalar, radix & clock arithmetic (unbounded & bound
   if(0==y->t){U(z=newK(0,y->n)) DO(y->n, M(z,kK(z)[i]=_vs(x,kK(y)[i])))} //eachright
   else if(-1==y->t)//eachright  (we deviate. K3.2 has a k implementation with values "flipped" with front zero-fill)
   {
-    P(*kI(x)<2, DOE)
     z = newK(0,y->n);
     K k = Ki(0);
     M(k,z)
@@ -870,6 +869,7 @@ K _vs(K x,K y) //vector from scalar, radix & clock arithmetic (unbounded & bound
   }
   else if(1==xt) // && 1==y->t /radix
   { //K3.2 mishandles 2 _vs 0 from our perspective (could be said to mishandle _vs, though see above) {(1_|{ _ y % x}[x]\y)!x} 
+    P(*kI(x)<2, DOE)
     U(z=newK(-1,0))
     I a = *kI(x), b = *kI(y), c=b/a;
     while(!z->n || b!=c) //need 1, but lookahead to dodge any fixed points
