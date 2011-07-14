@@ -46,7 +46,7 @@ cleanup:
   R z;
 }
 
-Z K scan2(K a, V *p, K b)
+Z K scan2(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
 {
   K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u); //oom
   I yt=y->t, yn=y->n;

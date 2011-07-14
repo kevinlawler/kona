@@ -12,6 +12,7 @@
 
 //Reserved verbs/functions (_verb)
 
+K _vs(K x,K y);
 Z I CIX(K a,I i,K x);
 Z I binr(K a,I b,I c,K x);
 Z I date_from_jdn(I j);
@@ -39,7 +40,6 @@ S_DYAD(in,   "{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}")
 S_DYAD(lin,  "{_in[;y]/:x}") 
 S_DYAD(mul,  "{x _dot\\:y}") 
 S_DYAD(sv,   "{{z+y*x}/[0;x;y]}")  
-S_DYAD(vs,   "{:[(1<_abs 4:y)|(~1=_abs 4:x);_n;:[@x;{(1_|{ _ y % x}[x]\\y)!x}[x;y]; {|(-1 _ j)-a*1 _ j:y(_%)\\a:|x}[x;y]]]}") //Working subfunction constants would remove [x] projection. Second part from K2 manual. The type checking at the beginning is a kluge until type checking inside functions doesn't crash
 
 S_TRIAD(ssr, "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\"=y$:),0)+/:x _ss y)_ x;,/ :[7=4:z;@[x;i;z];4:z$:;@[x;i;:[;z]];@[x;i;:;z]]}") //missing a few things
 
@@ -847,6 +847,57 @@ Z S rangematch(S p, C t, S r) //BSD.  p pattern t testchar r represented. R 0 on
     else{if(c==t)k=1; if(r)r[(UC)c]=!n;}
 	}
 	R t&&k==n?0:p; //null t => ignore match
+}
+
+void Ireverse(K x){DO(x->n/2, I t=kI(x)[x->n-i-1]; kI(x)[x->n-i-1]=kI(x)[i]; kI(x)[i]=t)}
+
+K _vs(K x,K y) //vector from scalar, radix & clock arithmetic (unbounded & bounded)
+{
+  P(1 < ABS(y->t) || 1!=ABS(xt), TE)
+
+  K z=0;
+
+  if(0==y->t){U(z=newK(0,y->n)) DO(y->n, M(z,kK(z)[i]=_vs(x,kK(y)[i])))} //eachright
+  else if(-1==y->t)//eachright  (we deviate. K3.2 has a k implementation with values "flipped" with front zero-fill)
+  {
+    P(*kI(x)<2, DOE)
+    z = newK(0,y->n);
+    K k = Ki(0);
+    M(k,z)
+    DO(y->n, *kI(k)=kI(y)[i]; M(z,k,kK(z)[i]=_vs(x,k)))
+    cd(k);
+    z=demote(z);
+  }
+  else if(1==xt) // && 1==y->t /radix
+  { //K3.2 mishandles 2 _vs 0 from our perspective (could be said to mishandle _vs, though see above) {(1_|{ _ y % x}[x]\y)!x} 
+    U(z=newK(-1,0))
+    I a = *kI(x), b = *kI(y), c=b/a;
+    while(!z->n || b!=c) //need 1, but lookahead to dodge any fixed points
+    {
+      kap(&z,&b);
+      b = c;
+      c = b/a;
+    }
+    DO(z->n, kI(z)[i] %= a)
+    Ireverse(z);
+  }
+  else if(-1==xt) // && 1==y->t /clock
+  {
+    //{|(-1 _ j)-a*1 _ j:y(_%)\a:|x}
+    DO(xn, if(kI(x)[i]<1) R DOE)
+    U(z=newK(-1,xn))
+    I a = *kI(y), n =z->n;
+    if(a<0){I s=1;DO(xn,s*=kI(x)[i]) a = s - (-a % s);} //a nice property. maybe not crucial
+    DO(n, kI(z)[i] = kI(x)[x->n-1-i])  // z:|x
+    if(n) *kI(z) = *kI(z)? a / *kI(z):0; 
+    DO(n-1, I d=kI(z)[i+1]; kI(z)[i+1] = d?kI(z)[i]/d:0) // divide scan
+    DO(n-1, kI(z)[n-1-i] = kI(z)[n-2-i] - kI(z)[n-1-i] * kI(x)[i] ) 
+    if(n) *kI(z) = a - *kI(z) * kI(x)[xn-1];
+    Ireverse(z);
+    R z;
+  }
+
+  R z;
 }
 
 /////////////////////////////////////////

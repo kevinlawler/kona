@@ -245,6 +245,7 @@ Z I tests02()
   TC((0.5 0 0;0 0.5 0;0 0 0.5), _inv (2 0 0;0 2 0; 0 0 2)  )
   TC((0.1 0 0;0 0.1 0;0 0 0.1), _inv (10 0 0;0 10 0; 0 0 10)  )
   TC(400 400, 10 10 _mul 20 20)
+
   //_sv _vs
   TC(13, 11(_+)\\2)
   TC(11 13 16, 11(_+)\\2 3)
@@ -270,14 +271,26 @@ Z I tests02()
   TC(2 2#(), ((;);(;)))
 
   TC({x+y}/1 2 3 4, 10)
-
-  TC(_n, 10 _vs "1")
-  TC(1 6 40, 24 60 60 _vs 4000)
-  TC(!0, 2 _vs 0) //could have a reason, but probably an artifact of writing K in K (K3.2)
+ 
+  //Radix _vs (unbounded)
+  //TC(!0, 2 _vs 0) //an artifact of writing K in K (K3.2), but sensible if you intend 30000 and 30 to have the same length _vs[2;] (leading zeroes)
+  TC((,0), 2 _vs 0)
+  TC((,1), 2 _vs 1)
+  TC(1 0, 2 _vs 2)
   TC(1 0 1 1,  2 _vs 11)
   TC(1 1 0 0,  2 _vs 12)
   TC(2 0 1 0, 10 _vs 2010)
-  TC(((2;2 2);(0;0 0);(1; 1 1);(0;1 2)), 10 _vs (2010;2011 2012)) //broken until {}\[] adverbs fixed? or subfunctions?
+  TC(1 2 3 4 5, 10 _vs 12345)
+  //TC(((2;2 2);(0;0 0);(1; 1 1);(0;1 2)), 10 _vs (2010;2011 2012)) //Unclear to me whether this level of generalization makes sense
+  //TC(skip,  2 _vs (2; 4 8;(16 32;64 128))) //see above
+  //Clock arithmetic _vs (bounded)
+  TC(1 6 40, 24 60 60 _vs 4000)
+  TC(0 0 0, 1 2 3 _vs 0)
+  TC(23 59 0, 24 60 60 _vs -60)
+  TC(13 20 0, 24 60 60 _vs -6000000)
+  TC((0 0 10;0 16 40;13 46 40) , 24 60 60 _vs/: 10 1000 1000000) // /: is redundant for us
+  TC(0 0, 1 1 _vs 0)
+ 
   TC(skip, 0, (_+[2;]) 11) //segfault
   TC((1;"parse"),  @[.:;"if[1; `0:“bad unicode quotes”]";:]) 
 

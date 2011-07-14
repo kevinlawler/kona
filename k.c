@@ -80,6 +80,12 @@ C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
 #define _VERB2 plus,minus,times,divide,max_or,min_and,power,rotate_mod,less,more,equals,match,at,what,drop_cut,join,take_reshape,dollar,dot,colon_dyadic
 #define _0VERB1 _0m,_1m,_2m,_3m,_4m,_5m,_6m
 #define _0VERB2 _0d,_1d,_2d,_3d,_4d,_5d,_6d //This has a dependency in the parser - magic number 6
+
+//#define _VERB1 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+//#define _VERB2 21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40
+//#define _0VERB1 41,42,43,44,45,46,47
+//#define _0VERB2 
+
 V vm[]  = {_VERB1};
 V vd[]  = {_VERB2};
 V vm0[] = {_0VERB1};
