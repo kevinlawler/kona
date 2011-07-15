@@ -19,7 +19,7 @@ Z I wdss(K *a,FILE *f);
 
 I interrupted = 0;
 
-Z void handle_SIGINT(int sig) { interrupted = 1; er(h_SI) }
+Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 
 //0: not a verb pointer, 1: monadic, 2: dyadic, 3: triadic
