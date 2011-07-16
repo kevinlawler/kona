@@ -44,7 +44,7 @@ typedef struct pda{I i,s,n;S c;}Pda;typedef Pda*PDA; //holds parse state. pos in
 #define SW switch
 #define CD default
 #define diff(x,y) (((V*)(x)) - (V*)(y))
-#define in(x,y)   (diff(x,y) < AE(y) && diff(x,y)>=0 )
+#define in(x,y)   ((size_t)diff(x,y) < AE(y))
 #define ABS(x)    ((x) < 0 ? -(x) : (x))
 #define SIGN(x)    ((x) < 0 ? -(1) : (1))
 
