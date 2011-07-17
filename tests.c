@@ -395,6 +395,9 @@ Z I tests02()
 
   TC(_n, do[3;."\" \"_sv 1"]) //bv_ex error mishandling was causing crash
   TC(_n, do[3;."1_sv \" \""]) //^^
+  
+  TC(6 7 8, (21>+/)(2+)/!3)
+
 
   //bv_ex subtriadic
   //bv_ex 1. doesn't seem to handle projectons correcly

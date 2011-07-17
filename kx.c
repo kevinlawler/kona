@@ -84,7 +84,8 @@ Z K over2l(K a, V *p, K b)
     I t;
     do
     {
-      K g=vf_ex(&a,u); U(g)
+      K*aa=&a;
+      K g=dv_ex(0,&aa,u); U(g)
       t=(g->t==1 && *kI(g));
       cd(g);
       if(!t)break;
@@ -120,7 +121,8 @@ Z K scan2l(K a, V *p, K b)
     {
       U(v=reverse(u))
       d=first(v); cd(v);
-      K g=vf_ex(&a,d); U(g)
+      K*aa=&a;
+      K g=dv_ex(0,&aa,d); U(g)
       t=(1==g->t && *kI(g));
       cd(g);
       if(!t){cd(d); break;}
