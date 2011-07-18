@@ -309,7 +309,8 @@ K where(K x)
   P(!xn,newK(-1,0))
   P(1!=ABS(xt),IE)
   I zn=0,y,j,t=0;
-  DO(xn,if((y=kI(x)[i])<0)R DOE;zn+=y)
+  //DO(xn,if((y=kI(x)[i])<0)R DOE;zn+=y)
+  DO(xn,if((y=kI(x)[i])<0)continue;zn+=y)//skip negatives instead of error
   K z=newK(-1,zn); U(z)
   DO(xn, for(j=0;j<kI(x)[i];j++)kI(z)[t++]=i)//Handles a-> == +-1 
   R z;

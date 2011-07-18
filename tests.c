@@ -397,6 +397,9 @@ Z I tests02()
   TC(_n, do[3;."1_sv \" \""]) //^^
   
   TC(6 7 8, (21>+/)(2+)/!3)
+  TC((1;"wsfull"),@[.:;"0I#0";:])
+  TC((1;"wsfull"),@[.:;"&0I";:])
+  TC((1;"wsfull"),@[.:;"!0I";:])
 
 
   //bv_ex subtriadic

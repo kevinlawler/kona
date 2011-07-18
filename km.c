@@ -14,7 +14,7 @@
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
 V KP[sizeof(V)*8+1]; //KPOOL
 I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
-
+#define MAX_OBJECT_LENGTH (((I)1) << 45) //for catching obviously incorrect allocations
 Z I cl2(I v);
 Z I kexpander(K *p,I n);
 Z K kapn_(K *a,V *v,I n);
@@ -71,6 +71,7 @@ Z I nearPG(I i){ I k=((size_t)i)&(PG-1);R k?i+PG-k:i;}//up 0,8,...,8,16,16,...
 K newK(I t, I n)
 { 
   K z;
+  if(n>MAX_OBJECT_LENGTH)R ME;//coarse (ignores bytes per type). but sz can overflow
   I k=sz(t,n);
   U(z=kalloc(k))
   //^^ relies on MAP_ANON being zero-filled for 0==t || 5==t (cd() the half-complete), 3==ABS(t) kC(z)[n]=0 (+-3 types emulate c-string)
@@ -80,18 +81,20 @@ K newK(I t, I n)
   #endif
   R z;
 }
+
 Z V kalloc(I k) //bytes. assumes k>0
 {
   I r=lsz(k);
   if(r>KP_MAX)R amem(k);// allocate for objects of sz > 2^KP_MAX
   R unpool(r);
 }
+
 Z V amem(I k){K z;if(MAP_FAILED==(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME; R z;}
 Z V unpool(I r)
 {
   V*z;
   V*L=((V*)KP)+r;
-  I k=1<<r;
+  I k= ((I)1)<<r;
   if(!*L)
   {
     U(z=amem(k))
@@ -124,10 +127,10 @@ Z I cl2(I v) //optimized 64-bit ceil(log_2(I))
 }
 
 
-I lsz(I k){R k<=1<<KP_MIN?KP_MIN:cl2(k);} //pool lane from size. Ignore everywhere lanes < KP_MIN. MAX() was eliminated as an optimization
+I lsz(I k){R k<=((I)1)<<KP_MIN?KP_MIN:cl2(k);} //pool lane from size. Ignore everywhere lanes < KP_MIN. MAX() was eliminated as an optimization
 I repool(V v,I r)//assert r < KP_MAX 
 {
-  memset(v,0,1<<r);
+  memset(v,0,((I)1)<<r);
   *(V*)v=KP[r];
   KP[r]=v;
   R 0;
