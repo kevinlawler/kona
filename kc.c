@@ -199,10 +199,13 @@ I args(int n,S*v)
 {
   K a;
   I c, len;
-  while(-1!=(c=getopt(n,v,":h:i:")))SW(c)
+  while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c)
   {
+    K k;
     CS('h',O("%d\n", atoi(optarg)))
     CS('i',PORT=optarg)
+    CS('e', cd(X(optarg)); exit(0) )
+    CS('x', k=X(optarg); printAtDepth(0,k,0,0,0,0); cd(k); exit(0) )
     CSR(':',)CS('?', O("%c ",optopt); show(kerr("opt")))
   }
   while(optind < n) load(v[optind++]);
