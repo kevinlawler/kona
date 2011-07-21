@@ -141,9 +141,10 @@ Z K scan2l(K a, V *p, K b)
       cd(v);cd(w);cd(d);
       d=c;
     }
-    if(flag){cd(c);cd(d);break;}
+    if(flag||interrupted){cd(c);cd(d);break;}
     c=dv_ex(0,p-1,d);cd(d);
   }
+  if (interrupted){interrupted=0;/*cd(u);*/ R BE; }
   R u;
 }
 
