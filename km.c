@@ -14,7 +14,7 @@
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
 V KP[sizeof(V)*8+1]; //KPOOL
 I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
-#define MAX_OBJECT_LENGTH (((I)1) << 45) //for catching obviously incorrect allocations
+#define MAX_OBJECT_LENGTH (((UI)1) << 31) //for catching obviously incorrect allocations
 Z I cl2(I v);
 Z I kexpander(K *p,I n);
 Z K kapn_(K *a,V *v,I n);
