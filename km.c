@@ -14,7 +14,12 @@
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
 V KP[sizeof(V)*8+1]; //KPOOL
 I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
+
+#if UINTPTR_MAX >= 0xffffffffffffffff //64 bit
+#define MAX_OBJECT_LENGTH (((UI)1) << 45) //for catching obviously incorrect allocations
+#else 
 #define MAX_OBJECT_LENGTH (((UI)1) << 31) //for catching obviously incorrect allocations
+#endif
 Z I cl2(I v);
 Z I kexpander(K *p,I n);
 Z K kapn_(K *a,V *v,I n);
@@ -114,8 +119,9 @@ Z I cl2(I v) //optimized 64-bit ceil(log_2(I))
     if(!v)R -1;// no bits set
     I e = 0;
     if(v & (v - 1ULL))e=1; //round up if not a power of two
-    if (sizeof(V) >= 8)    //64-bit only
-            if(v & 0xFFFFFFFF00000000ULL){e+=32;v>>=32;}
+    #if UINTPTR_MAX >= 0xffffffffffffffff
+      if(v & 0xFFFFFFFF00000000ULL){e+=32;v>>=32;} //64-bit or more only
+    #endif
     if(v & 0x00000000FFFF0000ULL){e+=16;v>>=16;}
     //short CL2_LUT[1<<16]; DO(1<<16,if(i) CL2_LUT[i]=log2(i));
     //to use lookup table: e+=CL2_LUT[v] and comment out below. 
