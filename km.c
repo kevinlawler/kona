@@ -18,7 +18,7 @@ I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
 #if UINTPTR_MAX >= 0xffffffffffffffff //64 bit
 #define MAX_OBJECT_LENGTH (((UI)1) << 45) //for catching obviously incorrect allocations
 #else 
-#define MAX_OBJECT_LENGTH (((UI)1) << 31) //for catching obviously incorrect allocations
+#define MAX_OBJECT_LENGTH (II - 1) //for catching obviously incorrect allocations
 #endif
 Z I cl2(I v);
 Z I kexpander(K *p,I n);
