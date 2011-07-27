@@ -17,6 +17,7 @@ enum TYPE_SEVEN_MEMBERS {CONTEXT,DEPTH,CODE,LOCALS,PARAMS,CONJ,CACHE_WD,CACHE_TR
 //Executable types: t-n is 7-n for n in {0,1,2,3,4,5,6,7}: 0: list of unexecuted types, 1: [derived] verb, 2: dynamically loaded function, 3: brace function{}, 4: ":[]", 5: if[], 6: while[], 7: do[]
 typedef struct node{V k,v;I b;struct node *c[2];}Node;typedef Node*N;//Knuth's AVL tree
 typedef struct pda{I i,s,n;S c;}Pda;typedef Pda*PDA; //holds parse state. pos in input, state, stacklength, stack
+typedef struct { I adverbClass; I valence; V func; S text; } TR; //Table Row for Dispatch Table
 #define ke(x) (((K)x)->k)
 #define kK(x) ke(x)
 #define kI(x) ((I*)ke(x))
