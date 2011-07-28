@@ -23,8 +23,7 @@ Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 
 //0: not a verb pointer, 1: monadic, 2: dyadic, 3: triadic
-I vn_ct, vm_ct, vd_ct, vt_ct;
-I adverb_ct;
+I vn_ct;
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
 
@@ -223,9 +222,19 @@ I kinit() //oom (return bad)
   I i;
   PG = sysconf(_SC_PAGE_SIZE);
   if(PG&(PG-1)){er(Pagesize not power of 2); exit(1);}
-#define SETLEN(x) {for(i=0; x[i]; i++)  x##ct = i+1; }
-  SETLEN(vn_); SETLEN(vm_); SETLEN(vd_); SETLEN(vt_);
-  for(i=0; adverbs[i]; i++) adverb_ct=i+1;  //adverbs not adverb_, make consistent?
+
+  DT_SIZE                 = DT_OFFSET(TABLE_END);
+  DT_END_OFFSET           = DT_OFFSET(end);
+  DT_ADVERB_OFFSET        = DT_OFFSET(over);
+  DT_VERB_OFFSET          = DT_OFFSET(flip);
+  DT_SPECIAL_VERB_OFFSET  = DT_OFFSET(_0m);
+
+  offsetOver      = DT_OFFSET(over);
+  offsetScan      = DT_OFFSET(scan);
+  offsetEach      = DT_OFFSET(each);
+  offsetEachright = DT_OFFSET(eachright);
+  offsetEachleft  = DT_OFFSET(eachleft);
+  offsetEachpair  = DT_OFFSET(eachpair);
 
   //could probably delete these variables and create func if(x<DT_SIZE) && DT[x].func == what
   offsetWhat  = DT_OFFSET(what); //equiv: DT_VERB_OFFSET+1+2*charpos(vc,'?');

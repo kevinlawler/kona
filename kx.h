@@ -1,6 +1,5 @@
 K of(K a,K b);
 K dot_tetradic_2(K *g,K b,K c,K y);
-extern V ends[];
 extern S LS;
 K newE(S s,K k);
 extern V offsetSSR,offsetWhat,offsetAt,offsetDot,offsetColon;

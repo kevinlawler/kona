@@ -69,11 +69,7 @@ I simpleString(S a) //0 on any symbol's string that requires quotes, eg `"a - b!
 }
 
 K end(){R 0;}
-V ends[] = {end};
-I bk(V p)
-{
-  R p==DT_END_OFFSET;
-} //break: is ; or \n
+I bk(V p){R p==DT_END_OFFSET;} //break: is ; or \n
 
 C ac[] = "/\\'";
 K over(){R 0;} K scan(){R 0;} K each(){R 0;}
@@ -88,8 +84,6 @@ C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
 
 V vm[]  = {_VERB1};
 V vd[]  = {_VERB2};
-V vm0[] = {_0VERB1};
-V vd0[] = {_0VERB2};
 
 V offsetSSR, offsetWhat, offsetAt, offsetDot, offsetColon;
 I offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
@@ -248,12 +242,12 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
       for(i=0;p=v[i];i++)
       { //TODO: mute extraneous :
 
-        I q=p;
-        if(q < DT_SIZE && q > DT_SPECIAL_VERB_OFFSET)
+        I q=(I)p;
+        if(q < DT_SIZE && q >= DT_SPECIAL_VERB_OFFSET)
         {  s=DT[q].text;
            k=strlen(s);
            DO(k,O_("%c",s[i]))
-           if(s[k-1]==':' && 1==DT[q].arity) O_(":"); //extra colon for monadic 0: verbs
+           if(s[k-1]==':' && 1==DT[q].arity) O_("%c",':'); //extra colon for monadic 0: verbs
         }
         else if(k=sva(p)) O_(2==k?"%c":"%c:",   verbsChar(p));
         else if(k=adverbClass(p)) O_(1==k?"%c":"%c:", adverbsChar(p));
@@ -372,7 +366,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 1, _ci,"_ci"},
   {0, 1, _db,"_db"},
   {0, 1, _dj,"_dj"},
-  {0, 1, exit,"_exit"},
+  {0, 1, _kona_exit,"_exit"},
   {0, 1, _getenv,"_getenv"},
   {0, 1, _gtime,"_gtime"},
   {0, 1, _host,"_host"},
@@ -410,21 +404,6 @@ I DT_OFFSET(V v){I i=0; while(v!=DT[i].func)i++; R i;} //init only
 
 int main(int argc,S*argv)
 {
-  DT_SIZE                 = DT_OFFSET(TABLE_END);
-  DT_END_OFFSET           = DT_OFFSET(end);
-  DT_ADVERB_OFFSET        = DT_OFFSET(over);
-  DT_VERB_OFFSET          = DT_OFFSET(flip);
-  DT_SPECIAL_VERB_OFFSET  = DT_OFFSET(_0m);
-
-  offsetOver      = DT_OFFSET(over);
-  offsetScan      = DT_OFFSET(scan);
-  offsetEach      = DT_OFFSET(each);
-  offsetEachright = DT_OFFSET(eachright);
-  offsetEachleft  = DT_OFFSET(eachleft);
-  offsetEachpair  = DT_OFFSET(eachpair);
-
-  O("%ld\n", DT[0].arity);
-
   kinit();
   args(argc,argv);
   boilerplate();

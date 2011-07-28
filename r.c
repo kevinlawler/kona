@@ -46,9 +46,9 @@ S_TRIAD(ssr, "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\
 #define W(x)      x
 #define _SYSTEMN  W(T) W(a) W(d) W(f) W(h) W(i) W(k) W(m) W(n) W(p) W(s) W(t) W(u) W(v) W(w)
 #define _MATH     W(acos) W(asin) W(atan) W(ceil) W(cos) W(cosh) W(exp) W(floor) W(log) W(sin) W(sinh) W(sqr) W(sqrt) W(tan) W(tanh)
-#define _SYSTEM1  _MATH W(abs) W(bd) W(ceiling) W(ci) W(db) W(dj) W(exit) W(getenv) W(gtime) W(host) W(ic) W(inv) W(jd) W(lt) W(ltime) W(size) 
-#define _SYSTEM2  W(bin) W(binl) W(di) W(dot) W(draw) W(dv) W(dvl) W(in) W(lin) W(lsq) W(mul) W(setenv) W(sm) W(ss) W(sv) W(vs)
-#define _SYSTEM3  W(ssr)
+//#define _SYSTEM1  _MATH W(abs) W(bd) W(ceiling) W(ci) W(db) W(dj) W(exit) W(getenv) W(gtime) W(host) W(ic) W(inv) W(jd) W(lt) W(ltime) W(size) 
+//#define _SYSTEM2  W(bin) W(binl) W(di) W(dot) W(draw) W(dv) W(dvl) W(in) W(lin) W(lsq) W(mul) W(setenv) W(sm) W(ss) W(sv) W(vs)
+//#define _SYSTEM3  W(ssr)
 
 
 F sqr(F x){R pow(x,2);}
@@ -63,7 +63,7 @@ K math(F(*f)(F), K a)
   else if(2==ABS(at))DO(n, kF(z)[i]=f(kF(a)[i]))
   R z;
 }
-Z K _exit(K a){P(1!=ABS(a->t),TE) exit(*kI(a));} // __exit ; 'LOCAL' for makeheaders 
+K _kona_exit(K a){P(1!=ABS(a->t),TE) exit(*kI(a));}
 
 #undef W
 #define W(x) K _##x(K a){R math(x,a);}
@@ -73,16 +73,14 @@ _MATH //all the math functions
 #define W(x) QUOTE(x)
 S n_s = _SYSTEMN;         // _n type reserved: "Tadfhikmnpstuvw";
 #undef W
-#define W(x) QUOTE(_##x),
-S vm_s[] = {_SYSTEM1 0};
-S vd_s[] = {_SYSTEM2 0};
-S vt_s[] = {_SYSTEM3 0};
-#undef W
+//#define W(x) QUOTE(_##x),
+//S vm_s[] = {_SYSTEM1 0}; S vd_s[] = {_SYSTEM2 0}; S vt_s[] = {_SYSTEM3 0};
+//#undef W
 #define W(x) _##x,
 V vn_[] = {_SYSTEMN 0}; //niladic
-V vm_[] = {_SYSTEM1 0}; //monadic
-V vd_[] = {_SYSTEM2 0}; //dyadic
-V vt_[] = {_SYSTEM3 0}; //triadic
+//V vm_[] = {_SYSTEM1 0}; //monadic
+//V vd_[] = {_SYSTEM2 0}; //dyadic
+//V vt_[] = {_SYSTEM3 0}; //triadic
 
 K _abs(K a) // _abs is separate from other math functions because it maintains type 1/-1 (and is stdlib.h not math.h)
 {

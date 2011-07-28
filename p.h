@@ -1,4 +1,3 @@
-extern V ends[];
 I charsAdverb(C c);
 extern V adverbs[];
 extern V vd0[];
