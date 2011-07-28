@@ -74,7 +74,6 @@ I bk(V p){R p==DT_END_OFFSET;} //break: is ; or \n
 C ac[] = "/\\'";
 K over(){R 0;} K scan(){R 0;} K each(){R 0;}
 K eachright(){R 0;} K eachleft(){R 0;} K eachpair(){R 0;}
-V adverbs[] = {over,scan,each,eachright,eachleft,eachpair};
 
 C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
 #define _VERB1 flip,negate,first,reciprocal,reverse,where,shape,enumerate,grade_up,grade_down,group,not_attribute,atom,range,floor_verb,enlist,count,format,dot_monadic,colon_monadic
@@ -82,8 +81,8 @@ C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
 #define _0VERB1 _0m,_1m,_2m,_3m,_4m,_5m,_6m
 #define _0VERB2 _0d,_1d,_2d,_3d,_4d,_5d,_6d //This has a dependency in the parser - magic number 6
 
-V vm[]  = {_VERB1};
-V vd[]  = {_VERB2};
+//V vm[]  = {_VERB1};
+//V vd[]  = {_VERB2};
 
 V offsetSSR, offsetWhat, offsetAt, offsetDot, offsetColon;
 I offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;

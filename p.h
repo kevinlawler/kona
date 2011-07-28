@@ -1,13 +1,6 @@
 I charsAdverb(C c);
 extern V adverbs[];
-extern V vd0[];
-extern V vm0[];
 I charsVerb(C c);
-extern V vd[];
-extern V vm[];
-extern V vt_[];
-extern V vd_[];
-extern V vm_[];
 I SC(S a,S b);
 K *denameS(S dir_string,S t);
 K EV(K e);
