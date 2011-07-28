@@ -456,7 +456,8 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
     CS( 4,r+=rrep_4(kS(z),(S)(w+1+m),aft)-sizeof(I)) //TODO: oom. K3.2 reads to the end of the file no problem even if null is missing. K3.2 has bug on `x or `xx (<3)
     CS( 6,) //no-op
     //TODO: verb cases:  +, {x}, 2:("f",2)  (third case probably not supported but see). Do projections get written? Note: _bd (-); _bd (+); _bd (:); etc are revealing
-    CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; *kK(f)=(K)('\007'==t?vm+w[1+m]:(vd+w[1+m]));  r+=000000000000000;) 
+    //using old K3 IO format, using outdated Kona internal verb representation:
+    //CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; *kK(f)=(K)('\007'==t?vm+w[1+m]+1:(vd+w[1+m]));  r+=000000000000000;)
     CD: R NE; //unsupported type. was:  if(t<-4 || t>7 || n<0) R NE; //verbs actually have some weird types though. 8==\010, etc
   }
   

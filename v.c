@@ -203,8 +203,8 @@ Z I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
 }
 
 I isVerbDyadic(K x,V v){R xt==7 && kW(x)[0]==v && !kW(x)[1];}
-I isColonDyadic(K x){R isVerbDyadic(x,addressColon);}
-I isDotDyadic(K x)  {R isVerbDyadic(x,addressDot);}
+I isColonDyadic(K x){R isVerbDyadic(x,offsetColon);}
+I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
 
 K specialAmendDot(K c, K args) //If c is like colon_dyadic return args@1, else dot
 {

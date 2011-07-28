@@ -68,7 +68,12 @@ I simpleString(S a) //0 on any symbol's string that requires quotes, eg `"a - b!
   R 1; 
 }
 
-K end(){R 0;} V ends[] = {end}; I bk(V p){R p==ends;} //break: is ; or \n
+K end(){R 0;}
+V ends[] = {end};
+I bk(V p)
+{
+  R p==DT_END_OFFSET;
+} //break: is ; or \n
 
 C ac[] = "/\\'";
 K over(){R 0;} K scan(){R 0;} K each(){R 0;}
@@ -81,17 +86,13 @@ C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
 #define _0VERB1 _0m,_1m,_2m,_3m,_4m,_5m,_6m
 #define _0VERB2 _0d,_1d,_2d,_3d,_4d,_5d,_6d //This has a dependency in the parser - magic number 6
 
-//#define _VERB1 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
-//#define _VERB2 21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40
-//#define _0VERB1 41,42,43,44,45,46,47
-//#define _0VERB2 
-
 V vm[]  = {_VERB1};
 V vd[]  = {_VERB2};
 V vm0[] = {_0VERB1};
 V vd0[] = {_0VERB2};
 
-V addressSSR, addressWhat, addressAt, addressDot, addressColon;
+V offsetSSR, offsetWhat, offsetAt, offsetDot, offsetColon;
+I offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
 
 S IFS[3] = {"x","y","z"};
 S IFP[3]; //Implicit function parameters sp(x),...
@@ -99,30 +100,28 @@ S IFP[3]; //Implicit function parameters sp(x),...
 I stringHasChar(S s,C c){I i=0;while(s[i])if(c==s[i++])R 1;R 0;} //string never has '\0'
 I charpos(S s,C c){I i=0;while(s[i] && c!=s[i])i++; R i;}
 
-C verbsChar(V p)  {R in(p,vm)?vc[diff(p,vm)]:in(p,vd)?vc[diff(p,vd)]:'\0';}
 I isCharVerb(C c) {R stringHasChar(vc,c);}
 I charsVerb(C c)  {R charpos(vc,c);}
+C verbsChar(V p)  {R (p>=DT_VERB_OFFSET && p < DT_SPECIAL_VERB_OFFSET)?vc[((I)p-DT_VERB_OFFSET)/2]:'\0';}
 
-C adverbsChar(V p) { R in(p,adverbs)?ac[diff(p,adverbs)%3]:'\0';}
-
+C adverbsChar(V p){R (p>=DT_ADVERB_OFFSET)?ac[((I)p-DT_ADVERB_OFFSET)%3]:'\0';}
 I charsAdverb(C c) {R charpos(ac,c);}
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
 { 
-  I k;
-  if(in(p,vm ))R 1; // + -    (~40 of these)
-  if(in(p,vd ))R 2;  
-  if(in(p,vm0))R 1; // 0: 6:  (~14 of these)
-  if(in(p,vd0))R 2;  
+  I q=p;
+  if(q<DT_SIZE)R DT[q].arity;
+  R 0;
 
-  if((k=diff(p,vm_))<vm_ct && k>=0)R 1; // _abs   (~46 of these)
-  if((k=diff(p,vd_))<vd_ct && k>=0)R 2; 
-  if((k=diff(p,vt_))<vt_ct && k>=0)R 3;  
-  R 0;              // (~100 in total) 
 }
-I adverbClass(V p) { R in(p,adverbs)? 1+diff(p,adverbs)/3: 0; } //0: not an adverb, 1: / \ ', 2: /: \: ':
+I adverbClass(V p) //0: not an adverb, 1: / \ ', 2: /: \: ':
+{ 
+  I q=p;
+  if (q<DT_SIZE) R DT[q].adverbClass;
+  R 0;
+} 
 
-Z I specialValence(V p){ R (p==addressSSR||p==addressWhat)?3:(p==addressAt||p==addressDot)?4:0;}
+Z I specialValence(V p){ R (p==offsetSSR||p==offsetWhat)?3:(p==offsetAt||p==offsetDot)?4:0;}
 I valence(V p)
 {
   I a,i;
@@ -148,11 +147,12 @@ I valence(V p)
     i=kVC(v)->n-1;
     V*k=kW(v)[i-1];
     // /: or \: or dyadic verb at end, 2, else 1 (other adverb,monadic-verb)
-    if(*k==eachright || *k==eachleft)R 2; //todo: this looks off: eachright can be valence 1? as in +:/:  ?
-    if(i>1 && *k==each || *k==over || *k==scan)  //for f'[x;y;z], f/[x;y;z], ...
+
+    if(k==offsetEachright || k==offsetEachleft) R 2; //todo: this looks off: eachright can be valence 1? as in +:/:  ?
+    if(i>1 && k==offsetEach || k==offsetOver || k==offsetScan)  //for f'[x;y;z], f/[x;y;z], ...
     {
       V*q; I j=0,s;
-      do q=kW(v)[i-2-(j++)]; while(*q==each || *q==over || *q==scan);
+      do q=kW(v)[i-2-(j++)]; while(q==offsetEach || q==offsetOver || q==offsetScan);
 
       s=sva(q);
       if(s && !specialValence(q)) R s - ((i-2-j >= 0)?1:0); // |+\ or +\   (leaves out |@\ and @\ ...or not...or intentional...?)
@@ -176,7 +176,7 @@ I valence(V p)
   R 0;
 }
 
-I VA(V p){R sva(p) || adverbClass(p);}  //Verb or Adverb?
+I VA(V p){R sva(p) || adverbClass(p);}  //(Verb or Adverb)?
 
 Z I isescape(UC c) {R (c=='"'||c=='\\'||c=='\b'||c=='\n'||c=='\r'||c=='\t');}
 Z I needspt0(F f){if(isnan(f)||-FI==f||FI==f)R 0; Z C b[512];snprintf(b,512,"%.*g",(int)PP,f); R !stringHasChar(b,'.') && !stringHasChar(b,'e');}//no better way I know
@@ -247,15 +247,18 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
       V *v=kW(a),*p;
       for(i=0;p=v[i];i++)
       { //TODO: mute extraneous :
-        if     (in(p,vd0)) O_("%ld:" , p-vd0);
-        else if(in(p,vm0)) O_("%ld::", p-vm0);
-        else if((k=diff(p,vt_)) < vt_ct && k>=0){s=vt_s[p-vt_]; k=strlen(s); DO(k,O_("%c",s[i]))}
-        else if((k=diff(p,vd_)) < vd_ct && k>=0){s=vd_s[p-vd_]; k=strlen(s); DO(k,O_("%c",s[i]))}
-        else if((k=diff(p,vm_)) < vm_ct && k>=0){s=vm_s[p-vm_]; k=strlen(s); DO(k,O_("%c",s[i]))} 
+
+        I q=p;
+        if(q < DT_SIZE && q > DT_SPECIAL_VERB_OFFSET)
+        {  s=DT[q].text;
+           k=strlen(s);
+           DO(k,O_("%c",s[i]))
+           if(s[k-1]==':' && 1==DT[q].arity) O_(":"); //extra colon for monadic 0: verbs
+        }
         else if(k=sva(p)) O_(2==k?"%c":"%c:",   verbsChar(p));
         else if(k=adverbClass(p)) O_(1==k?"%c":"%c:", adverbsChar(p));
-        else printAtDepth(u,*(K*)p,d+1,0,1+vdep,0);
-      }
+        else printAtDepth(u,*(K*)p,d+1,0,1+vdep,0); //assert: null p won't reach here
+     }
     }
     else if(2==a->n){ R;} //TODO cfunc
     else if(3==a->n)
@@ -301,7 +304,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 1, first,"*"},
   {0, 2, times,"*"},
   {0, 1, reciprocal,"%%"},
-  {0, 2, divide,"%"},
+  {0, 2, divide,"%%"},
   {0, 1, reverse,"|"},
   {0, 2, max_or,"|"},
   {0, 1, where,"&"},
@@ -402,16 +405,25 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
 
 K TABLE_END(){R 0;}
 I DT_SIZE=0;
-I DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VERB_OFFSET;
+I DT_END_OFFSET, DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VERB_OFFSET;
 I DT_OFFSET(V v){I i=0; while(v!=DT[i].func)i++; R i;} //init only
 
 int main(int argc,S*argv)
 {
   DT_SIZE                 = DT_OFFSET(TABLE_END);
+  DT_END_OFFSET           = DT_OFFSET(end);
   DT_ADVERB_OFFSET        = DT_OFFSET(over);
   DT_VERB_OFFSET          = DT_OFFSET(flip);
   DT_SPECIAL_VERB_OFFSET  = DT_OFFSET(_0m);
-  O("%ld\n", DT[0].valence);
+
+  offsetOver      = DT_OFFSET(over);
+  offsetScan      = DT_OFFSET(scan);
+  offsetEach      = DT_OFFSET(each);
+  offsetEachright = DT_OFFSET(eachright);
+  offsetEachleft  = DT_OFFSET(eachleft);
+  offsetEachpair  = DT_OFFSET(eachpair);
+
+  O("%ld\n", DT[0].arity);
 
   kinit();
   args(argc,argv);

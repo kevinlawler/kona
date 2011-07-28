@@ -75,5 +75,5 @@ Z K modified_execute(K x) //TODO: consider: this should be modified to use error
 {
   //K-Lite manual gives {:[4:x; .x; .[.;x]} as processing function
   if(4==xt || 3==ABS(xt)) R X(CSK(x));
-  if(!xt && xn>0) R vf_ex(addressDot,x); R ci(x);
+  if(!xt && xn>0) R vf_ex(offsetDot,x); R ci(x);
 }

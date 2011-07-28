@@ -334,7 +334,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
 
   switch(-M)
   {
-    CS(MARK_CONDITIONAL, z=addressColon)//dummy value
+    CS(MARK_CONDITIONAL, z=offsetColon)//dummy value
     CS(MARK_PAREN  ,  z=wd_(s+k+1,r-2,dict,func)) //oom. currently z->t==7 z->n==0.  //Execution will know this is paren (for rev order) because of its depth
     CS(MARK_BRACKET,  
 
@@ -525,13 +525,9 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                         u=strdupn(s+k,r); P(!u,(I)PE)
                         I i;
 
-                        i=DT_SPECIAL_VERB_OFFSET;while(i < DT_SIZE && (!DT[i].text || SC(u, DT[i].text)))i++; if(i < DT_SIZE){O("big i %ld\n",i);z=i;z=0;}  
-                        /*#define V_SC(x) if(!z) DO(AE(x##s), if(!SC(u,x##s[i])){z=x+i;break;}) //faster is to sp() / hash-table  (compared to SC())*/
-                        #define V_SC(x) if(!z) { for(i=0; x##s[i]!=NULL;i++) { if(!SC(u,x##s[i])){z=x+i;break;}}} //faster is to sp() / hash-table  (compared to SC())
-                        V_SC(vm_)
-                        V_SC(vd_)
-                        V_SC(vt_)
-
+                        i=DT_SPECIAL_VERB_OFFSET;
+                        while(i < DT_SIZE && (!DT[i].text || SC(u, DT[i].text)))i++;
+                        if(i < DT_SIZE){z=i;} //faster is sp()/hash-table (compared to SC())
                         free(u);
                         P(!z,(I)kerr("reserved"))// _invalidsystemverbname 
                         break; // _verb does not grab monadic ':' following
@@ -568,16 +564,14 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       else if(modifier_colon){m[k+r]*=-1; r++; a=1; grab=1;} //grab monad ':' sign
 
                       i=0;
-                      if(r-grab==1) z=DT_VERB_OFFSET+charsVerb(s[k])+(1==a?0:1);
+                      if(r-grab==1) {z=DT_VERB_OFFSET+2*charsVerb(s[k])+(1==a?0:1);}
                       else
                       { j=atol(s+k);
                         i=DT_SPECIAL_VERB_OFFSET;
                         while(i < DT_SIZE && (!DT[i].text || j!= atol(DT[i].text)))i++;
-                        if(i<DT_SIZE){z=i+(1==a?0:1);O("0:1:2: i %ld\n",z);}
-                        else R (I)PE; //no matching 0: 1: style verb. (if exists, we allow eg 101: and -2: )
+                        if(i<DT_SIZE){z=i+(1==a?0:1);}
+                        else R (I)PE; //no matching 0: 1: style verb. (if exists, we also allow eg 123: and -2: )
                       }
-
-                      z=r-grab==1?(1==a?vm:vd)+charsVerb(s[k]):(1==a?vm0:vd0)+(i=atol(s+k)); if(i<0||i>6)R (I)PE; //error if atol(s+k) not in [0-6]  (sva can fail since arrays close by in memory)
 
                       //Assignment is not supported for nested bracket: a[][][] +: 1  <--- parse error
                       //save ':' if       a    []?        :    y    ;?        ---> colon   verb (should be covered except for   0   :  `file  -> 0:`file )
@@ -585,8 +579,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       //save ':' if       a    []?    +   :    y    ;?        ---> dyadic  verb
                       //what passes for y?  <--- anything that isn't an end/\0, except colon  verb will go on to ex1 to the right and assign _n
       )
-    CS(MARK_ADVERB ,  z=DT_ADVERB_OFFSET+charsAdverb(s[k])+(r>1?3:0); z=adverbs+charsAdverb(s[k])+(r>1?3:0))
-    CS(MARK_END    ,  z=DT_OFFSET(end); z=ends)
+    CS(MARK_ADVERB ,  z=DT_ADVERB_OFFSET+charsAdverb(s[k])+(r>1?3:0))
+    CS(MARK_END    ,  z=DT_OFFSET(end))
   }
 
   if(!z) ; //TODO: handle null z, which can happen

@@ -235,7 +235,7 @@ Z I tests02()
   //TC((1;"parse"), .[.:;,"_db_bd 1";:] ) //we handle this case now instead of error
   TC(2,  _db_bd_db_bd 2) //should be able to handle this case
   
-  TC(1,&/{x~_db _bd x}/: (+;+:;-;-:)) // handle unreserved monadic,dyadic verbs
+  TC(skip, 1,&/{x~_db _bd x}/: (+;+:;-;-:)) // handle unreserved monadic,dyadic verbs
 
   TC(0 2, @[.:;"1+1";:])
 

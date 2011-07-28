@@ -16,7 +16,7 @@ extern K NIL;
 void seedPRNG(I s);
 N newN();
 extern N SYMBOLS;
-extern V addressSSR,addressWhat,addressAt,addressDot,addressColon;
+extern V offsetSSR,offsetWhat,offsetAt,offsetDot,offsetColon;
 extern C vc[];
 I charpos(S s,C c);
 extern V vd[];

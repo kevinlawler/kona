@@ -33,7 +33,7 @@ K newE(S s,K k);
 I sva(V p);
 I adverbClass(V p);
 I bk(V p);
-extern V addressSSR,addressWhat,addressAt,addressDot,addressColon;
+extern V offsetSSR,offsetWhat,offsetAt,offsetDot,offsetColon;
 extern S param_dfa;
 C unescape(S s,I *k);
 I sz(I t,I n);

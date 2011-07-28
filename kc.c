@@ -226,9 +226,14 @@ I kinit() //oom (return bad)
 #define SETLEN(x) {for(i=0; x[i]; i++)  x##ct = i+1; }
   SETLEN(vn_); SETLEN(vm_); SETLEN(vd_); SETLEN(vt_);
   for(i=0; adverbs[i]; i++) adverb_ct=i+1;  //adverbs not adverb_, make consistent?
-  addressSSR  = vt_ + 0;
-  addressWhat = vd+charpos(vc,'?'); addressAt    = vd+charpos(vc,'@');
-  addressDot  = vd+charpos(vc,'.'); addressColon = vd+charpos(vc,':');
+
+  //could probably delete these variables and create func if(x<DT_SIZE) && DT[x].func == what
+  offsetWhat  = DT_OFFSET(what); //equiv: DT_VERB_OFFSET+1+2*charpos(vc,'?');
+  offsetAt    = DT_OFFSET(at);
+  offsetDot   = DT_OFFSET(dot);
+  offsetColon = DT_OFFSET(colon_dyadic);
+  offsetSSR   = DT_OFFSET(_ssr);
+
   kerr("undescribed");//initialize errmsg string to be non-null for more useful reporting
   SYMBOLS=newN(); //Initialize intern pool 
   seedPRNG(randomBits()); 

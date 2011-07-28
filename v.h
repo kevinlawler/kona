@@ -14,7 +14,7 @@ K at_ref(K *p,K b,K c,K y);
 K vf_ex(V q,K g);
 I args(int n,S *v);
 K specialAmendDot(K c,K args);
-extern V addressSSR,addressWhat,addressAt,addressDot,addressColon;
+extern V offsetSSR,offsetWhat,offsetAt,offsetDot,offsetColon;
 I isVerbDyadic(K x,V v);
 I isColonDyadic(K x);
 I isDotDyadic(K x);

@@ -27,10 +27,10 @@ Z K over2(K a, V *p, K b)
   {
     V **q=(V**)p-1; I s=-2==y->t;
     if(VA(*q))
-      if     (**q==plus)    z= s?Kf(  0):Ki(0);
-      else if(**q==max_or)  z= s?Kf(-FI):Ki(0);
-      else if(**q==times)   z= s?Kf(  1):Ki(1);
-      else if(**q==min_and) z= s?Kf( FI):Ki(1);
+      if     (DT[(I)*q].func==plus)    z= s?Kf(  0):Ki(0);
+      else if(DT[(I)*q].func==max_or)  z= s?Kf(-FI):Ki(0);
+      else if(DT[(I)*q].func==times)   z= s?Kf(  1):Ki(1);
+      else if(DT[(I)*q].func==min_and) z= s?Kf( FI):Ki(1);
       else  z=LE;
       GC;
   }
@@ -131,7 +131,7 @@ Z K scan2l(K a, V *p, K b)
       u=join(w=u,v); cd(w); cd(v); U(u)
     }while(1);
   }
-  else while(1)
+  else while(1) //mm/o + error checking   eg if(!c) ... 
   {
     d=first(v=reverse(u));cd(v);
     if(matchI(b,c) || matchI(c,d))flag=1;
@@ -141,10 +141,10 @@ Z K scan2l(K a, V *p, K b)
       cd(v);cd(w);cd(d);
       d=c;
     }
-    if(flag||interrupted){cd(c);cd(d);break;}
+    if(interrupted){interrupted=0;R BE;}
+    if(flag){cd(c);cd(d);break;}
     c=dv_ex(0,p-1,d);cd(d);
   }
-  if (interrupted){interrupted=0;/*cd(u);*/ R BE; }
   R u;
 }
 
@@ -227,7 +227,7 @@ Z K dv_ex(K a, V *p, K b)
   I k=adverbClass(*p)?adverbClass(*o)?1:sva(*o):sva(*p);
   k=adverbClass(*p)?adverbClass(*o)?1:valence(*o):valence(*p); //also t7 basic
 
-  V adverb=*(V*)*p; //TODO: Implement adverb "Error Reports" error checking from manual
+  V adverb=*p; //TODO: Implement adverb "Error Reports" error checking from manual
 
   //k>2 --- ??? bound for special verbs ?.@ , etc.  ??? k=2 ??? valence is weird here
   //!(adver...  ---- added to let f/[;;;] through
@@ -236,15 +236,15 @@ Z K dv_ex(K a, V *p, K b)
 
   if(2==k)
   {
-    if (adverb == over) R over2(a, p, b);
-    if (adverb == scan) R scan2(a, p, b);
-    if (adverb == each)
+    if (adverb == offsetOver) R over2(a, p, b);
+    if (adverb == offsetScan) R scan2(a, p, b);
+    if (adverb == offsetEach)
       {
-      if(!a) adverb = eachright;
+      if(!a) adverb = offsetEachright;
       else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE;
       else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
-      else if (a->t > 0) adverb = eachright;
-      else if(b->t > 0) adverb = eachleft;
+      else if (a->t > 0) adverb = offsetEachright;
+      else if(b->t > 0) adverb = offsetEachleft;
       else
       {
         //a and b both lists/vectors of size an
@@ -262,14 +262,14 @@ Z K dv_ex(K a, V *p, K b)
     }
   } else if(2 > k)
   {
-    if (adverb == over) R over2l(a, p, b);
-    if (adverb == scan) R scan2l(a, p, b);
-    if (adverb == each) R each2l(a, p, b);
+    if (adverb == offsetOver) R over2l(a, p, b);
+    if (adverb == offsetScan) R scan2l(a, p, b);
+    if (adverb == offsetEach) R each2l(a, p, b);
   }
 
-  if(adverb == eachright) R eachright2(a, p, b);
-  if(adverb == eachleft) R eachleft2(a, p, b);
-  if(adverb == eachpair) R eachpair2(a, p, b);
+  if(adverb == offsetEachright) R eachright2(a, p, b);
+  if(adverb == offsetEachleft) R eachleft2(a, p, b);
+  if(adverb == offsetEachpair) R eachpair2(a, p, b);
 
   //this could be better ??
   I gn=0;
@@ -314,7 +314,9 @@ Z K dv_ex(K a, V *p, K b)
 K vf_ex(V q, K g) 
 {
   if (interrupted) {interrupted=0; R BE;}
-  V w=*(V*)q;
+
+  //V w=(*(V*)q);
+
   if(!g)R 0; //??? R w converted to type7...or ?
   K z=0;
   U(g=promote(g))
@@ -322,8 +324,8 @@ K vf_ex(V q, K g)
 
   I k=sva(q);
   I n=-1,j=0;
-  if(!k&&!w){cd(g); R 0;}// (2="2") 2 err
-  if(( k || ((K)w)->t==7) && (w && gn > (n=valence(q)) && !(!n && 1>=gn))){VE; GC;} //could remove 1>=gn condition ?
+  if(!k&&!(*(V*)q)){cd(g); R 0;}// (2="2") 2 err
+  if(( k || ((K)(*(V*)q))->t==7) && ( (q< DT_SIZE || (*(V*)q))  && gn > (n=valence(q)) && !(!n && 1>=gn))){VE; GC;} //could remove 1>=gn condition ?
   I argc=0; DO(gn,if(kK(g)[i])argc++)
 
   K a=0,b=0,c=0,d=0;
@@ -331,11 +333,11 @@ K vf_ex(V q, K g)
 
 
   //valence overloaded verbs 
-  if(gn > 2 && (w==what || w==_ssr)){ z=(w==what?what_triadic:_ssr)(a,b,c); GC; }
-  if(gn > 2 && (w==at   || w==dot )){ z= (w==at?at_tetradic:dot_tetradic)(a,b,c,d); GC;}
+  if(gn > 2 && (q==offsetWhat || q==offsetSSR)){ z=(q==offsetWhat?what_triadic:_ssr)(a,b,c); GC; }
+  if(gn > 2 && (q==offsetAt   || q==offsetDot )){ z= (q==offsetAt?at_tetradic:dot_tetradic)(a,b,c,d); GC;}
   //common verbs
 
-  if(2==k && a && b){ z=((K(*)(K,K))w)(a,b); GC;}
+  if(2==k && a && b){ z=((K(*)(K,K))DT[(I)q].func)(a,b); GC;}
   //? (+).1 -> err ; {[a;b]a+b} 1 -> err
   if(2==k && !a){VE; GC;} //Reachable? Projection?
 
@@ -351,10 +353,10 @@ K vf_ex(V q, K g)
   } //old comment: Projection? '(1+)' -> 1+  Build 7-verb? (Refactor with 'c' from []+: ex and maybe another place?)
 
   //+:[a] ... +:[a;b] handled above (valence err)
-  if(1==k && a) { z= ((K(*)(K))w)(a); GC;}
+  if(1==k && a) { z= ((K(*)(K))DT[(I)q].func)(a); GC;}
   if(1==k && !a) GC; //Reachable? Projection?
   //Functions  7-{1,2,3}
-  K f = (K) w; I ft=f->t;
+  K f = (K) (*(V*)q); I ft=f->t;
 
   if(ft != 7){z=g?dot(f,g):f; GC;}//TODO: check this for !a and for dict. ternary is superfluous since g nonzero?
   I t=f->n;
@@ -362,7 +364,7 @@ K vf_ex(V q, K g)
 
   //Projecting simple verbs works. The ex 7-type wrapper will catch simple verbs and they will make it back here. (except in above 2==k && a && !b case?)
   K o=kV(f)[CODE]; K p=kV(f)[PARAMS]; K s=kV(f)[LOCALS]; K r=kV(f)[CONJ]; 
-  I special = 1==t && !r && (addressAt==*kW(f) || addressDot==*kW(f) || addressWhat==*kW(f)); //_ssr is not special (not overloaded)
+  I special = 1==t && !r && (offsetAt==*kW(f) || offsetDot==*kW(f) || offsetWhat==*kW(f)); //_ssr is not special (not overloaded)
 
   I ii=o->n-2; //not the terminating NULL, but the entry before
   V*u=(V*) kK(o)+ii;
@@ -524,7 +526,7 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
 
 Z K bv_ex(V*p,K k)
 {
-  V q=*(V*)*p;
+  V q=*p;
   K x;
 
   //assert 0!=k->n
@@ -540,7 +542,7 @@ Z K bv_ex(V*p,K k)
     R dv_ex(kK(k)[0],p,kK(k)[1]);
   }
 
-  if(over==q)
+  if(offsetOver==q)
   {
     DO(k->n-1, x=kK(k)[i+1]; if(!x->n)R ci(*kK(k)); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return x_0 if any empty list x_{i>0}
     n=MAX(1,n);//if nothing was a list set to 1
@@ -557,7 +559,7 @@ Z K bv_ex(V*p,K k)
     R z;
   }
 
-  if(scan==q)
+  if(offsetScan==q)
   {
     DO(k->n-1, x=kK(k)[i+1]; if(!x)continue; if(!x->n)R ci(*kK(k)); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return x_0 if any empty list x_{i>0}
     if(!n) R bv_ex(p-1,k); //  {x+y+z}\[1;1;1] yields 1 but {x+y+z}\[1;1;1 1] yields (1 1;3 3;5 5)  
@@ -574,7 +576,7 @@ Z K bv_ex(V*p,K k)
     R z;
   }
 
-  if(each==q)
+  if(offsetEach==q)
   {
     DO(k->n, x=kK(k)[i];if(!x)continue; if(!x->n)R newK(0,0); if(!atomI(x))if(n&&n!=x->n)R LE;else n=x->n) //return () on any empty list
     n=MAX(1,n);//if nothing was a list set to 1
@@ -585,9 +587,9 @@ Z K bv_ex(V*p,K k)
     R z;
   }
 
-  if(eachright==q) R NYI;//todo: is this reachable?
-  if(eachleft ==q) R NYI;//todo: is this reachable?
-  if(eachpair ==q) R NYI;//todo: is this reachable?
+  if(offsetEachright==q) R NYI;//todo: is this reachable?
+  if(offsetEachleft ==q) R NYI;//todo: is this reachable?
+  if(offsetEachpair ==q) R NYI;//todo: is this reachable?
 
   R vf_ex(*p,k);
 }
@@ -596,10 +598,12 @@ K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (ful
 {
   //if(in(*w,adverbs)) R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
   I d;
-  if ((d=diff(*w,adverbs))<adverb_ct && d>=0) R NYI;
-  I c=0; while(w[c] && !bk(w[c])){c++; if(addressColon==w[c-1])break;} //must break or assignment is n^2  (a:b:c:1)
 
-  if(!c || !VA(w[c-1]) || (c>1 && addressColon==w[c-1] ) ) R ex2(w,k); //typical list for execution
+  if( DT_ADVERB_OFFSET < *w && *w < DT_VERB_OFFSET )R NYI;
+
+  I c=0; while(w[c] && !bk(w[c])){c++; if(offsetColon==w[c-1])break;} //must break or assignment is n^2  (a:b:c:1)
+
+  if(!c || !VA(w[c-1]) || (c>1 && offsetColon==w[c-1] ) ) R ex2(w,k); //typical list for execution
 
   //K3.2 crash bug: ."1",123456#"+"
   // build a 7type1 from the words if they end in a verb or adverb
@@ -630,7 +634,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   //TODO: is this messed up ......we can't index like this for (|-+) ?? what about 0-NULL []
   //ci(k) was R 0; ...  put this here for f/[x;y;z]
-  if(!v || !*v)R k?(1==k->n)?ci(kK(k)[0]):ci(k):(K)ends; //? '1 + _n' -> domain err, '1 +' -> 1+ . but '4: . ""' -> 6 
+  if(!v || !*v)R k?(1==k->n)?ci(kK(k)[0]):ci(k):(K)DT_END_OFFSET; //? '1 + _n' -> domain err, '1 +' -> 1+ . but '4: . ""' -> 6 
 
   if(bk(*v)) R *v;  // ; case
 
@@ -639,7 +643,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]   
   if(bk(v[1])) R ex_(*v,1);
 
-  if(!VA(*v) && (addressColon == v[1] || (VA(v[1]) && addressColon==v[2]) ) ) //Handle assignment
+  if(!VA(*v) && (offsetColon == v[1] || (VA(v[1]) && offsetColon==v[2]) ) ) //Handle assignment
   {
     K a=0,b=0,c=0,d=0;
     K*w=*v;
@@ -656,7 +660,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     kV(c)[CODE]=kc;
     *kW(c) = v[1]; //it's v[1] regardless of colon position
 
-    if(1!=sva(v[1])){d=ex1(v+(addressColon==v[1]?2:3),k); }   // oom -- except it's ok for d to be 0 elsewhere
+    if(1!=sva(v[1])){d=ex1(v+(offsetColon==v[1]?2:3),k); }   // oom -- except it's ok for d to be 0 elsewhere
     d=bk(d)?0:d;
   
     K h=dot_tetradic_2(w,b,c,d);
