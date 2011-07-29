@@ -102,14 +102,14 @@ I charsAdverb(C c) {R charpos(ac,c);}
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
 { 
-  I q=p;
+  UI q=p;
   if(q<DT_SIZE)R DT[q].arity;
   R 0;
 
 }
 I adverbClass(V p) //0: not an adverb, 1: / \ ', 2: /: \: ':
 { 
-  I q=p;
+  UI q=p;
   if (q<DT_SIZE) R DT[q].adverbClass;
   R 0;
 } 

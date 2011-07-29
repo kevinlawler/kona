@@ -470,7 +470,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
   R z;
 }
 
-K ex(K a){ U(a); K z=ex_(&a,0); cd(a);R z;} //Input is 7-0 type from wd()
+K ex(K a){U(a);K z=ex_(&a,0); cd(a);R z;} //Input is 7-0 type from wd()
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
@@ -598,7 +598,6 @@ K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (ful
 {
   //if(in(*w,adverbs)) R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
   I d;
-
   if( DT_ADVERB_OFFSET <= *w && *w < DT_VERB_OFFSET )R NYI;
 
   I c=0; while(w[c] && !bk(w[c])){c++; if(offsetColon==w[c-1])break;} //must break or assignment is n^2  (a:b:c:1)
