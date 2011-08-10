@@ -70,6 +70,8 @@ K collapse(K x) //oom
   R z;
 }
 
+K delist(K x){K z=0,t=x; while(t->t==0 && t->n==1){z=*kK(t); t=z;} z=ci(t); cd(x); R z;}
+
 K demote(K a)//Attempt to force unnaturally occurring lists into vectors
 { // change: (0;1;2) ->  0 1 2
   //   keep: (1;0.66667)  //numerics are not reconciled as you might guess

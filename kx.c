@@ -4,6 +4,7 @@
 
 #include "k.h"
 #include "kc.h"
+#include "ko.h"
 #include "kx.h"
 #include "km.h"
 #include "v.h"
@@ -483,8 +484,8 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
   SW(r)
   {
     CS(0, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){cd(z); U(x=ex1(v+1+i,0)) z=bk(x)?_n():x;})//  c:9;a+b;c:1 
-    CS(4, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){U(x=ex1(v+1+i,0)) x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); if(i==n) R x; if(xt!=1){cd(x);R TE;} a=*kI(x);cd(x); if(a)R ex1(v+i+1,0); else while(i<n&&!bk(v[i]))i++; } R _n())
-    CSR(5,)CSR(6,)CS(7, do{U(x=ex1(v,0)) x=bk(x)?_n():x; if(xt!=1){cd(x);R TE;}a=*kI(x);cd(x);i=0;if(b){while(++i<n&&!bk(v[i])); if(i>=n)break;}SW(r){CSR(5,)CS(6,if(a&&b)cd(ex0(v+i+1,0,0)))CS(7,DO2(a,cd(ex0(v+i+1,0,0))))}}while(6==r && a); R _n())
+    CS(4, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){U(x=ex1(v+1+i,0)) x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); if(i==n) R x; z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;}a=*kI(z);cd(z); if(a)R ex1(v+i+1,0); else while(i<n&&!bk(v[i]))i++; } R _n())
+    CSR(5,)CSR(6,)CS(7, do{U(x=ex1(v,0)) x=bk(x)?_n():x; z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;}a=*kI(z);cd(z);i=0;if(b){while(++i<n&&!bk(v[i])); if(i>=n)break;}SW(r){CSR(5,)CS(6,if(a&&b)cd(ex0(v+i+1,0,0)))CS(7,DO2(a,cd(ex0(v+i+1,0,0))))}}while(6==r && a); R _n())
     CD: z=newK(0,n?e:0); if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){x=ex1(v+1+i,0); M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}// (c:9;a+b;c:1) oom
   }
 
