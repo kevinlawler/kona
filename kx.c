@@ -19,22 +19,19 @@ Z V ex_(V a,I r);
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K over2(K a, V *p, K b)
 {
+
+  V *o=p-1; K(*f)(K,K); 
+
+  K k=0;
+  if(VA(*o) && (f=DT[(I)*o].alt_funcs.verb_over))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
+  P(k,k)
+
   K u=0,v=0;
   K y=a?v=join(u=enlist(a),b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
   I yt=y->t, yn=y->n;
   K z=0,g=0;
   if(yt  > 0){z=ci(y); GC;}
-  if(yn == 0)
-  {
-    V **q=(V**)p-1; I s=-2==y->t;
-    if(VA(*q))
-      if     (DT[(I)*q].func==plus)    z= s?Kf(  0):Ki(0);
-      else if(DT[(I)*q].func==max_or)  z= s?Kf(-FI):Ki(0);
-      else if(DT[(I)*q].func==times)   z= s?Kf(  1):Ki(1);
-      else if(DT[(I)*q].func==min_and) z= s?Kf( FI):Ki(1);
-      else  z=LE;
-      GC;
-  }
+  if(yn == 0){if(VA(*o))z=LE; GC; } //Some verbs will handle this in alt_funcs
   K c=first(y),d;//mm/o
   //TODO: this reuse of g should be implemented in other adverbs
   if(0 >yt) DO(yn-1, d=c; if(!g)g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); if(2==g->c){cd(g);g=0;} cd(d); if(!c) GC;) //TODO: oom err/mmo unwind above - oom-g

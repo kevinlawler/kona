@@ -62,7 +62,7 @@ K cd(K a)
 }
 K ci(K a){if(a)a->c++; R a;}
 
-I bp(I t) {SW(ABS(t)){CSR(1, R sizeof(I)) CSR(2, R sizeof(F)) CSR(3, R sizeof(C)) default: R sizeof(V); } } //Default 0/+-4/5/6/7  (assumes sizeof(K)==sizeof(S)==...)
+I bp(I t) {SW(ABS(t)){CSR(1, R sizeof(I)) CSR(2, R sizeof(F)) CSR(3, R sizeof(C)) CD: R sizeof(V); } } //Default 0/+-4/5/6/7  (assumes sizeof(K)==sizeof(S)==...)
 I sz(I t,I n){R 3*sizeof(I)+(7==t?TYPE_SEVEN_SIZE:n)*bp(t)+(3==ABS(t));} //not recursive. assert sz() > 0:  Everything gets valid block for simplified munmap/(free)
 
 Z I nearPG(I i){ I k=((size_t)i)&(PG-1);R k?i+PG-k:i;}//up 0,8,...,8,16,16,...

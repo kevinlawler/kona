@@ -271,129 +271,193 @@ K show(K a)
   R a;
 }
 
+K plus_over(K x,K y)
+{
+  I accI=0; F accF=0;
+  I yt=y->t,yn=y->n;
+  if((!yt&&yn) || ABS(yt) > 2 || (x && xt!=1 && xt!=2)) R 0;
+  K z,r;
+  SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
+  {
+    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=accF+kF(y)[i+1]) z=Kf(accF)) //CS order matters for empty list ()
+    CD:  if(yn)accI=*kI(y);DO(y->n-1, accI=accI+kI(y)[i+1]) z=Ki(accI); //CS 1
+  }
+  U(z)
+  if(x){r=plus(x,z); cd(z); z=r;}
+  R z;
+}
+
+K times_over(K x,K y)
+{
+  I accI=1; F accF=1;
+  I yt=y->t,yn=y->n;
+  if((!yt&&yn) || ABS(yt) > 2 || (x && xt!=1 && xt!=2)) R 0;
+  K z,r;
+  SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
+  {
+    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=accF*kF(y)[i+1]) z=Kf(accF)) //CS order matters for empty list () 
+    CD:  if(yn)accI=*kI(y);DO(y->n-1, accI=accI*kI(y)[i+1]) z=Ki(accI); //CS 1
+  }
+  U(z)
+  if(x){r=times(x,z); cd(z); z=r;}
+  R z;
+}
+
+K max_or_over(K x,K y)
+{
+  I accI=0; F accF=-FI;
+  I yt=y->t, yn=y->n;
+  if((!yt&&yn) || ABS(yt) > 2 || (x && xt!=1 && xt!=2)) R 0;
+  K z,r;
+  SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
+  {
+    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=MAX(accF,kF(y)[i+1])) z=Kf(accF)) //CS order matters for empty list () 
+    CD:  if(yn)accI=*kI(y);DO(y->n-1, accI=MAX(accI,kI(y)[i+1])) z=Ki(accI); //CS 1
+  }
+  U(z)
+  if(x){r=max_or(x,z); cd(z); z=r;}
+  R z;
+}
+
+K min_and_over(K x,K y)
+{
+  I accI=1; F accF=FI;
+  I yt=y->t, yn=y->n;
+  if((!yt&&yn) || ABS(yt) > 2 || (x && xt!=1 && xt!=2)) R 0;
+  K z,r;
+  SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
+  {
+    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=MIN(accF,kF(y)[i+1])) z=Kf(accF)) //CS order matters for empty list () 
+    CD:  if(yn)accI=*kI(y);DO(y->n-1, accI=MIN(accI,kI(y)[i+1])) z=Ki(accI); //CS 1
+  }
+  U(z)
+  if(x){r=min_and(x,z); cd(z); z=r;}
+  R z;
+}
+
 TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backward compatibility with IO & inet
 {
-  {0, 0, 0,0}, //So no row index is confused with null pointer
-  {0, 0, end,0}, // ; and such. convenience. (for ex(). not to be confused with last element of table)
-  {0, 0, 0, 0},
-  {1, 0, over,"/"},
-  {1, 0, scan,"\\"},
-  {1, 0, each,"'"},
-  {2, 0, eachright,"/:"},
-  {2, 0, eachleft,"\\:"},
-  {2, 0, eachpair,"':"},
-  {0, 0, 0,0},
-  {0, 0, 0,0},
-  {0, 0, 0,0},
-  {0, 0, 0,0},
-  {0, 0, 0,0},
-  {0, 0, 0,0},
-  {0, 0, 0,0},
-  {0, 0, 0,0},
-  {0, 1, flip,"+"},
-  {0, 2, plus,"+"},
-  {0, 1, negate,"-"},
-  {0, 2, minus,"-"},
-  {0, 1, first,"*"},
-  {0, 2, times,"*"},
-  {0, 1, reciprocal,"%%"},
-  {0, 2, divide,"%%"},
-  {0, 1, reverse,"|"},
-  {0, 2, max_or,"|"},
-  {0, 1, where,"&"},
-  {0, 2, min_and,"&"},
-  {0, 1, shape,"^"},
-  {0, 2, power,"^"},
-  {0, 1, enumerate,"!"},
-  {0, 2, rotate_mod,"|"},
-  {0, 1, grade_up,"<"},
-  {0, 2, less,"<"},
-  {0, 1, grade_down,">"},
-  {0, 2, more,">"},
-  {0, 1, group,"="},
-  {0, 2, equals,"="},
-  {0, 1, not_attribute,"~"},
-  {0, 2, match,"~"},
-  {0, 1, atom,"@"},
-  {0, 2, at,"@"},
-  {0, 1, range,"?"},
-  {0, 2, what,"?"},
-  {0, 1, floor_verb,"_"},
-  {0, 2, drop_cut,"_"},
-  {0, 1, enlist,","},
-  {0, 2, join,","},
-  {0, 1, count,"#"},
-  {0, 2, take_reshape,"#"},
-  {0, 1, format,"$"},
-  {0, 2, dollar,"$"},
-  {0, 1, dot_monadic,"."},
-  {0, 2, dot,"."},
-  {0, 1, colon_monadic,":"},
-  {0, 2, colon_dyadic,":"},
-  {0, 1, _0m,"0:"}, 
-  {0, 2, _0d,"0:"}, 
-  {0, 1, _1m,"1:"}, 
-  {0, 2, _1d,"1:"}, 
-  {0, 1, _2m,"2:"}, 
-  {0, 2, _2d,"2:"}, 
-  {0, 1, _3m,"3:"}, 
-  {0, 2, _3d,"3:"}, 
-  {0, 1, _4m,"4:"}, 
-  {0, 2, _4d,"4:"}, 
-  {0, 1, _5m,"5:"}, 
-  {0, 2, _5d,"5:"}, 
-  {0, 1, _6m,"6:"}, 
-  {0, 2, _6d,"6:"},  //do not add 7+ here. go to bottom. keep paired as before
-  {0, 1, _acos,"_acos"},
-  {0, 1, _asin,"_asin"},
-  {0, 1, _atan,"_atan"},
-  {0, 1, _ceil,"_ceil"},
-  {0, 1, _cos,"_cos"},
-  {0, 1, _cosh,"_cosh"},
-  {0, 1, _exp,"_exp"},
-  {0, 1, _floor,"_floor"},
-  {0, 1, _log,"_log"},
-  {0, 1, _sin,"_sin"},
-  {0, 1, _sinh,"_sinh"},
-  {0, 1, _sqr,"_sqr"},
-  {0, 1, _sqrt,"_sqrt"},
-  {0, 1, _tan,"_tan"},
-  {0, 1, _tanh,"_tanh"},
-  {0, 1, _abs,"_abs"},
-  {0, 1, _bd,"_bd"},
-  {0, 1, _ceiling,"_ceiling"},
-  {0, 1, _ci,"_ci"},
-  {0, 1, _db,"_db"},
-  {0, 1, _dj,"_dj"},
-  {0, 1, _kona_exit,"_exit"},
-  {0, 1, _getenv,"_getenv"},
-  {0, 1, _gtime,"_gtime"},
-  {0, 1, _host,"_host"},
-  {0, 1, _ic,"_ic"},
-  {0, 1, _inv,"_inv"},
-  {0, 1, _jd,"_jd"},
-  {0, 1, _lt,"_lt"},
-  {0, 1, _ltime,"_ltime"},
-  {0, 1, _size,"_size"},
-  {0, 2, _bin,"_bin"},
-  {0, 2, _binl,"_binl"},
-  {0, 2, _di,"_di"},
-  {0, 2, _dot,"_dot"},
-  {0, 2, _draw,"_draw"},
-  {0, 2, _dv,"_dv"},
-  {0, 2, _dvl,"_dvl"},
-  {0, 2, _in,"_in"},
-  {0, 2, _lin,"_lin"},
-  {0, 2, _lsq,"_lsq"},
-  {0, 2, _mul,"_mul"},
-  {0, 2, _setenv,"_setenv"},
-  {0, 2, _sm,"_sm"},
-  {0, 2, _ss,"_ss"},
-  {0, 2, _sv,"_sv"},
-  {0, 2, _vs,"_vs"},
-  {0, 3, _ssr,"_ssr"},
+  {0, 0, 0,0,0}, //So no row index is confused with null pointer
+  {0, 0, end,0,0}, // ; and such. convenience. (for ex(). not to be confused with last element of table)
+  {0, 0, 0, 0,0},
+  {1, 0, over,"/",0},
+  {1, 0, scan,"\\",0},
+  {1, 0, each,"'",0},
+  {2, 0, eachright,"/:",0},
+  {2, 0, eachleft,"\\:",0},
+  {2, 0, eachpair,"':",0},
+  {0, 0, 0,0,0},
+  {0, 0, 0,0,0},
+  {0, 0, 0,0,0},
+  {0, 0, 0,0,0},
+  {0, 0, 0,0,0},
+  {0, 0, 0,0,0},
+  {0, 0, 0,0,0},
+  {0, 0, 0,0,0},
+  {0, 1, flip,"+",0},
+  {0, 2, plus,"+",{plus_over}},
+  {0, 1, negate,"-",0},
+  {0, 2, minus,"-",0},
+  {0, 1, first,"*",0},
+  {0, 2, times,"*",{times_over}},
+  {0, 1, reciprocal,"%%",0},
+  {0, 2, divide,"%%",0},
+  {0, 1, reverse,"|",0},
+  {0, 2, max_or,"|",{max_or_over}},
+  {0, 1, where,"&",0},
+  {0, 2, min_and,"&",{min_and_over}},
+  {0, 1, shape,"^",0},
+  {0, 2, power,"^",0},
+  {0, 1, enumerate,"!",0},
+  {0, 2, rotate_mod,"|",0},
+  {0, 1, grade_up,"<",0},
+  {0, 2, less,"<",0},
+  {0, 1, grade_down,">",0},
+  {0, 2, more,">",0},
+  {0, 1, group,"=",0},
+  {0, 2, equals,"=",0},
+  {0, 1, not_attribute,"~",0},
+  {0, 2, match,"~",0},
+  {0, 1, atom,"@",0},
+  {0, 2, at,"@",0},
+  {0, 1, range,"?",0},
+  {0, 2, what,"?",0},
+  {0, 1, floor_verb,"_",0},
+  {0, 2, drop_cut,"_",0},
+  {0, 1, enlist,",",0},
+  {0, 2, join,",",0},
+  {0, 1, count,"#",0},
+  {0, 2, take_reshape,"#",0},
+  {0, 1, format,"$",0},
+  {0, 2, dollar,"$",0},
+  {0, 1, dot_monadic,".",0},
+  {0, 2, dot,".",0},
+  {0, 1, colon_monadic,":",0},
+  {0, 2, colon_dyadic,":",0},
+  {0, 1, _0m,"0:",0}, 
+  {0, 2, _0d,"0:",0}, 
+  {0, 1, _1m,"1:",0}, 
+  {0, 2, _1d,"1:",0}, 
+  {0, 1, _2m,"2:",0}, 
+  {0, 2, _2d,"2:",0}, 
+  {0, 1, _3m,"3:",0}, 
+  {0, 2, _3d,"3:",0}, 
+  {0, 1, _4m,"4:",0}, 
+  {0, 2, _4d,"4:",0}, 
+  {0, 1, _5m,"5:",0}, 
+  {0, 2, _5d,"5:",0}, 
+  {0, 1, _6m,"6:",0}, 
+  {0, 2, _6d,"6:",0},  //do not add 7+ here. go to bottom. keep paired as before
+  {0, 1, _acos,"_acos",0},
+  {0, 1, _asin,"_asin",0},
+  {0, 1, _atan,"_atan",0},
+  {0, 1, _ceil,"_ceil",0},
+  {0, 1, _cos,"_cos",0},
+  {0, 1, _cosh,"_cosh",0},
+  {0, 1, _exp,"_exp",0},
+  {0, 1, _floor,"_floor",0},
+  {0, 1, _log,"_log",0},
+  {0, 1, _sin,"_sin",0},
+  {0, 1, _sinh,"_sinh",0},
+  {0, 1, _sqr,"_sqr",0},
+  {0, 1, _sqrt,"_sqrt",0},
+  {0, 1, _tan,"_tan",0},
+  {0, 1, _tanh,"_tanh",0},
+  {0, 1, _abs,"_abs",0},
+  {0, 1, _bd,"_bd",0},
+  {0, 1, _ceiling,"_ceiling",0},
+  {0, 1, _ci,"_ci",0},
+  {0, 1, _db,"_db",0},
+  {0, 1, _dj,"_dj",0},
+  {0, 1, _kona_exit,"_exit",0},
+  {0, 1, _getenv,"_getenv",0},
+  {0, 1, _gtime,"_gtime",0},
+  {0, 1, _host,"_host",0},
+  {0, 1, _ic,"_ic",0},
+  {0, 1, _inv,"_inv",0},
+  {0, 1, _jd,"_jd",0},
+  {0, 1, _lt,"_lt",0},
+  {0, 1, _ltime,"_ltime",0},
+  {0, 1, _size,"_size",0},
+  {0, 2, _bin,"_bin",0},
+  {0, 2, _binl,"_binl",0},
+  {0, 2, _di,"_di",0},
+  {0, 2, _dot,"_dot",0},
+  {0, 2, _draw,"_draw",0},
+  {0, 2, _dv,"_dv",0},
+  {0, 2, _dvl,"_dvl",0},
+  {0, 2, _in,"_in",0},
+  {0, 2, _lin,"_lin",0},
+  {0, 2, _lsq,"_lsq",0},
+  {0, 2, _mul,"_mul",0},
+  {0, 2, _setenv,"_setenv",0},
+  {0, 2, _sm,"_sm",0},
+  {0, 2, _ss,"_ss",0},
+  {0, 2, _sv,"_sv",0},
+  {0, 2, _vs,"_vs",0},
+  {0, 3, _ssr,"_ssr",0},
   //^^Add new rows here^^
-  {-1,-1,TABLE_END,0} //sentinel
+  {-1,-1,TABLE_END,0,0} //sentinel
 };
 
 K TABLE_END(){R 0;}
