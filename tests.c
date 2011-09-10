@@ -410,6 +410,13 @@ Z I tests02()
   TC((1;"wsfull"),@[.:;"&0I";:])
   TC((1;"wsfull"),@[.:;"!0I";:])
 
+  TC(1 3    ,  +\\ 1 2)
+  TC(1 3.0  ,  +\\ 1.0 2.0)
+  TC(1 2 4.0,  1.0 +\\ 1 2)
+  TC(1 2 4.0,  1.0 +\\ 1.0 2.0)
+  TC(1 2 4  ,  1 +\\ 1 2)     //These change in K4
+  TC(1 2 4.0,  1 +\\ 1.0 2.0) //We break with K3's (1;2.0;4.0). K3 bug?
+
 
   //bv_ex subtriadic
   //bv_ex 1. doesn't seem to handle projectons correcly

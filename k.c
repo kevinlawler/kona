@@ -271,6 +271,39 @@ K show(K a)
   R a;
 }
 
+K plus_scan(K x, K y)
+{
+  //Optimized scan forces you to pre-determine output type for (x,y), in contrast to optimized over
+  I yt=y->t,yn=y->n;
+
+  P(x && xt != 1 && xt != 2, 0) 
+  P(yn<2 || !yt || ABS(yt) > 2 , 0)
+
+  I t = -ABS(yt); if(x) t = -MAX(ABS(xt),ABS(t));
+  I n = y->n + (x?1:0);
+
+  K z;
+  
+  if(!x && y->c==1 && (yt==t || sizeof(I)==sizeof(F))) z=ci(y); //reuse vector you know will be discarded
+  else z=newK(t,n);
+  U(z)
+
+  I j=0;
+  if(x)
+  {
+    j=1;
+    if     (-2==t && 2==xt)*kF(z)=*kF(x);
+    else if(-2==t && 1==xt)*kF(z)=*kI(x);
+    else if(-1==t && 1==xt)*kI(z)=*kI(x);
+  }
+
+  if     (-2==t && -2==yt) {kF(z)[j]=*kF(y)+(j?*kF(z):0); DO(yn-1, kF(z)[i+j+1] = kF(z)[i+j]+kF(y)[i+1])}
+  else if(-2==t && -1==yt) {kF(z)[j]=*kI(y)+(j?*kF(z):0); DO(yn-1, kF(z)[i+j+1] = kF(z)[i+j]+kI(y)[i+1])}
+  else if(-1==t && -1==yt) {kI(z)[j]=*kI(y)+(j?*kI(z):0); DO(yn-1, kI(z)[i+j+1] = kI(z)[i+j]+kI(y)[i+1])}
+
+  R z;
+}
+
 K plus_over(K x,K y)
 {
   I accI=0; F accF=0;
@@ -355,7 +388,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 0, 0,0,0},
   {0, 0, 0,0,0},
   {0, 1, flip,"+",0},
-  {0, 2, plus,"+",{plus_over}},
+  {0, 2, plus,"+",{plus_over,plus_scan}},
   {0, 1, negate,"-",0},
   {0, 2, minus,"-",0},
   {0, 1, first,"*",0},
