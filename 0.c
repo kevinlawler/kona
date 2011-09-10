@@ -784,7 +784,6 @@ K _5d(K x,K y)
   //can't write symbols/chars efficiently if #bytes rounded up. for this reason switched to using MAX(.,4*sizeof(I)) instead of nearI(.)
 
   //Largely Copy/pasted from 2:monadic
-  I yt=y->t, yn=y->n;
   if(4!=xt && 3!=ABS(xt)) R 0;//TODO: type error
 
   S m=CSK(x); //looks for .K or .L extensions first

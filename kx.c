@@ -28,7 +28,6 @@ Z K overDyad(K a, V *p, K b)
 
   K u=0,v=0;
   K y=a?v=join(u=enlist(a),b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
-  I yt=y->t, yn=y->n;
   K z=0,g=0;
   if(yt  > 0){z=ci(y); GC;}
   if(yn == 0){if(VA(*o))z=LE; GC; } //Some verbs will handle this in alt_funcs
@@ -53,7 +52,6 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
   P(k,k)
 
   K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u); //oom
-  I yt=y->t, yn=y->n;
   if(yt  > 0 || yn == 0) R y;
 
   K z=newK(0,yn),c,d;
@@ -191,6 +189,12 @@ Z K eachleft2(K a, V *p, K b)
 
 Z K eachpair2(K a, V *p, K b)  //2==k necessary?
 {
+  V *o=p-1; K(*f)(K,K); 
+
+  K k=0;
+  if(VA(*o) && (f=DT[(I)*o].alt_funcs.verb_eachpair))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
+  P(k,k)
+
   I bt=b->t, bn=b->n;
   if(bt >  0) R dv_ex(b,p-1,b);
   if(bt <= 0)
@@ -200,19 +204,20 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
     else if(bn < 2) R newK(0,0);//TODO: this newK and the above.....does empty list type depend on input?
   }
 
-  K z = newK(0,bn-1),d=0; //oom
+  K z = newK(0,bn-1),d=0; U(z)
   K g,h;
   if(0 >bt)DO(bn-1, h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(i)*bp(bt),bp(bt)); memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h); cd(g);cd(h);U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
   if(0==bt)DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
 
-  z=demote(z); //oom
+  z=demote(z);
 
-  if(a) //mmo
+  if(a)
   {
     K u,v;
-    u=enlist(a);//oom
-    v=join(u,z);//oom
-    cd(u);
+    u=enlist(a);
+    M(u,z)
+    v=join(u,z);
+    cd(u);cd(z);
     R v;
   }
 

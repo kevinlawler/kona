@@ -222,7 +222,6 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
   P(pt > 0 && pt != 5 && pt != 6,RE)
 
   I bt=b->t, bn=b->n;
-  I yt,yn; if(y){ yt=y->t; yn=y->n;}
 
   if(0==bn && (-1==bt || 0==bt ||  5==pt || 6==pt)) R 0;//Identity TODO ????
   P(0==bn && bt <= 0,IE)

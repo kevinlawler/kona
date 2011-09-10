@@ -17,7 +17,7 @@ enum TYPE_SEVEN_MEMBERS {CONTEXT,DEPTH,CODE,LOCALS,PARAMS,CONJ,CACHE_WD,CACHE_TR
 //Executable types: t-n is 7-n for n in {0,1,2,3,4,5,6,7}: 0: list of unexecuted types, 1: [derived] verb, 2: dynamically loaded function, 3: brace function{}, 4: ":[]", 5: if[], 6: while[], 7: do[]
 typedef struct node{V k,v;I b;struct node *c[2];}Node;typedef Node*N;//Knuth's AVL tree
 typedef struct pda{I i,s,n;S c;}Pda;typedef Pda*PDA; //holds parse state. pos in input, state, stacklength, stack
-typedef struct af{ V verb_over; V verb_scan; } AF; //Alternative/Adverb Functions
+typedef struct af{ V verb_over; V verb_scan; V verb_eachpair; } AF; //Alternative/Adverb Functions
 typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; //Table Row for Dispatch Table
 #define ke(x) (((K)x)->k)
 #define kK(x) ke(x)
@@ -37,6 +37,8 @@ typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; /
 #define R return
 #define xt x->t
 #define xn x->n
+#define yt y->t
+#define yn y->n
 #define DO(n,x) {I i=0,_i=(n);for(;i<_i;++i){x;}}
 #define DO2(n,x){I j=0,_j=(n);for(;j<_j;++j){x;}}
 #define DO3(n,x){I k=0,_k=(n);for(;k<_k;++k){x;}}

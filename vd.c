@@ -109,10 +109,10 @@ K dot(K a, K b) //NB: b can be a cheating 0-type with NULLs .. ?
 K dot_ref(K *p, K *x, K *z, I s, K c, K y)
 {
   K d=*p, f=x?*x:0;
-  I dt=d->t, dn=countI(d), ft, fn, yt, yn;
+  I dt=d->t, dn=countI(d), ft, fn, yn0;
 
   if(f) {ft=f->t; fn=countI(f);}
-  if(y) {yt=y->t; yn=countI(y);}
+  if(y) {yn0=countI(y);}
 
   if(-1==s && 0==fn && -3!=ft)
   {
@@ -137,15 +137,15 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
   if(0>=s) at_ref(p,f,c,y); //what errors will this take care of ?
   else if(0==ft)
   {
-    if(!atomI(f) && y && !atomI(y) && fn != yn) R LE;
-    I n = (atomI(f) && y)?yn:fn;
+    if(!atomI(f) && y && !atomI(y) && fn != yn0) R LE;
+    I n = (atomI(f) && y)?yn0:fn;
     if(y) U(y=promote(y))
-    DO(n, dot_ref(p, kK(f)+(i%fn), z, s, c, kK(y)[i%yn]))
+    DO(n, dot_ref(p, kK(f)+(i%fn), z, s, c, kK(y)[i%yn0]))
     cd(y);
   }
   else if(1==ABS(ft))
   {
-    if(!atomI(f) && y && !atomI(y) && fn != yn) R LE;
+    if(!atomI(f) && y && !atomI(y) && fn != yn0) R LE;
     if( 1==ft && dt > 0) R TE; // (5,6)
 
     if(y && yt != 0 && !atomI(f)) U(y = promote(y))
@@ -157,14 +157,14 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
     DO(fn, I e=kI(f)[i]; if( e < 0 || dn <= e ) R XE; )//check is in advance
     DO(fn,
       K py=0;
-      if(y) py=atomI(f)?y:kK(y)[i%yn];
+      if(y) py=atomI(f)?y:kK(y)[i%yn0];
       dot_ref(kK(d)+(kI(f)[i]),z,z+1,s-1,c,py);
     )
     cd(y);
   }
   else if(4==ABS(ft))
   {
-    if(!atomI(f) && y && !atomI(y) && fn != yn) R LE;
+    if(!atomI(f) && y && !atomI(y) && fn != yn0) R LE;
     if( 4==ft && 0 >= dt) R TE;
     if(-4==ft && 0 >= dt) R IE;
     if(y && yt != 0 && !atomI(f)) U(y = promote(y))
@@ -173,7 +173,7 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
     //Only 6/4, 5/4, 5/-4 at this point
     DO(fn,
       K py = 0;
-      if(y) py=atomI(f)?y:kK(y)[i%yn]; //trying promote here instead of itemAtIndex like in at_ref
+      if(y) py=atomI(f)?y:kK(y)[i%yn0]; //trying promote here instead of itemAtIndex like in at_ref
       S u = kS(f)[i];
       dot_ref(lookupEVOrCreate(p,u),z,z+1,s-1,c,py); //oom, cd(y),  ???
     )
@@ -182,10 +182,10 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
   else if(6==ft)
   {
     if(6==dt) R NULL; //identity
-    if(y && !atomI(y) &&  yn != d->n) R LE;
+    if(y && !atomI(y) &&  yn0 != d->n) R LE;
     if(y) U(y=promote(y))
-    if(5==dt) DO(d->n, dot_ref(EVP(DI(d,i)),z,z+1,s-1,c,y?kK(y)[i%yn]:0))
-    if(0>=dt) { K k=Ki(0); M(k,y?y:k);  DO(countI(d), *kI(k)=i; dot_ref(p,&k,z,s,c,y?kK(y)[i%yn]:0)) cd(k); }
+    if(5==dt) DO(d->n, dot_ref(EVP(DI(d,i)),z,z+1,s-1,c,y?kK(y)[i%yn0]:0))
+    if(0>=dt) { K k=Ki(0); M(k,y?y:k);  DO(countI(d), *kI(k)=i; dot_ref(p,&k,z,s,c,y?kK(y)[i%yn0]:0)) cd(k); }
     cd(y);
   }
   R 0;

@@ -271,10 +271,19 @@ K show(K a)
   R a;
 }
 
+K minus_eachpair(K x, K y)
+{
+  P(yn<2 || !yt || ABS(yt) > 2, 0)
+  K z = newK(yt,yn-1);
+  if     (-2==yt) DO(yn-1, kF(z)[i]=kF(y)[i+1]-kF(y)[i])
+  else if(-1==yt) DO(yn-1, kI(z)[i]=kI(y)[i+1]-kI(y)[i])
+  if(x){K u,v; u=enlist(x); M(u,z) v=join(u,z); cd(u);cd(z); R v; }
+  R z;
+}
+
 K plus_scan(K x, K y)
 {
   //Optimized scan forces you to pre-determine output type for (x,y), in contrast to optimized over
-  I yt=y->t,yn=y->n;
 
   P(x && xt != 1 && xt != 2, 0) 
   P(yn<2 || !yt || ABS(yt) > 2 , 0)
@@ -307,7 +316,6 @@ K plus_scan(K x, K y)
 K plus_over(K x,K y)
 {
   I accI=0; F accF=0;
-  I yt=y->t,yn=y->n;
   if((!yt&&yn) || ABS(yt) > 2 || (x && xt!=1 && xt!=2)) R 0;
   K z,r;
   SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
@@ -323,7 +331,6 @@ K plus_over(K x,K y)
 K times_over(K x,K y)
 {
   I accI=1; F accF=1;
-  I yt=y->t,yn=y->n;
   if((!yt&&yn) || ABS(yt) > 2 || (x && xt!=1 && xt!=2)) R 0;
   K z,r;
   SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
@@ -339,7 +346,6 @@ K times_over(K x,K y)
 K max_or_over(K x,K y)
 {
   I accI=0; F accF=-FI;
-  I yt=y->t, yn=y->n;
   if((!yt&&yn) || ABS(yt) > 2 || (x && xt!=1 && xt!=2)) R 0;
   K z,r;
   SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
@@ -355,7 +361,6 @@ K max_or_over(K x,K y)
 K min_and_over(K x,K y)
 {
   I accI=1; F accF=FI;
-  I yt=y->t, yn=y->n;
   if((!yt&&yn) || ABS(yt) > 2 || (x && xt!=1 && xt!=2)) R 0;
   K z,r;
   SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
@@ -390,7 +395,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 1, flip,"+",0},
   {0, 2, plus,"+",{plus_over,plus_scan}},
   {0, 1, negate,"-",0},
-  {0, 2, minus,"-",0},
+  {0, 2, minus,"-",{0,0,minus_eachpair}},
   {0, 1, first,"*",0},
   {0, 2, times,"*",{times_over}},
   {0, 1, reciprocal,"%%",0},
