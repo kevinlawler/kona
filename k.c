@@ -378,6 +378,10 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 0, 0,0,0}, //So no row index is confused with null pointer
   {0, 0, end,0,0}, // ; and such. convenience. (for ex(). not to be confused with last element of table)
   {0, 0, 0, 0,0},
+  {0, 0, 0, 0,0},
+  {0, 0, 0, 0,0},
+  {0, 0, 0, 0,0},
+  {0, 0, 0, 0,0},
   {1, 0, over,"/",0},
   {1, 0, scan,"\\",0},
   {1, 0, each,"'",0},
