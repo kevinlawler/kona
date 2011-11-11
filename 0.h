@@ -7,7 +7,6 @@ K _4m(K x);
 K read_tape(I i,I type);
 K _4d(K x,K y);
 K kap(K *a,V v);
-I getline_(S *s,I *n,FILE *f);
 K popen_charvec(C *cmd);
 K _3d(K x,K y);
 K _bd(K x);
