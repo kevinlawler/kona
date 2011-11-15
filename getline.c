@@ -42,7 +42,8 @@ I getdelim_(S *s,I *n,I d,FILE *f)
   R *n=m;
 }
 
-#if defined(__OpenBSD__)
+#if defined(__OpenBSD__) ||                                             \
+   (defined(__MACH__) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1070)
 I getdelim(S *s,I*n, I d, FILE *f);
 
 I getline(S *s,I*n, FILE *f){ return getdelim(s,n,'\n',f);}
@@ -90,5 +91,4 @@ I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
     funlockfile(f);
     return *n=-1;
 }
-#elif defined(__MACH__)
 #endif
