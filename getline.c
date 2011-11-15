@@ -90,5 +90,5 @@ I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
     funlockfile(f);
     return *n=-1;
 }
-#elseif defined(__MACH__)
+#elif defined(__MACH__)
 #endif
