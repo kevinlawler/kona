@@ -1,0 +1,19 @@
+#!/bin/sh
+
+HEADER=$1
+awk '
+# skip non-function defs
+/^#/ { next; }
+/^ / { next; }
+/^$/ { next; }
+/^\/\*/ { next; }
+/^extern/ { next; }
+
+# print every function name
+$2 ~ /\(/ {
+        sub("\\*", "");
+        sub("\\(.*", "");
+        print $2
+}
+' $HEADER.h |
+xargs -n 1 -J _ misc/audit_use_using ${HEADER} _

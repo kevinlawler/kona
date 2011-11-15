@@ -1,0 +1,14 @@
+#!/usr/bin/awk -f
+
+NF == 3 {
+        print("unused:", $0)
+}
+
+NF == 4 {
+        H = sub("\\.h", "", $1)
+        C = sub("\\.c", "", $4)
+        if (H == C)
+                print("private:", $0)
+        else
+                print("nonexistent:", $0)
+}
