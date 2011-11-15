@@ -37,9 +37,6 @@ I attend();
 extern fd_set master;
 K wd(S s,I n);
 K ex(K a);
-#if defined(__MACH__) || defined(__OpenBSD__)
-I getline(S *s,I *n,FILE *f);
-#endif
 I line(FILE *f,S *a,I *n,PDA *p);
 I lines(FILE *f);
 K kap(K *a,V v);
@@ -51,7 +48,6 @@ K show(K a);
 I parsedepth(PDA p);
 I complete(S a,I n,PDA *q,I *marks);
 I appender(S *s,I *n,S t,I k);
-I getline_(S *s,I *n,FILE *f);
 I wds(K *a,FILE*f);
 I wds_(K *a,FILE *f,I l);
 I prompt(I n);
