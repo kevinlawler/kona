@@ -6,11 +6,12 @@ awk '
 /^#/ { next; }
 /^ / { next; }
 /^$/ { next; }
-/^\/\*/ { next; }
+/^\// { next; }
 /^extern/ { next; }
+/^enum/ { next; }
 
 # print every function name
-$2 ~ /\(/ {
+{
         sub("\\*", "");
         sub("\\(.*", "");
         print $2

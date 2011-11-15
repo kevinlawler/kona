@@ -283,7 +283,7 @@ K _draw(K a,K b)
   R z;
 }
 
-void vitter_a(I *a,I n,I N,I j) //Method A
+Z void vitter_a(I *a,I n,I N,I j) //Method A
 {
   I S,i=0; 
   F top=N-n, Nreal=N, V, quot;
@@ -355,7 +355,7 @@ void vitter(I *a,I n,I N) //Method D
   }
 }
 
-
+Z void svdcmp(F **a, I m, I n, F *w, F **v, F *t);
 
 K _lsq(K a,K b)
 {
@@ -406,7 +406,7 @@ K _lsq(K a,K b)
 
 //SVD stuff cribbed from TINA who cribbed from Numerical Recipes (this is ok license-wise)
 #define Sign(u,v)               ( (v)>=0.0 ? ABS(u) : -ABS(u) )
-F radius(F u, F v) //aka 'pythag' compute (a^2+b^2)^(1/2) without under-/over-flow
+Z F radius(F u, F v) //aka 'pythag' compute (a^2+b^2)^(1/2) without under-/over-flow
 {
   F  Au, Av, Aw;
   Au = ABS(u);
@@ -422,7 +422,7 @@ F radius(F u, F v) //aka 'pythag' compute (a^2+b^2)^(1/2) without under-/over-fl
 * NOTE: if m<n, A should be filled up to square with zero rows.             *
 *       A[m][n] has been destroyed by U[m][n] after the decomposition.      *
 ****************************************************************************/
-void svdcmp(F **a, I m, I n, F *w, F **v, F *t)
+Z void svdcmp(F **a, I m, I n, F *w, F **v, F *t)
 {
     /* BUG `nm' may be used uninitialized in this function */
     I     flag, i, its, j, jj, k, l, nm, nm1 = n - 1, mm1 = m - 1;

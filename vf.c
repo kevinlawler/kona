@@ -112,7 +112,7 @@ Z I TNI(I p,C h) //transition function for parsing 0N -0I 0I 0n ...
 }
 
 Z I parseNI(S s,I n){I i=0,p=0; while(i<n && *s)p=TNI(p,*s++); R p<7?p:0;}
-F tround(F f){F d=FF(f); R (d>0&&!FC(d,1))||(d<0&&!FC(d,0))?ceil(f):floor(f);}
+Z F tround(F f){F d=FF(f); R (d>0&&!FC(d,1))||(d<0&&!FC(d,0))?ceil(f):floor(f);}
 
 //TODO: Really weird:  run '`g $ 99' run '. _d' see entry '(`s4;99;) in the `.k K-Tree
 //      also run '`s $ 1.0' -> domain error

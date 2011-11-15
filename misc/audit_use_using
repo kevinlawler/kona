@@ -2,7 +2,7 @@
 
 FUNC_NAME=$2
 
-grep -l "${FUNC_NAME}(" *.c |
+grep -l ${FUNC_NAME} *.c |
 env HEADER=$1 FUNC=$2 awk '
 BEGIN {
       header = ENVIRON["HEADER"]

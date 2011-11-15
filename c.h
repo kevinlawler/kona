@@ -18,7 +18,6 @@ I lines(FILE *f);
 K _n();
 K load(S s);
 K cd(K a);
-FILE *loadf(S s);
 K newK(I t,I n);
 K filename(S s);
 I prompt(I n);

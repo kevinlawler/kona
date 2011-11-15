@@ -6,7 +6,6 @@ K promote(K a);
 K dollar(K a,K b);
 I FC(F a,F b);
 F FF(F f);
-F tround(F f);
 I charpos(S s,C c);
 extern I PP;
 K kclone(K a);

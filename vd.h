@@ -31,4 +31,4 @@ K demote(K a);
 K lookup(K a,S b);
 K newK(I t,I n);
 K at_verb(K a,K b);
-K of2(K d,K *x,K *y,I s);
+

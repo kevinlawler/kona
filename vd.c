@@ -12,7 +12,7 @@
 Z K dot_ref(K *p,K *x,K *z,I s,K c,K y);
 Z K makeable(K a);
 
-K of2(K d, K *x, K *y, I s)
+Z K of2(K d, K *x, K *y, I s)
 {
   K f=*x;
   I dt=d->t, dn=d->n, ft=f->t, fn=f->n;
