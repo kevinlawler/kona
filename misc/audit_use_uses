@@ -8,12 +8,16 @@ awk '
 /^$/ { next; }
 /^\// { next; }
 /^extern/ { next; }
+/^typedef/ { next; }
 /^enum/ { next; }
 
 # print every function name
 {
         sub("\\*", "");
         sub("\\(.*", "");
+
+        # delete prefix _ for e.g. _acos in r.c
+        sub("^_", "", $2);
         print $2
 }
 ' $HEADER.h |
