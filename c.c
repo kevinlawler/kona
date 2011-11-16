@@ -38,7 +38,7 @@ K filename(S s)
   R p;
 }
 
-FILE *loadf(S s)
+Z FILE *loadf(S s)
 {
   FILE *f;
   K p=filename(s);

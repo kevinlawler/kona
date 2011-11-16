@@ -81,7 +81,7 @@ Z I mergerComparer(K a, I r, I i, I j)//Could unroll this
   else if( 0==t && 1==r && -1<KC(kK(a)[i],kK(a)[j])) R 1; 
   R 0;
 }
-void merger(K a, I r, K x, K y, I s, I t, I m)
+Z void merger(K a, I r, K x, K y, I s, I t, I m)
 {
   I i,j,k;
   I *c=kI(x),*d=kI(y);
@@ -92,7 +92,7 @@ void merger(K a, I r, K x, K y, I s, I t, I m)
    else c[k++]=d[j++];
   while(i<=m)c[k++]=d[i++]; 
 }
-void doMergeGrade(K a, I r, K x, K y, I s, I t)
+Z void doMergeGrade(K a, I r, K x, K y, I s, I t)
 {
   if(s >= t) R; //Faster: another sort when small |t-s| 
   I m=s+(t-s)/2; //sic

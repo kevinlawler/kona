@@ -24,7 +24,7 @@ S formed_dfa =
 
 S  left = "([{";
 S right = ")]}";
-C flop(C c){ R c=='('?')':c=='['?']':c=='{'?'}':c;}
+Z C flop(C c){ R c=='('?')':c=='['?']':c=='{'?'}':c;}
 
 //0123456789:;<=>?@ABCDEFGHIJKLM
 
@@ -282,7 +282,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
 Z I isodigit(C c){R isdigit(c) && c<'8';} // is octal digit
 Z I odigitlen3(S s){I i=0;while(s[i]&&isodigit(s[i])&&i<3)i++;R i;} // 0-3 consecutive octal digits
 
-C unescape(S s, I*k) //*k - return is composed of how many [escaped] chars
+Z C unescape(S s, I*k) //*k - return is composed of how many [escaped] chars
 {
   *k=1;
   C c=*s;

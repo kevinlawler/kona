@@ -11,7 +11,6 @@ K drop(K a,K b);
 K rotate(K a,K b);
 K _i();
 K shape(K a);
-void shapeCheck(K a,K p,I d);
 K take_reshape(K a,K b);
 K take(K a,K b);
 K reshape(K a,K b);

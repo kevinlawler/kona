@@ -11,6 +11,7 @@
 Z I updateIndex(K *p,I x,K r);
 Z K lookupEntryOrCreate(K *p,S k);
 Z S notsp(S a);
+Z I isDotDyadic(K x);
 
 K itemAtIndex(K a, I i)// Return i-th item from any type as K - TODO: oom wherever this is used
 {
@@ -38,9 +39,9 @@ K glue(K a, K b) { R Ks(sp(glueSS(*kS(a),*kS(b)))); } //oom
 K DI(K d, I i){R kK(d)[i];}         //dictionary index, yields entry
 S ES(K d){ R *kS(kK(d)[0]);}        //dictionary entry's symbol
 K DE(K d,S b){DO(d->n,K x=DI(d,i);if(b==ES(x))R x)R 0;} //dictionary entry lookup
-K* EIA(K a,I i){R kK(a)+i;}         //dictionary entry's address of i-th index
+Z K* EIA(K a,I i){R kK(a)+i;}         //dictionary entry's address of i-th index
 K* EVP(K e){R EIA(e,1);}            //dictionary entry's value-pointer address (K*)
-K* EAP(K e){R EIA(e,2);}            //dictionary entry's attribute_dictionary-pointer address (K*)
+Z K* EAP(K e){R EIA(e,2);}            //dictionary entry's attribute_dictionary-pointer address (K*)
 K   EV(K e){R *EVP(e);}             //dictionary entry's stored value
 
 //Potential K3/4 bug (won't spend time looking):  names in functions (params,
@@ -54,12 +55,15 @@ K* denameS(S dir_string, S t)
 {
   R denameD('.'==*t||!*t?&KTREE:denameD(&KTREE,dir_string),t);//duplicates '.' functionality in denameD to avoid dictionary initialization
 }
+
+Z K* denameRecurse(K*p,S t,I create);
+
 K* denameD(K*d, S t)
 {
   if(!simpleString(t)) R 0; //some kind of error
   R denameRecurse('.'==*t||!*t?&KTREE:d,t,1);
 }
-K* denameRecurse(K*p,S t,I create) 
+Z K* denameRecurse(K*p,S t,I create) 
 {
   if(!*t)R p; 
   if('.'==*t)t++;
@@ -202,9 +206,9 @@ Z I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
   R 0;
 }
 
-I isVerbDyadic(K x,V v){R xt==7 && kW(x)[0]==v && !kW(x)[1];}
+Z I isVerbDyadic(K x,V v){R xt==7 && kW(x)[0]==v && !kW(x)[1];}
 I isColonDyadic(K x){R isVerbDyadic(x,offsetColon);}
-I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
+Z I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
 
 K specialAmendDot(K c, K args) //If c is like colon_dyadic return args@1, else dot
 {

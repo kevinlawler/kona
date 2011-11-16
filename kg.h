@@ -1,6 +1,4 @@
 K mergeGrade(K a,I r);
-void doMergeGrade(K a,I r,K x,K y,I s,I t);
-void merger(K a,I r,K x,K y,I s,I t,I m);
 K charGrade(K a,I r);
 K cd(K a);
 K _i();

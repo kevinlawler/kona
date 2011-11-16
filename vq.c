@@ -20,7 +20,7 @@ K find(K a, K b)
   R Ki(an);
 }
 
-F num_ex(K a, F x)//f-> monadic, numeric in&out
+Z F num_ex(K a, F x)//f-> monadic, numeric in&out
 { 
   F y=0;
   K b,g;
@@ -47,7 +47,7 @@ Z I isShallowNumeric(K k)
   R 1;
 }
 
-F ithFloat(K k, I i) //made specific for what_triadic
+Z F ithFloat(K k, I i) //made specific for what_triadic
 {
   if(!k) R 0;
   I n=k->n;
@@ -56,7 +56,7 @@ F ithFloat(K k, I i) //made specific for what_triadic
   R kF(k)[i%n];
 }
 
-F inverter(K a, K b, K c, I index)//secant method
+Z F inverter(K a, K b, K c, I index)//secant method
 {
   F y = ithFloat(b,index);
 

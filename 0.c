@@ -438,7 +438,7 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
   else if(-3==t) r+=(1+n)*sizeof(C); //appears to need final '\0' or eval size limit ???
   if(s < r) R NE;//(could instead have these errors occuring individually in the switch statement)
 
-  K f, z=(-4 <= t && t<= 6)? newK(t,n):Kv(); U(z)
+  K z=(-4 <= t && t<= 6)? newK(t,n):Kv(); U(z)
 
 
   I c=0; // k->n counter
