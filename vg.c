@@ -204,7 +204,7 @@ K take_reshape(K a, K b)
   R 0<a->t?take(a,b):reshape(a,b);
 }
 
-void shapeCheck(K a, K p, I d)
+Z void shapeCheck(K a, K p, I d)
 { //Descend through list a marking shape p as -1 where it doesn't correspond
   I at=a->t, an=a->n;
   if(at>0 || an!=kI(p)[d]) kI(p)[d]=-1;//Mismatch or atom means p length too long

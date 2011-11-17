@@ -95,9 +95,9 @@ I charpos(S s,C c){I i=0;while(s[i] && c!=s[i])i++; R i;}
 
 I isCharVerb(C c) {R stringHasChar(vc,c);}
 I charsVerb(C c)  {R charpos(vc,c);}
-C verbsChar(V p)  {R (p>=DT_VERB_OFFSET && p < DT_SPECIAL_VERB_OFFSET)?vc[((I)p-DT_VERB_OFFSET)/2]:'\0';}
+Z C verbsChar(V p)  {R (p>=DT_VERB_OFFSET && p < DT_SPECIAL_VERB_OFFSET)?vc[((I)p-DT_VERB_OFFSET)/2]:'\0';}
 
-C adverbsChar(V p){R (p>=DT_ADVERB_OFFSET)?ac[((I)p-DT_ADVERB_OFFSET)%3]:'\0';}
+Z C adverbsChar(V p){R (p>=DT_ADVERB_OFFSET)?ac[((I)p-DT_ADVERB_OFFSET)%3]:'\0';}
 I charsAdverb(C c) {R charpos(ac,c);}
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
@@ -174,7 +174,7 @@ I VA(V p){R sva(p) || adverbClass(p);}  //(Verb or Adverb)?
 Z I isescape(UC c) {R (c=='"'||c=='\\'||c=='\b'||c=='\n'||c=='\r'||c=='\t');}
 Z I needspt0(F f){if(isnan(f)||-FI==f||FI==f)R 0; Z C b[512];snprintf(b,512,"%.*g",(int)PP,f); R !stringHasChar(b,'.') && !stringHasChar(b,'e');}//no better way I know
 
-int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: monadic (_5m)
+Z int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: monadic (_5m)
 {
   Z C b[512];
   va_list args;

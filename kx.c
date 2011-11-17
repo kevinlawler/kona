@@ -606,7 +606,6 @@ Z K bv_ex(V*p,K k)
 K ex1(V*w,K k)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (full pieces in between semicolons/newlines) 
 {
   //if(in(*w,adverbs)) R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
-  I d;
   if( DT_ADVERB_OFFSET <= *w && *w < DT_VERB_OFFSET )R NYI;
 
   I c=0; while(w[c] && !bk(w[c])){c++; if(offsetColon==w[c-1])break;} //must break or assignment is n^2  (a:b:c:1)

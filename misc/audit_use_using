@@ -1,0 +1,18 @@
+#!/bin/sh
+
+FUNC_NAME=$2
+
+grep -l ${FUNC_NAME} *.c |
+env HEADER=$1 FUNC=$2 awk '
+BEGIN {
+      header = ENVIRON["HEADER"]
+      func_name = ENVIRON["FUNC"]
+}
+      { f[ct++] = $1 }
+END   {
+    printf("%s.h %s : ", header, func_name);
+    for (i=0; i<ct; i++)
+        printf("%s ", f[i]);
+    printf("\n");
+}
+'
