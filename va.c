@@ -66,10 +66,14 @@ K mod(K a, K b) //In K4: {x-y*x div y}
   if     (2==ABS(at) && 2==bt) { g=*kF(b); DO(an, f=kF(a)[i]; FMOD) }
   else if(2==ABS(at) && 1==bt) { g=*kI(b); DO(an, f=kF(a)[i]; FMOD) }
   else if(1==ABS(at) && 2==bt) { g=*kF(b); DO(an, f=kI(a)[i]; FMOD) }
-  else if(1==ABS(at) && 1==bt) {
-    d=*kI(b); //TODO: casting to F is slow/wrong for big#
-    DO(an, c=kI(a)[i]; e=d?c-d*floor(c/(F)d):c; kI(z)[i]=e)
-  } else if(0==at) DO(an, if(!(kK(z)[i]=mod(kK(a)[i],b))){cd(z);R 0;}) 
+  else if(1==ABS(at) && 1==bt)
+  {
+    d=*kI(b); 
+    if(d>0) DO(an, c=kI(a)[i]; e=d?c-d*(c/d):c; kI(z)[i]=e)
+    else    DO(an, c=kI(a)[i]; e=d?c-d*floor(c/(F)d):c; kI(z)[i]=e) //TODO: casting to F is slow/wrong for big#. NB: floor does not equal truncate for negatives
+
+  } 
+  else if(0==at) DO(an, if(!(kK(z)[i]=mod(kK(a)[i],b))){cd(z);R 0;}) 
   R z;
 }
 
