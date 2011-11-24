@@ -186,6 +186,12 @@
   "Get k process's buffer."
   (get-buffer (concat "*" k-program-name "*")))
 
+(defun k-proc-kill ()
+  "Kill the current K process, if any."
+  (interactive)
+  (let ((kp (k-proc)))
+    (when kp (delete-process kp))))
+
 (defun switch-to-k (uarg)
   "Switch to a k process, or spawn a new one if not running.
 Universal argument switches to it in another window."
@@ -196,11 +202,11 @@ Universal argument switches to it in another window."
     (when kbuf
       (with-current-buffer kbuf
         (add-hook 'comint-output-filter-functions
-                  'k-comint-output-filter nil t)))
-  (unless (equal (current-buffer) kbuf)
-    (if uarg
-        (switch-to-buffer-other-window kbuf)
-        (switch-to-buffer kbuf)))
+                  'k-comint-output-filter nil t))
+      (unless (equal (current-buffer) kbuf)
+        (if uarg
+            (switch-to-buffer-other-window kbuf)
+            (switch-to-buffer kbuf))))
   kproc))
 
 (defun k-send-str (s)
@@ -211,15 +217,20 @@ Universal argument switches to it in another window."
     (when (and kproc s)
       (comint-send-string kproc s))))
             
+(defun k-buffer-is-visible ()
+  "Check if the k process buffer is currently visible."
+  (let ((b (k-proc-buffer)))
+    (when b
+      (member b
+              (mapcar (lambda (w) (window-buffer w))
+                      (window-list))))))
+
 (defun k-comint-output-filter (s)
   "Print output from code sent to k in the minibuffer."
-  ;; TODO How do we check if *k* buffer is visible? Can't use
-  ;; (current-buffer) because it's always current during the callback.
-  ;; It's kind of annoying to show the result in the minibuffer when
-  ;; it's already on-screen.
-  (let ((drop (min (length s)
-                   (+ 1 (length k-prompt-string)))))
-    (princ (substring s 0 (- drop)))))
+  (unless (k-buffer-is-visible)
+    (let ((drop (min (length s)
+                     (+ 1 (length k-prompt-string)))))
+      (princ (substring s 0 (- drop))))))
 
 (defun k-send-region (start end)
   "Send region to k process."
