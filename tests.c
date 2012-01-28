@@ -419,6 +419,7 @@ Z I tests02()
 
   TC(10 1, 10 -'': 2 3)
 
+  TC(0 12345 1406932606 654583775 1449466924, 4{((1103515245*x)+12345)!(_2^31)}\\0 )
 
   //bv_ex subtriadic
   //bv_ex 1. doesn't seem to handle projectons correcly
