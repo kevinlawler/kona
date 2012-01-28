@@ -31,11 +31,11 @@ all: k k_test
 
 k: CFLAGS += $(PRODFLAGS)
 k: $(OBJS)
-	$(CC) ${CFLAGS} $(LDFLAGS) $^ -o $@
+	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
 
 k_test: CFLAGS += $(DEVFLAGS)
 k_test: $(OBJS_T) tests.t.o
-	$(CC) ${CFLAGS} $(LDFLAGS) $^ -o $@
+	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
 
 test: k_test
 
