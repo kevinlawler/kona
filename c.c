@@ -255,6 +255,7 @@ K backslash(S s, I n)
       CS('_',
              O(
               "Constants:\n"
+              "(Note: the K epoch is 2035-01-01T00:00:00)\n"
               "_T       [current UTC Julian day count]+[fraction complete]\n"
               //"_a     \n"
               "_d       K-Tree path / current working dictionary\n"
