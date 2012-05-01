@@ -1,3 +1,7 @@
+There is lots of information on the Kona wiki
+
+    https://github.com/kevinlawler/kona/wiki
+
 To compile (OS X/Linux/BSD):
 
     make           #gmake on BSD
