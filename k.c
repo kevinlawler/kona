@@ -411,7 +411,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 1, shape,"^",0},
   {0, 2, power,"^",0},
   {0, 1, enumerate,"!",0},
-  {0, 2, rotate_mod,"|",0},
+  {0, 2, rotate_mod,"!",0},
   {0, 1, grade_up,"<",0},
   {0, 2, less,"<",0},
   {0, 1, grade_down,">",0},
