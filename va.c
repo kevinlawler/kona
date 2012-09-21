@@ -62,7 +62,12 @@ K mod(K a, K b) //In K4: {x-y*x div y}
 
   K z=newK(t,an); U(z)
   I c,d,e; F f,g,h;
-  #define FMOD h=g?f-g*floor(f/g):f; kF(z)[i]=h;
+#if __INT_MAX__ == 2147483647  
+  F ct=1e-13; // Comparison tolerance for 32 bit
+#else
+  F ct=0; // Not needed for 64 bit
+#endif
+  #define FMOD h=g?f-g*floor(ct+f/g):f; kF(z)[i]=(ABS(h)>ct)?h:0;
   if     (2==ABS(at) && 2==bt) { g=*kF(b); DO(an, f=kF(a)[i]; FMOD) }
   else if(2==ABS(at) && 1==bt) { g=*kI(b); DO(an, f=kF(a)[i]; FMOD) }
   else if(1==ABS(at) && 2==bt) { g=*kF(b); DO(an, f=kI(a)[i]; FMOD) }
