@@ -670,7 +670,11 @@ K _3m(K x)
   //3:`"999.999.999.999",1234   // same host: 3:`,1234
   S host=CSK(*kK(x)), errstr;
   char port[256];
+#if __INT_MAX__ == 2147483647  
+  snprintf(port,256,"%lld",*kI(kK(x)[1]));
+#else
   snprintf(port,256,"%ld",*kI(kK(x)[1]));
+#endif
 
   int sockfd;
   struct addrinfo hints, *servinfo, *p; 

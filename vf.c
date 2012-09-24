@@ -71,9 +71,16 @@ Z K formatF(F x, I y, I c)
   R z;
 }
 Z K formatI(I x)
-{ I n=snprintf(0,0,"%ld",x); 
+{ 
+#if __INT_MAX__ == 2147483647  
+  I n=snprintf(0,0,"%lld",x);
+  K z=newK(-3,n);
+  if(z)sprintf(kC(z),"%lld",x);
+#else
+  I n=snprintf(0,0,"%ld",x);
   K z=newK(-3,n);
   if(z)sprintf(kC(z),"%ld",x);
+#endif 
   R z;
 }
 K format(K a) 
