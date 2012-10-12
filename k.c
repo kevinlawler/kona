@@ -217,11 +217,7 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   #define CPMAX {if(!u && i>pmax){O_("...");break;}}
 
   if(0==    t )                            DO(a->n, CPMAX printAtDepth(u,kK(a)[i],d+1,i*m,0,0);O_(i<_i-1?m?"\n":";":""))
-#if __INT_MAX__ == 2147483647
   if(1==ABS(t)) if(!a->n) O_("!0");    else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O_("0N"):f==-II?O_("-0I"):f==II?O_("0I"):O_("%lld",f); if(i<_i-1)O_(" "))
-#else
-  if(1==ABS(t)) if(!a->n) O_("!0");    else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O_("0N"):f==-II?O_("-0I"):f==II?O_("0I"):O_("%ld",f); if(i<_i-1)O_(" "))
-#endif
   if(2==ABS(t)) if(!a->n) O_("0#0.0"); else DO(a->n, CPMAX g=kF(a)[i];isnan(g)?O_("0n"):g==-FI?O_("-0i"):g==FI?O_("0i"):O_("%.*g",(int)PP,g);if(i<_i-1)O_(" ");else if(needspt0(g))O_(".0"))
   if(3==ABS(t)) { O_("\"");                 DO(a->n, CPMAX UC c=kC(a)[i];
                                               if(isprint(c)&&(!isescape(c)))O_("%c",c);
