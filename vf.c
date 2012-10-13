@@ -64,16 +64,18 @@ Z K formatS(S x)
 }
 Z K formatF(F x, I y, I c)
 { 
+  int k=y;
   S b= 0==c?"%.*g":1==c?"%.*f":"%.*e";// %#.*g ?? 
-  I n=snprintf(0,0,b,y,x);  
+  I n=snprintf(0,0,b,k,x);  
   K z=newK(-3,n);
-  if(z)sprintf(kC(z),b,y,x);
+  if(z)sprintf(kC(z),b,k,x);
   R z;
 }
 Z K formatI(I x)
-{ I n=snprintf(0,0,"%ld",x); 
+{ 
+  I n=snprintf(0,0,"%lld",x);
   K z=newK(-3,n);
-  if(z)sprintf(kC(z),"%ld",x);
+  if(z)sprintf(kC(z),"%lld",x); 
   R z;
 }
 K format(K a) 

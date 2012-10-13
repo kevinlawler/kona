@@ -58,7 +58,7 @@ K math(F(*f)(F), K a)
   P(ABS(at) > 2,TE)
   I t=1==ABS(at)?2*at:at;
   K e, z=newK(t,n);
-  if     (0==    at )DO(n, e=kK(a)[i]; M(z,kK(z)[i]=math(f,e))) //should be no demote needed
+  if     (0==    at )DO(n, e=kK(a)[i]; kK(z)[i]=math(f,e); if(!kK(z)[i]){cd(z);R 0;}) //should be no demote needed.
   else if(1==ABS(at))DO(n, kF(z)[i]=f(kI(a)[i]))
   else if(2==ABS(at))DO(n, kF(z)[i]=f(kF(a)[i]))
   R z;
