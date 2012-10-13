@@ -213,8 +213,6 @@ Z I tests02()
   TC(5,i:0;do[,5;i+:1];i)
 
   //Commands
-  TC(1, 2<#."\\w") // \w command
-
   TC((1;"parse"), @[.:;"\b";:]) //trap parse errors  (\b  backspace)
 
   TC(51, a:101#"1+"; . a) //In debug mode repeating . a;. a; causes execution time to build
