@@ -397,7 +397,7 @@ I rep(K x,I y) //#bytes in certain net/disk representations
   //_bd (+/) is type 20, -': -/ -\ all seem to have have their own types
   //projection causes nonce error
 
-  I m=sizeof(I)*(y?4:2), r=m, n=xn;  //y crutch for factor {0,1}->{net size, disk size}
+  I m=sizeof(I)*(y?4:2), r=m, n=xn, q=0;  //y crutch for factor {0,1}->{net size, disk size}
   SW(xt)
   {
     CSR(0,) CS(5, DO(xn,r+=rep(kK(x)[i],y)))
@@ -406,7 +406,7 @@ I rep(K x,I y) //#bytes in certain net/disk representations
     CS(-3, r+= (1+n)*sizeof(C))
     CS(-2, r+=     n*sizeof(F))
     CS(-1, r+=     n*sizeof(I))
-    CS( 4, r+=1+strlen(*kS(x))-sizeof(I))
+    CS( 4, q=1+strlen(*kS(x)); if(q>=sizeof(I))r+=q-sizeof(I))//without q check can cause trouble on 32-bit
   }
   R MAX(r,m);
 }
@@ -670,7 +670,7 @@ K _3m(K x)
   //3:`"999.999.999.999",1234   // same host: 3:`,1234
   S host=CSK(*kK(x)), errstr;
   char port[256];
-  snprintf(port,256,"%ld",*kI(kK(x)[1]));
+  snprintf(port,256,"%lld",*kI(kK(x)[1]));
 
   int sockfd;
   struct addrinfo hints, *servinfo, *p; 

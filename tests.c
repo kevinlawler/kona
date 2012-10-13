@@ -29,7 +29,7 @@ I tp(I x){ switch(x){CS(0,failed++)  CS(1,passed++)CS(2,skipped++)} tests++; R x
 
 I tc(S a, S b) //test comparison .  R 0,1,2
 {
-  if(!(tests % 50)) O("t:%ld\n",tests); //commenting this causes an error. no idea why. fflush? macro stuff? >2 args bc of "skip" ?
+  if(!(tests % 50)) O("t:%lld\n",tests); //commenting this causes an error. no idea why. fflush? macro stuff? >2 args bc of "skip" ?
   if(!SC("skip",a)) R 2;
 
   kreci=0;
@@ -55,9 +55,9 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   I c=0; DO(kreci, if(krec[i]) c++)
   if(!c) R m;
 
-  fprintf(stderr,"Failed: Memory Leak - %s, %s \nAllocated K: %ld\nUnfreed K  : %ld\nLeak %%     : %f\n", a,b,kreci, c, c/(F)kreci);
+  fprintf(stderr,"Failed: Memory Leak - %s, %s \nAllocated K: %lld\nUnfreed K  : %lld\nLeak %%     : %f\n", a,b,kreci, c, c/(F)kreci);
   I j=-1;
-  DO(c, do j++; while(!krec[j] && j < kreci); if(j>=kreci) break; K k=krec[j]; if(k){O("c:%ld t:%ld n:%ld | k:%ld\n",k->c,k->t,k->n,(I)k); show(k);} )
+  DO(c, do j++; while(!krec[j] && j < kreci); if(j>=kreci) break; K k=krec[j]; if(k){O("c:%lld t:%lld n:%lld | k:%lld\n",k->c,k->t,k->n,(I)k); show(k);} )
   R 0;
 }
 
@@ -72,8 +72,8 @@ I test()
 
 //done:
   testtime=(clock()-testtime)/CLOCKS_PER_SEC;
-  F rate=passed/((F)tests-skipped); 
-  O("Test pass rate: %.4f, Total: %ld, Passed: %ld, Skipped: %ld, Failed: %ld, Time: %fs\n", rate,tests,passed,skipped,failed,testtime);
+  F rate=passed/((F)tests-skipped);
+  O("Test pass rate: %.4f, Total: %lld, Passed: %lld, Skipped: %lld, Failed: %lld, Time: %fs\n", rate,tests,passed,skipped,failed,testtime);
   I r=1==rate;
   O("%s\n", ts(r));
   testtime=0;
@@ -213,8 +213,6 @@ Z I tests02()
   TC(5,i:0;do[,5;i+:1];i)
 
   //Commands
-  TC(1, 2<#."\\w") // \w command
-
   TC((1;"parse"), @[.:;"\b";:]) //trap parse errors  (\b  backspace)
 
   TC(51, a:101#"1+"; . a) //In debug mode repeating . a;. a; causes execution time to build
@@ -892,6 +890,7 @@ Z I testsBook()
   TC(1, a:`a`b`c!3 3#!9;b:.((`a;0 1 2);(`b;3 4 5);(`c;6 7 8));a~b )
 
   TC((1;"type") , @[.:;"_sin _sin (;)";:])
+  TC((1;"type") , @[.:;"_sin _sin (0;)";:])
 
   //Regressions
   TC(2, _2.5)

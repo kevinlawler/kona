@@ -2,7 +2,7 @@
 #define TS_H
 
 typedef void* V;
-typedef long I; //there are cases where casting pointer arithmetic to signed int will fail
+typedef long long I; //there are cases where casting pointer arithmetic to signed int will fail
 typedef double F;
 typedef char C; //Store +-3 type '\0' terminated
 typedef C* S;
@@ -86,7 +86,7 @@ typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; /
 #define RTIME(d,...) {d=clock();{__VA_ARGS__;}d=(clock()-d)/CLOCKS_PER_SEC;}
 #define TIME(...) {F d; RTIME(d,__VA_ARGS__); O("Elapsed:%.7f\n",d);}
 #define dump(x, fmt) {fprintf(stderr, "%s:%u: %s=" fmt "\n", __FILE__, __LINE__, #x, x);}
-#define dd(x) dump((I)x,"%ld")
+#define dd(x) dump((I)x,"%lld")
 #define er(x) {fprintf(stderr, "%s:%u: %s\n",__FILE__, __LINE__, #x);}
 
 #endif

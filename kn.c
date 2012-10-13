@@ -31,12 +31,12 @@ K read_tape(I i, I type) // type in {0,1} -> {select loop, 4: resp reader}
   I nbytes = recv(i,b,g,0); 
   if(nbytes <= 0)
   {
-    if (nbytes == 0);//printf("server: socket %ld hung up\n", i);
+  if (nbytes == 0);//printf("server: socket %lld hung up\n", i);
     else perror("recv");
     GC;
   }
-  //fill struct data + k data 
-  CP[i].r += nbytes; //DO(nbytes, O("b%ld : %o\n",i,(UC)b[i]))
+  //fill struct data + k data
+  CP[i].r += nbytes; //DO(nbytes, O("b%lld : %o\n",i,(UC)b[i])) 
   if(m == CP[i].r) //We've read enough bytes to fill our struct m1 with transmission data (it's also the _db header)
   {
     //TODO: so that we get the right sizes, etc, in the M1, rearrange bytes based on little-endianness indicator CP[i].m1.a
