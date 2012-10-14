@@ -1,6 +1,6 @@
 Kona wiki: https://github.com/kevinlawler/kona/wiki
 
-To compile (OS X/Linux/BSD):
+To compile (OS X/Linux/BSD/Cygwin):
 
     make           #gmake on BSD
 
