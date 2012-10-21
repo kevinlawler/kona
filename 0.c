@@ -139,7 +139,7 @@ Z K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
     if(3==ABS(t)) memcpy(v,kC(b),s);
     else DO(n, k=kK(b)[i]; if(3==ABS(k->t)){memcpy(v+c,kC(k),k->n); c+=k->n;} v[c++]='\n'; )
 
-    msync(v,s,MS_SYNC|MS_INVALIDATE);
+    //msync(v,s,MS_SYNC|MS_INVALIDATE); //slow
     munmap(v,s); 
   }
 
@@ -354,7 +354,7 @@ Z K _1d_write(K x,K y)
 
   wrep(y,v,1);
 
-  msync(v,n,MS_SYNC|MS_INVALIDATE);
+  //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
   munmap(v,n); 
 
   R _n();
@@ -835,7 +835,7 @@ K _5d(K x,K y)
   else if(-2==yt)  memcpy(d,ke(y),y->n*sizeof(F));
   else if(-1==yt)  memcpy(d,ke(y),y->n*sizeof(I)); 
  
-  msync(v,n,MS_SYNC|MS_INVALIDATE);
+  //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
   munmap(v,n); 
 
   R Ki(fn+yn); //mm/o 
@@ -898,7 +898,7 @@ K _6d(K a,K b) //A lot of this is copy/paste from 0: dyadic write
     if(MAP_FAILED==(v=mmap(0,e+n,PROT_WRITE,MAP_SHARED,f,0)))R SE; //should this be MAP_PRIVATE|MAP_NORESERVE ?
     close(f);
     memcpy(v+e,kC(b),n);
-    msync(v+e,n,MS_SYNC|MS_INVALIDATE);
+    msync(v+e,n,MS_SYNC|MS_INVALIDATE); //keep msync for _6d ??? see issue 163
     munmap(v,e+n); 
   }
 
