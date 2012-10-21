@@ -245,7 +245,7 @@ K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
 
     //triadic & tetradic create dict path if not existing (even on errors). dyadic/monadic create nothing
 
-    p = denameS(__d,*kS(a));
+    p = denameS(__d,*kS(a),1);
     U(p) //oom
   }
   else q = kclone(a); 
@@ -286,4 +286,18 @@ Z K makeable(K a) //TODO: this has to be reworked. can't hang out raw in dot_mon
   DO(n, x=kK(a)[i]; if(0==x->t) if( 4 != kK(x)[0]->t || (3==x->n && 5!=kK(x)[2]->t && 6!=kK(x)[2]->t)) R 0)
   R (K)1;
 }
-K dot_monadic(K x){R 3==ABS(xt)?KX(x):4==xt?ci(*denameS(__d,*kS(x))):5==xt?unmake(x):makeable(x)?make(x):vf_ex(offsetDot,x); }  //TODO: mmo. untested everywhere. TODO: esp mmo _() underscore function
+
+K dot_monadic(K x)
+{
+  if(3==ABS(xt))R KX(x);
+  if(4==xt)
+  { 
+    K *p = denameS(__d,*kS(x),0);
+    if(!p) R DOE;
+    R ci(*p);
+  }
+  if(5==xt)R unmake(x);
+  if(makeable(x))R make(x);
+  R vf_ex(offsetDot,x);
+}  
+

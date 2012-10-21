@@ -51,17 +51,17 @@ K   EV(K e){R *EVP(e);}             //dictionary entry's stored value
 
 //Weird: Found some bug in K3.2 were running .` would add a copy of the entries in the root of the K tree every time. Not sure how to reproduce
 //K* denameBig(K dir_sym,K name_sym){R denameS(*kS(dir_sym),*kS(name_sym));} //[unnecessary?] wrapper for K-object inputs
-K* denameS(S dir_string, S t)
+K* denameS(S dir_string, S t, I create)
 {
-  R denameD('.'==*t||!*t?&KTREE:denameD(&KTREE,dir_string),t);//duplicates '.' functionality in denameD to avoid dictionary initialization
+  R denameD('.'==*t||!*t?&KTREE:denameD(&KTREE,dir_string,create),t,create);//duplicates '.' functionality in denameD to avoid dictionary initialization
 }
 
 Z K* denameRecurse(K*p,S t,I create);
 
-K* denameD(K*d, S t)
+K* denameD(K*d, S t, I create)
 {
   if(!simpleString(t)) R 0; //some kind of error
-  R denameRecurse('.'==*t||!*t?&KTREE:d,t,1);
+  R denameRecurse('.'==*t||!*t?&KTREE:d,t,create);
 }
 Z K* denameRecurse(K*p,S t,I create) 
 {
@@ -80,8 +80,19 @@ Z K* denameRecurse(K*p,S t,I create)
   //and LOC should have the potential to return 0 (indicating other errors as well, e.g. out of memory)
   P(!(6==a || 5==a),(K*)TE)
 
-  K e=lookupEntryOrCreate(p,k);  //To create a dename without path creation add a branch here that does lookup without create
-  P(!e,(K*)ME)
+  K e=0;
+  
+  if(create)
+  {
+    e=lookupEntryOrCreate(p,k);  
+    P(!e,(K*)ME)
+  }
+  else
+  {
+    K a=*p;
+    if(5==a->t) e=DE(a,k);
+    P(!e,(K*)0)
+  }
 
   if('.'==*t && (!t[1] || '.'==t[1])) 
   {

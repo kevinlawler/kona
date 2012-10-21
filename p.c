@@ -216,7 +216,7 @@ I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 //      this rule doesn't apply to function argument lists, eg: f:{  [a] 1} is ok. however f: {\n\n  [a;b;d]  1+1} not ok
 //      so the check probably has to do with whether some useful symbol occurred on the line already
 //other errors: syntax error
-K wd(S s, I n){R wd_(s,n,denameD(&KTREE,__d),0);}
+K wd(S s, I n){R wd_(s,n,denameD(&KTREE,__d,1),0);}
 K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
 {
   if(!s) R 0;
@@ -439,7 +439,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                         M(z,t,j);
                         I n=0;
                         DO(3, if(DE(t,IFP[2-i])){n=3-i;break;})
-                        DO(n,denameD(zdict,IFP[i])) //TODO: oom
+                        DO(n,denameD(zdict,IFP[i],1)) //TODO: oom
                         cd(t); cd(j);
                       }
 
@@ -511,12 +511,12 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                         }
                         else if(q=DE(*dict,u)) z=EVP(q); //If func has its local, use it
                         //else if(':'==s[k+r] && ':'==s[k+r+1] && -MARK_VERB==m[k+r+1]){m[k+r]=MARK_NAME; r++; z=denameS(kV(func)[CONTEXT],u);} //m[]=  probably superfluous 
-                        else if(-MARK_VERB==m[k+r] && ':'==s[k+r+1] && -MARK_VERB==m[k+r+1]){if(':'==s[k+r])r++; z=denameS(kV(func)[CONTEXT],u);}
-                        else if(dict==(K*)kV(func)+LOCALS && ':'==s[k+r] && -MARK_VERB==m[k+r]) z=denameD(dict,u); //K3.2:  a+:1 format applies to context-globals not locals
-                        else z=denameS(kV(func)[CONTEXT],u);//Otherwise check the context (refactor with above?) 
+                        else if(-MARK_VERB==m[k+r] && ':'==s[k+r+1] && -MARK_VERB==m[k+r+1]){if(':'==s[k+r])r++; z=denameS(kV(func)[CONTEXT],u,1);}
+                        else if(dict==(K*)kV(func)+LOCALS && ':'==s[k+r] && -MARK_VERB==m[k+r]) z=denameD(dict,u,1); //K3.2:  a+:1 format applies to context-globals not locals
+                        else z=denameS(kV(func)[CONTEXT],u,1);//Otherwise check the context (refactor with above?) 
                         //The way this else-branch is set up, {b;b:1} will create context-global b though K3.2 won't. Seems OK
                       }
-                      else z=denameD(dict,u);
+                      else z=denameD(dict,u,1);
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if('_'==s[k] && r > 1)

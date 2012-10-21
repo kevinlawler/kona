@@ -4,7 +4,7 @@ K Ks(S x);
 K make(K a);
 K kclone(K a);
 extern S __d;
-K *denameS(S dir_string,S t);
+K *denameS(S dir_string,S t,I create);
 extern C errmsg[256];
 I isColonDyadic(K x);
 K dot_tetradic(K a,K b,K c,K y);
