@@ -144,11 +144,11 @@ K backslash(S s, I n)
               "\\  scan dyad    +\\3 4 5  or 6+\\3 4 5    *\\10#2\n"
                "/  over monad   apply until fixed    f/x    (%%[;2.0])/9999.0 \n"
                "/  over monad   apply n times      n f/x    4 (2+)/0 \n"
-               "/  over monad   apply while true   b f/x    todo\n"
+               "/  over monad   apply while true   b f/x    {x<10} {x+1}/ 3\n"
               "\\  scan monad   trace until repeat   f\\x    (1!)\\1 2 3 4\n"
               "\\  scan monad   trace n times      n f\\x    10(|+\\)\\1 1\n"
-               "/  over         f/[x;y;z]\n"
-              "\\  scan         f\\[x;y;z]\n"
+               "/  over         {x+y+z}/[1 2 3;4;7 8 9]  f/[x;y;z]\n"
+              "\\  scan         {x+y+z}\[1 2 3;4;7 8 9]  f\\[x;y;z]\n"
                "'  each         \"abc\" ,' \"def\"    join each  \n"
                "'  each         !:' 2 3 4    enumerate each  \n"
                "/: eachright    #:/:(2;2 2;2 2 2)    count each right\n"
@@ -385,7 +385,7 @@ K backslash(S s, I n)
                "0: dyadic   write to console `0: \"hello\\n\" \n"
                "2: dyadic   dynamically load C function  a:`libfile 2:(`func,3); a[1;2;3]\n"
                "4: monadic  type of data [-4,7],  4: \"c\" /returns 3\n"
-               "5: monadic  todo. printed representation. 5:1 2 3 /returns \"1 2 3\"\n"
+               "5: monadic  printed representation. 5:1 2 3 /returns \"1 2 3\"\n"
 
                "\n0: and 1: both have versions for reading fields\n"
                "In all cases `f can instead be (`f;start;length)\n"
@@ -394,9 +394,9 @@ K backslash(S s, I n)
                "(type;width)1:`f \n" 
                "\"c\" 1:`f for c in \"cid\", read bytes/ints/doubles\n"
                "Reading delimited text fields:\n"
-               "(type;[,]delim)0:`f    todo\n"
+               "(type;[,]delim)0:`f    \n"
                "c 1-byte char, b 1-byte int, s 2-byte int, i 4-byte int, f 4-byte float,\n"
-               "d 8-byte double, \" \" 1-byte skip, I int, F float, C string, S string (sym), DTZMm Y? todo\n"
+               "d 8-byte double, \" \" 1-byte skip, I int, F float, C string, S string (sym), DTZMm Y? \n"
              );
       )
       CS('`',R NYI)
