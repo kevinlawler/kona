@@ -91,7 +91,7 @@ Z K* denameRecurse(K*p,S t,I create)
   {
     K a=*p;
     if(5==a->t) e=DE(a,k);
-    P(!e,(K*)0)
+    P(!e,&NIL)
   }
 
   if('.'==*t && (!t[1] || '.'==t[1])) 
