@@ -351,7 +351,7 @@ K vf_ex(V q, K g)
   if(2==k && !a){VE; GC;} //Reachable? Projection?
 
   //Reachable: try "#'(1;1 2)" (the # is dyadic not monadic #:). We return projection (#[1;],#[1 2;]), K3.2 gives valence error
-  if(2==k && !b)
+  if((2==k || q==offsetSSR) && !b)
   { K v = Kv(), kb = newK(-4,2); M(v,kb)
     kK(kb)[0]=q; 
     kK(kb)[1]=0;

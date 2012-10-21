@@ -898,6 +898,12 @@ Z I testsBook()
   TC((1;"domain") , @[.:;".`\".k.xtc\"";:])
   TC((1;"domain") , @[.:;".`\".k.xtc.b\"";:])
 
+  TC(_ssr[1], _ssr 1)
+  TC(_ssr[1;2], (_ssr 1) 2)
+  TC(_ssr[()], _ssr ())
+  TC(_ssr[("this";"is";,"at")], _ssr ("this";"is";,"at"))
+  TC("that", _ssr["this";"is";,"at"])
+
   //Regressions
   TC(2, _2.5)
 
