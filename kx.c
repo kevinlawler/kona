@@ -196,7 +196,7 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
   P(k,k)
 
   I bt=b->t, bn=b->n;
-  if(bt >  0) R dv_ex(b,p-1,b);
+  if(bt >  0) R dv_ex(a,p-1,b);
   if(bt <= 0)
   {
     if     (bn == 0 && !a) R LE;
@@ -213,11 +213,13 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
 
   if(a)
   {
-    K u,v;
-    u=enlist(a);
+    K u,v,f,d;
+    f=first(b);
+    d=dv_ex(a,p-1,f);
+    u=enlist(d);
     M(u,z)
     v=join(u,z);
-    cd(u);cd(z);
+    cd(u);cd(z);cd(f);cd(d);
     R v;
   }
 
