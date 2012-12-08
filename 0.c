@@ -585,7 +585,7 @@ Z K _1d_read(K a,K b)
     }
   }
 
-  munmap(v,s);
+  munmap(v,fn);
   R z;
 }
 
