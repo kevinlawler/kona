@@ -537,7 +537,12 @@ Z K _1d_read(K a,K b)
   P(f<0, DOE)
 
   S v;
-  if(MAP_FAILED==(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb)))R SE;
+
+  I fb_off_by  = fb % PAGE_SIZE; //desired offset fb misaligned from page boundary by
+  I map_length = fn + fb_off_by;
+  I map_offset = fb - fb_off_by;
+
+  if(MAP_FAILED==(v=mmap(0,map_length,PROT_READ,MAP_SHARED,f,map_offset)))R SE;
   close(f);
 
   //End of copy/paste
@@ -551,7 +556,7 @@ Z K _1d_read(K a,K b)
 
   //(kC(c)[], kI(d)[] ) 1: (ff,fb,fn)
   I i,j;
-  V p=v;
+  V p=v + fb_off_by;
 
   //cbsijfdmIFCSDZM
   for(j=0;j<r;j++) //read row 
@@ -585,7 +590,7 @@ Z K _1d_read(K a,K b)
     }
   }
 
-  munmap(v,fn);
+  munmap(v,map_length);
   R z;
 }
 
