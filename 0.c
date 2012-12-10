@@ -538,7 +538,7 @@ Z K _1d_read(K a,K b)
 
   S v;
 
-  I fb_off_by  = fb % PAGE_SIZE; //desired offset fb misaligned from page boundary by
+  I fb_off_by  = fb % PG; //desired offset fb misaligned from page boundary by
   I map_length = fn + fb_off_by;
   I map_offset = fb - fb_off_by;
 
