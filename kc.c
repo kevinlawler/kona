@@ -75,7 +75,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   I v=complete(*a,*n,p,0); //will allocate if p is null
   b=parsedepth(*p);
   if(v==3){show(kerr("nest")); GC;} 
-  if(v==2){show(kerr("unmatched")); GC;}
+  if(v==2){show(kerr("unmatched")); b=0; GC;}
   if(v==1) goto done;//generally incomplete
   if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
   RTIME(d,k=ex(wd(*a,*n)))
