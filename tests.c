@@ -956,6 +956,12 @@ Z I testsBook()
   TC(4, f:{x:4;e:5;f:6;a:1;b:2;c:3;a;:x;c};f 0;f 0)
   TC(2, f:{x;4;e;5;f:t;a:1;b:2;c:3;a;:b;c};f 0;f 0)
 
+  //overMonad
+  TC("abcd" ,("abcd";"efgh")/0)
+  TC("efgh" ,("abcd";"efgh")/1)
+  TC("b" ,("abcd";"efgh")/0 1)
+  TC("g" ,("abcd";"efgh")/1 2)
+
   R 0;
 }
 

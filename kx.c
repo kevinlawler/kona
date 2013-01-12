@@ -104,6 +104,7 @@ Z K overMonad(K a, V *p, K b)
     if(flag)break;
     u=c?c:u;
     U(c=dv_ex(0,p-1,u))
+    if(1==ABS(b->t)) flag=1;
   }
   R c;
 }
@@ -294,10 +295,13 @@ Z K dv_ex(K a, V *p, K b)
   if(gn > 1) kK(g)[1]=b;
   if(gn > 0) kK(g)[0]=a?a:b;
 
-  K temp = vf_ex(*p,g);
+  K tmp; I flag=0;
+  if(*p>DT_SIZE && 0!=b->n) {V*p1=*p; if(*p1>DT_SIZE) {K p2=*p1; if(7!=p2->t) flag=1;}}
+  if(flag) tmp = vf_ex(*p,b); 
+  else tmp=vf_ex(*p,g); 
 
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
-  R temp;
+  R tmp;
 }
 
 //1. Use PARAMETER list (or XYZ tuple) to merge CONJ and ARGS-G into LOCAL-DICT-TREE
