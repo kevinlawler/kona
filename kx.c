@@ -149,6 +149,7 @@ Z K scanMonad(K a, V *p, K b)
     if(interrupted){interrupted=0;R BE;}
     if(flag){cd(c);cd(d);break;}
     c=dv_ex(0,p-1,d);cd(d);
+    if(!c){cd(u); R c;}
   }
   R u;
 }
