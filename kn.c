@@ -4,7 +4,7 @@
 
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 
-#if defined(__OpenBSD__) || defined(__FreeBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
 #include <sys/socket.h>
 #include <netinet/in.h>
 #endif

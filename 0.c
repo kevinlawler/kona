@@ -3,7 +3,7 @@
 
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 
-#if defined(__OpenBSD__) || defined(__FreeBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__)  || defined(__NetBSD__)
 #include <sys/socket.h>
 #include <netinet/in.h>
 #endif
@@ -698,7 +698,7 @@ K _3m(K x)
   //O("client: connecting to %s\n", s);
   I yes=1;
   setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I));//disable nagle
-#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
+#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)  || defined(__NetBSD__)
   setsockopt(sockfd, SOL_SOCKET,  SO_NOSIGPIPE,&yes, sizeof(I)); 
 #endif
   freeaddrinfo(servinfo); 
