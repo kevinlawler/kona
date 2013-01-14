@@ -42,7 +42,7 @@ I getdelim_(S *s,I *n,I d,FILE *f)
   R *n=m;
 }
 
-#if defined(__OpenBSD__) ||                                             \
+#if defined(__OpenBSD__) || defined(__NetBSD__) ||  \
    (defined(__MACH__) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1070)
 I getdelim(S *s,I*n, I d, FILE *f);
 
