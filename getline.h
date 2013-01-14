@@ -1,5 +1,5 @@
 K _p();
-#if defined(__OpenBSD__) || \
+#if defined(__OpenBSD__) || defined(__NetBSD__) || \
    (defined(__MACH__) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1070)
 I getline(S *s,I *n,FILE *f);
 I getdelim(S *s,I *n,I d,FILE *f);

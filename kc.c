@@ -4,7 +4,7 @@
 
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 
-#if defined(__OpenBSD__) || defined(__FreeBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
 #include <sys/socket.h>
 #include <netinet/in.h>
 #endif
@@ -138,7 +138,7 @@ I attend() //K3.2 uses fcntl somewhere
       listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
       if (listener < 0) continue;
       // lose the "address already in use" error message 
-#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
+#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
       setsockopt(listener, SOL_SOCKET, SO_REUSEADDR | SO_NOSIGPIPE , &yes, sizeof(I)); 
 #endif
       if (bind(listener, p->ai_addr, p->ai_addrlen) < 0) { close(listener); continue; }
