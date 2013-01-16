@@ -324,7 +324,7 @@ Z K dv_ex(K a, V *p, K b)
 //  X8   projection {}[1;;3] --- 7-{1,2,3} types. Verb projections come for free
 //   9   proper sub-functions (hint is the non-null f passed to wd_(). Inherit/copy active dict to kV()[LOCAL] )
 //       Arthur: "subfunctions are just projections, eg  c:{[f;g]{f g x}} composition d:{[f;g]{[f;g;x]f g x}[f;g]} composition c[-:;%:] 3 ; d[-:;%:] 3  
-//   10  {  :x  } early return
+//  x10  {  :x  } early return
 //  X11  Reusably compiled
 
 //For -7 (7-0) CONJ is unexecuted brackets. For 7-{1,2,3} it's 0-type with NULLs
