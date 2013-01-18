@@ -15,9 +15,9 @@ Z K ex0(V *v,K k,I r);
 Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
 
-I fer=0; // Flag Early Return 
-I fwh=0; // Flag While (TODO: both fer and fwh should be made thread-local)
-I stk=0; // Stack counter
+__thread I fer=0; // Flag Early Return 
+__thread I fwh=0; // Flag While
+__thread I stk=0; // Stack counter
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
