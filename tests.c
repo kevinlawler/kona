@@ -962,6 +962,11 @@ Z I testsBook()
   TC("b" ,("abcd";"efgh")/0 1)
   TC("g" ,("abcd";"efgh")/1 2)
 
+  //stack counter
+  TC(skip, 500, {:[x>0;1+_f[x-1];0]}500)                    // works but is slow
+  TC(skip, stack error, {:[x>0;1+_f[x-1];0]}500)            // fails with stack error
+  TC(skip, 500, rcr:{:[x>0;1+_f[x-1];0]}; rcr 1000)         // works but is slow 
+  TC(skip, stack error, rcr:{:[x>0;1+_f[x-1];0]}; rcr 1001) // fails with stack error
   R 0;
 }
 

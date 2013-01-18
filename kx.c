@@ -17,6 +17,7 @@ Z V ex_(V a,I r);
 
 I fer=0; // Flag Early Return 
 I fwh=0; // Flag While (TODO: both fer and fwh should be made thread-local)
+I stk=0; // Stack counter
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -432,6 +433,8 @@ K vf_ex(V q, K g)
     CS(3, //Executing a {} character function such as {1+1}, {x+y+z-1}, or {[a;b] a+b}
 
       if(((I)kV(f)[DEPTH]) > 500){kerr("stack"); GC; }
+      if(stk > 1000){kerr("stack"); GC; }
+      stk++;
 
       I j=0; K*e; K fw;
 
@@ -490,7 +493,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
   R z;
 }
 
-K ex(K a){U(a); if(7==a->t)if(*(kW(a))>DT_SIZE){K tmp=*(K*)*(kW(a)); if(7==tmp->t)if(6==tmp->n)fwh=1;} K z=ex_(&a,0); cd(a); fer=0; fwh=0; R z;} //Input is 7-0 type from wd()
+K ex(K a){U(a); if(7==a->t)if(*(kW(a))>DT_SIZE){K tmp=*(K*)*(kW(a)); if(7==tmp->t)if(6==tmp->n)fwh=1;} K z=ex_(&a,0); cd(a); fer=0; fwh=0; stk=0; R z;} //Input is 7-0 type from wd()
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
