@@ -300,7 +300,7 @@ Z K dv_ex(K a, V *p, K b)
   K tmp; I flag=0;
   if(*p>DT_SIZE && 0!=b->n) {V*p1=*p; if(*p1>DT_SIZE) {K p2=*p1; if(7!=p2->t) flag=1;}}
   if(flag) tmp = vf_ex(*p,b); 
-  else {if(stk>1000)R kerr("stack"); stk++; tmp=vf_ex(*p,g);}
+  else {if(stk>1000){cd(g); R kerr("stack");} stk++; tmp=vf_ex(*p,g);}
 
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
   R tmp;

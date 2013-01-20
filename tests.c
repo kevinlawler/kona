@@ -967,6 +967,8 @@ Z I testsBook()
   TC(skip, stack error, {:[x>0;1+_f[x-1];0]}500)            // fails with stack error
   TC(skip, 500, rcr:{:[x>0;1+_f[x-1];0]}; rcr 1000)         // works but is slow 
   TC(skip, stack error, rcr:{:[x>0;1+_f[x-1];0]}; rcr 1001) // fails with stack error
+  TC(skip, stack error, . t : ". t")                        // fails with stack error
+
   R 0;
 }
 
