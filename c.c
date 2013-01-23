@@ -8,6 +8,7 @@ Z K backslash_s(S s);
 Z K backslash_t(S s);
 Z K precision_(void);
 Z K workspace(S s);
+extern I scrLim;
 
 void boilerplate()
 {
@@ -49,10 +50,12 @@ Z FILE *loadf(S s)
 
 K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
 {
+  if(scrLim>124){O("limit\n");  R kerr("stack");} scrLim++;  
   FILE*f=loadf(s);
   P(!f,_n())
   lines(f);
   fclose(f);
+  scrLim--;
   R _n();
 }
 
