@@ -192,14 +192,14 @@ I attend() //K3.2 uses fcntl somewhere
 
 }
 
-K ARGS; //saved values from argv[1:]
+K KONA_ARGS; //saved values from argv[1:]
 
 I args(int n,S*v)
 {
   K a;
   I c, len;
-  U(ARGS=newK(0, n))
-  DO(n, { len=strlen(v[i]); M(ARGS,a=newK(-3, len)) strncpy(kC(a),v[i],len); kK(ARGS)[i]=a;});
+  U(KONA_ARGS=newK(0, n))
+  DO(n, { len=strlen(v[i]); M(KONA_ARGS,a=newK(-3, len)) strncpy(kC(a),v[i],len); kK(KONA_ARGS)[i]=a;});
   while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c)
   {
     K k;

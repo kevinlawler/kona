@@ -73,7 +73,7 @@ K vf_ex(V q,K g);
 K newK(I t,I n);
 K cd(K a);
 extern K KFIXED;
-extern K ARGS;
+extern K KONA_ARGS;
 K kap(K *a,V v);
 K _acos(K x);
 K _asin(K x);
