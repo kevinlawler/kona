@@ -201,7 +201,7 @@ I args(int n,S*v)
   K a;
   I c, len;
   U(KONA_ARGS=newK(0, n))
-  DO(n, { len=strlen(v[i]); M(KONA_ARGS,a=newK(-3, len)) strncpy(kC(a),v[i],len); kK(KONA_ARGS)[i]=a;});
+  DO(n, { len=strlen(v[i]); if(!(a=newK(-3, len))){cd(KONA_ARGS);R 0;} strncpy(kC(a),v[i],len); kK(KONA_ARGS)[i]=a;});//M(KONA_ARGS,...) issue here on CYGWIN
   while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c)
   {
     K k;
