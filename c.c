@@ -8,6 +8,7 @@ Z K backslash_s(S s);
 Z K backslash_t(S s);
 Z K precision_(void);
 Z K workspace(S s);
+extern I scrLim;
 
 void boilerplate()
 {
@@ -49,10 +50,12 @@ Z FILE *loadf(S s)
 
 K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
 {
+  if(scrLim>124){O("limit\n");  R kerr("stack");} scrLim++;  
   FILE*f=loadf(s);
   P(!f,_n())
   lines(f);
   fclose(f);
+  scrLim--;
   R _n();
 }
 
@@ -244,7 +247,7 @@ K backslash(S s, I n)
               ":[x1;t1;x2;t2;...;xn;tn;else] evaluate xi until true and return ti, otherwise return else \n"
               "    :[0;10;0;20;1;30;40] yields 30\n"
               "if[x;e1;...;en] if x then evaluate all e. if[j>i;a:1;b:2] \n"
-              "do[m;e1;...;em] do all e n times. do[100;f[i];i+:1] \n"
+              "do[m;e1;...;en] do all e m times. do[100;f[i];i+:1] \n"
               "while[x;e1;...;en] while x do e.  while[a>b; f a; a-:1] \n"
               "/ starts a comment. Must begin a line or have a space before\n"
               "\\ is trace when beginning an expression inside a function (todo)\n"

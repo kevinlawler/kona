@@ -18,6 +18,7 @@ Z I randomBits();
 Z I wdss(K *a,FILE *f);
 
 I interrupted = 0;
+extern I scrLim = 0;        // script load limit
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
 
@@ -155,6 +156,7 @@ I attend() //K3.2 uses fcntl somewhere
 
   for(;;) // main loop  
   {
+    scrLim = 0;
     read_fds = master; // copy it 
     if (-1==select(fdmax+1,&read_fds,0,0,0)) //null timeval -> select blocks
     {
