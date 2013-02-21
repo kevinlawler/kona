@@ -81,6 +81,7 @@ typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; /
 #define NE kerr("nonce")
 #define FE kerr("file")
 #define DOE kerr("domain") 
+#define SYE kerr("syntax")
 #define NYI kerr("nyi")
 
 #define RTIME(d,...) {d=clock();{__VA_ARGS__;}d=(clock()-d)/CLOCKS_PER_SEC;}

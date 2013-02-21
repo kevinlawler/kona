@@ -969,6 +969,8 @@ Z I testsBook()
   TC(skip, stack error, rcr:{:[x>0;1+_f[x-1];0]}; rcr 1001) // fails with stack error
   TC(skip, stack error, . t : ". t")                        // fails with stack error
 
+  TC((1;"syntax") , @[.:;"0-8^-4&1/::=-";:]) //if we ever handle this, then won't be error
+
   R 0;
 }
 

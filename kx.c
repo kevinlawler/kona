@@ -673,6 +673,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   if(!VA(*v) && (offsetColon == v[1] || (VA(v[1]) && offsetColon==v[2]) ) ) //Handle assignment
   {
+    if(adverbClass(v[1]))R SYE;//Could potentially handle instead of erroring
     K a=0,b=0,c=0,d=0;
     K*w=*v;
     U(a=*w);
