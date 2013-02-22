@@ -128,6 +128,7 @@ K lookup(K a, S b){K x=DE(a,b); R x?EV(x):_n();}
 //TODO: oom at_verb everywhere
 K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/directory & b is executable string like "1+1+c"
 {//"of" depends on this even though @[d;i] = .[d;,i] <--- that equality doesn't always hold
+  if(!b) R b;
   if(0==b->t && 0==b->n)R newK(0,0);//Overriding right-arg () 
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   K z;
