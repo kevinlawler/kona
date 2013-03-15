@@ -426,14 +426,22 @@ Z I tests02()
   //bv_ex subtriadic
   //bv_ex 1. doesn't seem to handle projectons correcly
   //      2. doesn't let / \ etc handle themselves correctly in the dyadic (monadic, niladic?) case
-  TC(skip, {x+y}/[1;], {x+y}/[1;])
-  TC(skip, 10, {x+y}/[1;] 2 3 4)
-  TC(skip, 10, ({x+y}/)[1;] 2 3 4)
-  TC(skip, 1 3 6 10, {x+y}\\[1;] 2 3 4) //k4 deviates from k3 and gives 3 6 10
-  TC(skip, 0, {x+y}\\[1;])
-  TC(skip, 0, {x+y}/[;1])
-  TC_("skip","{x+y}'[1;]")
-  TC_("skip","3 4 5 , {x+y}'[1;] 2 3 4")
+  TC(+/[1;],+/[1;])    // valid as test for memory leak (not for correct result)
+  TC(10 , +/[1;]2 3 4)
+  TC(10 , (+/)[1;]2 3 4)
+  TC(1 3 6 10 , +\\[1;]2 3 4)
+  TC(+\\[1;],+\\[1;])    // valid as test for memory leak leak (not for correct result)
+  TC(+/[;1],+/[;1])    // valid as test for memory leak leak (not for correct result)
+  TC_("+'[;1]","+'[;1]")  // valid as test for memory leak leak (not for correct result)
+  TC_("3 4 5","+'[1;]2 3 4")
+  TC({x+y}/[1;], {x+y}/[1;])  // valid as test for memory leak leak (not for correct result)
+  TC(10 , {x+y}/[1;]2 3 4)
+  TC(10 , ({x+y}/)[1;]2 3 4)
+  TC(1 3 6 10 , {x+y}\\[1;]2 3 4) //k4 deviates from k3 and gives 3 6 10
+  TC({x+y}\\[1;],{x+y}\\[1;])  // valid as test for memory leak leak (not for correct result)
+  TC({x+y}/[;1], {x+y}/[;1])  // valid as test for memory leak leak (not for correct result)
+  TC_("{x+y}'[1;]","{x+y}'[1;]")  // valid as test for memory leak leak (not for correct result)
+  TC_("3 4 5","{x+y}'[1;]2 3 4")
   TC_("skip","(,':)[1 2;3 4] ~ (1 2;4 3)")
 
   R 0; 

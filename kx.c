@@ -18,6 +18,7 @@ Z V ex_(V a,I r);
 __thread I fer=0; // Flag Early Return 
 __thread I fwh=0; // Flag While
 __thread I stk=0; // Stack counter
+__thread I proj=0; // Projection
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -388,7 +389,7 @@ K vf_ex(V q, K g)
 
   I ii=o->n-2; //not the terminating NULL, but the entry before
   V*u=(V*) kK(o)+ii;
-  if(2==n && 1==adverbClass(*u) ) n=1; //   / \ '  but maybe should exclude '
+  if(2==n && 1==adverbClass(*u) ) n=gn; //   / \ '  but maybe should exclude '
 
   if(n && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
   {
@@ -412,7 +413,8 @@ K vf_ex(V q, K g)
       if(!m)GC;
       K *q=kK(m);
       DO(m->n, q[i]=ci(kK(r)[i]); if(!q[i] && j<gn) q[i]=ci(kK(g)[j++]))   
-      z=ex2(kW(f),m); 
+      if(proj){V*w=&kW(f)[1]; z=bv_ex(w,m);}
+      else z=ex2(kW(f),m); 
       cd(m);
     )
     CS(2, //Executing a dynamically loaded library function from 2:
@@ -494,7 +496,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
   R z;
 }
 
-K ex(K a){U(a); if(7==a->t)if(*(kW(a))>DT_SIZE){K tmp=*(K*)*(kW(a)); if(7==tmp->t)if(6==tmp->n)fwh=1;} K z=ex_(&a,0); cd(a); fer=0; fwh=0; stk=0; R z;} //Input is 7-0 type from wd()
+K ex(K a){U(a); if(7==a->t)if(*(kW(a))>DT_SIZE){K tmp=*(K*)*(kW(a)); if(7==tmp->t)if(6==tmp->n)fwh=1;} K z=ex_(&a,0); cd(a); fer=0; fwh=0; stk=0; proj=0; R z;} //Input is 7-0 type from wd()
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
@@ -528,7 +530,7 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
       I i=p->n-2; //not the terminating NULL, but the entry before
       V*q=(V*) kK(p)+i;
 
-      I proj=0;
+      proj=0;
       if(k->n >1 && !sva(*q) && adverbClass(*q) )
       {
         DO(k->n, if(!kK(k)[i])proj=1) 
