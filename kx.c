@@ -530,7 +530,6 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
       I i=p->n-2; //not the terminating NULL, but the entry before
       V*q=(V*) kK(p)+i;
 
-      proj=0;
       if(k->n >1 && !sva(*q) && adverbClass(*q) )
       {
         DO(k->n, if(!kK(k)[i])proj=1) 
