@@ -43,7 +43,7 @@ K cd(K a)
   #ifdef DEBUG
   if(a && a->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd(a) dd(a->c) dd(a->t) dd(a->n) show(a); }
   #endif 
-  if(!a || --a->c) R a;
+  if(!a || a->c>1000000 || --a->c) R a;
   #ifdef DEBUG
   DO(kreci, if(a==krec[i]){krec[i]=0; break; })
   #endif 
