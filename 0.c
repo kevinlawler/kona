@@ -228,7 +228,7 @@ Z K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a
                CS('C', q=newK(-3,x);     if(!q)R 0; memcpy(kC(q),v+y,x); kK(k)[p]=q; q=0;) //oom q
                CS('S', m=strdupn(v+y,x); if(!m)R 0; kS(k)[p]=sp(m); free(m);) //oom m
              }
-             //if(q)cd(q);
+             if(q && q->c<1000000)cd(q);
              y+=x;
          )
       p++;
