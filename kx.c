@@ -106,7 +106,7 @@ Z K overMonad(K a, V *p, K b)
     if(flag)break;
     u=c?c:u;
     U(c=dv_ex(0,p-1,u))
-    if(1==ABS(b->t)) flag=1;
+    if(3==ABS(c->t)) flag=1;
   }
   R c;
 }
