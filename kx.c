@@ -301,7 +301,7 @@ Z K dv_ex(K a, V *p, K b)
   K tmp; I flag=0;
   if(*p>DT_SIZE && 0!=b->n) {V*p1=*p; if(*p1>DT_SIZE) {K p2=*p1; if(7!=p2->t) flag=1;}}
   if(flag) tmp = vf_ex(*p,b); 
-  else {if(stk>2000000){R kerr("stack"); GC;} stk++; tmp=vf_ex(*p,g);}
+  else {if(stk>2e6){R kerr("stack"); GC;} stk++; tmp=vf_ex(*p,g); stk--;}
 
  cleanup:
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
@@ -436,15 +436,15 @@ K vf_ex(V q, K g)
     CS(3, //Executing a {} character function such as {1+1}, {x+y+z-1}, or {[a;b] a+b}
 
       if(((I)kV(f)[DEPTH]) > 500){kerr("stack"); GC; }
-      if(stk > 2000000){kerr("stack"); GC; }
+      if(stk > 2e6){kerr("stack"); GC; }
       stk++;
 
       I j=0; K*e; K fw;
 
       if(!(tree=kV(f)[CACHE_TREE]))  //could merge this and and CACHE_WD check by duplicating the arg merge DO
       {
-        tree=newK(5,p->n+s->n); if(!tree) GC; //note: cleanup is unusual -- could turn into double labels
-        DO(tree->n, if(!(kK(tree)[i]=newK(0,3))){cd(tree); GC;}) //shallow dict copy -- dictionary entry pool?
+        tree=newK(5,p->n+s->n); if(!tree) {stk--; GC;} //note: cleanup is unusual -- could turn into double labels
+        DO(tree->n, if(!(kK(tree)[i]=newK(0,3))){cd(tree); stk--; GC;}) //shallow dict copy -- dictionary entry pool?
         DO(tree->n, DO2(3,  kK(DI(tree,i))[j] = ci(kK((i<p->n?DI(p,i):DI(s,i-p->n)))[j])))//shallow copy
         kV(f)[CACHE_TREE]=tree;
       }
@@ -464,6 +464,7 @@ K vf_ex(V q, K g)
       ci(fw);
       z=ex(fw); 
       DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; )
+      stk--;
     )
   }
 
