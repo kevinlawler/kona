@@ -29,7 +29,7 @@ K formKiCS(S s) //  0 $ "123\000456\000" is 123 ('\0' char)
   if(w) r=NI[w]; 
   else if(*s)
   {
-    r=strtol(s,&p,10);
+    r=strtoll(s,&p,10);
     errno=0; //is this ok to do?
     q=*p;
     if(IN==r)r=-II;//if r < -0I then r=-0I
