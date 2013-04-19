@@ -1,6 +1,9 @@
 /* memory management */
 
-#define _GNU_SOURCE
+#if defined(__linux__)
+#define _GNU_SOURCE 1
+#endif
+
 #include "incs.h"
 
 #include "k.h"
