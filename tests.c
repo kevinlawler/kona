@@ -266,6 +266,7 @@ Z I tests02()
   TC( 4:."\\p",1)
 
   TC(3999, #5:2000#1) //5:monadic should not be subject to "..." display eliding (before displaying it anyway)
+  //TC(33599997, #5:16799999#1) // Forces r>KP_MAX in kexpander for 32-bit-Linux
   TC(5:(+),   (,"+")) 
   TC(5:(|/), "|/") 
   TC(5:(_acos;_tanh;_abs;_size;_bin;_vs;_ssr), "(_acos;_tanh;_abs;_size;_bin;_vs;_ssr)")

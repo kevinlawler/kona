@@ -1,5 +1,6 @@
 /* memory management */
 
+#define _GNU_SOURCE
 #include "incs.h"
 
 #include "k.h"
@@ -149,7 +150,12 @@ Z I kexpander(K*p,I n) //expand only.
   if(r>KP_MAX) //Large anonymous mmapped structure - (simulate mremap)
   {
     if(f<=0) R 1;
+#if defined(__linux__)
+    V*w=mremap(a,c,d,MREMAP_MAYMOVE);
+    if(MAP_FAILED!=w) {*p=w; R 1;}
+#else
     if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1;//Add pages to end
+#endif
     U(v=amem(d))   memcpy(v,a,c); *p=v; munmap(a,c); R 1; //Couldn't add pages, copy to new space
   }
   //Standard pool object
