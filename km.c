@@ -157,7 +157,9 @@ Z I kexpander(K*p,I n) //expand only.
     V*w=mremap(a,c,d,MREMAP_MAYMOVE);
     if(MAP_FAILED!=w) {*p=w; R 1;}
 #else
-    if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1;//Add pages to end
+    if(-1==msync(a+e,f,MS_ASYNC))
+      if(errno==ENOMEM)
+	if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1;//Add pages to end
 #endif
     U(v=amem(d))   memcpy(v,a,c); *p=v; munmap(a,c); R 1; //Couldn't add pages, copy to new space
   }
