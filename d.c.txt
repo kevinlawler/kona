@@ -1,6 +1,6 @@
 //For libraries dynamically loaded by 2: dyadic
 typedef void* V;
-typedef long I;
+typedef long long I;
 typedef double F;
 typedef char C;
 typedef C* S;
