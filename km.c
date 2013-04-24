@@ -156,10 +156,11 @@ Z I kexpander(K*p,I n) //expand only.
 #if defined(__linux__)
     V*w=mremap(a,c,d,MREMAP_MAYMOVE);
     if(MAP_FAILED!=w) {*p=w; R 1;}
-#else
-    if(-1==msync(a+e,f,MS_ASYNC))
-      if(errno==ENOMEM)
-	if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1;//Add pages to end
+#else  
+    F m=f/(F)PG; I n=m; if(m>n) n=n+1; I g=1;
+    DO(n, if(-1==msync(a+e+PG*i,1,MS_ASYNC)) {if(errno!=ENOMEM) {g=0; break;}}
+          else {g=0; break;})
+    if(g) if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1; //Add pages to end
 #endif
     U(v=amem(d))   memcpy(v,a,c); *p=v; munmap(a,c); R 1; //Couldn't add pages, copy to new space
   }
