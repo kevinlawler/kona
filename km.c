@@ -157,7 +157,7 @@ Z I kexpander(K*p,I n) //expand only.
     V*w=mremap(a,c,d,MREMAP_MAYMOVE);
     if(MAP_FAILED!=w) {*p=w; R 1;}
 #else  
-    F m=f/(F)PG; I n=m; if(m>n) n=n+1; I g=1;
+    F m=f/(F)PG; I n=m, g=1; if(m>n) n++;
     DO(n, if(-1==msync(a+e+PG*i,1,MS_ASYNC)) {if(errno!=ENOMEM) {g=0; break;}}
           else {g=0; break;})
     if(g) if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1; //Add pages to end
