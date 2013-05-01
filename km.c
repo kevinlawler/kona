@@ -153,16 +153,23 @@ Z I kexpander(K*p,I n) //expand only.
   if(r>KP_MAX) //Large anonymous mmapped structure - (simulate mremap)
   {
     if(f<=0) R 1;
-#if defined(__linux__)
+#ifdef __linux__
     V*w=mremap(a,c,d,MREMAP_MAYMOVE);
     if(MAP_FAILED!=w) {*p=w; R 1;}
+#elif defined(__APPLE__)
+    F m=f/(F)PG; I n=m, g=1; if(m>n) n++; UC cvec[n];
+    DO(n, I x; x=mincore(a+e+PG*i,1,cvec);  if(x==0)O("mincore returned 0\n");
+          if(-1==x) {if(errno!=ENOMEM) {g=0; break;}}
+          else {g=0; break;})
+    if(g) if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) {O("mmap OK\n"); R 1;} //Add pages to end
+    else O("mmap failed\n");
 #else  
     F m=f/(F)PG; I n=m, g=1; if(m>n) n++;
     DO(n, if(-1==msync(a+e+PG*i,1,MS_ASYNC)) {if(errno!=ENOMEM) {g=0; break;}}
           else {g=0; break;})
-    if(g) if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1; //Add pages to end
+    if(g) if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) {O("msync\n"); R 1;} //Add pages to end
 #endif
-    U(v=amem(d))   memcpy(v,a,c); *p=v; munmap(a,c); R 1; //Couldn't add pages, copy to new space
+    U(v=amem(d))   memcpy(v,a,c); *p=v; munmap(a,c); O("copy\n"); R 1; //Couldn't add pages, copy to new space
   }
   //Standard pool object
   I s=lsz(d);
