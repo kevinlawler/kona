@@ -262,7 +262,7 @@ Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file  (s;",")0:f  or  (s;,",")0
   if(MAP_FAILED==(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb))){O("mmap failed\n"); R SE;}
   close(f);
 
-  I fc=1; DO(fn, if(v[fb+i]==w)fc++; if(v[fb+i]=='\n')break;) // field count
+  I fc=0; DO(cn,if(' '==kC(c)[i])continue; if(stringHasChar("IFCS",kC(c)[i])) fc++; else R TE) //field count
   I r=0; DO(fn, if(v[fb+i]=='\n')r++) // row count
   if(v[fn-1]!='\n')r++; // no final line feed
 
