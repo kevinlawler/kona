@@ -721,7 +721,6 @@ K _2d(K a,K b)
   I v=*kI(d);
   P(v<0 || v > 7, VE)
 
-  dd(v)
   cS e;
   V x=dlopen(CSK(a),RTLD_LAZY|RTLD_LOCAL),y;
 
