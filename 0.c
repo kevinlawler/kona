@@ -31,6 +31,7 @@
 Z K _0d_write(K a,K b);
 Z K _0d_read(K a,K b);
 Z K _0d_rdDsv(K c,K b);
+Z K _0d_rdDsvWc(K a,K b);
 Z K _1m_r(I f,V fixed, V v,V aft,I*b);
 Z K _1d_char(K x,K y);
 Z K _1d_read(K a,K b);
@@ -155,7 +156,8 @@ Z K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a
   P(an!=2,DOE)
   K c=kK(a)[0],d=kK(a)[1];
   I cn=c->n, dn=d->n;
-  P(3 == ABS(d->t), _0d_rdDsv(a,b))
+  P(3 == d->t, _0d_rdDsv(a,b))
+  P(-3 == d->t, _0d_rdDsvWc(a,b))
   P(3 != ABS(c->t) || 1 != ABS(d->t), TE )//(K3.2 strictly requires lists---bad)
   P(!cn || cn != dn, LE)
   P(3 != ABS(bt) && 4 != bt && 0 != bt, TE)
@@ -242,14 +244,13 @@ cleanup:
   R z;
 }
 
-Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file  (s;",")0:f  or  (s;,",")0:f
+Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file (no column headings)  (s;",")0:f
 {
   K z=0;
   I an=a->n, bt=b->t;
   P(an!=2,DOE)
   K c=kK(a)[0],d=kK(a)[1];
   I cn=c->n;
-  if(d->t==-3) R NYI;
   P(3 != ABS(bt) && 4 != bt && 0 != bt, TE)
   C*x=kC(d); C w=*x; // delimiter
 
@@ -307,6 +308,94 @@ Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file  (s;",")0:f  or  (s;,",")0
       free(m);
     }
     p++; 
+  }
+
+cleanup:
+  munmap(v,s);
+  R z;
+}
+
+Z K _0d_rdDsvWc(K a,K b)     // read delim-sep-val-file-with-columm-headings    (s;,",")0:f
+{
+  K z=0;
+  I an=a->n, bt=b->t;
+  P(an!=2,DOE)
+  K c=kK(a)[0],d=kK(a)[1];
+  I cn=c->n;
+  P(3 != ABS(bt) && 4 != bt && 0 != bt, TE)
+  C*x=kC(d); C w=*x; // delimiter
+
+  I fb=0,fn=0,s; P(stat_sz(CSK(b),&s),SE)
+  if(bt) fn=s;
+
+  I f=open(CSK(b),0);
+  P(f<0,DOE)
+  S v; // fn: file length,  f: fd,  fb: offset
+  if(MAP_FAILED==(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb))){O("mmap failed\n"); R SE;}
+  close(f);
+
+  I fc=0; DO(cn,if(' '==kC(c)[i])continue; if(stringHasChar("IFCS",kC(c)[i])) fc++; else R TE) //field count
+  I r=0; DO(fn, if(v[fb+i]=='\n')r++) // row count
+  if(v[fn-1]!='\n')r++; // no final line feed
+
+  z=newK(0,2); if(!z) GC;
+  kK(z)[0]=newK(-4,fc); kK(z)[1]=newK(0,fc);
+  I e=0; C g;
+  DO(cn, g=kC(c)[i]; if(' '==g)continue; if(!(kK(kK(z)[1])[e++]=newK(-charpos("CIF S",g),r-1))){cd(z);z=0;GC;}) //0C, -1I, -2F, -4S
+
+  S m; I u=0,t=0,p=0,n=0,h=0; C*tok; C y[2]; y[0]=w; K k;
+  for(;u<=fn;u+=t+1,t=0) {
+    while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=NULL)t++;
+    if(0==n++ && (v[u+t]=='\n' || v[u+t]==NULL)) { 
+      K q=0; e=h=0;
+      m=strdupn(v+u,t); if(!m) R 0;
+      if(m[0]!=NULL){
+        tok=strtok(m,y);
+        k=kK(z)[e++]; 
+        if(kC(c)[h++]==' ') e--;
+        else kS(kK(z)[0])[p++]=sp(tok);
+        while(tok != NULL){
+          tok=strtok(NULL,y);
+          if(tok!=NULL) {
+            k=kK(z)[e++];
+            if(kC(c)[h++]==' ') e--;
+            else kS(kK(z)[0])[p++]=sp(tok);
+          }
+        }
+      }
+      free(m); p=0;
+    }
+    if(n>1 && (v[u+t]=='\n' || v[u+t]==NULL)) {
+      K q=0; e=h=0;
+      m=strdupn(v+u,t); if(!m) R 0;
+      if(m[0]!=NULL){
+        tok=strtok(m,y);
+        k=kK(kK(z)[1])[e++];
+        switch(kC(c)[h++]) {
+          CS(' ', e--)
+          CS('I', q=formKiCS(tok); kI(k)[p]=q?*kI(q):IN;)
+          CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
+          CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
+          CS('S', kS(k)[p]=sp(tok);)
+	}
+        if(q && q->c<1000000)cd(q);
+        while(tok != NULL){
+          tok=strtok(NULL,y);
+          if(tok!=NULL) {
+            k=kK(kK(z)[1])[e++];
+            switch(kC(c)[h++]) {
+              CS(' ', e--)
+              CS('I', q=formKiCS(tok); kI(k)[p]=q?*kI(q):IN;)
+              CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
+              CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
+              CS('S', kS(k)[p]=sp(tok);)
+	    }
+          }
+          if(q && q->c<1000000)cd(q);
+        }
+      }
+      free(m); p++;
+    }
   }
 
 cleanup:
