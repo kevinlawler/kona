@@ -302,7 +302,7 @@ Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file (no column headings)  (s;"
               CS('S', kS(k)[p]=sp(tok);)
 	    }
           }
-          if(q && q->c<1000000)cd(q);
+          if(q && q->c<1000000 && q->c>0)cd(q);
         }
       }
       free(m);
