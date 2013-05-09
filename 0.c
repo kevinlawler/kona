@@ -289,7 +289,7 @@ Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file (no column headings)  (s;"
           CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
           CS('S', kS(k)[p]=sp(tok);)
 	}
-        if(q && q->c<1000000)cd(q);
+        if(q && q->c<1000000 && q->c>0)cd(q);
         while(tok != NULL){
           tok=strtok(NULL,y);
           if(tok!=NULL) {
@@ -378,7 +378,7 @@ Z K _0d_rdDsvWc(K a,K b)     // read delim-sep-val-file-with-columm-headings    
           CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
           CS('S', kS(k)[p]=sp(tok);)
 	}
-        if(q && q->c<1000000)cd(q);
+        if(q && q->c<1000000 && q->c>0)cd(q);
         while(tok != NULL){
           tok=strtok(NULL,y);
           if(tok!=NULL) {
