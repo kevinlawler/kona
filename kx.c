@@ -420,7 +420,7 @@ K vf_ex(V q, K g)
     CS(2, //Executing a dynamically loaded library function from 2:
       v=kW(f)[1];
       K a[7]; if(r)memcpy(a,kK(r),MIN(r->n,7)*sizeof(V)); //MIN(.,7) is superfluous
-      DO(7,if(!a[i] && j<gn)a[i]=kK(g)[j++])
+      DO(7,if(j<gn)a[i]=kK(g)[j++])
       SW(n)
       {
         CS(0,z=((K(*)())v)())

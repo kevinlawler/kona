@@ -1,4 +1,5 @@
 //For libraries dynamically loaded by 2: dyadic
+#include <stdio.h>
 typedef void* V;
 typedef long long I;
 typedef double F;
@@ -12,6 +13,8 @@ typedef struct k0{I c,t,n;struct k0*k[1];}*K;
 #define kF(x) ((F*)ke(x))
 #define kC(x) ((C*)ke(x))
 #define kS(x) ((S*)ke(x))
+#define O printf
+#define R return
 extern K Ki(I);
 extern K Kf(F);
 

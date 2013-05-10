@@ -37,6 +37,10 @@ k_test: CFLAGS += $(DEVFLAGS)
 k_test: $(OBJS_T) tests.t.o
 	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
 
+k_dyn: CFLAGS += $(PRODFLAGS)
+k_dyn: $(OBJS)
+	$(CC) ${CFLAGS} $^ -rdynamic -o $@ $(LDFLAGS)
+
 test: k_test
 
 install:
