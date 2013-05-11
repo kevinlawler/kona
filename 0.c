@@ -814,7 +814,8 @@ K _2d(K a,K b)
   V x=dlopen(CSK(a),RTLD_LAZY|RTLD_LOCAL),y;
 
   e=dlerror();
-  P(e||!x,DOE)
+  if (e) { O("error loading %s\nerr=%s\n", CSK(a), e); R 0; }
+  if (!x){ O("error loading %s \n", CSK(a)); R 0; }
   y=dlsym(x,CSK(c));
   e=dlerror();
   P(e&&*e,kerr(e))
