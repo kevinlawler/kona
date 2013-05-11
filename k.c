@@ -228,7 +228,7 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
                 else 
                 { I ss=0,sl;S str;
                   DO(a->n, CPMAX str=kS(a)[i]; if(str<DT_SIZE)continue; sl=strlen(str);ss=simpleString(str);
-                           O_("`"); if(!ss) O_("\""); DO2(sl, O_("%c", str[j] )) O_(i<_i-1?" ":""); if(!ss) O_("\""); 
+                           O_("`"); if(!ss) O_("\""); DO2(sl, O_("%c", str[j] )) if(!ss) O_("\""); 
                     ) 
                 }
 
