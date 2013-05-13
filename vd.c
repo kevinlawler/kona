@@ -154,8 +154,8 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
     //TODO: .[.,(`a;2);0 0;*:] -> identity. (0->type err, 0 0 0-> rank err)
     if(dt != 0) R RE;
 
-    DO(fn, I e=kI(f)[i]; if( e < 0 || dn <= e ) R XE; )//check is in advance
-    DO(fn,
+    if(f) DO(fn, I e=kI(f)[i]; if( e < 0 || dn <= e ) R XE; )//check is in advance
+    if(f) DO(fn,
       K py=0;
       if(y) py=atomI(f)?y:kK(y)[i%yn0];
       dot_ref(kK(d)+(kI(f)[i]),z,z+1,s-1,c,py);
