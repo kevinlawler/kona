@@ -14,7 +14,7 @@ Z K makeable(K a);
 
 Z K of2(K d, K *x, K *y, I s)
 {
-  K f=*x;
+  K f=*x; if(!f) R NYI;
   I dt=d->t, dn=d->n, ft=f->t, fn=f->n;
 
   if(0>=s)R at_verb(d,f); //Is it at_verb or at()...  ?
@@ -145,10 +145,10 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
   }
   else if(1==ABS(ft))
   {
-    if(!atomI(f) && y && !atomI(y) && fn != yn0) R LE;
+    if(f && !atomI(f) && y && !atomI(y) && fn != yn0) R LE;
     if( 1==ft && dt > 0) R TE; // (5,6)
 
-    if(y && yt != 0 && !atomI(f)) U(y = promote(y))
+    if(y && yt != 0 && f && !atomI(f)) U(y = promote(y))
     else ci(y);
 
     //TODO: .[.,(`a;2);0 0;*:] -> identity. (0->type err, 0 0 0-> rank err)
