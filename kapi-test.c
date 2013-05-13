@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <math.h>
 #include "kona.h"
 
 
@@ -6,9 +8,12 @@ Z int pass, fail;
 
 #define tst(e)	if(e){pass++;}else{fprintf(stderr, "Failed:%s\n", #e); fail++;}
 
+#define TEST(i,x,f) do { {i;} tst(x); {f;}} while(0)
+
 int
 main(int argc, char** argv)
 {
+	F pi = atan(1.0)*4;
 	K a = gi(2);
 	K b = gi(3);
 	K c = gi(4);
@@ -22,20 +27,45 @@ main(int argc, char** argv)
 
 	b = gf(1.0); c = gf(2);
 	tst(Kf(b) + 1 == Kf(c));
+	cd(b); cd(c);
+
+	a = gs(sp("foo"));
+	b = ksk("`foo", 0);
+	tst(Ks(a) == Ks(b));
+	cd(a); cd(b);
+
+	a = ksk("2 + 3", 0);
+	tst(Ki(a) == 5);
+	cd(a);
+
+	a = ksk("_ci 65", 0);
+	tst(Kc(a) == 'A');
 
 	// XXX this should return type 1 uniform vector
 	a=gnk(3,gi(11),gi(22),gi(33));
 	tst(a->t == 0);
+
 	v = (K*)a->k;
-
-	fprintf(stderr, "%p\n", KK(a));
 	tst(Ki(v[0])+Ki(v[1])==Ki(v[2]));
+	cd(a);
 
-	ksk("2 + 3", 0);
+	gsk("pi",gf(pi));
+	a = ksk("pi", 0);
+	tst(Kf(a) == pi);
+	cd(a);
+
+
+	//b = ksk("+/", a);
+	//tst(Ki(b) == 66);
+
+	//argc--;argv++;
+	//DO(i, argc, {a=ksk(argv[i], 0);
+
 	//ksk("`0:,/$!10;`0:,\"\n\"", 0);
-	//if (argc > 1 && strcmp(argv[1], "-i") == 0) {
-		//boilerplate();
-		//attend();
-	//}
+
 	fprintf(stderr, "Pass:%4d, fail:%4d\n", pass, fail);
+	if (argc > 1 && strcmp(argv[1], "-i") == 0) {
+		boilerplate();
+		attend();
+	}
 }

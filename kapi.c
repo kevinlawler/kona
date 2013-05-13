@@ -10,6 +10,13 @@ extern K newE(S s, K k);
 extern I _jd(I);
 extern I _dj(I);
 extern I kinit();
+extern K X(S);
+extern K dv_ex(K, V*, K);
+extern K KTREE;
+extern K kap(K*, V);
+extern K* denameD(K*,S,I);
+extern K* denameS(S,S,I);
+extern S __d;
 
 K gi(I x) {K z=newK(1,1); Ki(z)=x; R z;}
 K gf(F x) {K z=newK(2,1); Kf(z)=x; R z;}
@@ -27,7 +34,14 @@ I sfn(S s, K(*f)(), I i) { R 0; } // XXX
 I sdf(I i, I(*f)()) { R 0; } // XXX
 I scd(I i) { R close(i);}
 
-K gsk(S s, K k) { R newE(sp(s),k); } // XXX probablu should return k
+K gsk(S s, K k) {
+	s = sp(s);
+	K x=newE(s,k);
+	// BUG: adds variable to .`
+	kap(denameS(__d, "", 1), x);
+	cd(x);
+	R k;
+}
 
 I jd(I i) { R _jd(i);}
 I dj(I i) { R _jd(i);}
@@ -45,7 +59,10 @@ K gnk(I n, ...)
 K ksk(S s, K x)
 {
 	K z;
+	K y;
 	if (!*s) { kinit(); R 0; }
-	z = wd(s, strlen(s));
-	R dot(z, x);
+	y = X(s);
+	if (!x) R y;
+	//z = dv_ex(0, KV(z)[2], x) : z;
+	R y;
 }

@@ -42,10 +42,10 @@ typedef struct k0{I c,t,n;struct k0*k[1];}*K;
 extern K kap(K*,V);
 
 /* atom accessors */
-#define Ki(x)	((x)->n)
+#define Ki(x)	(*KI(x))
 #define Kf(x)	(*KF(x))
-#define Kc(x)	(*(UC*)&(x)->n)
-#define Ks(x)	(*(S*)&(x)->n)
+#define Kc(x)	(*KC(x))
+#define Ks(x)	(*KS(x))
 
 /* atom generators */
 extern K gi(I);
