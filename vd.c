@@ -109,7 +109,7 @@ K dot(K a, K b) //NB: b can be a cheating 0-type with NULLs .. ?
 K dot_ref(K *p, K *x, K *z, I s, K c, K y)
 {
   K d=*p, f=x?*x:0;
-  I dt=d->t, dn=countI(d), ft, fn, yn0;
+  I dt=d->t, dn=countI(d), ft=999, fn, yn0;
 
   if(f) {ft=f->t; fn=countI(f);}
   if(y) {yn0=countI(y);}
