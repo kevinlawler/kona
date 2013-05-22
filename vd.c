@@ -112,6 +112,7 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
   I dt=d->t, dn=countI(d), ft=999, fn, yn0;
 
   if(f) {ft=f->t; fn=countI(f);}
+  else R NYI;
   if(y) {yn0=countI(y);}
 
   if(-1==s && 0==fn && -3!=ft)
