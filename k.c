@@ -507,15 +507,6 @@ I DT_SIZE=0;
 I DT_END_OFFSET, DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VERB_OFFSET;
 I DT_OFFSET(V v){I i=0; while(v!=DT[i].func)i++; R i;} //init only
 
-int main(int argc,S*argv)
-{
-  kinit();
-  args(argc,argv);
-  boilerplate();
-  attend(); //loop on stdin/inet
-  R 0;
-}
-
 I kreci=0;  //should be inside DEBUG case but needed in r.c cached verbs, at least until caching method changes
 #ifdef DEBUG
 void tf(N n){if(!n)R;DO(2,tf(n->c[i]))free(n->k);repool(n,lsz(sizeof(Node))); } //tree free
