@@ -1,6 +1,8 @@
 PREFIX = /usr/local
 LDFLAGS = -lm
+CFLAGS=-g -Wall
 PRODFLAGS = -O3 #-pg -g3
+LIB=libkona.a
 DEVFLAGS = -O0 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
 
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
@@ -29,12 +31,20 @@ endif
 
 all: k k_test
 
+lib: $(LIB) 
+
+$(LIB): $(OBJS) kapi.o
+	$(AR) crv $@ $(OBJS) kapi.o
+
+kapi-test: kapi-test.o $(LIB)
+	$(CC) ${CFLAGS} $^ -o $@ -L. -lkona $(LDFLAGS)
+
 k: CFLAGS += $(PRODFLAGS)
-k: $(OBJS)
+k: $(OBJS) main.o
 	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
 
 k_test: CFLAGS += $(DEVFLAGS)
-k_test: $(OBJS_T) tests.t.o
+k_test: $(OBJS_T) main.t.o tests.t.o
 	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
 
 k_dyn: CFLAGS += $(PRODFLAGS)
@@ -80,5 +90,6 @@ vd.c: km.h p.h r.h v.h vd.h
 vf.c: km.h vf.h
 vg.c: kg.h km.h v.h vc.h
 vq.c: r.h v.h vq.h
+kapi.c: kona.h
 
 # DO NOT DELETE
