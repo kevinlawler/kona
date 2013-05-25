@@ -14,7 +14,7 @@ Z K makeable(K a);
 
 Z K of2(K d, K *x, K *y, I s)
 {
-  K f=*x;
+  K f=*x; if(!f) R NYI;
   I dt=d->t, dn=d->n, ft=f->t, fn=f->n;
 
   if(0>=s)R at_verb(d,f); //Is it at_verb or at()...  ?
@@ -109,9 +109,10 @@ K dot(K a, K b) //NB: b can be a cheating 0-type with NULLs .. ?
 K dot_ref(K *p, K *x, K *z, I s, K c, K y)
 {
   K d=*p, f=x?*x:0;
-  I dt=d->t, dn=countI(d), ft, fn, yn0;
+  I dt=d->t, dn=countI(d), ft=999, fn, yn0;
 
   if(f) {ft=f->t; fn=countI(f);}
+  else R NYI;
   if(y) {yn0=countI(y);}
 
   if(-1==s && 0==fn && -3!=ft)
@@ -145,17 +146,17 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
   }
   else if(1==ABS(ft))
   {
-    if(!atomI(f) && y && !atomI(y) && fn != yn0) R LE;
+    if(f && !atomI(f) && y && !atomI(y) && fn != yn0) R LE;
     if( 1==ft && dt > 0) R TE; // (5,6)
 
-    if(y && yt != 0 && !atomI(f)) U(y = promote(y))
+    if(y && yt != 0 && f && !atomI(f)) U(y = promote(y))
     else ci(y);
 
     //TODO: .[.,(`a;2);0 0;*:] -> identity. (0->type err, 0 0 0-> rank err)
     if(dt != 0) R RE;
 
-    DO(fn, I e=kI(f)[i]; if( e < 0 || dn <= e ) R XE; )//check is in advance
-    DO(fn,
+    if(f) DO(fn, I e=kI(f)[i]; if( e < 0 || dn <= e ) R XE; )//check is in advance
+    if(f) DO(fn,
       K py=0;
       if(y) py=atomI(f)?y:kK(y)[i%yn0];
       dot_ref(kK(d)+(kI(f)[i]),z,z+1,s-1,c,py);
