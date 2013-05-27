@@ -1,0 +1,299 @@
+A description of the Kona<->C API
+
+Bakul Shah
+May 25, 2013
+
+
+Introduction
+------------
+Use of this API allows you to mix kona and C code. There are
+two uses for this API: 
+
+a) when the kona library is linked with some C code to make a
+  standalone application that can use K as an embedded language.
+b) when a C library is to be used from K code, either from
+   a K script or standalone.
+
+In either case you can have C code calling K code calling C
+code etc. Attention must be paid to how Kona does reference
+counting to ensure that objects don't get released before
+their use has been finished or they stick around after their
+use is finished. In the first case the application will crash.
+In the second case the application may get a memory leak and
+overtime run out of memory.
+
+
+Glossary
+--------
+
+atom 	a scalar K object
+list	a K list
+object	an atom or list
+
+These may be preceded with type name to indicate a specific
+typed object. For example an integer object is either an
+integer atom or an integer list.
+
+
+Usage
+-----
+
+C code using this API must include kona.h.
+
+a) Using K as an embedded language: link with the kona library
+   with -lkona. If necessary, set -L to the directory where
+   libkona.a resides. For example
+
+   cc -I/usr/local/include mycode.c -L/usr/local/lib -lkona
+
+   The API must be initializd by calling ksk("", 0) and ensuring
+   it doesn't return an errror.
+
+b) Calling C code from K: Compile the C code as a shared library
+   and then load it using the 2: function. For example, if the
+   C code contains
+
+       K bar(K num, K ints, K syms) { ... }
+
+   Then to access this function from K one can do use
+   the following in K code:
+
+       foo:"mylib" 2: ("bar", 3)
+
+       x:foo[1;2 3 4;`a`b`c]
+
+
+Types
+------
+
+In C, typedef K represents a k object. It is a pointer to a
+struct containing the following fields + content specific data:
+
+c	ref count
+n	number of items
+t	type of the object
+
+These can be directly accessed from C code but should never be
+directly modified. Object content should only be accessed
+or modified through macros described below.
+
+A k object can be of the following types (the first column
+shows the value in t field).
+
+value 	Name
+-4	symbol list
+-3	char list
+-2	float list
+-1	integer list
+0	general list
+1	integer
+2	float
+3	char
+4	symbol
+5	dictionary
+6	null
+7	procedure
+
+The following C types are used in the construction of K
+objects.
+
+Type	typedef	C-type
+integer	I	long long int
+float	F	double
+char	C	char
+symbol	S	C*
+ptr	V	void*
+
+Support functions
+-----------------
+
+S sp(S)
+    Intern a given string. The same S value is returned as
+    long as the argument to sp is the same string.
+
+    Example:
+	char x[4] = {'f','o','o', 0};
+	sp("foo") == sp(x)
+
+Accessor functions
+------------------
+
+Atoms
+
+C Kc(K)
+F Kf(K)
+I Ki(K)
+S Ks(K)
+    Kc() returns a reference to a char, Kf() to a float, Ki to
+    an int and Ks() to a symbol. They can be used to read or
+    write the value.
+
+    Examples:
+	If objects c, f, i, s are existing atoms of type char,
+	float, integer and symbol, then
+
+	Kc(c) == 'A'
+	Kf(f) = 1.2
+	Ki(i) = 12
+	Ks(s) = sp("abc"); // asign interned "abc"
+
+Lists
+
+C* KC(K)
+F* KF(K)
+I* KI(K)
+S* KS(K)
+    KC() returns ptr to an array of chars, KF() an array of floats,
+    KI() an array of integers, KS() an array of symbols.
+
+    Examples:
+	If objects c, f, i, s are existing lists of type char,
+	float, integer and symbol, then
+
+	KC(c)[0] == 'A'
+	KF(f)[0] = 1.2
+	KI(i)[0] = 12
+	KS(s)[0] = sp("abc"); // asign interned "abc"
+
+K KK(K)
+    KK() takes a general list and retuns a ptr to an array of
+    objects.
+
+
+Generator functions
+-------------------
+
+These function return new objects. The returned value has a
+ref count of 1. These objects may be passed to K functions,
+stored in K or C data structures etc.
+
+Atoms
+
+K gc(C)
+K gf(F)
+K gi(I)
+K gs(S)
+K gn()
+    gc() create an atom from a char,gf() from a float, gi()
+    from an integer, gs() from an interned string and gn ceate
+    a null atom.
+
+    Examples:
+	K x = gc('A');
+	K y = gf(1.2);
+	K z = gi(12);
+	K w = gs(sp("abc")); // NB: the string must be interned with sp()
+	K ls = gnk(4,x,y,z,w);
+
+Lists
+
+K gp(S)
+K gpn(S,I n)
+    gs() creates a char list from a C string. gpn() creates a
+    char list from the first n chars of a C string.
+
+    Example:
+	K s1 = gp("foo");
+	K s2 = gpn("food", 3);
+	strncmp(KC(s1), KC(s2), 3) == 0
+
+K gtn(I t,I n)
+    Create a list of type t and allocate space for n elements.
+    These elements must be separately initialized with values
+    appropriate to the type. t is in [-4 .. 0].
+
+    Example:
+	K i = gtn(-1,2);	// list of 2 ints;
+	KI(i)[0] = 11;
+	KI(i)[1] = 22;
+
+K gnk(I n,...)
+    Create a general list of N elements from a variable list
+    of objects
+
+    Example:
+	K x = gnk(5, gc('A'), gf(1.2), gi(333), gp("foo"), gs(sp("bar")));
+	Will yield K object ('A'; 1.2; 333; "foo", `bar)
+
+
+K gsk(S s, K k)
+    Generate a triple: symbol from s, value k, attribute
+    (none). Used for building dictionaries.
+
+    Dictionaries can be generated with gtn(5, n) and may be
+    treated as general list. They may be extended using kap
+    with a list of triples.
+
+    Example:
+	K d = gtn(5,1);
+	K t = gsk("foo", gi(12));
+
+	KK(d)[0] = gsk("foo", gi(12));
+	kap(&d, gsk("bar", gf(1.23)));
+
+K kap(K*x, V y)
+    Append item y to list x. The actual type of y depends on
+    the list type of x. Returns x if the append was
+    successful.
+
+Refernce counts
+---------------
+I cd(K)
+    decrement reference count. When the C code doesn't need
+    the k object any more, it must use cd() to allow freeing
+    up memory.
+
+K ci(K)
+    increment reference count. When the C code is handed a
+    k object that it wants to save, it should use ci() it.
+
+K from C
+--------
+K ksk(S e, K a)		 [NYI]
+    execute string e. Any arguments are provided in a. If e
+    takes n arguments, a must be general list of n values.
+    Return the result object or a null with error string
+    as its content.
+
+    Example:
+	K ints = ksk("{!x}",gnk(1,gi(10)));
+
+C from K
+--------
+
+K sfn(S s,(K(*f)(),I n)	 [NYI]
+    Register a C function f to be called from K with the name
+    s. It should take n arguments. Returns the function object.
+
+    Example:
+	K average(K a, K b) { return gi(Ki(a)+Ki(b)); }
+	sfn("avg", (K(*)())average,2);
+
+sdf(I s,I(*fn)())		[NYI]
+    Register a callback function for the given socket s.  The
+    first arg when positive records an accept callback.  When
+    negative records a read callback. These functions are
+    called from k main loop. 
+
+scd(I s)			[NYI]
+    Close the socket. This also tells the k main loop to
+    stop looking for events on it.
+
+Conversions
+-----------
+
+I dj(I j)
+    given julian days return a date in the form yyyymmdd.
+    julian day 0 maps to 20350101
+
+I jd(I d)
+    given a date in the form yyyymmdd return julians days.
+
+
+Socket functions
+----------------
+
+General Notes
+-------------
+
+When the C code finishes the use of a k object, 

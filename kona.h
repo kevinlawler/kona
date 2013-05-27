@@ -72,7 +72,7 @@ extern I sfn(S,K(*)(),I);
 extern K ci(K);
 extern I cd(K);
 
-/* conversion functions */
+/* date conversion */
 extern I jd(I);
 extern I dj(I);
 
