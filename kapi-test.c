@@ -6,6 +6,8 @@
 
 Z int pass, fail;
 
+extern K KTREE;
+
 #define tst(e)	if(e){pass++;}else{fprintf(stderr, "Failed:%s\n", #e); fail++;}
 
 #define TEST(i,x,f) do { {i;} tst(x); {f;}} while(0)
@@ -49,10 +51,27 @@ main(int argc, char** argv)
 	tst(Ki(v[0])+Ki(v[1])==Ki(v[2]));
 	cd(a);
 
-	gsk("pi",gf(pi));
-	a = ksk("pi", 0);
+
+	{
+	b = gsk("pi",gf(pi));
+	kap(&KTREE, b);
+	a = X(".pi");
 	tst(Kf(a) == pi);
 	cd(a);
+	}
+
+	{
+	K dir = gtn(5,0);
+	kap(&dir, gsk("x",gi(1)));
+	kap(&dir, gsk("y",gi(2)));
+	kap(&KTREE, gsk("z",dir));
+	a = X(".z.x");
+	tst(Ki(a) == 1);
+	cd(a);
+	a = X(".z.y");
+	tst(Ki(a) == 2);
+	cd(a);
+	}
 
 
 	//b = ksk("+/", a);
