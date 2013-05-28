@@ -682,7 +682,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     U(a=*w);
     if(7==a->t && 0==a->n && (b=kV(a)[CONJ]) && 7==b->t && 0==b->n ) 
     {
-      U(b=ex_(kV(a)+CONJ,2))
+      U(b=ex_(kV(a)+CONJ,(*kW(b)==1 || *(kW(b)+1)==1)?1:2))
       w=*kW(a); //K temp=a;  //a=ci(*kW(a)); w=*kW(a); cd(temp);
     }
     if(!b)U(b=newK(0,0))
