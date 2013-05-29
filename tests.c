@@ -1419,8 +1419,8 @@ Z I testsBook()
 
   // also  "1+ * :'(3 0;5 2;7 4)" works (monad colon not flush with *)
   
-  //K x = newK(0,0);
-  //DO(1000, kap(&x,Ki(i)); show(x)  )
+  //K x = newK(0,0), K k;
+  //DO(1000, k = Ki(i); kap(&x,&k); show(x)  )
   //dd(x->n)
 
   //show(make(newK(0,0))); //empty dict works .()

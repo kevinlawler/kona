@@ -54,7 +54,7 @@ main(int argc, char** argv)
 
 	{
 	b = gsk("pi",gf(pi));
-	kap(&KTREE, b);
+	kap(&KTREE, &b);
 	a = X(".pi");
 	tst(Kf(a) == pi);
 	cd(a);
@@ -62,15 +62,35 @@ main(int argc, char** argv)
 
 	{
 	K dir = gtn(5,0);
-	kap(&dir, gsk("x",gi(1)));
-	kap(&dir, gsk("y",gi(2)));
-	kap(&KTREE, gsk("z",dir));
+	K t;
+	t = gsk("x",gi(1)); kap(&dir, &t);
+	t = gsk("y",gi(2)); kap(&dir, &t);
+	t = gsk("z",dir); kap(&KTREE, &t);
 	a = X(".z.x");
 	tst(Ki(a) == 1);
 	cd(a);
 	a = X(".z.y");
 	tst(Ki(a) == 2);
 	cd(a);
+	}
+
+	{
+	I i;
+	K d = gtn(5,0);
+	K c0 = gtn(0,0);
+	K c1 = gtn(-1,0);
+	K t0, t1, e;
+	t0 = gsk("a", c0); kap(&d,&t0);
+	t1 = gsk("b", c1); kap(&d,&t1);
+	e = gp("hello1"); kap(&c0,&e);
+	e = gp("hello2"); kap(&c0,&e);
+	KK(KK(d)[0])[1] = c0;
+	i = 1; kap(&KK(KK(d)[1])[1], &i);
+	i = 2; kap(&KK(KK(d)[1])[1], &i);
+	//i = 1; kap(&c1, &i);
+	//i = 2; kap(&c1, &i);
+	//KK(KK(d)[1])[1] = c1;
+	show(d);
 	}
 
 

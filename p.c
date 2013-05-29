@@ -383,7 +383,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       else if(MARK_NAME != ABS(m[k-1-a])) //Has form na*[] and not va*[] so move n from the parent to the LOCAL on this BRACKET. NAME special storage case
                       {
                         K q=newE(LS,ci(*f)); //oom
-                        kap((K*) kV(g)+LOCALS,q);//oom
+                        kap((K*) kV(g)+LOCALS,&q);//oom
                         cd(q); //kap does ci
 
                         //cd(DI(*locals,--(*locals)->n));  //You can't do this. (the reason is the same as why you can't (currently) realloc-shrink the anonymous mmapped Ks)
@@ -505,7 +505,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                         {
                           V q=newEntry(u);
                           U(q)
-                          M(q,kap(dict,q))
+                          M(q,kap(dict,&q))
                           z=EV(q);
                           cd(q);
                         }
@@ -593,7 +593,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
     CSR(MARK_BRACE  ,)
     CSR(MARK_NUMBER ,)
     CSR(MARK_QUOTE  ,)
-    CS (MARK_SYMBOL , z=newE(LS,z); P(!z,(I)ME) kap(locals,z); cd(z); z=EVP(z) ) //oom
+    CS (MARK_SYMBOL , z=newE(LS,z); P(!z,(I)ME) kap(locals,&z); cd(z); z=EVP(z) ) //oom
   }
 
   *p=z;

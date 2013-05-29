@@ -26,7 +26,7 @@ I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
 #endif
 Z I cl2(I v);
 Z I kexpander(K *p,I n);
-Z K kapn_(K *a,V *v,I n);
+Z K kapn_(K *a,V v,I n);
 Z V amem(I k);
 Z V kalloc(I k);
 Z V unpool(I r);
@@ -174,7 +174,7 @@ Z I kexpander(K*p,I n) //expand only.
   R 1;
 }
 
-Z K kapn_(K *a,V *v,I n)
+Z K kapn_(K *a,V v,I n)
 {
   if(!a||!n)R 0;
   K k=*a;
@@ -200,19 +200,19 @@ Z K kapn_(K *a,V *v,I n)
   SW(ABS(t))
   {
     CSR(0,) CS(5, DO(n, kK(k)[i+m]=ci(((K*)v)[i])));
-    CS(1, memcpy(kI(k)+m,*v,n*sizeof(I)));
-    CS(2, memcpy(kF(k)+m,*v,n*sizeof(F)));
-    CS(3, strncpy(kC(k)+m,(S)*v,n); kC(k)[p]=0);
-    CS(4, memcpy(kS(k)+m,*v,n*sizeof(S)))
+    CS(1, memcpy(kI(k)+m,v,n*sizeof(I)));
+    CS(2, memcpy(kF(k)+m,v,n*sizeof(F)));
+    CS(3, strncpy(kC(k)+m,(S)v,n); kC(k)[p]=0);
+    CS(4, memcpy(kS(k)+m,v,n*sizeof(S)))
     CD:   R 0;
   }
   if(t>0&&t<5&&p>1)k->t*=-1;
   R *a;
 }
 
-extern K kapn(K *a,V v,I n){R kapn_(a,&v,n);}
+extern K kapn(K *a,V v,I n){R kapn_(a,v,n);}
 
-extern K kap(K*a,V v){R kapn_(a,&v,1);}
+extern K kap(K*a,V v){R kapn_(a,v,1);}
 
 N newN(){R unpool(lsz(sizeof(Node)));}
 PDA newPDA(){PDA p=unpool(lsz(sizeof(Pda)));U(p) p->c=malloc(1); if(!p->c){ME;R 0;} R p;}
