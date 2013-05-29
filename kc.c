@@ -58,7 +58,7 @@ Z I wdss(K*a,FILE*f)
 {
   I c=0,n=0;
   K k=0,z=newK(0,0);
-  while(0<(c=wds(&k,f))){kap(&z,k); cd(k); n++;}
+  while(0<(c=wds(&k,f))){kap(&z,&k); cd(k); n++;}
   *a=z;
   R c==-1?n:c;
 }
@@ -248,15 +248,17 @@ I kinit() //oom (return bad)
   kerr("undescribed");//initialize errmsg string to be non-null for more useful reporting
   SYMBOLS=newN(); //Initialize intern pool 
   seedPRNG(randomBits()); 
-  KFIXED=newK(0,0); kap(&KFIXED,NIL=Kn());cd(NIL);
+  NIL=Kn();
+  KFIXED=newK(0,0); kap(&KFIXED,&NIL);cd(NIL);
   __d = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
 #ifdef DEBUG
   test();
 #endif
   KTREE=Kd();//Initalize. Alt, KTREE=_(.,(`k;));
-  K x;
-  kap(&KTREE,x=newEntry(sp("k"))); cd(x);
-  kap(&KTREE,x=newE(sp("t"),_dot_t())); cd(x);
+  K x=newEntry(sp("k"));
+  kap(&KTREE,&x); cd(x);
+  x=newE(sp("t"),_dot_t());
+  kap(&KTREE,&x); cd(x);
 
   R 0;
 }

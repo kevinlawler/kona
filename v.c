@@ -115,7 +115,7 @@ Z K lookupEntryOrCreate(K *p, S k) //****only *dict or *_n are passed to here
 
   x=newEntry(k);
   if(6==a->t){cd(*p); *p=newK(5,0);} //mm/o is this done right?
-  kap(p,x); //oom
+  kap(p,&x); //oom
   cd(x);
 
   R x;
