@@ -285,7 +285,7 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
     P(y && !atomI(y) && yn != pn,LE)
     if(6==pt) R 0;//Identity TODO ??
 
-    K k = 5==pt?Ks(0):Ki(0);
+    K k = 5==pt?Ks(LS):Ki(0);
     U(k)
     if(y) M(k,y = promote(y))
     
