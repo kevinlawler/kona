@@ -38,7 +38,7 @@ K kclone(K a)//Deep copy -- eliminate where possible
                   {
                     K r=kclone(*(K*)w); //oom
                     V q=newE(LS,r); //oom
-                    kap((K*) kV(z)+LOCALS,q);//oom
+                    kap((K*) kV(z)+LOCALS,&q);//oom
                     cd(q);//kap does ci
                     q=EVP(q); //oom free z etc. kap needs checking 
                     v[i]=q;

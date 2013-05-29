@@ -21,11 +21,11 @@ Z S rangematch(S p,C t,S r);
 
 //'S' for [pre-]Scripted. These macros should be refactored/rewritten. Certainly don't need new K every time.
 //The a=kreci stuff is a kluge we use since f##_KVAR == vs_KVAR (and KFIXED) live outside the test framework 
-#define S_MONAD_(f,v,t) K v; K f(K x){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,v);cd(v);} K k=newK(0,1); U(k) kK(k)[0]=x; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
+#define S_MONAD_(f,v,t) K v; K f(K x){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,&v);cd(v);} K k=newK(0,1); U(k) kK(k)[0]=x; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
 #define S_MONAD(f,x) S_MONAD_(_##f,f##_KVAR,x)
-#define S_DYAD_(f,v,t) K v; K f(K x,K y){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,v);cd(v);} K k=newK(0,2); U(k) kK(k)[0]=x; kK(k)[1]=y; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
+#define S_DYAD_(f,v,t) K v; K f(K x,K y){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,&v);cd(v);} K k=newK(0,2); U(k) kK(k)[0]=x; kK(k)[1]=y; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
 #define S_DYAD(f,x) S_DYAD_(_##f,f##_KVAR,x)
-#define S_TRIAD_(f,v,t) K v; K f(K x,K y,K w){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,v);cd(v);} K k=newK(0,3); U(k) kK(k)[0]=x; kK(k)[1]=y; kK(k)[2]=w; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
+#define S_TRIAD_(f,v,t) K v; K f(K x,K y,K w){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,&v);cd(v);} K k=newK(0,3); U(k) kK(k)[0]=x; kK(k)[1]=y; kK(k)[2]=w; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
 #define S_TRIAD(f,x) S_TRIAD_(_##f,f##_KVAR,x)
 
 S_MONAD(gtime, "{(_dj _ x % 86400; 100 _sv 24 60 60 _vs x ! 86400)}") //will error until _sv works

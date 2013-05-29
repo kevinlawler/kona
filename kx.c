@@ -597,7 +597,7 @@ Z K bv_ex(V*p,K k)
     kK(z)[0]=ci(*kK(k));
     DO(n,*kK(g)=ci(kK(z)[z->n-1]); DO2(g->n-1, x=itemAtIndex(kK(k)[j+1],i); M(x,z,g) kK(g)[j+1]=x;)
          x=bv_ex(p-1,g); M(x,z,g) DO2(g->n, cd(kK(g)[j]); kK(g)[j]=0 ) //set to 0 in case OOM happens
-         kap(&z,x); cd(x);) 
+         kap(&z,&x); cd(x);) 
     cd(g);
     z=collapse(z); //unnecessary?
     R z;
@@ -649,7 +649,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
         if(VA(b[j])) continue; //partially copy pasted from clone(). This pattern occurs here, in clone(), at the end of capture(), and in capture's BRACKET handler
         K r = ex_(w[j],1); //oom
         V q=newE(LS,r); //oom
-        kap((K*) kV(a)+LOCALS,q);//oom
+        kap((K*) kV(a)+LOCALS,&q);//oom
         cd(q); //kap does ci
         q=EVP(q); //oom free z etc. kap needs checking 
         b[j]=q;
