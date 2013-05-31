@@ -677,13 +677,24 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   if(!VA(*v) && (offsetColon == v[1] || (VA(v[1]) && offsetColon==v[2]) ) ) //Handle assignment
   {
     if(adverbClass(v[1]))R SYE;//Could potentially handle instead of erroring
-    K a=0,b=0,c=0,d=0;
+    K a=0,b=0,c=0,d=0,p=0;
     K*w=*v;
     U(a=*w);
     if(7==a->t && 0==a->n && (b=kV(a)[CONJ]) && 7==b->t && 0==b->n ) 
     {
       U(b=ex_(kV(a)+CONJ,(*kW(b)==1 || *(kW(b)+1)==1)?1:2))
+      if(b->t==0 && b->n==0) {
+        cd(b);
+        if(1e6<(UI)v[0]) { 
+          K h=*(K*)*v;
+          if(h->t==7) {    
+            if(1e6<(UI)*kW(h)) { 
+              K r=*(K*)*kW(h);
+              if(r->t==5) {
+                p=enumerate(r);
+                b=enlist(p); } } } } }
       w=*kW(a); //K temp=a;  //a=ci(*kW(a)); w=*kW(a); cd(temp);
+      if(p) cd(p);
     }
     if(!b)U(b=newK(0,0))
     c=Kv(); //mmo  Optimization: could use A struct instead, with array[] for CODE
