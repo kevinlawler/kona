@@ -684,15 +684,12 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     {
       U(b=ex_(kV(a)+CONJ,(*kW(b)==1 || *(kW(b)+1)==1)?1:2))
       if(b->t==0 && b->n==0) {
-        cd(b);
         if(1e6<(UI)v[0]) { 
           K h=*(K*)*v;
           if(h->t==7) {    
             if(1e6<(UI)*kW(h)) { 
               K r=*(K*)*kW(h);
-              if(r->t==5) {
-                p=enumerate(r);
-                b=enlist(p); } } } } }
+              if(r->t==5) { cd(b); p=enumerate(r); b=enlist(p); } } } } }
       w=*kW(a); //K temp=a;  //a=ci(*kW(a)); w=*kW(a); cd(temp);
       if(p) cd(p);
     }
