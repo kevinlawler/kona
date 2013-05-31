@@ -689,9 +689,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
           if(h->t==7) {    
             if(1e6<(UI)*kW(h)) { 
               K r=*(K*)*kW(h);
-              if(r->t==5) { cd(b); p=enumerate(r); b=enlist(p); } } } } }
+              if(r->t==5) { p=enumerate(r); cd(b); b=enlist(p); cd(p); } } } } }
       w=*kW(a); //K temp=a;  //a=ci(*kW(a)); w=*kW(a); cd(temp);
-      if(p) cd(p);
     }
     if(!b)U(b=newK(0,0))
     c=Kv(); //mmo  Optimization: could use A struct instead, with array[] for CODE
