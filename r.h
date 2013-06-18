@@ -97,6 +97,7 @@ K _di(K x,K y);
 K _dot(K x,K y);
 K _dv(K x,K y);
 K _dvl(K x,K y);
+K _hat(K x,K y);
 K _in(K x,K y);
 K _lin(K x,K y);
 K _mul(K x,K y);

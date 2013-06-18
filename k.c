@@ -488,6 +488,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 2, _draw,"_draw",0},
   {0, 2, _dv,"_dv",0},
   {0, 2, _dvl,"_dvl",0},
+  {0, 2, _hat,"_hat",0},
   {0, 2, _in,"_in",0},
   {0, 2, _lin,"_lin",0},
   {0, 2, _lsq,"_lsq",0},
