@@ -40,7 +40,7 @@ S_DYAD(in,   "{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}")
 S_DYAD(lin,  "{_in[;y]/:x}") 
 S_DYAD(mul,  "{x _dot\\:y}") 
 S_DYAD(sv,   "{{z+y*x}/[0;x;y]}")  
-S_DYAD(hat, "{:[(1~4:x)|(2~4:x); _f[!x;y];:[@y;_f[x;,y]; x _dvl y]]}") //or "caret"
+S_DYAD(hat,  "{:[(1~4:x)|(2~4:x); _f[!x;y];:[@y;_f[x;,y]; x _dvl y]]}") //or "caret"
 
 S_TRIAD(ssr, "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\"=y$:),0)+/:x _ss y)_ x;,/ :[7=4:z;@[x;i;z];4:z$:;@[x;i;:[;z]];@[x;i;:;z]]}") //missing a few things
 
