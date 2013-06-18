@@ -5,6 +5,7 @@
 #include "km.h"
 #include "0.h"
 #include "v.h"
+#include "r.h"
 
 /* misc verbs */
 
@@ -374,6 +375,23 @@ K enumerate(K a)
   else if(5==t){I n=a->n; z=newK(-4,n);U(z) DO(n, kS(z)[i]=ES(DI(a,i)))}//TODO: test this accessor composition
   else if(-3==t || 3==t){ return enumerate_charvec(kC(a)); }
   else if(4==t)R NYI; //TODO: 4==t enumerate dictionary of sym on k-tree, other sym: nil =Kn()
+  else if(-1==t) //odometer
+  {
+    I n=a->n,x,p=1;
+    K e,r,s;
+    DO(n,x=kI(a)[i];p*=x;if(x<0||p<0)R IE;)
+    if(n==0)p=0;
+    U(z=newK(0,p)) 
+    if(p>0)
+    {
+      DO(p,e=newK(-1,a->n);M(e,z) kK(z)[i]=e)
+      r = kK(z)[0];
+      DO(r->n, kI(r)[i]=0)
+      DO(p-1, r=kK(z)[i];s=kK(z)[i+1]; I carry = 1;
+        DO2(s->n, x=(-1+s->n)-j;kI(s)[x]=kI(r)[x]; if(carry){kI(s)[x]++;carry=0;} if(kI(s)[x]>=kI(a)[x]){kI(s)[x]=0;carry=1;}))
+    }
+    R z;
+  }
   else if(1==t || 2==t){I n= t==1?*kI(a):(I)*kF(a); P(n<0,DOE) z=newK(-1,n); U(z) DO(n,kI(z)[i]=i)}//could instead be (in)?tolerant ceil/floor
   else R DOE;//Domain Error? Type Error on '!1 2 3' 
   R z;

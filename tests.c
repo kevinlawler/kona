@@ -989,6 +989,10 @@ Z I testsBook()
 
   TC((1;"syntax") , @[.:;"0-8^-4&1/::=-";:]) //if we ever handle this, then won't be error
 
+  TC((0 0;0 1;1 0;1 1) ,!2 2)
+  TC(a:2 1 3; a _vs/:!*/a, !2 1 3)
+
+
   R 0;
 }
 
