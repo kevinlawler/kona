@@ -393,6 +393,6 @@ K enumerate(K a)
     R z;
   }
   else if(1==t || 2==t){I n= t==1?*kI(a):(I)*kF(a); P(n<0,DOE) z=newK(-1,n); U(z) DO(n,kI(z)[i]=i)}//could instead be (in)?tolerant ceil/floor
-  else R DOE;//Domain Error? Type Error on '!1 2 3' 
+  else R DOE;
   R z;
 }
