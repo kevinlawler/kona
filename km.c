@@ -51,8 +51,14 @@ K cd(K a)
   #ifdef DEBUG
   DO(kreci, if(a==krec[i]){krec[i]=0; break; })
   #endif 
-  if(7==a->t){ DO(-2+TYPE_SEVEN_SIZE,cd(kV(a)[2+i]))} //-4 special trick: don't recurse on V members. assumes sizeof S==K==V.  (don't free CONTEXT or DEPTH)
-  if(0==a->t || 5==a->t) DO(a->n, cd(kK(a)[a->n-i-1])) //repool in reverse, attempt to maintain order
+
+  SW(a->t)
+  {
+    CS(7, DO(-2+TYPE_SEVEN_SIZE,cd(kV(a)[2+i]))) //-4 special trick: don't recurse on V members. assumes sizeof S==K==V.  (don't free CONTEXT or DEPTH)
+    CSR(5,)
+    CS(0, DO(a->n, cd(kK(a)[a->n-i-1]))) //repool in reverse, attempt to maintain order
+  }
+
   #ifdef DEBUG
   if(0)R 0; //for viewing K that have been over-freed
   #endif
