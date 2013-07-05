@@ -560,13 +560,13 @@ I rep(K x,I y) //#bytes in certain net/disk representations
   //_bd (+/) is type 20, -': -/ -\ all seem to have have their own types
   //projection causes nonce error
 
-  I m=sizeof(I)*(y?4:2), r=m, n=xn, q=0;  //y crutch for factor {0,1}->{net size, disk size}
+  I m=sizeof(I)*(y?4:2), r=m, n=xn, q=0, e=0;  //y crutch for factor {0,1}->{net size, disk size}
   SW(xt)
   {
     CSR(0,) CS(5, DO(xn,r+=rep(kK(x)[i],y)))
     CSR('\007',) CS('\010', if(1==xn);    ) //TODO - seven_types on disk  (1==xn --> no size increase)
     CS(-4, DO(n, r+=1+strlen(kS(x)[i])))
-    CS(-3, r+= (1+n)*sizeof(C))
+    CS(-3, e=.75+((F)((1+n)*sizeof(C))/4); r+= 4*e)
     CS(-2, r+=     n*sizeof(F))
     CS(-1, r+=     n*sizeof(I))
     CS( 4, q=1+strlen(*kS(x)); if(q>=sizeof(I))r+=q-sizeof(I))//without q check can cause trouble on 32-bit
@@ -595,10 +595,10 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
   else if('\012'==t); //TODO: some verb/function types increase r or n size
   else n=1;
 
-
+  I e=0;
   if     (-1==t) r+=   n *sizeof(I);
   else if(-2==t) r+=   n *sizeof(F);
-  else if(-3==t) r+=(1+n)*sizeof(C); //appears to need final '\0' or eval size limit ???
+  else if(-3==t) {e=.75+((F)((1+n)*sizeof(C))/4); r+= 4*e;} //appears to need final '\0' or eval size limit ???
   if(s < r) R NE;//(could instead have these errors occuring individually in the switch statement)
 
   K z=(-4 <= t && t<= 6)? newK(t,n):Kv(); U(z)
