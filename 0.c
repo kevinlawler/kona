@@ -531,21 +531,21 @@ I wrep(K x,V v,I y)//write representation. see rep(). y in {0,1}->{net, disk}
   I m=y?2:0;
 
   if(y){*w=-3; w[1]=1; w[2]=t; w[3]=n;}
-  else{ *w=xt; w[1]=xn; }
+  else{memcpy(w,&(x->t),sizeof(x->t)+sizeof(x->n));}
 
   V d=w+2+m; //disk/destination for lists/vectors
 
   I e=(2+m)*sizeof(I); if(0!=t&&5!=t&&-4!=t) e=rep(x,y); //don't rep() on nested structures -- O(n^2)
 
   I r=0,s;
-  if(0==t||5==t) DO(n, r+=wrep(kK(x)[i],d+r,y) )
+  if(0==t||5==t) DO(n, V point = d+r; I delta = wrep(kK(x)[i],point,y); r+=delta )
   else if(-4==t) DO(n, s=1+strlen(kS(x)[i]); memcpy(d+r,kS(x)[i],s); r+=s )
   else if( '\007'==t || '\010'==t) //TODO: write seven_types to disk //TODO: calculate return length r optimally for seven_type since seven_type can nest 
   {
     //outdated
     //if(1==xn && 1==kVC(x)->n-1){ K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m] = diff(k,s==1?vm:vd); }  //TODO: work for more than just unreserved monadic, dyadic verbs
   }
-  else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x)); } memcpy(d,s,b); } 
+  else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x)); } memcpy(d,s,b);}
 
   R e+r;
 }
@@ -560,13 +560,13 @@ I rep(K x,I y) //#bytes in certain net/disk representations
   //_bd (+/) is type 20, -': -/ -\ all seem to have have their own types
   //projection causes nonce error
 
-  I m=sizeof(I)*(y?4:2), r=m, n=xn, q=0, e=0;  //y crutch for factor {0,1}->{net size, disk size}
+  I m=sizeof(I)*(y?4:2), r=m, n=xn, q=0;  //y crutch for factor {0,1}->{net size, disk size}
   SW(xt)
   {
     CSR(0,) CS(5, DO(xn,r+=rep(kK(x)[i],y)))
     CSR('\007',) CS('\010', if(1==xn);    ) //TODO - seven_types on disk  (1==xn --> no size increase)
     CS(-4, DO(n, r+=1+strlen(kS(x)[i])))
-    CS(-3, e=.75+((F)((1+n)*sizeof(C))/4); r+= 4*e)
+    CS(-3, r+= (1+n)*sizeof(C))
     CS(-2, r+=     n*sizeof(F))
     CS(-1, r+=     n*sizeof(I))
     CS( 4, q=1+strlen(*kS(x)); if(q>=sizeof(I))r+=q-sizeof(I))//without q check can cause trouble on 32-bit
@@ -589,16 +589,16 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
   if(y)P(-3!=w[0],NE)
 
   //if(y)w[1]; //mmap reference count
-  I t=w[m]; //type
+  I t;
+  memcpy(&t,w+m,sizeof(I)); //type
   I n;
-  if(t<=0 || 5==t)n=w[1+m];
+  if(t<=0 || 5==t)memcpy(&n,w+1+m,sizeof(I));
   else if('\012'==t); //TODO: some verb/function types increase r or n size
   else n=1;
 
-  I e=0;
   if     (-1==t) r+=   n *sizeof(I);
   else if(-2==t) r+=   n *sizeof(F);
-  else if(-3==t) {e=.75+((F)((1+n)*sizeof(C))/4); r+= 4*e;} //appears to need final '\0' or eval size limit ???
+  else if(-3==t) r+=(1+n)*sizeof(C); //appears to need final '\0' or eval size limit ???
   if(s < r) R NE;//(could instead have these errors occuring individually in the switch statement)
 
   K z=(-4 <= t && t<= 6)? newK(t,n):Kv(); U(z)
@@ -608,15 +608,15 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
   switch(t) //most of this can be refactored into changing parameters to a single memcpy call
   {
     CSR( 0,)//fall through
-    CS ( 5,while(v+r < aft && c < n) { K k=rrep(v+r,aft,&r,y); M(z,k) kK(z)[c++]=k; } if(c!=n){cd(z);R NE;} ) 
+    CS ( 5,while(v+r < aft && c < n) { K k=rrep(v+r,aft,&r,y); M(z,k) memcpy(&(kK(z)[c++]),&k,sizeof(K)); } if(c!=n){cd(z);R NE;} ) 
 
     CS(-4,while(v+r < aft && c < n) r+=rrep_4(kS(z)+c++,v+r,aft); P(c!=n,NE) ) //TODO: oom
     CS(-3,memcpy(kC(z),w+2+m,n*sizeof(C)))//K3.2 does not verify final '\0' (does not read any extra bytes at all)
     CS(-2,memcpy(kC(z),w+2+m,n*sizeof(F)))//maybe could factor above and below (but sizeof C != sizeof I/F)
     CS(-1,memcpy(kC(z),w+2+m,n*sizeof(I)))
-    CS( 1,*kI(z)=w[1+m])
-    CS( 2,*kF(z)=*(F*)(w+1+m))
-    CS( 3,*kC(z)=*(S)(w+1+m)) //K3.2 take first C but do not check remaining C values of full I at w[3]
+    CS( 1,memcpy(kI(z),w+1+m,1*sizeof(I)))
+    CS( 2,memcpy(kF(z),w+1+m,1*sizeof(F)))
+    CS( 3,memcpy(kC(z),w+1+m,1*sizeof(C))) //K3.2 take first C but do not check remaining C values of full I at w[3]
     CS( 4,r+=rrep_4(kS(z),(S)(w+1+m),aft)-sizeof(I)) //TODO: oom. K3.2 reads to the end of the file no problem even if null is missing. K3.2 has bug on `x or `xx (<3)
     CS( 6,) //no-op
     //TODO: verb cases:  +, {x}, 2:("f",2)  (third case probably not supported but see). Do projections get written? Note: _bd (-); _bd (+); _bd (:); etc are revealing
