@@ -972,6 +972,7 @@ Z I testsBook()
   TC(4, f:{x:4;e:5;f:6;a:1;b:2;c:3;a;:x;c};f 0;f 0)
   TC(2, f:{x;4;e;5;f:t;a:1;b:2;c:3;a;:b;c};f 0;f 0)
   TC(5, {b::4; b:5; b}0)   // verify that global assign not interpreted as early return
+  TC(5, {b:4; b::5; b}0)
 
   //overMonad
   TC("abcd" ,("abcd";"efgh")/0)
