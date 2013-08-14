@@ -631,7 +631,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
 
   if(!c || !VA(w[c-1]) || (c>1 && offsetColon==w[c-1] ) ) R ex2(w,k); //typical list for execution
 
-  if(w[0]==offsetColon && w[1]>DT_SIZE){ 
+  if(w[0]==offsetColon && w[1]>DT_SIZE && w[-1]!=offsetColon){ 
     fer=1; I d=0; while(w[d] && !bk(w[d])){d++;} 
     K a=Kv(); a->n=0; K kb=newK(-4,d); M(a,kb) V*b=(V*)kK(kb); DO(d-1, b[i]=w[i+1];) b[d-1]=0; kV(a)[CODE]=kb; 
     V x=ex_(&a,0); cd(a); R x; }
