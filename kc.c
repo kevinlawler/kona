@@ -24,8 +24,6 @@ I scrLim=0;
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
 
-I DT_OFFSET(V v){I i=0; while(v!=DT[i].func)i++; R i;} //init only
-
 //0: not a verb pointer, 1: monadic, 2: dyadic, 3: triadic
 I vn_ct;
 

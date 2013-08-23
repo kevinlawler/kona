@@ -107,6 +107,7 @@ K ex(K a);
 K X(S s);
 I min(I a,I b);
 I max(I a,I b);
+I DT_OFFSET(V v);
 extern C PPON;
 extern I PPMAX;
 extern I PP;
