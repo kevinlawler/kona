@@ -2,6 +2,7 @@
 #define TS_H
 
 typedef void* V;
+typedef long L;
 typedef long long I; //there are cases where casting pointer arithmetic to signed int will fail
 typedef double F;
 typedef char C; //Store +-3 type '\0' terminated
