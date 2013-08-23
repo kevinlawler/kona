@@ -1,6 +1,7 @@
 /* console input, main loop */
 
 #include "incs.h"
+#include "getline.h"
 
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 
@@ -15,13 +16,15 @@
 #include "kc.h"
 
 Z I randomBits();
-Z I wdss(K *a,FILE *f);
+// Z I wdss(K *a,FILE *f);
 
 I interrupted = 0;
-extern I scrLim = 0;        // script load limit
+extern I scrLim;        // script load limit
+I scrLim=0;
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
 
+I DT_OFFSET(V v){I i=0; while(v!=DT[i].func)i++; R i;} //init only
 
 //0: not a verb pointer, 1: monadic, 2: dyadic, 3: triadic
 I vn_ct;
@@ -54,14 +57,14 @@ cleanup:
   R v?-v:c; // -1 EOF, -2 unmatched, -3 nest
 }
 
-Z I wdss(K*a,FILE*f)
-{
-  I c=0,n=0;
-  K k=0,z=newK(0,0);
-  while(0<(c=wds(&k,f))){kap(&z,&k); cd(k); n++;}
-  *a=z;
-  R c==-1?n:c;
-}
+// Z I wdss(K*a,FILE*f)
+// {
+//   I c=0,n=0;
+//   K k=0,z=newK(0,0);
+//   while(0<(c=wds(&k,f))){kap(&z,&k); cd(k); n++;}
+//   *a=z;
+//   R c==-1?n:c;
+// }
 
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));R 0;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
@@ -71,7 +74,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
 
   I o = isatty(STDIN) && f==stdin; //display results to stdout?
 
-  if(-1==(c=getline(&s,&m,f))) GC;
+  if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   appender(a,n,s,c);//"strcat"(a,s)
   I v=complete(*a,*n,p,0); //will allocate if p is null
   b=parsedepth(*p);
@@ -167,12 +170,13 @@ I attend() //K3.2 uses fcntl somewhere
     // run through the existing connections looking for data to read 
     for(i = 0; i <= fdmax; i++) 
       if (FD_ISSET(i, &read_fds))
+      {
         if(i==STDIN)
         {
           nbytes=line(stdin,&a,&n,&q);
-          if(nbytes<=0)
+          if(nbytes<=0){
             if(!PORT) exit(0); //Catch CTRL+D 
-            else FD_CLR(i,&master); 
+            else FD_CLR(i,&master);} 
         }
         else if(i == listener) // handle new connections 
         {
@@ -190,6 +194,7 @@ I attend() //K3.2 uses fcntl somewhere
         } 
         else if(a) continue; //K3.2 blocks if in the middle of processing the command-line (should we sleep here?)
         else read_tape(i,0);
+      }
   }
 
 }
@@ -221,7 +226,6 @@ K KFIXED;
 I kinit() //oom (return bad)
 {
   atexit(finally);
-  I i;
   PG = sysconf(_SC_PAGE_SIZE);
   if(PG&(PG-1)){er(Pagesize not power of 2); exit(1);}
 
@@ -239,11 +243,11 @@ I kinit() //oom (return bad)
   offsetEachpair  = DT_OFFSET(eachpair);
 
   //could probably delete these variables and create func if(x<DT_SIZE) && DT[x].func == what
-  offsetWhat  = DT_OFFSET(what); //equiv: DT_VERB_OFFSET+1+2*charpos(vc,'?');
-  offsetAt    = DT_OFFSET(at);
-  offsetDot   = DT_OFFSET(dot);
-  offsetColon = DT_OFFSET(colon_dyadic);
-  offsetSSR   = DT_OFFSET(_ssr);
+  offsetWhat  = (V)(long)DT_OFFSET(what); //equiv: DT_VERB_OFFSET+1+2*charpos(vc,'?');
+  offsetAt    = (V)(long)DT_OFFSET(at);
+  offsetDot   = (V)(long)DT_OFFSET(dot);
+  offsetColon = (V)(long)DT_OFFSET(colon_dyadic);
+  offsetSSR   = (V)(long)DT_OFFSET(_ssr);
 
   kerr("undescribed");//initialize errmsg string to be non-null for more useful reporting
   SYMBOLS=newN(); //Initialize intern pool 
@@ -263,5 +267,9 @@ I kinit() //oom (return bad)
   R 0;
 }
 
-Z I randomBits(){I s;I f=open("/dev/urandom",0);read(f,&s,sizeof(s));close(f);R s;} //lfop
+Z I randomBits(){
+  I s;I f=open("/dev/urandom",0);
+  ssize_t r=read(f,&s,sizeof(s));
+  if(!r) show(kerr("read"));
+  close(f);R s;} //lfop
 void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}

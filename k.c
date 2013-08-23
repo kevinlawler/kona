@@ -506,7 +506,6 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
 K TABLE_END(){R 0;}
 I DT_SIZE=0;
 I DT_END_OFFSET, DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VERB_OFFSET;
-I DT_OFFSET(V v){I i=0; while(v!=DT[i].func)i++; R i;} //init only
 
 I kreci=0;  //should be inside DEBUG case but needed in r.c cached verbs, at least until caching method changes
 #ifdef DEBUG
