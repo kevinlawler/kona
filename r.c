@@ -5,6 +5,9 @@
 #include <netinet/in.h>
 #endif
 
+#include <sys/time.h>
+
+#include "km.h"
 #include "r.h"
 #include "va.h"
 #include "vf.h"
