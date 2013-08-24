@@ -1,5 +1,6 @@
 #include <dlfcn.h>
 #include "incs.h"
+#include "getline.h"
 
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 
@@ -75,8 +76,8 @@ K _0m(K a)
   K k;
   z=newK(0,c);
   if(!z) GC;
-  DO(s, if('\n'!=v[i])kK(z)[d]=(V)1+(I)kK(z)[d]; else d++) //2nd run: count lengths (cheat & use pointers' space)
-  DO(c,e=(I)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
+  DO(s, if('\n'!=v[i])kK(z)[d]=(V)1+(I)(L)kK(z)[d]; else d++) //2nd run: count lengths (cheat & use pointers' space)
+  DO(c,e=(I)(L)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
   e=0;
   DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n;) //3rd run: populate 
 
@@ -122,8 +123,12 @@ Z K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
 
   if(1==f) //write to stdout
   {
-    if(3==ABS(t)) write(f,kC(b),s); //This is duplicated but I don't see how to factor it right now (choose write/memcpy funcs?)
-    else DO(n, k=kK(b)[i]; if(3==ABS(k->t))write(f,kC(k),k->n); write(f,"\n",1); )
+    I r;
+    if(3==ABS(t)) {r=write(f,kC(b),s); if(!r)show(kerr("write"));} 
+      //This is duplicated but I don't see how to factor it right now (choose write/memcpy funcs?)
+    else DO(n, k=kK(b)[i]; 
+      if(3==ABS(k->t)) {r=write(f,kC(k),k->n); if(!r)show(kerr("write"));} 
+      r=write(f,"\n",1); if(!r)show(kerr("write"));)
   }
   else     //write to mmap'd file
   {
@@ -274,12 +279,12 @@ Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file (no column headings)  (s;"
 
   S m; I u=0,t=0,p=0,n=0,h=0; C*tok; C y[2]; y[0]=w; K k;
   for(;u<=fn;u+=t+1,t=0) {
-    while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=NULL)t++;
-    if(v[u+t]=='\n' || v[u+t]==NULL) { 
+    while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=(L)NULL)t++;
+    if(v[u+t]=='\n' || v[u+t]==(L)NULL) { 
       K q=0; e=h=0;
       m=strdupn(v+u,t); 
       if(!m) R 0;
-      if(m[0]!=NULL){
+      if(m[0]!=(L)NULL){
         tok=strtok(m,y);
         k=kK(z)[e++]; 
         switch(kC(c)[h++]) {
@@ -345,11 +350,11 @@ Z K _0d_rdDsvWc(K a,K b)     // read delim-sep-val-file-with-columm-headings    
 
   S m; I u=0,t=0,p=0,n=0,h=0; C*tok; C y[2]; y[0]=w; K k;
   for(;u<=fn;u+=t+1,t=0) {
-    while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=NULL)t++;
-    if(0==n++ && (v[u+t]=='\n' || v[u+t]==NULL)) { 
-      K q=0; e=h=0;
+    while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=(L)NULL)t++;
+    if(0==n++ && (v[u+t]=='\n' || v[u+t]==(L)NULL)) { 
+      e=h=0;
       m=strdupn(v+u,t); if(!m) R 0;
-      if(m[0]!=NULL){
+      if(m[0]!=(L)NULL){
         tok=strtok(m,y);
         k=kK(z)[e++]; 
         if(kC(c)[h++]==' ') e--;
@@ -365,10 +370,10 @@ Z K _0d_rdDsvWc(K a,K b)     // read delim-sep-val-file-with-columm-headings    
       }
       free(m); p=0;
     }
-    if(n>1 && (v[u+t]=='\n' || v[u+t]==NULL)) {
+    if(n>1 && (v[u+t]=='\n' || v[u+t]==(L)NULL)) {
       K q=0; e=h=0;
       m=strdupn(v+u,t); if(!m) R 0;
-      if(m[0]!=NULL){
+      if(m[0]!=(L)NULL){
         tok=strtok(m,y);
         k=kK(kK(z)[1])[e++];
         switch(kC(c)[h++]) {
@@ -822,7 +827,7 @@ K _2d(K a,K b)
   P(!y,DOE)
 
   K z=Kv(), w=newK(-4,3); M(z,w); z->n=2;
-  kK(w)[0]=(V)v;//valence
+  kK(w)[0]=(V)(L)v;//valence
   kK(w)[1]=y;   //function*
   //kK(w)[2]=0;   //reminder
   kV(z)[CODE] = w;
@@ -873,7 +878,7 @@ K _3m(K x)
 }
 
 
-Z I sendall(I s,S b,I k){I t=0,r=k,n;while(t<k){n=send(s,b+t,r,0);if(-1==n)break;t+=n;r-=n;}R -1==n?n:0;}//from beej
+Z I sendall(I s,S b,I k){I t=0,r=k,n=0;while(t<k){n=send(s,b+t,r,0);if(-1==n)break;t+=n;r-=n;}R -1==n?n:0;}//from beej
 
 I ksender(I sockfd,K y,I t)
 {
@@ -974,9 +979,9 @@ K _5d(K x,K y)
   if(s < 4*sizeof(I)) R 0; //TODO: err, file is malformed
 
   //TODO: regular file read + rewind?
-  I ft,fn;
-  pread(f,&ft,sizeof(ft),2*sizeof(I));
-  pread(f,&fn,sizeof(ft),2*sizeof(I)+sizeof(ft));
+  I ft,fn,g;
+  g=pread(f,&ft,sizeof(ft),2*sizeof(I)); if(!g)show(kerr("pread"));
+  g=pread(f,&fn,sizeof(ft),2*sizeof(I)+sizeof(ft)); if(!g)show(kerr("pread"));
 
   if( (yt>0&&yt!=5) || ft != yt) R 0; //TODO: type error
   
@@ -1057,7 +1062,7 @@ K _6d(K a,K b) //A lot of this is copy/paste from 0: dyadic write
 
   P(f<0,SE)
 
-  if(1==f) write(f,kC(b),n); //write to stdout on empties
+  if(1==f) {I r=write(f,kC(b),n); if(!r)show(kerr("write"));}       //write to stdout on empties
   else                       //write to mmap'd file
   {
     P(ftruncate(f,e+n),SE)

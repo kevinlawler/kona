@@ -267,7 +267,6 @@ I kinit() //oom (return bad)
 
 Z I randomBits(){
   I s;I f=open("/dev/urandom",0);
-  ssize_t r=read(f,&s,sizeof(s));
-  if(!r) show(kerr("read"));
+  I r=read(f,&s,sizeof(s)); if(!r)show(kerr("read"));
   close(f);R s;} //lfop
 void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
