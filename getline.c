@@ -29,9 +29,9 @@ I appender(S *s, I *n, S t, I k) //concatenate t to s
   R 0;
 }
 
-I getline_(S *s,I *n,FILE *f){R getdelim_(s,n,'\n',f);}
+I getline_(S *s,size_t * __restrict__ n,FILE *f){R getdelim_(s,n,'\n',f);}
 
-I getdelim_(S *s,I *n,I d,FILE *f)
+I getdelim_(S *s,size_t * __restrict__ n,I d,FILE *f)
 {
   I m; S z;
   if(getdelim(s,n,d,f)==-1){*n=0; R -1;}

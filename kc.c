@@ -35,12 +35,12 @@ I wds_(K*a,FILE*f,I l)
   S s=0,t=0; I b=0,c=0,m=0,n=0,v=0;
   K z=0; PDA p=0;
   I o=isatty(STDIN)&&f==stdin;
-  if(-1==(c=getline_(&s,&n,f)))GC;
+  if(-1==(c=getline_(&s,(size_t * __restrict__)&n,f)))GC;
   appender(&t,&m,s,n);
   while(1==(v=complete(t,m,&p,0)))
   { b=parsedepth(p);
     if(o)prompt(b+l);
-    if(-1==(c=getline_(&s,&n,f)))GC;
+    if(-1==(c=getline_(&s,(size_t * __restrict__)&n,f)))GC;
     appender(&t,&m,s,n);
   }
   SW(v){CS(2,show(kerr("unmatched"));GC) CS(3,show(kerr("nest")); GC)}

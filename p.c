@@ -468,7 +468,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                             g=1==a?formKiCS(u):formKfCS(u);
                             free(u);
                             M(z,g)
-                            if(1==a) kI(z)[b++]=*kI(g);     // dereferencing type-punned pointer will break strict aliasing rules
+                            if(1==a) kI(z)[b++]=*kI(g);
                             else     kF(z)[b++]=*kF(g);
                             cd(g);
                         ) 

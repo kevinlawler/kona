@@ -43,5 +43,4 @@ K cd(K a);
 K newK(I t,I n);
 I stat_sz(S u,I *n);
 S CSK(K x);
-I getdelim_(S *s,I *n,I d,FILE *f);
 K _0m(K a);

@@ -59,7 +59,7 @@ K _0m(K a)
   S v=0;
   K z;
   if(4==t && !**kS(a)){
-    b=getdelim_(&v,&s,EOF,stdin);
+    b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);
     P(freopen_stdin() == NULL, FE)
     if(b==-1){z=newK(0,0); GC;}
   }
@@ -909,7 +909,7 @@ K popen_charvec(C *cmd)
   f=popen(cmd,"r");
   P(!f,_n())
   z=newK(0,0); //oom
-  while (getline_(&s, &n, f) >= 0)
+  while (getline_(&s, (size_t * __restrict__)&n, f) >= 0)
   { l=newK(-3,n-1);
     strncpy(kC(l),s,n-1);
     kap(&z,&l);
