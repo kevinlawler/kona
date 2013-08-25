@@ -69,7 +69,7 @@ I simpleString(S a) //0 on any symbol's string that requires quotes, eg `"a - b!
 }
 
 K end(){R 0;}
-I bk(V p){R p==DT_END_OFFSET;} //break: is ; or \n
+I bk(V p){R p==(V)(L)DT_END_OFFSET;} //break: is ; or \n
 
 C ac[] = "/\\'";
 K over(){R 0;} K scan(){R 0;} K each(){R 0;}
@@ -95,21 +95,21 @@ I charpos(S s,C c){I i=0;while(s[i] && c!=s[i])i++; R i;}
 
 I isCharVerb(C c) {R stringHasChar(vc,c);}
 I charsVerb(C c)  {R charpos(vc,c);}
-Z C verbsChar(V p)  {R (p>=DT_VERB_OFFSET && p < DT_SPECIAL_VERB_OFFSET)?vc[((I)p-DT_VERB_OFFSET)/2]:'\0';}
+Z C verbsChar(V p)  {R (p>=(V)(L)DT_VERB_OFFSET && p < (V)(L)DT_SPECIAL_VERB_OFFSET)?vc[(p-(V)(L)DT_VERB_OFFSET)/2]:'\0';}
 
-Z C adverbsChar(V p){R (p>=DT_ADVERB_OFFSET)?ac[((I)p-DT_ADVERB_OFFSET)%3]:'\0';}
+Z C adverbsChar(V p){R (p>=(V)(L)DT_ADVERB_OFFSET)?ac[(p-(V)(L)DT_ADVERB_OFFSET)%3]:'\0';}
 I charsAdverb(C c) {R charpos(ac,c);}
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
 { 
-  UI q=p;
+  UI q=(UI)p;
   if(q<DT_SIZE)R DT[q].arity;
   R 0;
 
 }
 I adverbClass(V p) //0: not an adverb, 1: / \ ', 2: /: \: ':
 { 
-  UI q=p;
+  UI q=(UI)p;
   if (q<DT_SIZE) R DT[q].adverbClass;
   R 0;
 } 
@@ -141,11 +141,11 @@ I valence(V p)
     V*k=kW(v)[i-1];
     // /: or \: or dyadic verb at end, 2, else 1 (other adverb,monadic-verb)
 
-    if(k==offsetEachright || k==offsetEachleft) R 2; //todo: this looks off: eachright can be valence 1? as in +:/:  ?
-    if(i>1 && k==offsetEach || k==offsetOver || k==offsetScan)  //for f'[x;y;z], f/[x;y;z], ...
+    if(k==(V)(L)offsetEachright || k==(V)(L)offsetEachleft) R 2; //todo: this looks off: eachright can be valence 1? as in +:/:  ?
+    if((i>1 && k==(V)(L)offsetEach) || k==(V)(L)offsetOver || k==(V)(L)offsetScan)  //for f'[x;y;z], f/[x;y;z], ...
     {
       V*q; I j=0,s;
-      do q=kW(v)[i-2-(j++)]; while(q==offsetEach || q==offsetOver || q==offsetScan);
+      do q=kW(v)[i-2-(j++)]; while(q==(V)(L)offsetEach || q==(V)(L)offsetOver || q==(V)(L)offsetScan);
 
       s=sva(q);
       if(s && !specialValence(q)) R s - ((i-2-j >= 0)?1:0); // |+\ or +\   (leaves out |@\ and @\ ...or not...or intentional...?)
@@ -163,7 +163,7 @@ I valence(V p)
     if(sva(k)>1 && i>1 && !VA(kW(v)[i-2]))R valence(k)-1; //NB: f:(7+);g:(1+|+); both dyad-plus, f valence 1, g valence 2. Rule is 1 for nd; 2 for vd;
     R valence(k);
   }
-  if(2==t) R (I)w[0]; //could we have determined these types implicitly... ?
+  if(2==t) R (I)(L)w[0]; //could we have determined these types implicitly... ?
   if(3==t) R ((K)kV(v)[PARAMS])->n;
   
   R 0;
@@ -216,40 +216,47 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   I pmax = 500;//limit output on long lists. could be improved. would be better as a global variable with <= 0 indicating disabled
   #define CPMAX {if(!u && i>pmax){O_("...");break;}}
 
-  if(0==    t )                            DO(a->n, CPMAX printAtDepth(u,kK(a)[i],d+1,i*m,0,0);O_(i<_i-1?m?"\n":";":""))
-  if(1==ABS(t)) if(!a->n) O_("!0");    else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O_("0N"):f==-II?O_("-0I"):f==II?O_("0I"):O_("%lld",f); if(i<_i-1)O_(" "))
-  if(2==ABS(t)) if(!a->n) O_("0#0.0"); else DO(a->n, CPMAX g=kF(a)[i];isnan(g)?O_("0n"):g==-FI?O_("-0i"):g==FI?O_("0i"):O_("%.*g",(int)PP,g);if(i<_i-1)O_(" ");else if(needspt0(g))O_(".0"))
-  if(3==ABS(t)) { O_("\"");                 DO(a->n, CPMAX UC c=kC(a)[i];
-                                              if(isprint(c)&&(!isescape(c)))O_("%c",c);
-                                              else if(isescape(c))
-                                                SW(c){CS('"',O_("\\\""));CS('\\',O_("\\\\"));CS('\b',O_("\\b"));CS('\n',O_("\\n"));CS('\r',O_("\\r"));CS('\t',O_("\\t"));}
-                                              else O_("\\%.3o",c) ) O_("\""); }
-  if(4==ABS(t)) if(!a->n) O_("0#`");  
-                else 
-                { I ss=0,sl;S str;
-                  DO(a->n, CPMAX str=kS(a)[i]; if(str<DT_SIZE)continue; sl=strlen(str);ss=simpleString(str);
-                           O_("`"); if(!ss) O_("\""); DO2(sl, O_("%c", str[j] )) if(!ss) O_("\""); O_(i<_i-1?" ":""); 
-                    ) 
-                }
-
-  if(7==    t)
+  if(0==t) DO(a->n, CPMAX printAtDepth(u,kK(a)[i],d+1,i*m,0,0);O_(i<_i-1?m?"\n":";":""))
+  if(1==ABS(t)){
+    if(!a->n) O_("!0");    
+    else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O_("0N"):f==-II?O_("-0I"):f==II?O_("0I"):O_("%lld",f); if(i<_i-1)O_(" "))}
+  if(2==ABS(t)){ 
+    if(!a->n) O_("0#0.0"); 
+    else 
+      DO(a->n, CPMAX g=kF(a)[i];
+        isnan(g)?O_("0n"):g==-FI?O_("-0i"):g==FI?O_("0i"):O_("%.*g",(int)PP,g);
+        if(i<_i-1)O_(" ");
+        else if(needspt0(g))O_(".0"))}
+  if(3==ABS(t)) {
+    O_("\""); DO(a->n, CPMAX UC c=kC(a)[i];
+    if(isprint(c)&&(!isescape(c)))O_("%c",c);
+    else 
+      if(isescape(c)) 
+        SW(c){CS('"',O_("\\\""));CS('\\',O_("\\\\"));CS('\b',O_("\\b"));CS('\n',O_("\\n"));CS('\r',O_("\\r"));CS('\t',O_("\\t"));}
+      else O_("\\%.3o",c) ) O_("\""); }
+  if(4==ABS(t)){ 
+    if(!a->n) O_("0#`");  
+    else { I ss=0,sl;S str;
+           DO(a->n, CPMAX str=kS(a)[i]; if((L)str<(L)DT_SIZE)continue; sl=strlen(str);ss=simpleString(str);
+                    O_("`"); if(!ss) O_("\""); DO2(sl, O_("%c", str[j] )) if(!ss) O_("\""); O_(i<_i-1?" ":""); ) } }
+  if(7==t)
   {
     if(1==a->n)
     {
       I i,k; S s;
       V *v=kW(a),*p;
-      for(i=0;p=v[i];i++)
+      for(i=0;(p=v[i]);i++)
       { //TODO: mute extraneous :
 
-        I q=(I)p;
+        I q=(I)(L)p;
         if(q < DT_SIZE && q >= DT_SPECIAL_VERB_OFFSET)
         {  s=DT[q].text;
            k=strlen(s);
            DO(k,O_("%c",s[i]))
            if(s[k-1]==':' && 1==DT[q].arity) O_("%c",':'); //extra colon for monadic 0: verbs
         }
-        else if(k=sva(p)) O_(2==k?"%c":"%c:",   verbsChar(p));
-        else if(k=adverbClass(p)) O_(1==k?"%c":"%c:", adverbsChar(p));
+        else if((k=sva(p))) O_(2==k?"%c":"%c:",   verbsChar(p));
+        else if((k=adverbClass(p))) O_(1==k?"%c":"%c:", adverbsChar(p));
         else printAtDepth(u,*(K*)p,d+1,0,1+vdep,0); //assert: null p won't reach here
      }
     }
@@ -375,132 +382,132 @@ K min_and_over(K x,K y)
 
 TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backward compatibility with IO & inet
 {
-  {0, 0, 0,0,0}, //So no row index is confused with null pointer
-  {0, 0, end,0,0}, // ; and such. convenience. (for ex(). not to be confused with last element of table)
-  {0, 0, 0, 0,0},
-  {0, 0, 0, 0,0},
-  {0, 0, 0, 0,0},
-  {0, 0, 0, 0,0},
-  {0, 0, 0, 0,0},
-  {1, 0, over,"/",0},
-  {1, 0, scan,"\\",0},
-  {1, 0, each,"'",0},
-  {2, 0, eachright,"/:",0},
-  {2, 0, eachleft,"\\:",0},
-  {2, 0, eachpair,"':",0},
-  {0, 0, 0,0,0},
-  {0, 0, 0,0,0},
-  {0, 0, 0,0,0},
-  {0, 0, 0,0,0},
-  {0, 0, 0,0,0},
-  {0, 0, 0,0,0},
-  {0, 0, 0,0,0},
-  {0, 0, 0,0,0},
-  {0, 1, flip,"+",0},
+  {0, 0, 0,0,{0}}, //So no row index is confused with null pointer
+  {0, 0, end,0,{0}}, // ; and such. convenience. (for ex(). not to be confused with last element of table)
+  {0, 0, 0, 0,{0}},
+  {0, 0, 0, 0,{0}},
+  {0, 0, 0, 0,{0}},
+  {0, 0, 0, 0,{0}},
+  {0, 0, 0, 0,{0}},
+  {1, 0, over,"/",{0}},
+  {1, 0, scan,"\\",{0}},
+  {1, 0, each,"'",{0}},
+  {2, 0, eachright,"/:",{0}},
+  {2, 0, eachleft,"\\:",{0}},
+  {2, 0, eachpair,"':",{0}},
+  {0, 0, 0,0,{0}},
+  {0, 0, 0,0,{0}},
+  {0, 0, 0,0,{0}},
+  {0, 0, 0,0,{0}},
+  {0, 0, 0,0,{0}},
+  {0, 0, 0,0,{0}},
+  {0, 0, 0,0,{0}},
+  {0, 0, 0,0,{0}},
+  {0, 1, flip,"+",{0}},
   {0, 2, plus,"+",{plus_over,plus_scan}},
-  {0, 1, negate,"-",0},
+  {0, 1, negate,"-",{0}},
   {0, 2, minus,"-",{0,0,minus_eachpair}},
-  {0, 1, first,"*",0},
+  {0, 1, first,"*",{0}},
   {0, 2, times,"*",{times_over}},
-  {0, 1, reciprocal,"%%",0},
-  {0, 2, divide,"%%",0},
-  {0, 1, reverse,"|",0},
+  {0, 1, reciprocal,"%%",{0}},
+  {0, 2, divide,"%%",{0}},
+  {0, 1, reverse,"|",{0}},
   {0, 2, max_or,"|",{max_or_over}},
-  {0, 1, where,"&",0},
+  {0, 1, where,"&",{0}},
   {0, 2, min_and,"&",{min_and_over}},
-  {0, 1, shape,"^",0},
-  {0, 2, power,"^",0},
-  {0, 1, enumerate,"!",0},
-  {0, 2, rotate_mod,"!",0},
-  {0, 1, grade_up,"<",0},
-  {0, 2, less,"<",0},
-  {0, 1, grade_down,">",0},
-  {0, 2, more,">",0},
-  {0, 1, group,"=",0},
-  {0, 2, equals,"=",0},
-  {0, 1, not_attribute,"~",0},
-  {0, 2, match,"~",0},
-  {0, 1, atom,"@",0},
-  {0, 2, at,"@",0},
-  {0, 1, range,"?",0},
-  {0, 2, what,"?",0},
-  {0, 1, floor_verb,"_",0},
-  {0, 2, drop_cut,"_",0},
-  {0, 1, enlist,",",0},
-  {0, 2, join,",",0},
-  {0, 1, count,"#",0},
-  {0, 2, take_reshape,"#",0},
-  {0, 1, format,"$",0},
-  {0, 2, dollar,"$",0},
-  {0, 1, dot_monadic,".",0},
-  {0, 2, dot,".",0},
-  {0, 1, colon_monadic,":",0},
-  {0, 2, colon_dyadic,":",0},
-  {0, 1, _0m,"0:",0}, 
-  {0, 2, _0d,"0:",0}, 
-  {0, 1, _1m,"1:",0}, 
-  {0, 2, _1d,"1:",0}, 
-  {0, 1, _2m,"2:",0}, 
-  {0, 2, _2d,"2:",0}, 
-  {0, 1, _3m,"3:",0}, 
-  {0, 2, _3d,"3:",0}, 
-  {0, 1, _4m,"4:",0}, 
-  {0, 2, _4d,"4:",0}, 
-  {0, 1, _5m,"5:",0}, 
-  {0, 2, _5d,"5:",0}, 
-  {0, 1, _6m,"6:",0}, 
-  {0, 2, _6d,"6:",0},  //do not add 7+ here. go to bottom. keep paired as before
-  {0, 1, _acos,"_acos",0},
-  {0, 1, _asin,"_asin",0},
-  {0, 1, _atan,"_atan",0},
-  {0, 1, _ceil,"_ceil",0},
-  {0, 1, _cos,"_cos",0},
-  {0, 1, _cosh,"_cosh",0},
-  {0, 1, _exp,"_exp",0},
-  {0, 1, _floor,"_floor",0},
-  {0, 1, _log,"_log",0},
-  {0, 1, _sin,"_sin",0},
-  {0, 1, _sinh,"_sinh",0},
-  {0, 1, _sqr,"_sqr",0},
-  {0, 1, _sqrt,"_sqrt",0},
-  {0, 1, _tan,"_tan",0},
-  {0, 1, _tanh,"_tanh",0},
-  {0, 1, _abs,"_abs",0},
-  {0, 1, _bd,"_bd",0},
-  {0, 1, _ceiling,"_ceiling",0},
-  {0, 1, _ci,"_ci",0},
-  {0, 1, _db,"_db",0},
-  {0, 1, _dj,"_dj",0},
-  {0, 1, _kona_exit,"_exit",0},
-  {0, 1, _getenv,"_getenv",0},
-  {0, 1, _gtime,"_gtime",0},
-  {0, 1, _host,"_host",0},
-  {0, 1, _ic,"_ic",0},
-  {0, 1, _inv,"_inv",0},
-  {0, 1, _jd,"_jd",0},
-  {0, 1, _lt,"_lt",0},
-  {0, 1, _ltime,"_ltime",0},
-  {0, 1, _size,"_size",0},
-  {0, 2, _bin,"_bin",0},
-  {0, 2, _binl,"_binl",0},
-  {0, 2, _di,"_di",0},
-  {0, 2, _dot,"_dot",0},
-  {0, 2, _draw,"_draw",0},
-  {0, 2, _dv,"_dv",0},
-  {0, 2, _dvl,"_dvl",0},
-  {0, 2, _hat,"_hat",0},
-  {0, 2, _in,"_in",0},
-  {0, 2, _lin,"_lin",0},
-  {0, 2, _lsq,"_lsq",0},
-  {0, 2, _mul,"_mul",0},
-  {0, 2, _setenv,"_setenv",0},
-  {0, 2, _sm,"_sm",0},
-  {0, 2, _ss,"_ss",0},
-  {0, 2, _sv,"_sv",0},
-  {0, 2, _vs,"_vs",0},
-  {0, 3, _ssr,"_ssr",0},
+  {0, 1, shape,"^",{0}},
+  {0, 2, power,"^",{0}},
+  {0, 1, enumerate,"!",{0}},
+  {0, 2, rotate_mod,"!",{0}},
+  {0, 1, grade_up,"<",{0}},
+  {0, 2, less,"<",{0}},
+  {0, 1, grade_down,">",{0}},
+  {0, 2, more,">",{0}},
+  {0, 1, group,"=",{0}},
+  {0, 2, equals,"=",{0}},
+  {0, 1, not_attribute,"~",{0}},
+  {0, 2, match,"~",{0}},
+  {0, 1, atom,"@",{0}},
+  {0, 2, at,"@",{0}},
+  {0, 1, range,"?",{0}},
+  {0, 2, what,"?",{0}},
+  {0, 1, floor_verb,"_",{0}},
+  {0, 2, drop_cut,"_",{0}},
+  {0, 1, enlist,",",{0}},
+  {0, 2, join,",",{0}},
+  {0, 1, count,"#",{0}},
+  {0, 2, take_reshape,"#",{0}},
+  {0, 1, format,"$",{0}},
+  {0, 2, dollar,"$",{0}},
+  {0, 1, dot_monadic,".",{0}},
+  {0, 2, dot,".",{0}},
+  {0, 1, colon_monadic,":",{0}},
+  {0, 2, colon_dyadic,":",{0}},
+  {0, 1, _0m,"0:",{0}}, 
+  {0, 2, _0d,"0:",{0}}, 
+  {0, 1, _1m,"1:",{0}}, 
+  {0, 2, _1d,"1:",{0}}, 
+  {0, 1, _2m,"2:",{0}}, 
+  {0, 2, _2d,"2:",{0}}, 
+  {0, 1, _3m,"3:",{0}}, 
+  {0, 2, _3d,"3:",{0}}, 
+  {0, 1, _4m,"4:",{0}}, 
+  {0, 2, _4d,"4:",{0}}, 
+  {0, 1, _5m,"5:",{0}}, 
+  {0, 2, _5d,"5:",{0}}, 
+  {0, 1, _6m,"6:",{0}}, 
+  {0, 2, _6d,"6:",{0}},  //do not add 7+ here. go to bottom. keep paired as before
+  {0, 1, _acos,"_acos",{0}},
+  {0, 1, _asin,"_asin",{0}},
+  {0, 1, _atan,"_atan",{0}},
+  {0, 1, _ceil,"_ceil",{0}},
+  {0, 1, _cos,"_cos",{0}},
+  {0, 1, _cosh,"_cosh",{0}},
+  {0, 1, _exp,"_exp",{0}},
+  {0, 1, _floor,"_floor",{0}},
+  {0, 1, _log,"_log",{0}},
+  {0, 1, _sin,"_sin",{0}},
+  {0, 1, _sinh,"_sinh",{0}},
+  {0, 1, _sqr,"_sqr",{0}},
+  {0, 1, _sqrt,"_sqrt",{0}},
+  {0, 1, _tan,"_tan",{0}},
+  {0, 1, _tanh,"_tanh",{0}},
+  {0, 1, _abs,"_abs",{0}},
+  {0, 1, _bd,"_bd",{0}},
+  {0, 1, _ceiling,"_ceiling",{0}},
+  {0, 1, _ci,"_ci",{0}},
+  {0, 1, _db,"_db",{0}},
+  {0, 1, _dj,"_dj",{0}},
+  {0, 1, _kona_exit,"_exit",{0}},
+  {0, 1, _getenv,"_getenv",{0}},
+  {0, 1, _gtime,"_gtime",{0}},
+  {0, 1, _host,"_host",{0}},
+  {0, 1, _ic,"_ic",{0}},
+  {0, 1, _inv,"_inv",{0}},
+  {0, 1, _jd,"_jd",{0}},
+  {0, 1, _lt,"_lt",{0}},
+  {0, 1, _ltime,"_ltime",{0}},
+  {0, 1, _size,"_size",{0}},
+  {0, 2, _bin,"_bin",{0}},
+  {0, 2, _binl,"_binl",{0}},
+  {0, 2, _di,"_di",{0}},
+  {0, 2, _dot,"_dot",{0}},
+  {0, 2, _draw,"_draw",{0}},
+  {0, 2, _dv,"_dv",{0}},
+  {0, 2, _dvl,"_dvl",{0}},
+  {0, 2, _hat,"_hat",{0}},
+  {0, 2, _in,"_in",{0}},
+  {0, 2, _lin,"_lin",{0}},
+  {0, 2, _lsq,"_lsq",{0}},
+  {0, 2, _mul,"_mul",{0}},
+  {0, 2, _setenv,"_setenv",{0}},
+  {0, 2, _sm,"_sm",{0}},
+  {0, 2, _ss,"_ss",{0}},
+  {0, 2, _sv,"_sv",{0}},
+  {0, 2, _vs,"_vs",{0}},
+  {0, 3, _ssr,"_ssr",{0}},
   //^^Add new rows here^^
-  {-1,-1,TABLE_END,0,0} //sentinel
+  {-1,-1,TABLE_END,0,{0}} //sentinel
 };
 
 K TABLE_END(){R 0;}
