@@ -45,7 +45,7 @@ I OOM_CD(I g, ...) //out-of-memory count-decrement
 K cd(K a)
 {
   #ifdef DEBUG
-  if(a && a->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd(a) dd(a->c) dd(a->t) dd(a->n) show(a); }
+  if(a && a->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd((I)(L)a) dd(a->c) dd(a->t) dd(a->n) show(a); }
   #endif 
   if(!a || --a->c) R a;
   #ifdef DEBUG
@@ -161,7 +161,7 @@ Z I kexpander(K*p,I n) //expand only.
     if(f<=0) R 1;
 #if defined(__linux__)
     V*w=mremap(a,c,d,MREMAP_MAYMOVE);
-    if(MAP_FAILED!=w) {*p=w; R 1;}
+    if(MAP_FAILED!=w) {*p=(K)w; R 1;}
 #else  
     F m=f/(F)PG; I n=m, g=1; if(m>n) n++;
     DO(n, if(-1==msync(a+e+PG*i,1,MS_ASYNC)) {if(errno!=ENOMEM) {g=0; break;}}
