@@ -61,7 +61,7 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
   if(0==b->t && 0==b->n) R ci(a);//Empty list is identity
   P(0<at && at<5 && 6!=bt,TE)
   //At is either <=0 or dict or nil. b is not ()
-  K z;
+  K z=0;
   if(6==at)
   { // _n . x  for various x in K3.2
     if     (1==bt)z=ci(b);
@@ -109,7 +109,7 @@ K dot(K a, K b) //NB: b can be a cheating 0-type with NULLs .. ?
 K dot_ref(K *p, K *x, K *z, I s, K c, K y)
 {
   K d=*p, f=x?*x:0;
-  I dt=d->t, dn=countI(d), ft=999, fn, yn0;
+  I dt=d->t, dn=countI(d), ft=999, fn, yn0=0;
 
   if(f) {ft=f->t; fn=countI(f);}
   else R NYI;

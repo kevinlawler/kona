@@ -175,8 +175,8 @@ K reshape(K a, K b)
 {
   I an=a->n, bn=b->n;
   if(!an)R first(b);//sic
-  I ns=0,np=-1,x,y=-1;
-  DO(an, if(0>(x=kI(a)[i])){np=i;ns-=x;})//If any <0, only one -1
+  I ns=0,x,y=-1;
+  DO(an, if(0>(x=kI(a)[i])){ns-=x;})//If any <0, only one -1
   P(ns < -1,DOE)
   I p=1; DO(an, p*=kI(a)[i])//Product over
   P(ns<0 && (!p || !bn || bn%p),LE)

@@ -23,7 +23,7 @@ K kclone(K a)//Deep copy -- eliminate where possible
 
     z->t=a->t; 
     I vt=z->n = a->n;
-    K kv;
+    K kv=0;
 
     V*v;
     SW(vt)

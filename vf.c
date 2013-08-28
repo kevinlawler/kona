@@ -122,7 +122,7 @@ Z F tround(F f){F d=FF(f); R (d>0&&!FC(d,1))||(d<0&&!FC(d,0))?ceil(f):floor(f);}
 K dollar(K a, K b) //form/format_dyadic
 {
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
-  K z;
+  K z=0;
   I x = (at <=0 && -3 != at), y = (bt <=0 && -3 != bt);
   P(x && y && an!=bn,LE)
 

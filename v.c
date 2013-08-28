@@ -109,7 +109,7 @@ Z K lookupEntryOrCreate(K *p, S k) //****only *dict or *_n are passed to here
 {
   K a=*p, x;
 
-  if(5==a->t) if(x=DE(a,k)) R x;
+  if(5==a->t) if((x=DE(a,k))) R x;
 
   P(!strlen(k),TE) //TODO verify this noting `. is not `
   P(strchr(k,'.'),DOE)

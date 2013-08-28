@@ -1,5 +1,6 @@
 #include "incs.h"
 
+#include "km.h"
 #include "r.h"
 #include "v.h"
 #include "vq.h"
