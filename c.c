@@ -440,7 +440,9 @@ Z K backslash_t(S s)
 
 
 #ifdef __MACH__
-#include <mach/mach_types.h> 
+#include <mach/mach.h>
+#include <mach/mach_types.h>
+#include <mach/task.h> 
 #endif
 Z K workspace(S s)
 {
@@ -448,7 +450,7 @@ Z K workspace(S s)
   K z=newK(-1,3); U(z)
   struct task_basic_info t_info;
   mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
-  if(KERN_SUCCESS != task_info(mach_task_self(),TASK_BASIC_INFO,&t_info,&t_info_count)) R 0;
+  if(KERN_SUCCESS != task_info(mach_task_self(),TASK_BASIC_INFO,(int *)&t_info,&t_info_count)) R 0;
   kI(z)[0]=t_info.resident_size;
   kI(z)[1]=t_info.virtual_size;
   kI(z)[2]=0;
