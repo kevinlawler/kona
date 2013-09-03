@@ -57,7 +57,7 @@ I tc(S a, S b) //test comparison .  R 0,1,2
 
   fprintf(stderr,"Failed: Memory Leak - %s, %s \nAllocated K: %lld\nUnfreed K  : %lld\nLeak %%     : %f\n", a,b,kreci, c, c/(F)kreci);
   I j=-1;
-  DO(c, do j++; while(!krec[j] && j < kreci); if(j>=kreci) break; K k=krec[j]; if(k){O("c:%lld t:%lld n:%lld | k:%lld\n",k->c,k->t,k->n,(I)(L)k); show(k);} )
+  DO(c, do j++; while(!krec[j] && j < kreci); if(j>=kreci) break; K k=krec[j]; if(k){O("c:%lld t:%lld n:%lld | k:%ld\n",k->c,k->t,k->n,(L)k); show(k);} )
   R 0;
 }
 

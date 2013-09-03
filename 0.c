@@ -76,8 +76,8 @@ K _0m(K a)
   K k;
   z=newK(0,c);
   if(!z) GC;
-  DO(s, if('\n'!=v[i])kK(z)[d]=(V)1+(I)(L)kK(z)[d]; else d++) //2nd run: count lengths (cheat & use pointers' space)
-  DO(c,e=(I)(L)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
+  DO(s, if('\n'!=v[i])kK(z)[d]=(V)1+(L)kK(z)[d]; else d++) //2nd run: count lengths (cheat & use pointers' space)
+  DO(c,e=(L)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
   e=0;
   DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n;) //3rd run: populate 
 

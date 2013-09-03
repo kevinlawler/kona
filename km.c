@@ -45,7 +45,7 @@ I OOM_CD(I g, ...) //out-of-memory count-decrement
 K cd(K a)
 {
   #ifdef DEBUG
-  if(a && a->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd((I)(L)a) dd(a->c) dd(a->t) dd(a->n) show(a); }
+  if(a && a->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd((L)a) dd(a->c) dd(a->t) dd(a->n) show(a); }
   #endif 
   if(!a || --a->c) R a;
   #ifdef DEBUG

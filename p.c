@@ -335,13 +335,13 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
   switch(-M)
   {
     CS(MARK_CONDITIONAL, z=offsetColon)//dummy value
-    CS(MARK_PAREN  ,  z=wd_(s+k+1,r-2,dict,func); if(!z)R (I)(L)PE;) //oom. currently z->t==7 z->n==0.  
+    CS(MARK_PAREN  ,  z=wd_(s+k+1,r-2,dict,func); if(!z)R (L)PE;) //oom. currently z->t==7 z->n==0.  
                      //Execution will know this is paren (for rev order) because of its depth
     CS(MARK_BRACKET,  
 
                       if(!*d || bk(p[-1])){
                         if(func && !k) R r; //Ignore function params. k because no {[a;b][c;d]}
-                        else R (I)(L)PE;}  // [1;2] on a line by itself
+                        else R (L)PE;}  // [1;2] on a line by itself
 
                       a=0;
                       while(a < -1+*d && adverbClass(p[-1-a]))a++;
@@ -356,7 +356,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       V*o = kW(g);
 
                       z=wd_(s+k+1,r-2,dict,func);
-                      if(!z){cd(g); R (I)(L)PE;}
+                      if(!z){cd(g); R (L)PE;}
                       //g o z   oom: you can return 0 but catch above?
 
 
@@ -429,7 +429,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       
                       //Validate brackets in {[..]...} : 0-Absent, 1-OK, 2-Fail
                       I state = param_validate(s+k+1,r-2);
-                      P(state>1,(I)(L)kerr("parameter"))
+                      P(state>1,(L)kerr("parameter"))
 
                       if(state) //Bracketed parameters exist and are well-formed
                       {
@@ -464,7 +464,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       DO(r, if(m[k+i]>=0)continue;
                             l=1;
                             while(m[l+k+i]==MARK_NUMBER)l++;
-                            if(!(u=strdupn(s+k+i,l))){cd(z);R (I)(L)ME;}
+                            if(!(u=strdupn(s+k+i,l))){cd(z);R (L)ME;}
                             g=1==a?formKiCS(u):formKfCS(u);
                             free(u);
                             M(z,g)
@@ -494,7 +494,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
     CS(MARK_NAME   ,  e=strdupn(s+k,r);
                       u=sp(e); //converting to sp() probably unnecessary
                       if(e)free(e);
-                      P(!u,(I)(L)ME) //you can return 0 but catch above?
+                      P(!u,(L)ME) //you can return 0 but catch above?
 
                       //k3.2 knows whether NAME is set for assignment or not.  "b.c" value/parse error but "b.c:3" ok
 
@@ -531,15 +531,15 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if('_'==s[k] && r > 1)
                       {
-                        if(k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r]) R (I)(L)PE;
-                        u=strdupn(s+k,r); P(!u,(I)(L)PE)
+                        if(k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r]) R (L)PE;
+                        u=strdupn(s+k,r); P(!u,(L)PE)
                         I i;
 
                         i=DT_SPECIAL_VERB_OFFSET;
                         while(i < DT_SIZE && (!DT[i].text || SC(u, DT[i].text)))i++;
                         if(i < DT_SIZE){z=(V)(L)i;} //faster is sp()/hash-table (compared to SC())
                         free(u);
-                        P(!z,(I)(L)kerr("reserved"))// _invalidsystemverbname 
+                        P(!z,(L)kerr("reserved"))// _invalidsystemverbname 
                         break; // _verb does not grab monadic ':' following
                       }
 
@@ -557,7 +557,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       if(!is_colon && !(k+1<n && ':'==s[k+1] && -MARK_VERB==m[k+1] ))name_bracket_assign=0;
 
                       //  Handles this case at least (0 0)[0]:1  (works but not proven correct/the right thing to do)
-                      if(i && is_colon && !modifier_colon && !name_bracket_assign) R (I)(L)PE;
+                      if(i && is_colon && !modifier_colon && !name_bracket_assign) R (L)PE;
 
                       I y_present= k+r+1<n && !(s[k+r+1] == ':' && -MARK_VERB==m[k+r+1]) && MARK_END != ABS(m[k+r+1]);
 
@@ -568,7 +568,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       if(is_colon && !modifier_colon)
                       { 
                         a=2;
-                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R (I)(L)PE; 
+                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R (L)PE; 
                           // +:: or 4:: :  or a _abs:  (trailing dyadic :)
                       }
                       else if(name_bracket_assign) a=y_present?2:1;
@@ -580,9 +580,9 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       else
                       { j=(V)(L)atol(s+k);
                         i=DT_SPECIAL_VERB_OFFSET;
-                        while(i < DT_SIZE && (!DT[i].text || (I)(L)j != atol(DT[i].text)))i++;
+                        while(i < DT_SIZE && (!DT[i].text || (L)j != atol(DT[i].text)))i++;
                         if(i<DT_SIZE){z=(V)(L)(i+(1==a?0:1));}
-                        else R (I)(L)PE; //no matching 0: 1: style verb. (if exists, we also allow eg 123: and -2: )
+                        else R (L)PE; //no matching 0: 1: style verb. (if exists, we also allow eg 123: and -2: )
                       }
 
                       //Assignment is not supported for nested bracket: a[][][] +: 1  <--- parse error
@@ -606,7 +606,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
     CSR(MARK_BRACE  ,)
     CSR(MARK_NUMBER ,)
     CSR(MARK_QUOTE  ,)
-    CS (MARK_SYMBOL , z=newE(LS,z); P(!z,(I)(L)ME) kap(locals,&z); cd(z); z=EVP(z) ) //oom
+    CS (MARK_SYMBOL , z=newE(LS,z); P(!z,(L)ME) kap(locals,&z); cd(z); z=EVP(z) ) //oom
   }
 
   *p=z;

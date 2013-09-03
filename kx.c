@@ -27,7 +27,7 @@ Z K overDyad(K a, V *p, K b)
   V *o=p-1; K(*f)(K,K); 
 
   K k=0;
-  if(VA(*o) && (f=DT[(I)(L)*o].alt_funcs.verb_over))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
+  if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_over))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)
 
   K u=0,v=0;
@@ -52,7 +52,7 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
   V *o=p-1; K(*f)(K,K); 
 
   K k=0;
-  if(VA(*o) && (f=DT[(I)(L)*o].alt_funcs.verb_scan))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
+  if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_scan))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)
 
   K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u); //oom
@@ -198,7 +198,7 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
   V *o=p-1; K(*f)(K,K); 
 
   K k=0;
-  if(VA(*o) && (f=DT[(I)(L)*o].alt_funcs.verb_eachpair))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
+  if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_eachpair))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)
 
   I bt=b->t, bn=b->n;
@@ -253,9 +253,9 @@ Z K dv_ex(K a, V *p, K b)
 
   if(2==k)
   {
-    if ((I)(L)adverb == offsetOver) R overDyad(a, p, b);
-    if ((I)(L)adverb == offsetScan) R scanDyad(a, p, b);
-    if ((I)(L)adverb == offsetEach)
+    if ((L)adverb == offsetOver) R overDyad(a, p, b);
+    if ((L)adverb == offsetScan) R scanDyad(a, p, b);
+    if ((L)adverb == offsetEach)
       {
       if(!a) adverb = (V)(L)offsetEachright;
       else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE;
@@ -279,14 +279,14 @@ Z K dv_ex(K a, V *p, K b)
     }
   } else if(2 > k)
   {
-    if ((I)(L)adverb == offsetOver) R overMonad(a, p, b);
-    if ((I)(L)adverb == offsetScan) R scanMonad(a, p, b);
-    if ((I)(L)adverb == offsetEach) R each2(a, p, b);
+    if ((L)adverb == offsetOver) R overMonad(a, p, b);
+    if ((L)adverb == offsetScan) R scanMonad(a, p, b);
+    if ((L)adverb == offsetEach) R each2(a, p, b);
   }
 
-  if((I)(L)adverb == offsetEachright) R eachright2(a, p, b);
-  if((I)(L)adverb == offsetEachleft) R eachleft2(a, p, b);
-  if((I)(L)adverb == offsetEachpair) R eachpair2(a, p, b);
+  if((L)adverb == offsetEachright) R eachright2(a, p, b);
+  if((L)adverb == offsetEachleft) R eachleft2(a, p, b);
+  if((L)adverb == offsetEachpair) R eachpair2(a, p, b);
 
   //this could be better ??
   I gn=0;
@@ -359,7 +359,7 @@ K vf_ex(V q, K g)
   if(gn > 2 && (q==offsetAt   || q==offsetDot )){ z= (q==offsetAt?at_tetradic:dot_tetradic)(a,b,c,d); GC;}
   //common verbs
 
-  if(2==k && a && b){ z=((K(*)(K,K))DT[(I)(L)q].func)(a,b); GC;}
+  if(2==k && a && b){ z=((K(*)(K,K))DT[(L)q].func)(a,b); GC;}
   //? (+).1 -> err ; {[a;b]a+b} 1 -> err
   if(2==k && !a){VE; GC;} //Reachable? Projection?
 
@@ -375,7 +375,7 @@ K vf_ex(V q, K g)
   } //old comment: Projection? '(1+)' -> 1+  Build 7-verb? (Refactor with 'c' from []+: ex and maybe another place?)
 
   //+:[a] ... +:[a;b] handled above (valence err)
-  if(1==k && a) { z= ((K(*)(K))DT[(I)(L)q].func)(a); GC;}
+  if(1==k && a) { z= ((K(*)(K))DT[(L)q].func)(a); GC;}
   if(1==k && !a) GC; //Reachable? Projection?
   //Functions  7-{1,2,3}
   K f = (K) (*(V*)q); I ft=f->t;
@@ -437,7 +437,7 @@ K vf_ex(V q, K g)
     )
     CS(3, //Executing a {} character function such as {1+1}, {x+y+z-1}, or {[a;b] a+b}
 
-      if(((I)(L)kV(f)[DEPTH]) > 500){kerr("stack"); GC; }
+      if(((L)kV(f)[DEPTH]) > 500){kerr("stack"); GC; }
       if(stk > 2e6){kerr("stack"); GC; }
       stk++;
 
@@ -685,7 +685,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     U(a=*w);
     if(7==a->t && 0==a->n && (b=kV(a)[CONJ]) && 7==b->t && 0==b->n ) 
     {
-      U(b=ex_(kV(a)+CONJ,((I)(L)*kW(b)==1 || (I)(L)*(kW(b)+1)==1)?1:2))
+      U(b=ex_(kV(a)+CONJ,((L)*kW(b)==1 || (L)*(kW(b)+1)==1)?1:2))
       w=*kW(a); //K temp=a;  //a=ci(*kW(a)); w=*kW(a); cd(temp);
       if(b->t==0 && b->n==0) {   
         if(1e6<(UI)w) { 

@@ -163,7 +163,7 @@ I valence(V p)
     if(sva(k)>1 && i>1 && !VA(kW(v)[i-2]))R valence(k)-1; //NB: f:(7+);g:(1+|+); both dyad-plus, f valence 1, g valence 2. Rule is 1 for nd; 2 for vd;
     R valence(k);
   }
-  if(2==t) R (I)(L)w[0]; //could we have determined these types implicitly... ?
+  if(2==t) R (L)w[0]; //could we have determined these types implicitly... ?
   if(3==t) R ((K)kV(v)[PARAMS])->n;
   
   R 0;
@@ -248,7 +248,7 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
       for(i=0;(p=v[i]);i++)
       { //TODO: mute extraneous :
 
-        I q=(I)(L)p;
+        I q=(L)p;
         if(q < DT_SIZE && q >= DT_SPECIAL_VERB_OFFSET)
         {  s=DT[q].text;
            k=strlen(s);
