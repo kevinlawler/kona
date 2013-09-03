@@ -85,7 +85,7 @@ C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
 //V vd[]  = {_VERB2};
 
 V offsetSSR, offsetWhat, offsetAt, offsetDot, offsetColon;
-I offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
+L offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
 
 S IFS[3] = {"x","y","z"};
 S IFP[3]; //Implicit function parameters sp(x),...
@@ -94,11 +94,11 @@ I stringHasChar(S s,C c){I i=0;while(s[i])if(c==s[i++])R 1;R 0;} //string never 
 I charpos(S s,C c){I i=0;while(s[i] && c!=s[i])i++; R i;}
 
 I isCharVerb(C c) {R stringHasChar(vc,c);}
-I charsVerb(C c)  {R charpos(vc,c);}
+L charsVerb(C c)  {R charpos(vc,c);}
 Z C verbsChar(V p)  {R ((L)p>=DT_VERB_OFFSET && (L)p < DT_SPECIAL_VERB_OFFSET)?vc[((L)p-DT_VERB_OFFSET)/2]:'\0';}
 
 Z C adverbsChar(V p){R ((L)p>=DT_ADVERB_OFFSET)?ac[((L)p-DT_ADVERB_OFFSET)%3]:'\0';}
-I charsAdverb(C c) {R charpos(ac,c);}
+L charsAdverb(C c) {R charpos(ac,c);}
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
 { 
@@ -511,9 +511,9 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
 };
 
 K TABLE_END(){R 0;}
-I DT_SIZE=0;
-I DT_END_OFFSET, DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VERB_OFFSET;
-I DT_OFFSET(V v){I i=0; while(v!=DT[i].func)i++; R i;} //init only
+L DT_SIZE=0;
+L DT_END_OFFSET, DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VERB_OFFSET;
+L DT_OFFSET(V v){I i=0; while(v!=DT[i].func)i++; R i;} //init only
 
 I kreci=0;  //should be inside DEBUG case but needed in r.c cached verbs, at least until caching method changes
 #ifdef DEBUG

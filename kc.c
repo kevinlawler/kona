@@ -241,11 +241,11 @@ I kinit() //oom (return bad)
   offsetEachpair  = DT_OFFSET(eachpair);
 
   //could probably delete these variables and create func if(x<DT_SIZE) && DT[x].func == what
-  offsetWhat  = (V)(L)DT_OFFSET(what); //equiv: DT_VERB_OFFSET+1+2*charpos(vc,'?');
-  offsetAt    = (V)(L)DT_OFFSET(at);
-  offsetDot   = (V)(L)DT_OFFSET(dot);
-  offsetColon = (V)(L)DT_OFFSET(colon_dyadic);
-  offsetSSR   = (V)(L)DT_OFFSET(_ssr);
+  offsetWhat  = (V)DT_OFFSET(what); //equiv: DT_VERB_OFFSET+1+2*charpos(vc,'?');
+  offsetAt    = (V)DT_OFFSET(at);
+  offsetDot   = (V)DT_OFFSET(dot);
+  offsetColon = (V)DT_OFFSET(colon_dyadic);
+  offsetSSR   = (V)DT_OFFSET(_ssr);
 
   kerr("undescribed");//initialize errmsg string to be non-null for more useful reporting
   SYMBOLS=newN(); //Initialize intern pool 

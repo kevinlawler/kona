@@ -257,11 +257,11 @@ Z K dv_ex(K a, V *p, K b)
     if ((L)adverb == offsetScan) R scanDyad(a, p, b);
     if ((L)adverb == offsetEach)
       {
-      if(!a) adverb = (V)(L)offsetEachright;
+      if(!a) adverb = (V)offsetEachright;
       else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE;
       else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
-      else if (a->t > 0) adverb = (V)(L)offsetEachright;
-      else if(b->t > 0) adverb = (V)(L)offsetEachleft;
+      else if (a->t > 0) adverb = (V)offsetEachright;
+      else if(b->t > 0) adverb = (V)offsetEachleft;
       else
       {
         //a and b both lists/vectors of size an
@@ -299,7 +299,7 @@ Z K dv_ex(K a, V *p, K b)
   if(gn > 0) kK(g)[0]=a?a:b;
 
   K tmp; I flag=0;
-  if(*p>(V)(L)DT_SIZE && 0!=b->n) {V*p1=*p; if(*p1>(V)(L)DT_SIZE) {K p2=*p1; if(7!=p2->t) flag=1;}}
+  if(*p>(V)DT_SIZE && 0!=b->n) {V*p1=*p; if(*p1>(V)DT_SIZE) {K p2=*p1; if(7!=p2->t) flag=1;}}
   if(flag) tmp = vf_ex(*p,b); 
   else {if(stk>2e6){R kerr("stack"); GC;} stk++; tmp=vf_ex(*p,g); stk--;}
 
@@ -487,7 +487,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
   if(kV(x)[CONJ])
   {
-    if((tmp=*(K*)(kV(x)+CONJ))) if(offsetColon==*kW(tmp) && *(kW(tmp)+1)>(V)(L)DT_SIZE)fer=1;
+    if((tmp=*(K*)(kV(x)+CONJ))) if(offsetColon==*kW(tmp) && *(kW(tmp)+1)>(V)DT_SIZE)fer=1;
     y=ex_(kV(x)+CONJ,2); //Use 0-type with NULLS if passing to function
     U(y); 
     if(y->t == 0 && y->n==0){cd(y); y=_n();}
@@ -499,7 +499,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
   R z;
 }
 
-K ex(K a){U(a); if(7==a->t)if(*(kW(a))>(V)(L)DT_SIZE){K tmp=*(K*)*(kW(a)); if(7==tmp->t)if(6==tmp->n)fwh=1;} K z=ex_(&a,0); cd(a); fer=0; fwh=0; stk=0; proj=0; R z;} //Input is 7-0 type from wd()
+K ex(K a){U(a); if(7==a->t)if(*(kW(a))>(V)DT_SIZE){K tmp=*(K*)*(kW(a)); if(7==tmp->t)if(6==tmp->n)fwh=1;} K z=ex_(&a,0); cd(a); fer=0; fwh=0; stk=0; proj=0; R z;} //Input is 7-0 type from wd()
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
@@ -514,7 +514,7 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
     CS(0, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){cd(z); U(x=ex1(v+1+i,0,&i,n,1)) z=bk(x)?_n():x; if(fer)R z;})//  c:9;a+b;c:1 
     CS(4, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){U(x=ex1(v+1+i,0,&i,n,1)) if(fer)R x; x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); if(i==n) R x; z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;}a=*kI(z);cd(z); if(a)R ex1(v+i+1,0,&i,n,1); else while(i<n&&!bk(v[i]))i++; } R _n())
     CSR(5,)CSR(6,)CS(7, do{I i=0; U(x=ex1(v,0,&i,0,1)) if(fer)R x; x=bk(x)?_n():x; z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;}a=*kI(z);cd(z);i=0;if(b){while(++i<n&&!bk(v[i])); if(i>=n)break;}SW(r){CSR(5,)CS(6,if(a&&b){x=ex0(v+i+1,0,0); if(fer)R x; cd(x);})CS(7,DO2(a, x=ex0(v+i+1,0,0); if(fer)R x; cd(x);))}}while(6==r && a); R _n())
-    CD: z=newK(0,n?e:0); if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){if(offsetColon==(v+1+i)[0] && (v+1+i)[1]>(V)(L)DT_SIZE)fer=1; x=ex1(v+1+i,0,&i,n,0); if(fer){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}// (c:9;a+b;c:1) oom
+    CD: z=newK(0,n?e:0); if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){if(offsetColon==(v+1+i)[0] && (v+1+i)[1]>(V)DT_SIZE)fer=1; x=ex1(v+1+i,0,&i,n,0); if(fer){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}// (c:9;a+b;c:1) oom
   }
 
   //Note on brackets: [] is _n, not (). Expression [1;1] (0-type with two atoms) is different from [1 1] (integer vector)
@@ -633,7 +633,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
 
   if(!c || !VA(w[c-1]) || (c>1 && offsetColon==w[c-1] ) ) R ex2(w,k); //typical list for execution
 
-  if(w[0]==offsetColon && w[1]>(V)(L)DT_SIZE){ 
+  if(w[0]==offsetColon && w[1]>(V)DT_SIZE){ 
     if(w[-1]!=offsetColon) fer=1; 
     I d=0; while(w[d] && !bk(w[d])){d++;} 
     K a=Kv(); a->n=0; K kb=newK(-4,d); M(a,kb) V*b=(V*)kK(kb); DO(d-1, b[i]=w[i+1];) b[d-1]=0; kV(a)[CODE]=kb; 

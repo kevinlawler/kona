@@ -533,11 +533,11 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       {
                         if(k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r]) R (L)PE;
                         u=strdupn(s+k,r); P(!u,(L)PE)
-                        I i;
+                        L i;
 
                         i=DT_SPECIAL_VERB_OFFSET;
                         while(i < DT_SIZE && (!DT[i].text || SC(u, DT[i].text)))i++;
-                        if(i < DT_SIZE){z=(V)(L)i;} //faster is sp()/hash-table (compared to SC())
+                        if(i < DT_SIZE){z=(V)i;} //faster is sp()/hash-table (compared to SC())
                         free(u);
                         P(!z,(L)kerr("reserved"))// _invalidsystemverbname 
                         break; // _verb does not grab monadic ':' following
@@ -545,7 +545,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
 
                       //The code for verb arity is hard to follow. I suspect this is because I could not find the factorization
                       I grab=0;
-                      I i=0;
+                      L i=0;
 
                       I is_colon=':'==s[k];
                       I name_bracket_assign=0;
@@ -575,13 +575,13 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       else if(modifier_colon){m[k+r]*=-1; r++; a=1; grab=1;} //grab monad ':' sign
 
                       i=0;
-                      if(r-grab==1) {z=(V)(L)(DT_VERB_OFFSET+2*charsVerb(s[k])+(1==a?0:1));}
+                      if(r-grab==1) {z=(V)(DT_VERB_OFFSET+2*charsVerb(s[k])+(1==a?0:1));}
 
                       else
-                      { j=(V)(L)atol(s+k);
+                      { j=(V)atol(s+k);
                         i=DT_SPECIAL_VERB_OFFSET;
                         while(i < DT_SIZE && (!DT[i].text || (L)j != atol(DT[i].text)))i++;
-                        if(i<DT_SIZE){z=(V)(L)(i+(1==a?0:1));}
+                        if(i<DT_SIZE){z=(V)(i+(1==a?0:1));}
                         else R (L)PE; //no matching 0: 1: style verb. (if exists, we also allow eg 123: and -2: )
                       }
 
@@ -592,8 +592,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       //what passes for y?  <--- anything that isn't an end/\0, except colon  verb will go on to ex1 to the right and assign _n
 
       )
-    CS(MARK_ADVERB ,  z=(V)(L)(DT_ADVERB_OFFSET+charsAdverb(s[k])+(r>1?3:0)))
-    CS(MARK_END    ,  z=(V)(L)(DT_OFFSET(end)))
+    CS(MARK_ADVERB ,  z=(V)(DT_ADVERB_OFFSET+charsAdverb(s[k])+(r>1?3:0)))
+    CS(MARK_END    ,  z=(V)(DT_OFFSET(end)))
   }
 
   if(!z) ; //TODO: handle null z, which can happen
