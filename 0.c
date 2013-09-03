@@ -812,7 +812,7 @@ K _2d(K a,K b)
   //Mac OS X: gcc -m64 -flat_namespace -undefined suppress -dynamiclib file.c -o file.dylib
   K c,d;
   P((4!=a->t && 3!=ABS(a->t)) || b->t || b->n!=2 || (4!=(c=kK(b)[0])->t && 3!=ABS(c->t)) || 1!=(d=kK(b)[1])->t, TE)
-  I v=*kI(d);
+  L v=*kI(d);
   P(v<0 || v > 7, VE)
 
   cS e;
@@ -827,7 +827,7 @@ K _2d(K a,K b)
   P(!y,DOE)
 
   K z=Kv(), w=newK(-4,3); M(z,w); z->n=2;
-  kK(w)[0]=(V)(L)v;//valence
+  kK(w)[0]=(V)v;//valence
   kK(w)[1]=y;   //function*
   //kK(w)[2]=0;   //reminder
   kV(z)[CODE] = w;

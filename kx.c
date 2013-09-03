@@ -346,7 +346,7 @@ K vf_ex(V q, K g)
   I k=sva(q);
   I n=-1,j=0;
   if(!k&&!(*(V*)q)){cd(g); R 0;}// (2="2") 2 err
-  if(( k || ((K)(*(V*)q))->t==7) && ( (q<(V)(L)DT_SIZE || (*(V*)q))  && gn > (n=valence(q)) && !(!n && 1>=gn))){VE; GC;} 
+  if(( k || ((K)(*(V*)q))->t==7) && ( ((L)q<DT_SIZE || (*(V*)q))  && gn > (n=valence(q)) && !(!n && 1>=gn))){VE; GC;} 
     //could remove 1>=gn condition ?
   I argc=0; DO(gn,if(kK(g)[i])argc++)
 
@@ -570,7 +570,7 @@ Z K bv_ex(V*p,K k)
     R dv_ex(kK(k)[0],p,kK(k)[1]);
   }
 
-  if((V)(L)offsetOver==q)
+  if(offsetOver==(L)q)
   {
     DO(k->n-1, x=kK(k)[i+1]; if(!x->n)R ci(*kK(k)); if(!atomI(x)){if(n&&n!=x->n)R LE;else n=x->n)} //return x_0 if any empty list x_{i>0}
     n=MAX(1,n);//if nothing was a list set to 1
@@ -587,7 +587,7 @@ Z K bv_ex(V*p,K k)
     R z;
   }
 
-  if((V)(L)offsetScan==q)
+  if(offsetScan==(L)q)
   {
     DO(k->n-1, x=kK(k)[i+1]; if(!x)continue; if(!x->n)R ci(*kK(k)); if(!atomI(x)){if(n&&n!=x->n)R LE;else n=x->n)} //return x_0 if any empty list x_{i>0}
     if(!n) R bv_ex(p-1,k); //  {x+y+z}\[1;1;1] yields 1 but {x+y+z}\[1;1;1 1] yields (1 1;3 3;5 5)  
@@ -604,7 +604,7 @@ Z K bv_ex(V*p,K k)
     R z;
   }
 
-  if((V)(L)offsetEach==q)
+  if(offsetEach==(L)q)
   {
     DO(k->n, x=kK(k)[i];if(!x)continue; if(!x->n)R newK(0,0); if(!atomI(x)){if(n&&n!=x->n)R LE;else n=x->n)} //return () on any empty list
     n=MAX(1,n);//if nothing was a list set to 1
@@ -615,19 +615,19 @@ Z K bv_ex(V*p,K k)
     R z;
   }
 
-  if((V)(L)offsetEachright==q) R NYI;//todo: is this reachable?
-  if((V)(L)offsetEachleft ==q) R NYI;//todo: is this reachable?
-  if((V)(L)offsetEachpair ==q) R NYI;//todo: is this reachable?
+  if(offsetEachright==(L)q) R NYI;//todo: is this reachable?
+  if(offsetEachleft ==(L)q) R NYI;//todo: is this reachable?
+  if(offsetEachpair ==(L)q) R NYI;//todo: is this reachable?
 
   R vf_ex(*p,k);
 }
 
 K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (full pieces in between semicolons/newlines) 
 {
-  if(offsetColon==w[0] && w[1]>(V)(L)DT_SIZE && w[2]>(V)(L)DT_SIZE && fwh==0) 
+  if(offsetColon==w[0] && (L)w[1]>DT_SIZE && (L)w[2]>DT_SIZE && fwh==0) 
     {fer=1; if(f)*i=n; else *i=-1; K tmp=*(K*)*(w+1); R ci(tmp); }
   //if(in(*w,adverbs)) R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
-  if( (V)(L)DT_ADVERB_OFFSET <= *w && *w < (V)(L)DT_VERB_OFFSET )R NYI;
+  if( DT_ADVERB_OFFSET <= (L)*w && (L)*w < DT_VERB_OFFSET )R NYI;
 
   I c=0; while(w[c] && !bk(w[c])){c++; if(offsetColon==w[c-1])break;} //must break or assignment is n^2  (a:b:c:1)
 

@@ -69,7 +69,7 @@ I simpleString(S a) //0 on any symbol's string that requires quotes, eg `"a - b!
 }
 
 K end(){R 0;}
-I bk(V p){R p==(V)(L)DT_END_OFFSET;} //break: is ; or \n
+I bk(V p){R (L)p==DT_END_OFFSET;} //break: is ; or \n
 
 C ac[] = "/\\'";
 K over(){R 0;} K scan(){R 0;} K each(){R 0;}
@@ -95,9 +95,9 @@ I charpos(S s,C c){I i=0;while(s[i] && c!=s[i])i++; R i;}
 
 I isCharVerb(C c) {R stringHasChar(vc,c);}
 I charsVerb(C c)  {R charpos(vc,c);}
-Z C verbsChar(V p)  {R (p>=(V)(L)DT_VERB_OFFSET && p < (V)(L)DT_SPECIAL_VERB_OFFSET)?vc[(p-(V)(L)DT_VERB_OFFSET)/2]:'\0';}
+Z C verbsChar(V p)  {R ((L)p>=DT_VERB_OFFSET && (L)p < DT_SPECIAL_VERB_OFFSET)?vc[((L)p-DT_VERB_OFFSET)/2]:'\0';}
 
-Z C adverbsChar(V p){R (p>=(V)(L)DT_ADVERB_OFFSET)?ac[(p-(V)(L)DT_ADVERB_OFFSET)%3]:'\0';}
+Z C adverbsChar(V p){R ((L)p>=DT_ADVERB_OFFSET)?ac[((L)p-DT_ADVERB_OFFSET)%3]:'\0';}
 I charsAdverb(C c) {R charpos(ac,c);}
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
@@ -141,11 +141,11 @@ I valence(V p)
     V*k=kW(v)[i-1];
     // /: or \: or dyadic verb at end, 2, else 1 (other adverb,monadic-verb)
 
-    if(k==(V)(L)offsetEachright || k==(V)(L)offsetEachleft) R 2; //todo: this looks off: eachright can be valence 1? as in +:/:  ?
-    if((i>1 && k==(V)(L)offsetEach) || k==(V)(L)offsetOver || k==(V)(L)offsetScan)  //for f'[x;y;z], f/[x;y;z], ...
+    if((L)k==offsetEachright || (L)k==offsetEachleft) R 2; //todo: this looks off: eachright can be valence 1? as in +:/:  ?
+    if((i>1 && (L)k==offsetEach) || (L)k==offsetOver || (L)k==offsetScan)  //for f'[x;y;z], f/[x;y;z], ...
     {
       V*q; I j=0,s;
-      do q=kW(v)[i-2-(j++)]; while(q==(V)(L)offsetEach || q==(V)(L)offsetOver || q==(V)(L)offsetScan);
+      do q=kW(v)[i-2-(j++)]; while((L)q==offsetEach || (L)q==offsetOver || (L)q==offsetScan);
 
       s=sva(q);
       if(s && !specialValence(q)) R s - ((i-2-j >= 0)?1:0); // |+\ or +\   (leaves out |@\ and @\ ...or not...or intentional...?)
