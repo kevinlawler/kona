@@ -237,7 +237,7 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   if(4==ABS(t)){ 
     if(!a->n) O_("0#`");  
     else { I ss=0,sl;S str;
-           DO(a->n, CPMAX str=kS(a)[i]; if((L)str<(L)DT_SIZE)continue; sl=strlen(str);ss=simpleString(str);
+           DO(a->n, CPMAX str=kS(a)[i]; if((L)str<DT_SIZE)continue; sl=strlen(str);ss=simpleString(str);
                     O_("`"); if(!ss) O_("\""); DO2(sl, O_("%c", str[j] )) if(!ss) O_("\""); O_(i<_i-1?" ":""); ) } }
   if(7==t)
   {
