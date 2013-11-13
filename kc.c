@@ -19,8 +19,7 @@ Z I randomBits();
 // Z I wdss(K *a,FILE *f);
 
 I interrupted = 0;
-extern I scrLim;        // script load limit
-I scrLim=0;
+I scrLim = 0;           // script load limit
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
 

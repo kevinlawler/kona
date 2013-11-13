@@ -15,10 +15,13 @@ Z K ex0(V *v,K k,I r);
 Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
 
-__thread I fer=0; // Flag Early Return 
-__thread I fwh=0; // Flag While
-__thread I stk=0; // Stack counter
-__thread I proj=0; // Projection
+__thread I fer=0;  // Flag Early Return 
+__thread I fwh=0;  // Flag While
+__thread I stk=0;  // Stack counter
+__thread I proj=0; // Projection 
+__thread K prnt=0; // Parent of Subfunction 
+__thread I f1s=1;  // Flag 1 for Subfunctions
+__thread I f2s=0;  // Flag 2 for Subfunctions
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -451,6 +454,13 @@ K vf_ex(V q, K g)
         kV(f)[CACHE_TREE]=tree;
       }
 
+      if(f2s && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
+        K j0=dot_monadic(kV(prnt)[LOCALS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
+        K j2=join(j0,j1); cd(kV(prnt)[CACHE_TREE]); kV(prnt)[CACHE_TREE]=dot_monadic(j2);
+        cd(j0); cd(j1); cd(j2); tree=kV(prnt)[CACHE_TREE]; 
+        cd(kV(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; 
+      }
+
       DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; if(r && i<r->n) *e=ci(kK(r)[i]); if(!*e && j<g->n) *e=ci(kK(g)[j++])) //merge in: CONJ with function args
 
       if(!(fw=kV(f)[CACHE_WD]))
@@ -499,7 +509,9 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
   R z;
 }
 
-K ex(K a){U(a); if(7==a->t)if(*(kW(a))>(V)DT_SIZE){K tmp=*(K*)*(kW(a)); if(7==tmp->t)if(6==tmp->n)fwh=1;} K z=ex_(&a,0); cd(a); fer=0; fwh=0; stk=0; proj=0; R z;} //Input is 7-0 type from wd()
+K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
+  U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
+  K z=ex_(&a,0); cd(a); fer=fwh=stk=proj=f2s=0; f1s=1; prnt=0; R z; }
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
@@ -672,10 +684,30 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   if(bk(*v)) R *v;  // ; case
 
-  if(!v[1] && !k){ R ex_(*v,1); }  // n case
+  if(!v[1] && !k){  // n case
+    K z=ex_(*v,1);
+    if(z>(K)DT_SIZE && z->t==7 && z->n==3){
+      if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n){
+        K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
+        K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); 
+      } 
+      prnt=z; 
+    }
+    R z; 
+  }
+
   if(!v[1] && sva(*v)){ R vf_ex(*v,k);}  //TODO: (,/:) and (,\:) both valence 2  
-  //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]   
-  if(bk(v[1])) R ex_(*v,1);
+  //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
+
+  if(bk(v[1])){
+    K z= ex_(*v,1);
+    if(prnt && z->t==7 && z->n==3 && kV(prnt)[CACHE_TREE] && kV(z)[LOCALS] && !kK(z)[LOCALS]->n){
+      K j0=dot_monadic(kV(prnt)[CACHE_TREE]); K j1=dot_monadic(kV(z)[LOCALS]); 
+      K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2);
+      cd(j0); cd(j1); cd(j2); f1s=0; prnt=z; 
+    }
+    R z; 
+  }
 
   if(!VA(*v) && (offsetColon == v[1] || (VA(v[1]) && offsetColon==v[2]) ) ) //Handle assignment
   {
@@ -728,7 +760,17 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   i=0; while(adverbClass(v[1+i])) i++; //ALT'Y: i=adverbClass(b)?i+1:0;
   t2=ex2(v+1+i,k); //oom. these cannot be placed into single function call b/c order of eval is unspecified
   t3=ex_(*v,1);
-    u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
+  if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
+    if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD]){
+      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n && !kK(t3)[LOCALS]->n) {
+        f2s=1;
+        cd(kK(t3)[CACHE_TREE]); kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
+      }
+    }
+    prnt=t3; 
+  }
+
+  u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
   *v=VA(t3)?t3:(V)&t3;
   e=dv_ex(0,v+i,t2); *v=u;
   cd(t2); if(!VA(t3)) cd(t3);

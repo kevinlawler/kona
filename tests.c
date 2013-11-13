@@ -57,7 +57,7 @@ I tc(S a, S b) //test comparison .  R 0,1,2
 
   fprintf(stderr,"Failed: Memory Leak - %s, %s \nAllocated K: %lld\nUnfreed K  : %lld\nLeak %%     : %f\n", a,b,kreci, c, c/(F)kreci);
   I j=-1;
-  DO(c, do j++; while(!krec[j] && j < kreci); if(j>=kreci) break; K k=krec[j]; if(k){O("c:%lld t:%lld n:%lld | k:%ld\n",k->c,k->t,k->n,(L)k); show(k);} )
+  DO(c, do j++; while(!krec[j] && j < kreci); if(j>=kreci) break; K k=krec[j]; if(k){O("c:%lld t:%lld n:%lld | k:%p\n",k->c,k->t,k->n,k); show(k);} )
   R 0;
 }
 
@@ -150,11 +150,47 @@ Z I tests02()
   TC(7, {a::[1;7];a} 0)
 
   //Subfunctions
-  TC(skip, 3, {b:3; g:{b}; b:4; g[]}0) //Subfunctions inherit constants
-  TC(123, {g:{b:1};b::123;g[]} 0;b)
-  TC(3, {b:3; {b:4} 0; b}0)
-  TC(3,{[a;b]{[c;d]c+d}[a;b]}[1;2])
-  TC(2,{[a;a]a+a}[1;9]) //oddly enough
+  TC( 3, {b:3; g:{b}; b:4; g[]}0)       // inheritance: same var in prnt&child  child res
+  TC( 4, {b:3; g:{b}; b:4; b}0)         // inheritance: same var in prnt&child  prnt res
+  TC(_n, {b:3; g:{a}; b:4; g[]}0)       // inheritance: diff var in prnt/child, child res
+  TC( 4, {b:3; g:{a}; b:4; b}0)         // inheritance: diff var in prnt/child, prnt res
+  TC( 1, {g:{b:1}; g[]}0)               // :: subf-asgn, no prnt-asgn
+  TC(12, {g:{b:1}; b::12; g[]}0;b)      // :: gl-asgn, gl-res (no prnt-asgn)
+  TC( 1, {g:{b:1}; b::12; g[]}0)        // :: gl-asgn, child-res (no prnt-asgn)
+  TC( 1, {g:{b:1}; c::12; g[]}0)        // :: gl-asgn, child-res (diff gl variable)
+  TC( 4, {g:{b:1}; b::12; b:4; b}0)     // :: gl-asgn, prnt-res (prnt-asgn after gl-asgn)
+  TC(_n, {g:{b:1}; b::12; b:4; b}0;b)   // :: gl-asgn, glbl-res (prnt-asgn after gl-asgn)
+  TC(12, {g:{b:1}; b::12; b}0)          // :: gl-asgn, prnt-res (no prnt-asgn)
+  TC(12, {g:{b:1}; b:4; b::12; b}0)     // :: gl-asgn, prnt-res (prnt-asgn before gl-asgn)
+  TC(_n, {g:{b:1}; b:4; b::12; b}0;b)   // :: gl-asgn, glbl-res (prnt-asgn before gl-asgn)
+  TC(12, b:3;{g:{b:1};b::12;g[]} 0;b)   // :: gl-asgn, pre-existing gl
+  TC( 1, {g:{b:1;b}; b:12; g[]}0)       // :  prnt-asgn, child res
+  TC( 3, {b:3; {b:4; b}0; b}0)          // :  prnt-asgn, prnt res
+  TC( 3, {[a;b]{[c;d]c+d}[a;b]}[1;2])   // 2 explicit bracket args
+  TC( 2, {[a;a]a+a}[1;9])               // oddly enough (no subfunction)
+  TC( 1 10, {a:10; {x,a}x}1)            // 1 implicit arg: x
+  TC( 1 2 10, {a:10;{x,y,a}[x;y]}[1;2]) // 2 implicit args x,y
+  TC( 7, {{x+y+z}[x;y;z]+1}[1;2;3])     // 3 implict args: x,y,z
+  TC( 8, {x+{b:3;g:{b};b:4;g[]}0}5)     // Depth-2 and inheritance
+  TC( 4, {x-{x+{b:3;g:{b};b:4;g[]}0}5}12)  // Depth-3 and inheritance
+  TC(3 5, {x+y,{x-{x+{b:3;g:{b};b:4;g[]}0}5}12}[1;2])  // Depth-4
+  TC( 9, {+/x,{x+y,4}[1;2]}1)           // 2-level implicit args
+  TC( 9, {+/x,{x+y,{x-{x+{b:3; g:{b}; b:4; g[]}0}5}12}[1;2]}1) // Depth-5
+  TC( 5, {+/x,{x+y,{x-{x+{b:3; g:{b}; b:4; :7; g[]}0}5}12}[1;2]}1) // early-return in level-5
+  TC( 7, {+/x,{x+y,{x-{x+{b:3; g:{b}; b:4; g[]}0}5}12}[1;2]; :7}1) // early-return in level-1
+  TC( 3, {{b:3; g:{b}; b:4; g[]}0}0)    // unbuffered double braces
+  TC( 4, {1+{b:3; g:{b}; b:4; g[]}0}0)  // buffered double braces 
+  TC( 8, {({b:3;g:{b};b:4;g[]}0) + {b:5;g:{b};b:6;g[]}0}0) //double independent subfuncs
+  TC( 3, b:9; {b:3;g:{b};b:4;g[]}0)     // pre-existing K-Tree entry
+  TC(25, {{+/x,{x+y,{x-{x+{b:3;g:{b};b:4;g[]}0}5}12}[1;2]}1 + {x+{b:3;g:{b};b:4;g[]}0}5 + {x-{x+{b:3;g:{b};b:4;g[]}0}5}12 + x}4)
+         // 4 stacks: depth-5, depth-2, depth-3, and implicit
+  TC(1 3 10 3 10, g:1; do[2;{a:10; g::g,{x,a}x}3]; g) // do[2;] loop with subfunction (implicit arg) 
+  TC( 7, f:{x+y+z}; g:f[1;;3]; {b:3; h:{b}; b:4; g[h[ ] ] }0) // projection and subfunction
+  TC( 3, {:[x<2;1;_f[x-1]*x]}/: 2 3 4; {b:3; g:{b}; b:4; g[]}0) // muti-statement combo test
+  TC(120, {b:3; g:{b}; a::{:[x<2; 1; _f[x-1]*x]}5; g[ ]}0; a) // embedded _f with atom-arg
+  TC(2 6 24, {b:3; g:{b}; a::{:[x<2; 1; _f[x-1]*x]}/:2 3 4; g[ ]}0; a) // embedded _f with list-arg
+  TC( 5, {x + {[a] a+a} y}[1;2])        // Leon Baum test
+  TC( 5, {[a;b] a + {x+x} b}[1;2])      // Leon Baum test-2
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
