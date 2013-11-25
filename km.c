@@ -42,55 +42,35 @@ I OOM_CD(I g, ...) //out-of-memory count-decrement
 //Arthur says he doesn't use malloc or free. Andrei Moutchkine claims smallest unit is vm page (his truss says no malloc + add pages one at a time).
 //Arthur not using malloc is probably true. No strdup & related functions in binary's strings. Note: Skelton references "different allocator" not in \w report
 //This source would be improved by getting ridding of remaing malloc/calloc/realloc
-K cd(K x)
+K cd(K a)
 {
   #ifdef DEBUG
-  if(x && x->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd((L)x) dd(x->c) dd(x->t) dd(x->n) show(x); }
+  if(a && a->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd((L)a) dd(a->c) dd(a->t) dd(a->n) show(a); }
   #endif 
-
-  P(!x,0)
-  x->c -= 1;
-
-  SW(xt)
-  {
-    CSR(5,)
-    CS(0, DO(xn, cd(kK(x)[xn-i-1]))) //repool in reverse, attempt to maintain order
-  }
-
-  if(x->c > 0) R x;
-
+  if(!a || --a->c) R a;
   #ifdef DEBUG
-  DO(kreci, if(x==krec[i]){krec[i]=0; break; })
+  DO(kreci, if(a==krec[i]){krec[i]=0; break; })
   #endif 
 
-  SW(xt)
+  SW(a->t)
   {
-    CS(7, DO(-2+TYPE_SEVEN_SIZE,cd(kV(x)[2+i]))) //-4 special trick: don't recurse on V members. assumes sizeof S==K==V.  (don't free CONTEXT or DEPTH)
+    CS(7, DO(-2+TYPE_SEVEN_SIZE,cd(kV(a)[2+i]))) //-4 special trick: don't recurse on V members. assumes sizeof S==K==V.  (don't free CONTEXT or DEPTH)
+    CSR(5,)
+    CS(0, DO(a->n, cd(kK(a)[a->n-i-1]))) //repool in reverse, attempt to maintain order
   }
 
   #ifdef DEBUG
   if(0)R 0; //for viewing K that have been over-freed
   #endif
-  //assumes seven_type x->k is < PG
-  I o=((size_t)x)&(PG-1);//file-mapped? 1:
-  I k=sz(xt,xn), r=lsz(k);
+  //assumes seven_type a->k is < PG
+  I o=((size_t)a)&(PG-1);//file-mapped? 1:
+  I k=sz(a->t,a->n), r=lsz(k);
   //assert file-maps have sizeof(V)==o and unpooled blocks never do (reasonable)
-  if(sizeof(V)==o || r>KP_MAX)munmap(((V)x)-o,k+o); //(file-mapped or really big) do not go back into pool. 
-  else repool(x,r);
+  if(sizeof(V)==o || r>KP_MAX)munmap(((V)a)-o,k+o); //(file-mapped or really big) do not go back into pool. 
+  else repool(a,r);
   R 0;
 }
-
-K ci(K x)
-{
-  P(!x,0)
-  x->c++;
-  SW(xt)
-  {
-    CSR(5,)
-    CS(0, DO(xn, ci(kK(x)[i])))
-  }
-  R x;
-}
+K ci(K a){if(a)a->c++; R a;}
 
 I bp(I t) {SW(ABS(t)){CSR(1, R sizeof(I)) CSR(2, R sizeof(F)) CSR(3, R sizeof(C)) CD: R sizeof(V); } } //Default 0/+-4/5/6/7  (assumes sizeof(K)==sizeof(S)==...)
 I sz(I t,I n){R 3*sizeof(I)+(7==t?TYPE_SEVEN_SIZE:n)*bp(t)+(3==ABS(t));} //not recursive. assert sz() > 0:  Everything gets valid block for simplified munmap/(free)
