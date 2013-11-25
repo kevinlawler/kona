@@ -302,7 +302,7 @@ Z K dv_ex(K a, V *p, K b)
   if(gn > 0) kK(g)[0]=a?a:b;
 
   K tmp; I flag=0;
-  if(*p>(V)DT_SIZE && 0!=b->n){
+  if(*p>(V)DT_SIZE && b->n){
     V*p1=*p;
     if(*p1>(V)DT_SIZE){
       K p2=*p1;
