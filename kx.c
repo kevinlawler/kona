@@ -302,8 +302,14 @@ Z K dv_ex(K a, V *p, K b)
   if(gn > 0) kK(g)[0]=a?a:b;
 
   K tmp; I flag=0;
-  if(*p>(V)DT_SIZE && 0!=b->n) {V*p1=*p; if(*p1>(V)DT_SIZE) {K p2=*p1; if(7!=p2->t) flag=1;}}
-  if(flag) tmp = vf_ex(*p,b); 
+  if(*p>(V)DT_SIZE && 0!=b->n){
+    V*p1=*p;
+    if(*p1>(V)DT_SIZE){
+      K p2=*p1;
+      if(7!=p2->t && -1!=p2->t) flag=1;
+    }
+  }
+  if(flag) tmp=vf_ex(*p,b); 
   else {if(stk>2e6){R kerr("stack"); GC;} stk++; tmp=vf_ex(*p,g); stk--;}
 
  cleanup:
