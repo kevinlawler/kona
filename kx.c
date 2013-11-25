@@ -315,7 +315,6 @@ Z K dv_ex(K a, V *p, K b)
     stk++; tmp=vf_ex(*p,g); stk--;
   }
 
- cleanup:
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
   R tmp;
 }
