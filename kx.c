@@ -310,7 +310,10 @@ Z K dv_ex(K a, V *p, K b)
     }
   }
   if(flag) tmp=vf_ex(*p,b); 
-  else {if(stk>2e6){R kerr("stack"); GC;} stk++; tmp=vf_ex(*p,g); stk--;}
+  else{
+    if(stk>2e6) R kerr("stack"); 
+    stk++; tmp=vf_ex(*p,g); stk--;
+  }
 
  cleanup:
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
