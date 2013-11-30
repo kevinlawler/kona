@@ -191,8 +191,8 @@ Z I tests02()
   TC(2 6 24, {b:3; g:{b}; a::{:[x<2; 1; _f[x-1]*x]}/:2 3 4; g[ ]}0; a) // embedded _f with list-arg
   TC( 5, {x + {[a] a+a} y}[1;2])        // Leon Baum test
   TC( 5, {[a;b] a + {x+x} b}[1;2])      // Leon Baum test-2
-  TC( 3, {[n]a:n;{x}a}3 )               // Variable scope problem
-  TC_("(7 0;7 1;7 2)", "{a:5;{(7;x)}'[!3]}[]")
+  TC_("(7 0;7 1;7 2)", "f:{(7;x)};{[n]a:n;f'[!a]}[3]") // Variable scope
+  TC_("(7 0;7 1;7 2)", "{a:5;{(7;x)}'[!3]}[]")         // More complicated variable scope
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
