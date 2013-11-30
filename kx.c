@@ -770,7 +770,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   t3=ex_(*v,1);
   if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
     if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD]){
-      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n && !kK(t3)[LOCALS]->n) {
+      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n && !kK(t3)[LOCALS]->n && 
+         kK(kK(prnt)[CACHE_WD])[LOCALS]->n>1) {
         f2s=1;
         cd(kK(t3)[CACHE_TREE]); kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
       }
