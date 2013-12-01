@@ -377,7 +377,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       K* f = p[-1-a];
                       if(!sva(f))
                       {
-                        if(MARK_ADVERB==ABS(m[k-1-a]))
+                        if(MARK_ADVERB==ABS(m[k-1-a]) || MARK_ADVERB==ABS(m[k-a]))
                         {
                           //do nothing for '[] and ':[]  (and sort of / /: \ \: ... but they don't reach here)
                         }
