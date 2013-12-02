@@ -154,7 +154,7 @@ K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/director
     else if(-3==at) DO(bn,kC(z)[i]=kC(a)[kI(b)[i]])
     else if(-2==at) DO(bn,kF(z)[i]=kF(a)[kI(b)[i]])
     else if(-1==at) DO(bn,kI(z)[i]=kI(a)[kI(b)[i]])
-    else if( 0==at){DO(bn,kK(z)[i]=ci(kK(a)[kI(b)[i]])) z=collapse(z);}
+    else if( 0==at){DO(bn,kK(z)[i]=ci(kK(a)[kI(b)[i]])) if(bt==ABS(bt) || bn!=1)z=collapse(z);}
   }
   else if(4==ABS(bt))
   {
