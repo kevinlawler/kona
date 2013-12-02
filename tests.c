@@ -193,6 +193,7 @@ Z I tests02()
   TC( 5, {[a;b] a + {x+x} b}[1;2])      // Leon Baum test-2
   TC_("(7 0;7 1;7 2)", "f:{(7;x)};{[n]a:n;f'[!a]}[3]") // Variable scope
   TC_("(7 0;7 1;7 2)", "{a:5;{(7;x)}'[!3]}[]")         // More complicated variable scope
+  TC(1 3, a:{x/y}; b:{a[{(x;#y)};x]}; b[(1;1 2 3)])    // Subfunctions and juxtaposition
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
