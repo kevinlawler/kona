@@ -487,6 +487,7 @@ Z I tests02()
   TC_("skip","(,':)[1 2;3 4] ~ (1 2;4 3)")
 
   TC(("ab";,"ab";("ab";"cd")), (2 2 # "abcd")[(0;,0;0 1)]) // indexing scalars & singletons 
+  TC(("a";),"a",:[1;;"b"])  // concatenating with "nothing"
 
   R 0; 
 }
