@@ -637,13 +637,13 @@ Z K bv_ex(V*p,K k)
 
   if(offsetEachright==(L)q) 
   {
-    P(k->n!=2,VE);
+    P(k->n!=2,VE)
     K a=kK(k)[0],b=kK(k)[1];
     R eachright2(a,p,b);
   }
   if(offsetEachleft ==(L)q)
   {
-    P(k->n!=2,VE);
+    P(k->n!=2,VE)
     K a=kK(k)[0],b=kK(k)[1];
     R eachleft2(a,p,b);
   }
