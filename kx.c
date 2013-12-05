@@ -635,8 +635,18 @@ Z K bv_ex(V*p,K k)
     R z;
   }
 
-  if(offsetEachright==(L)q) R NYI;//todo: is this reachable?
-  if(offsetEachleft ==(L)q) R NYI;//todo: is this reachable?
+  if(offsetEachright==(L)q) 
+  {
+    P(k->n!=2,VE)
+    K a=kK(k)[0],b=kK(k)[1];
+    R eachright2(a,p,b);
+  }
+  if(offsetEachleft ==(L)q)
+  {
+    P(k->n!=2,VE)
+    K a=kK(k)[0],b=kK(k)[1];
+    R eachleft2(a,p,b);
+  }
   if(offsetEachpair ==(L)q) R NYI;//todo: is this reachable?
 
   R vf_ex(*p,k);
