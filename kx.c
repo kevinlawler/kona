@@ -627,11 +627,12 @@ Z K bv_ex(V*p,K k)
   if(offsetEach==(L)q)
   {
     DO(k->n, x=kK(k)[i];if(!x)continue; if(!x->n)R newK(0,0); if(!atomI(x)){if(n&&n!=x->n)R LE;else n=x->n)} //return () on any empty list
+    I c=!n;//collapse needed
     n=MAX(1,n);//if nothing was a list set to 1
     K z=newK(0,n), g=newK(0,k->n); M(g,z)//break [;;...] into subpieces for f, store in g
     DO(n, K x; DO2(k->n, x=itemAtIndex(kK(k)[j],i); M(x,g,z) kK(g)[j]=x) x=bv_ex(p-1,g); M(x,z,g) kK(z)[i]=x; DO2(k->n, cd(kK(g)[j]); kK(g)[j]=0))//sic =0
     cd(g);
-    z=collapse(z);
+    if(c)z=collapse(z);else z=demote(z);
     R z;
   }
 
