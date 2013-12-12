@@ -351,7 +351,6 @@ K vf_ex(V q, K g)
 
   if(!g)R 0; //??? R w converted to type7...or ?
   K z=0;
-  I f3s=0;  // Flag 3 for Subfunctions
   U(g=promote(g))
   I gn=g->n;
 
@@ -474,13 +473,6 @@ K vf_ex(V q, K g)
 
       if(!(fw=kV(f)[CACHE_WD]))
       {
-
-        if(prnt && prnt!=f && kV(prnt)[CACHE_TREE] && kV(f)[CACHE_TREE] && kK(prnt)[LOCALS]->n)
-        {
-          K j0=dot_monadic(kV(f)[CACHE_TREE]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-          K j2=join(j0,j1); tree=dot_monadic(j2); cd(j0); cd(j1); cd(j2); f3s=1;
-        }
-
         K fc = kclone(f); //clone the function to pass for _f
         cd(kV(fc)[CONJ]);kV(fc)[CONJ]=0;
         kV(fc)[DEPTH]++;
@@ -490,9 +482,8 @@ K vf_ex(V q, K g)
       }
 
       ci(fw);
-      z=ex(fw);
-      if(f3s) cd(tree);
-      else DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0;)
+      z=ex(fw); 
+      DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; )
       stk--;
     )
   }
@@ -797,8 +788,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         cd(kK(t3)[CACHE_TREE]); kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
       }
     }
-  if(! (prnt && kV(prnt)[PARAMS] && kK(prnt)[PARAMS]->n==2 && 
-     kV(prnt)[CACHE_WD] && kK(kK(prnt)[CACHE_WD])[LOCALS]->n==1 && kK(t3)[PARAMS]->n==1)) prnt=t3; 
+    prnt=t3; 
   }
 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
