@@ -478,8 +478,7 @@ K vf_ex(V q, K g)
         if(prnt && prnt!=f && kV(prnt)[CACHE_TREE] && kV(f)[CACHE_TREE] && kK(prnt)[LOCALS]->n)
         {
           K j0=dot_monadic(kV(f)[CACHE_TREE]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-          K j2=join(j0,j1); tree=dot_monadic(j2); ci(tree);
-          cd(j0); cd(j1); cd(j2); f3s=1;
+          K j2=join(j0,j1); tree=dot_monadic(j2); cd(j0); cd(j1); cd(j2); f3s=1;
         }
 
         K fc = kclone(f); //clone the function to pass for _f
@@ -500,7 +499,6 @@ K vf_ex(V q, K g)
 
 cleanup:
   cd(g);
-  if(f3s) cd(tree);
   R z;
 }
 
