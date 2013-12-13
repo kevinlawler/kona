@@ -195,7 +195,7 @@ Z I tests02()
   TC_("(7 0;7 1;7 2)", "{a:5;{(7;x)}'[!3]}[]")         // More complicated variable scope
   TC(1 3, a:{x/y}; b:{a[{(x;#y)};x]}; b[(1;1 2 3)])    // Subfunctions and juxtaposition
   TC_("2 2#!4" , "a:{[f;c]f/'c}; c:2 2#!4; {d:a[{(x;y)};x];d}c") // Subfunction args & local variables
-  //TC(1 2, {a:x;{[b]a,b}y}[1;2])         // Outer scope shadowed depending on argument passing syntax
+  TC(1 2, {a:x;{[b]a,b}y}[1;2])         // Outer scope shadowed depending on argument passing syntax
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
