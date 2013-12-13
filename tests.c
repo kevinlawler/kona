@@ -195,7 +195,12 @@ Z I tests02()
   TC_("(7 0;7 1;7 2)", "{a:5;{(7;x)}'[!3]}[]")         // More complicated variable scope
   TC(1 3, a:{x/y}; b:{a[{(x;#y)};x]}; b[(1;1 2 3)])    // Subfunctions and juxtaposition
   TC_("2 2#!4" , "a:{[f;c]f/'c}; c:2 2#!4; {d:a[{(x;y)};x];d}c") // Subfunction args & local variables
-  //TC(1 2, {a:x;{[b]a,b}y}[1;2])         // Outer scope shadowed depending on argument passing syntax
+  //TC(1 2, {a:x;{[b]a,b}y}[1;2])  // Outer scope shadowed depending on argument passing syntax: issue #221
+  TC_("(1 0;3 2)", "g:{[x;f]l:x[;0];r:x[;1];l f' r}; d:2 2#!4; g[d;{y,x}]")      // issue #221
+  TC_("(1 0;3 2)", "g:{[x;f]l:x[;0];r:x[;1];l f' r}; a:{y,x}; d:2 2#!4; g[d;a]") // issue #221
+  TC_("(0 3;1 3;2 3;3 3;4 3;5 3)","{{[x;t](t,x)}[x]'!y+x}[3;3]")   // s0 from issue #221 comments
+  //TC_("(0 3;1 3;2 3;3 3;4 3;5 3)","{{[t](t,x)}'!y+x}[3;3]")      // s1 from issue #221 comments
+  //TC_("(0 3;1 3;2 3;3 3;4 3;5 3)","{a:x;{[t](t,x)}'!y+x}[3;3]")  // s2 from issue #221 comments
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
@@ -491,8 +496,6 @@ Z I tests02()
 
   TC(("ab";,"ab";("ab";"cd")), (2 2 # "abcd")[(0;,0;0 1)]) // indexing scalars & singletons 
   TC(("a";),"a",:[1;;"b"])  // concatenating with "nothing"
-  TC_("(1 0;3 2)", "g:{[x;f]l:x[;0];r:x[;1];l f' r}; a:{y,x}; d:2 2#!4; g[d;{y,x}]")
-  TC_("(1 0;3 2)", "g:{[x;f]l:x[;0];r:x[;1];l f' r}; a:{y,x}; d:2 2#!4; g[d;a]")
 
   R 0; 
 }
