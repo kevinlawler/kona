@@ -491,7 +491,7 @@ Z I tests02()
 
   TC(("ab";,"ab";("ab";"cd")), (2 2 # "abcd")[(0;,0;0 1)]) // indexing scalars & singletons 
   TC(("a";),"a",:[1;;"b"])  // concatenating with "nothing"
-  TC_("(1 0;3 2)", "g:{[x;f]l:x[;0];r:x[;1];l f' r}; a:{y,x}; d:2 2#!4; g[d;{y,x}]")
+  TC_("(1 0;3 2)", "g:{[x;f]l:x[;0];r:x[;1];l f' r}; d:2 2#!4; g[d;{y,x}]")
   TC_("(1 0;3 2)", "g:{[x;f]l:x[;0];r:x[;1];l f' r}; a:{y,x}; d:2 2#!4; g[d;a]")
 
   R 0; 
