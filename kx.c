@@ -787,7 +787,15 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         K* x=(K*)kS(kK(kK(prnt)[CACHE_WD])[CODE])[4]; K z=*x;
         if(!(z->t==7 && z->n==0)){
           f2s=1;
-          cd(kK(t3)[CACHE_TREE]); kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
+          if(kV(t3)[CACHE_WD])
+          {
+            cd(kK(t3)[CACHE_TREE]); kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
+          }
+          else 
+          {
+            K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
+            K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
+          }
         }
       }
     }
