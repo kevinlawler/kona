@@ -799,7 +799,15 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
           {
             K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
             K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
-    } } } }
+          }
+        }
+      }
+      else if(!kK(t3)[LOCALS]->n) 
+      {
+        K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
+        K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
+      }
+    }
     prnt=t3; 
   }
 
