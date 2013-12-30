@@ -781,11 +781,15 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   i=0; while(adverbClass(v[1+i])) i++; //ALT'Y: i=adverbClass(b)?i+1:0;
   t2=ex2(v+1+i,k); //oom. these cannot be placed into single function call b/c order of eval is unspecified
   t3=ex_(*v,1);
-  if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
-    if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD]){
-      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n && !kK(t3)[LOCALS]->n) {
+  if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3)
+  {
+    if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD])
+    {
+      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n && !kK(t3)[LOCALS]->n)
+      {
         K* x=(K*)kS(kK(kK(prnt)[CACHE_WD])[CODE])[4]; K z=*x;
-        if(!(z->t==7 && z->n==0)){
+        if(!(z->t==7 && z->n==0))
+        {
           f2s=1;
           if(kV(t3)[CACHE_WD])
           {
@@ -795,10 +799,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
           {
             K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
             K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
-          }
-        }
-      }
-    }
+    } } } }
     prnt=t3; 
   }
 
