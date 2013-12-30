@@ -462,7 +462,7 @@ K vf_ex(V q, K g)
         kV(f)[CACHE_TREE]=tree;
       }
 
-      if(f2s && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
+        if(f2s && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
         K j0=dot_monadic(kV(prnt)[LOCALS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
         K j2=join(j0,j1); cd(kV(prnt)[CACHE_TREE]); kV(prnt)[CACHE_TREE]=dot_monadic(j2);
         cd(j0); cd(j1); cd(j2); tree=kV(prnt)[CACHE_TREE]; 
@@ -783,16 +783,16 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   t3=ex_(*v,1);
   if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3)
   {
-    if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD])
+    if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n)
     {
-      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n && !kK(t3)[LOCALS]->n)
+      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n)
       {
         K* x=(K*)kS(kK(kK(prnt)[CACHE_WD])[CODE])[4]; K z=*x;
         if(!(z->t==7 && z->n==0))
         {
-          f2s=1;
           if(kV(t3)[CACHE_WD])
           {
+            f2s=1;
             cd(kK(t3)[CACHE_TREE]); kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
           }
           else 
@@ -802,7 +802,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
           }
         }
       }
-      else if(!kK(t3)[LOCALS]->n) 
+      else 
       {
         K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
         K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
