@@ -720,7 +720,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   if(bk(v[1])){
     K z= ex_(*v,1);
-    if(prnt && z->t==7 && z->n==3 && 
+    if(z && prnt && z->t==7 && z->n==3 && 
        kV(prnt)[CACHE_TREE] && kK(prnt)[LOCALS]->n && !kK(prnt)[PARAMS]->n &&
        kV(z)[LOCALS] && !kK(z)[LOCALS]->n){
       K j0=dot_monadic(kV(prnt)[CACHE_TREE]); K j1=dot_monadic(kV(z)[LOCALS]); 
