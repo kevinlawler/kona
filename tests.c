@@ -498,6 +498,10 @@ Z I tests02()
   TC(("ab";,"ab";("ab";"cd")), (2 2 # "abcd")[(0;,0;0 1)]) // indexing scalars & singletons 
   TC(("a";),"a",:[1;;"b"])  // concatenating with "nothing"
 
+  //COW: Copy On Write
+  TC(0 1 2 3, a:b:!4; a[1]:9; b)
+  TC(0 1 2 3, a:b:!4; a[1 2]:8 9; b)
+ 
   R 0; 
 }
 
