@@ -499,8 +499,10 @@ Z I tests02()
   TC(("a";),"a",:[1;;"b"])  // concatenating with "nothing"
 
   //COW: Copy On Write
-  TC(0 1 2 3, a:b:!4; a[1]:9; b)
-  TC(0 1 2 3, a:b:!4; a[1 2]:8 9; b)
+  TC(0 1 2 3, a:b:!4; a[1]:9; b)     // update integer vector w integer atom
+  TC(0 1 2 3, a:b:!4; a[1 2]:8 9; b) // update integer vector w integer vector
+  TC((.1;.2;.3;.4), a:b:(.1;.2;.3;.4); a[1]:.9; b)         // update float vector w float atom
+  TC((.1;.2;.3;.4), a:b:(.1;.2;.3;.4); a[1 2]:(.8;.9); b)  // update float vector w float vector
  
   R 0; 
 }
