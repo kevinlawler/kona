@@ -196,7 +196,7 @@ K dot_tetradic_2(K *g, K b, K c, K y)
 {
 
   K x = *g;
-  if((0==xt||5==xt) && x->c>1 )//fix copy-on-write for lists, dictionaries
+  if(x->c>1 )//fix copy-on-write
   {
     *g=kclone(x);
     cd(x);

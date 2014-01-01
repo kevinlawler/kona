@@ -199,7 +199,7 @@ Z I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
     kK(*p)[x] = ci(r);
     *p = demote(*p); //oom ?
   }
-  else if((pt != -rt) || ((-1==pt || -2==pt) && (*p)->c > 1))
+  else if(pt != -rt)
   {
     K t=promote(*p);
     //U(t) //oom
