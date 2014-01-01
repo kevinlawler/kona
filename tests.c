@@ -503,6 +503,9 @@ Z I tests02()
   TC(0 1 2 3, a:b:!4; a[1 2]:8 9; b) // update integer vector w integer vector
   TC((.1;.2;.3;.4), a:b:(.1;.2;.3;.4); a[1]:.9; b)         // update float vector w float atom
   TC((.1;.2;.3;.4), a:b:(.1;.2;.3;.4); a[1 2]:(.8;.9); b)  // update float vector w float vector
+  TC(d:.((`a;1;);(`b;2;));d[!d]:d, (.((`a;1;);(`b;2;));.((`a;1;);(`b;2;)))  ) //update dictionaries
+  TC(x:2 2#!4;x[0]:x;x, ((0 1;2 3);2 3)) //update list
+  TC(x:!10;y:x;y[1]:100;x, !10) //cross-variable assignment
  
   R 0; 
 }

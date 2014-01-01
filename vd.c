@@ -194,6 +194,14 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
 
 K dot_tetradic_2(K *g, K b, K c, K y)
 {
+
+  K x = *g;
+  if((0==xt||5==xt) && x->c>1 )//fix copy-on-write for lists, dictionaries
+  {
+    *g=kclone(x);
+    cd(x);
+  }
+
   I bt=b->t, bn=countI(b);
 
   if(0==bn || 6==bt)
