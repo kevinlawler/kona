@@ -24,7 +24,7 @@ I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
 #else 
 #define MAX_OBJECT_LENGTH (II - 1) //for catching obviously incorrect allocations
 #endif
-Z I cl2(I v);
+Z int cl2(unsigned long long v);
 Z I kexpander(K *p,I n);
 Z K kapn_(K *a,V v,I n);
 Z V amem(I k);
@@ -144,22 +144,32 @@ Z V unpool(I r)
   R z;
 }
 
-Z I cl2(I v) //optimized 64-bit ceil(log_2(I)) 
+Z int cl2(unsigned long long v)
 {
-    if(!v)R -1;// no bits set
-    I e = 0;
-    if(v & (v - 1ULL))e=1; //round up if not a power of two
-    #if UINTPTR_MAX >= 0xffffffffffffffff
-      if(v & 0xFFFFFFFF00000000ULL){e+=32;v>>=32;} //64-bit or more only
-    #endif
-    if(v & 0x00000000FFFF0000ULL){e+=16;v>>=16;}
-    //short CL2_LUT[1<<16]; DO(1<<16,if(i) CL2_LUT[i]=log2(i));
-    //to use lookup table: e+=CL2_LUT[v] and comment out below. 
-    if(v & 0x000000000000FF00ULL){e+=8; v>>=8; }
-    if(v & 0x00000000000000F0ULL){e+=4; v>>=4; }
-    if(v & 0x000000000000000CULL){e+=2; v>>=2; }
-    if(v & 0x0000000000000002ULL){e+=1; v>>=1; }
-    R e;
+  //dgobbi method
+  if(!v)R -1;// no bits set
+
+  static const unsigned long long t[6] = {
+    0xFFFFFFFF00000000ull,
+    0x00000000FFFF0000ull,
+    0x000000000000FF00ull,
+    0x00000000000000F0ull,
+    0x000000000000000Cull,
+    0x0000000000000002ull
+  };
+
+  int y = (((v & (v - 1)) == 0) ? 0 : 1);
+  int j = 32;
+  int i;
+
+  for (i = 0; i < 6; i++) {
+    int k = (((v & t[i]) == 0) ? 0 : j);
+    y += k;
+    v >>= k;
+    j >>= 1;
+  }
+
+  return y;
 }
 
 
