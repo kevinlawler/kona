@@ -506,6 +506,7 @@ Z I tests02()
   TC(d:.((`a;1;);(`b;2;));d[!d]:d, (.((`a;1;);(`b;2;));.((`a;1;);(`b;2;)))  ) //update dictionaries
   TC(x:2 2#!4;x[0]:x;x, ((0 1;2 3);2 3)) //update list
   TC(x:!10;y:x;y[1]:100;x, !10) //cross-variable assignment
+  TC(x:(1;1.0;"1");y:x;z:x;z[0]:2;y, (1;1.0;"1")) //demonstrate need for recursive ci/cd
  
   R 0; 
 }
