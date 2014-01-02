@@ -277,7 +277,7 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
       M(r,args)
       K *v = EVP(DE(*p,u)); 
       cd(*v);
-      *v=r; //mm/o inc/dec r here ??
+      *v=r; 
       cd(args);
    )
   }

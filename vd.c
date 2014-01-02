@@ -125,7 +125,13 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
     cd(args);
     U(r)
     cd(*p); 
-    *p=r;
+    if (5==r->t || 0==r->t)
+    {
+      *p=kclone(r);
+      cd(r);
+    }
+    else
+    *p=r; 
     R NULL;
   }
   //these may turn out to be the "ELSE" case
