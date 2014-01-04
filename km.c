@@ -16,7 +16,7 @@
 //buckets."
 //
 //Setting the minimum pool lane size to the width of a cache line can be a good idea
-//This increases the number of bytes to improve cache performance
+//This increases the number of bytes in order to improve cache performance
 //See: https://github.com/ruby/ruby/pull/495
 //As of 2014.01.04 cache line size is often 64 bytes (or 2^6 giving KP_MIN==6)
 //There doesn't appear to be a programmatic/compiler way to determine this
