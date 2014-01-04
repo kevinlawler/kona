@@ -14,7 +14,16 @@
 //returned to OS). Also: " Why do you think it is memory fragmentation? The
 //allocator in kdb+ is designed specifically to avoid that by using fixed size
 //buckets."
-#define KP_MIN 5  //2^x, must be at least ceil(lg(sizeof(V)))
+//
+//Setting the minimum pool lane size to the width of a cache line can be a good idea
+//This increases the number of bytes to improve cache performance
+//See: https://github.com/ruby/ruby/pull/495
+//As of 2014.01.04 cache line size is often 64 bytes (or 2^6 giving KP_MIN==6)
+//There doesn't appear to be a programmatic/compiler way to determine this
+//Linux: cat /proc/cpuinfo | grep cache_alignment
+//OSX: sysctl -a | grep cache
+//Simple tests on Kona confirmed 6 is an improvement over 5
+#define KP_MIN 6  //2^x, must be at least ceil(lg(sizeof(V)))
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
 V KP[sizeof(V)*8+1]; //KPOOL
 I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
