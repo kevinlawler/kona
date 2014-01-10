@@ -508,7 +508,11 @@ Z I tests02()
   TC(x:!10;y:x;y[1]:100;x, !10) //cross-variable assignment
   TC(x:(1;1.0;"1");y:x;z:x;z[0]:2;y, (1;1.0;"1")) //demonstrate need for recursive ci/cd
   TC(1, x:.+(`a`b;1 2); y:x; ."y.a:11; x.a") //dict references
- 
+  TC(x:.+(`a`b;1 2); y:x; y.a:11;x, .+(`a`b;1 2) )  // Bakul comments #205, case 1
+  TC(d:.+(`a`b;1 2);d[`a]:d, .+(`a`b;1 2) )         // Bakul comments #205, case 2a
+  //TC(d:.+(`a`b;1 2);d.a:d, .+(`a`b;1 2) )         // Bakul comments #205, case 2b
+  TC(d:.+(`a`b;1 2); d[!d]:d, (.((`a;1;);(`b;2;));.((`a;1;);(`b;2;))) )   // #188
+
   R 0; 
 }
 
