@@ -200,12 +200,15 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
 
 K dot_tetradic_2(K *g, K b, K c, K y)
 {
-
-  K x = *g;
-  if(x->c>1 )//fix copy-on-write
+  if(!fcl)
+  { 
+    K x = *g;
+    if(x->c>1) { *g=kclone(x); cd(x); }
+  }
+  else
   {
-    *g=kclone(x);
-    cd(x);
+    K x = y;
+    if(x->c>1) { y=kclone(x); cd(x); }
   }
 
   I bt=b->t, bn=countI(b);
@@ -222,6 +225,7 @@ K dot_tetradic_2(K *g, K b, K c, K y)
   }
   else R TE; //Type Error  7,5,+-3,+-2 TODO: Move inside if possible... ?
   
+  if(fcl)cd(y);
   R *g;
 }
 

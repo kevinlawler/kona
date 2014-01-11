@@ -14,6 +14,8 @@ Z K dv_ex(K a,V *p,K b);
 Z K ex0(V *v,K k,I r);
 Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
+I ckDct(K p,K y);
+I ckDct_(K p,K y);
 
 __thread I fer=0;  // Flag Early Return 
 __thread I fwh=0;  // Flag While
@@ -22,6 +24,7 @@ __thread I proj=0; // Projection
 __thread K prnt=0; // Parent of Subfunction 
 __thread I f1s=1;  // Flag 1 for Subfunctions
 __thread I f2s=0;  // Flag 2 for Subfunctions
+I fcl=0; // Flag for kclone
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -755,8 +758,11 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(1!=sva(v[1])){d=ex1(v+(offsetColon==v[1]?2:3),k,0,0,1); }   // oom -- except it's ok for d to be 0 elsewhere
     d=bk(d)?0:d;
   
+    ckDct(*w,d);
     K h=dot_tetradic_2(w,b,c,d);
-    cd(c); cd(d); M(b,h)
+    cd(c);
+    if(!fcl)cd(d); fcl=0; 
+    M(b,h)
     K j=of(h,b); 
     cd(b);
     R j;
@@ -816,4 +822,18 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   e=dv_ex(0,v+i,t2); *v=u;
   cd(t2); if(!VA(t3)) cd(t3);
   R e; 
+}
+
+I ckDct(K x,K y)
+{
+  if(!(y && !bk(y) && yt==5 && DT_SIZE<ABS((L)(x)) && xt!=6) && !fcl) R 0;
+  DO(yn, ckDct_(x,kK(y)[yn-i-1]))
+  R 0;
+}
+
+I ckDct_(K x,K y)
+{
+  if(x==y)fcl=1;
+  DO(yn, if(yt==0 || yt==5)ckDct_(x,kK(y)[yn-i-1]))
+  R 0;
 }

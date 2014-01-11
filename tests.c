@@ -510,8 +510,11 @@ Z I tests02()
   TC(1, x:.+(`a`b;1 2); y:x; ."y.a:11; x.a") //dict references
   TC(x:.+(`a`b;1 2); y:x; y.a:11;x, .+(`a`b;1 2) )  // Bakul comments #205, case 1
   TC(d:.+(`a`b;1 2);d[`a]:d, .+(`a`b;1 2) )         // Bakul comments #205, case 2a
-  //TC(d:.+(`a`b;1 2);d.a:d, .+(`a`b;1 2) )         // Bakul comments #205, case 2b
+  TC(d:.+(`a`b;1 2);d.a:d, .+(`a`b;1 2) )         // Bakul comments #205, case 2b
   TC(d:.+(`a`b;1 2); d[!d]:d, (.((`a;1;);(`b;2;));.((`a;1;);(`b;2;))) )   // #188
+  TC(.((`a;(9 9 9;9 9 9;9 9 9););(`b;2;)), d:.+(`a`b;(3 3#9;2));e:d;d.a[1;2]:e) //case 3
+  TC( (.((`a;(9 9;9 9););(`b;2;));.((`a;(9 9;9 9););(`b;2;))), d:.+(`a`b;(2 2#9;2));d[]:d)  // case 4
+  TC((2;(9 9 9;9 9 9;9 9 9)),  d:.+(`a`b;(3 3#9;2));d[]:|d[])                   //case 5
 
   R 0; 
 }
