@@ -14,8 +14,8 @@ Z K dv_ex(K a,V *p,K b);
 Z K ex0(V *v,K k,I r);
 Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
-I ckDct(K p,K y);
-I ckDct_(K p,K y);
+I cirRefChk(K p,K y);
+I cirRefChk_(K p,K y);
 
 __thread I fer=0;  // Flag Early Return 
 __thread I fwh=0;  // Flag While
@@ -758,7 +758,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(1!=sva(v[1])){d=ex1(v+(offsetColon==v[1]?2:3),k,0,0,1); }   // oom -- except it's ok for d to be 0 elsewhere
     d=bk(d)?0:d;
   
-    ckDct(*w,d);
+    cirRefChk(*w,d);
     K h=dot_tetradic_2(w,b,c,d);
     cd(c);
     if(!fcl)cd(d); fcl=0; 
@@ -824,16 +824,16 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   R e; 
 }
 
-I ckDct(K x,K y)
+I cirRefChk(K x,K y)
 {
-  if(fcl || xt==6 || !y || yt!=5 || ABS((L)(x))<DT_SIZE) R 0;
-  DO(yn, ckDct_(x,kK(y)[yn-i-1]))
+  if(fcl || xt==6 || !y || (yt!=0 && yt!=5) || ABS((L)(x))<DT_SIZE) R 0;
+  DO(yn, cirRefChk_(x,kK(y)[yn-i-1]))
   R 0;
 }
 
-I ckDct_(K x,K y)
+I cirRefChk_(K x,K y)
 {
   if(x==y)fcl=1;
-  DO(yn, if(!fcl && (yt==0 || yt==5))ckDct_(x,kK(y)[yn-i-1]))
+  DO(yn, if(!fcl && (yt==0 || yt==5))cirRefChk_(x,kK(y)[yn-i-1]))
   R 0;
 }
