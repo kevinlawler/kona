@@ -826,7 +826,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
 I ckDct(K x,K y)
 {
-  if(!(y && !bk(y) && yt==5 && DT_SIZE<ABS((L)(x)) && xt!=6) && !fcl) R 0;
+  if(fcl || xt==6 || !y || yt!=5 || ABS((L)(x))<DT_SIZE) R 0;
   DO(yn, ckDct_(x,kK(y)[yn-i-1]))
   R 0;
 }
@@ -834,6 +834,6 @@ I ckDct(K x,K y)
 I ckDct_(K x,K y)
 {
   if(x==y)fcl=1;
-  DO(yn, if(yt==0 || yt==5)ckDct_(x,kK(y)[yn-i-1]))
+  DO(yn, if(!fcl && (yt==0 || yt==5))ckDct_(x,kK(y)[yn-i-1]))
   R 0;
 }
