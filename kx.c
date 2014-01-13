@@ -14,8 +14,8 @@ Z K dv_ex(K a,V *p,K b);
 Z K ex0(V *v,K k,I r);
 Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
-I cirRefChk(K p,K y);
-I cirRefChk_(K p,K y);
+I cirRef(K p,K y);
+I cirRef_(K p,K y,I f);
 
 __thread I fer=0;  // Flag Early Return 
 __thread I fwh=0;  // Flag While
@@ -24,7 +24,6 @@ __thread I proj=0; // Projection
 __thread K prnt=0; // Parent of Subfunction 
 __thread I f1s=1;  // Flag 1 for Subfunctions
 __thread I f2s=0;  // Flag 2 for Subfunctions
-I fcl=0; // Flag for kclone
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -757,12 +756,20 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
     if(1!=sva(v[1])){d=ex1(v+(offsetColon==v[1]?2:3),k,0,0,1); }   // oom -- except it's ok for d to be 0 elsewhere
     d=bk(d)?0:d;
-  
-    cirRefChk(*w,d);
+
+    if(cirRef(*w,d))
+    {
+      K x = d;
+      if(x->c>1) { d=kclone(x); cd(x); }
+    }
+    else
+    { 
+      K x = *w;
+      if(x->c>1) { *w=kclone(x); cd(x); }
+    }
+
     K h=dot_tetradic_2(w,b,c,d);
-    cd(c);
-    if(!fcl)cd(d); fcl=0; 
-    M(b,h)
+    cd(c); cd(d); M(b,h)
     K j=of(h,b); 
     cd(b);
     R j;
@@ -824,16 +831,17 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   R e; 
 }
 
-I cirRefChk(K x,K y)
+I cirRef(K x,K y)
 {
-  if(fcl || xt==6 || !y || (yt!=0 && yt!=5) || ABS((L)(x))<DT_SIZE) R 0;
-  DO(yn, cirRefChk_(x,kK(y)[yn-i-1]))
-  R 0;
+  I f=0;
+  if(xt==6 || !y || (yt!=0 && yt!=5) || ABS((L)(x))<DT_SIZE) R 0;
+  DO(yn, f=cirRef_(x,kK(y)[yn-i-1],f))
+  R f;
 }
 
-I cirRefChk_(K x,K y)
+I cirRef_(K x,K y,I f)
 {
-  if(x==y)fcl=1;
-  DO(yn, if(!fcl && (yt==0 || yt==5))cirRefChk_(x,kK(y)[yn-i-1]))
-  R 0;
+  if(x==y)f=1;
+  DO(yn, if(!f && (yt==0 || yt==5)) f=cirRef_(x,kK(y)[yn-i-1],f))
+  R f;
 }
