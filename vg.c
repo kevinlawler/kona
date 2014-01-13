@@ -49,9 +49,60 @@ K enlist(K x)
   R z;
 }
 
+Z K fast_rangeC(K a)
+{
+  I n=a->n;
+  K z=NULL;
+  C seen[256];
+  memset(seen, 0, sizeof(seen));
+  C *b=kC(a);
+  DO(n, seen[b[i]]=1);
+  I len=0, offset=0; // count unique values
+  DO(256, if (seen[i]) { len++; });
+  z=newK(-3, len); if(!z) goto cleanup;
+  // copy the first appearance of every unique C
+  DO(n, C c=b[i]; if (seen[c]) {kC(z)[offset++]=c; seen[c]=0;});
+  R z;
+
+cleanup:
+  if (z) cd(z);
+  R 0;
+}
+
+Z K fast_rangeI(K a, I min, I max)
+{
+  I n=a->n;
+  K ks=NULL, z=NULL;
+  I d=max-min+1;     // delta
+  ks=newK(-3, d); if (!ks) goto cleanup;
+  C *seen=kC(ks);
+  I *b=kI(a);
+  memset(seen, 0, d*sizeof(C));
+  DO(n, seen[b[i]-min]=1);
+  I len=0, offset=0; // count unique values
+  DO(d, if (seen[i]) { len++; });
+  z=newK(-1, len); if(!z) goto cleanup;
+  // copy the first appearance of every unique I
+  DO(n, I c=b[i]-min; if (seen[c]) { kI(z)[offset++]=b[i]; seen[c]=0;});
+  cd(ks);
+  R z;
+
+cleanup:
+  if (ks) cd(ks);
+  if (z) cd(z);
+  R 0;
+}
+
 K range(K a)
 { 
   I t=a->t, n=a->n;
+  if (-1 == t) { // do fast path if max-min is small
+    I x,u=II,v=-II;//MIN,MAX
+    DO(n, x=kI(a)[i]; if(x<u)u=x; if(x>v)v=x;);
+    if(v-u < 87654321) R fast_rangeI(a,u,v);
+  }
+  if (-3 == t) { R fast_rangeC(a); }
+
   P(t>0,RE)
   K z=0,g=0,k=0;
   
@@ -61,7 +112,6 @@ K range(K a)
 
   I *h=kI(g);
   if(-4==t)DO(n-1, if(kS(a)[h[n-i-1]]==kS(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
-  if(-3==t)DO(n-1, if(kC(a)[h[n-i-1]]==kC(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
   if(-2==t)DO(n-1, if(!FC(kF(a)[h[n-i-1]],kF(a)[h[n-i-2]])){h[n-i-1]=-1;--u;})
   if(-1==t)DO(n-1, if(kI(a)[h[n-i-1]]==kI(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
   if( 0==t)DO(n-1, if(matchI(kK(a)[h[n-i-1]],kK(a)[h[n-i-2]]))   {h[n-i-1]=-1;--u;})
@@ -71,7 +121,6 @@ K range(K a)
 
   I *m=kI(k); //This could be refactored
   if(-4==t)DO(n, if(h[m[i]]>-1)kS(z)[x++]=kS(a)[h[m[i]]] )
-  if(-3==t)DO(n, if(h[m[i]]>-1)kC(z)[x++]=kC(a)[h[m[i]]] )
   if(-2==t)DO(n, if(h[m[i]]>-1)kF(z)[x++]=kF(a)[h[m[i]]] )
   if(-1==t)DO(n, if(h[m[i]]>-1)kI(z)[x++]=kI(a)[h[m[i]]] )
   if( 0==t)DO(n, if(h[m[i]]>-1)kK(z)[x++]=ci(kK(a)[h[m[i]]]))
