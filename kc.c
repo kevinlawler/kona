@@ -69,7 +69,8 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   S s=0; I b=0,c=0,m=0;
   K k; F d;
 
-  I o = isatty(STDIN) && f==stdin; //display results to stdout?
+  //I o = isatty(STDIN) && f==stdin; //display results to stdout?
+  I o = isatty(STDIN); //display results to stdout?
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   appender(a,n,s,c);//"strcat"(a,s)
