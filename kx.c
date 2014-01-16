@@ -760,7 +760,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(cirRef(*w,d) || ((*w)->t==6 && d && d->t==5) )
     {
       K x = d;
-      if(x->c>1 || (x->c==1 && xt==0)) { d=kclone(x); cd(x); }
+      if(x->c>1 || (xt==0 && x->c==1) || (xt==5 && x->c==1 && xn==2) ) { d=kclone(x); cd(x); }
     }
     else
     { 
