@@ -13,9 +13,8 @@ extern I scrLim;
 void boilerplate()
 {
  if(!isatty(STDOUT) || !isatty(STDIN)) R;
-  O("K Console - Enter \\ for help\n");
+  O("K Console - Enter \\ for help\n\n");
   prompt(0);
-
 }
 
 //Q. What if a script is \loaded (via remote call) while the terminal is waiting with an open PDA for matching parentheses/quote marks? 

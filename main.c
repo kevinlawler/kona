@@ -4,8 +4,8 @@
 int main(int argc,S*argv)
 {
   kinit();
-  args(argc,argv);
   boilerplate();
+  args(argc,argv);
   attend(); //loop on stdin/inet
   R 0;
 }
