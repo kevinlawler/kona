@@ -760,12 +760,12 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5)) )
     {
       K x = d;
-      if( x->c>1 || ( x->c==1 && (xt==0 || xt==5) )) { d=kclone(x); cd(x); }
+      if(x->c) {d=kclone(x); cd(x);}
     }
     else
     { 
       K x = *w;
-      if(x->c>1) { *w=kclone(x); cd(x); }
+      if(x->c>1) {*w=kclone(x); cd(x);}
     }
 
     K h=dot_tetradic_2(w,b,c,d);
