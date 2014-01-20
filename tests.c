@@ -855,7 +855,7 @@ Z I testsBook()
   TC((9 2 3;4 5;6 7 8), ? (9 2 3;4 5;9 2 3;6 7 8;4 5;9 2 3))
   TC(2.0 , %% 2) //Kind of cheating here. C parser complains on single %
   TC(1.0, %%1)
-  TC(0i, %%0)
+  TC(0.0, %%0)             
   TC(2 4 1 3, |3 1 4 2)
   TC(m:(8 1 6;3 5 7;4 9 2); |m , (4 9 2;3 5 7;8 1 6))
   TC(`three, *|`one`two`three)
