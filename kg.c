@@ -14,12 +14,11 @@ I FC(F a, F b)//Floating-Point Compare
 
   if(isinf(a) || a==LONG_MAX) {
     if (isinf(b) || b==LONG_MAX) {
-      //R a==b?0:a<b?-1:1;
       R (a<0 && b<0)?0:(a>0 && b>0)?0:(a<0 && b>0)?-1:1;
     }
     R a<0?-1:1;
   }
-  else if (isinf(b)) {
+  else if (isinf(b) || b==LONG_MAX) {
     R b>0?-1:1;
   }
 
