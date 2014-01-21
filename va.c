@@ -110,13 +110,13 @@ K divide(K a, K b)//NB: Integral values promoted to float
 
   if(1==ABS(at) && 1==ABS(bt))//save I from being cast to F for greater accuracy
   { 
-    if (an==bn)      { DO(zn,s= kI(a)[i];t=kI(b)[i];kI(z)[i]=!t?!s?0:s>0?w:-w:s/t)}
-    else if (an==1)  { DO(zn,s= kI(a)[0];t=kI(b)[i];kI(z)[i]=!t?!s?0:s>0?w:-w:s/t)}
-    else /* bn==1 */ { DO(zn,s= kI(a)[i];t=kI(b)[0];kI(z)[i]=!t?!s?0:s>0?w:-w:s/t)}
+    if (an==bn)      { DO(zn,s= kI(a)[i];t=kI(b)[i];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
+    else if (an==1)  { DO(zn,s= kI(a)[0];t=kI(b)[i];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
+    else /* bn==1 */ { DO(zn,s= kI(a)[i];t=kI(b)[0];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
     R z;
   }
 
-  #define FDIVIDE kF(z)[i]=!d?!u?0:u>0?y:-y:u/d //0/0=0, 1/0=oo, -1/0=-oo, 1/2=0.5 
+  #define FDIVIDE kF(z)[i]=!d?!u?FN:u>0?y:-y:u/d //0/0=FN, 1/0=oo, -1/0=-oo, 1/2=0.5
   SCALAR_EXPR(FDIVIDE,divide,u,d)
 
   R z;
