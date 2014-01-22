@@ -202,6 +202,7 @@ Z I tests02()
   TC_("(0 3;1 3;2 3;3 3;4 3;5 3)","{{[x;t](t,x)}[x]'!y+x}[3;3]") // s0 from issue #221 comments
   TC_("(0 3;1 3;2 3;3 3;4 3;5 3)","{{[t](t,x)}'!y+x}[3;3]")      // s1 from issue #221 comments
   TC_("(0 3;1 3;2 3;3 3;4 3;5 3)","{a:x;{[t](t,x)}'!y+x}[3;3]")  // s2 from issue #221 comments
+  TC_("0 0 0 1 0 0 0 0 0 0", "f:{a:!x;{3=x!10}'a};f 10")         // issue #232
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
