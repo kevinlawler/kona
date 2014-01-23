@@ -203,8 +203,8 @@ Z I tests02()
   TC_("(0 3;1 3;2 3;3 3;4 3;5 3)","{{[t](t,x)}'!y+x}[3;3]")      // s1 from issue #221 comments
   TC_("(0 3;1 3;2 3;3 3;4 3;5 3)","{a:x;{[t](t,x)}'!y+x}[3;3]")  // s2 from issue #221 comments
   TC_("0 0 0 1 0 0 0 0 0 0", "f:{a:!x;{3=x!10}'a};f 10")         // issue #232
-  TC(15 20 25, f:{a:x; 1 2 3{a+x*y}\\:5} ;f 10)
-  TC(99, f:{a:x; 2{a+x+y}/42}; f 55)
+  TC(15 20 25, f:{a:x; 1 2 3{a+x*y}\\:5} ;f 10)   // issue #234 (extra escape needed for C)
+  TC(99, f:{a:x; 2{a+x+y}/42}; f 55)              // issue #234
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
