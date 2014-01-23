@@ -781,6 +781,32 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   {
     t2=ex2(v+2+i,k); //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
+    if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3)
+    {
+      if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n)
+      {
+        if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n)
+        {
+          if(kV(t3)[CACHE_WD])
+          {
+            f2s=1;
+            cd(kK(t3)[CACHE_TREE]); kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
+          }
+          else 
+          {
+            K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
+            K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
+          }
+        }
+        else 
+        {
+          K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
+          K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
+        }
+      }
+      prnt=t3; 
+    }
+
       //if(v[1]!=t3) if(!VA(t3)) show(t3);//for use with below
       u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;.  Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3;
