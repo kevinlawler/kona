@@ -205,6 +205,7 @@ Z I tests02()
   TC_("0 0 0 1 0 0 0 0 0 0", "f:{a:!x;{3=x!10}'a};f 10")         // issue #232
   TC(15 20 25, f:{a:x; 1 2 3{a+x*y}\\:5} ;f 10)   // issue #234 (extra escape needed for C)
   TC(99, f:{a:x; 2{a+x+y}/42}; f 55)              // issue #234
+  TC_("1 1", "{a:x;{a}()}'1 2")  // issue #235: INCORRECT result test. Included to show NO memory leak. 
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
