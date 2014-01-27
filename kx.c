@@ -24,6 +24,7 @@ __thread I proj=0; // Projection
 __thread K prnt=0; // Parent of Subfunction 
 __thread I f1s=1;  // Flag 1 for Subfunctions
 __thread I f2s=0;  // Flag 2 for Subfunctions
+__thread K grnt=0; // GrandParent of Subfunction
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -313,8 +314,13 @@ Z K dv_ex(K a, V *p, K b)
   }
   if(flag) tmp=vf_ex(*p,b); 
   else{
-    if(stk>2e6) R kerr("stack"); 
+    if(stk>2e6) R kerr("stack");
+    if(prnt && !grnt && prnt->t==7 && prnt->n==3 && kK(prnt)[CODE]->t==-3) 
+    {
+      if (NULL!=strstr(kC(kK(prnt)[CODE]),"{")) grnt=prnt;
+    }
     stk++; tmp=vf_ex(*p,g); stk--;
+    if(grnt && !prnt) prnt=grnt;
   }
 
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
@@ -711,8 +717,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n){
         K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
         K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); 
-      } 
-      prnt=z; 
+      }
+      prnt=z;
     }
     R z; 
   }

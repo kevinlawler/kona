@@ -81,6 +81,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(v==1) goto done;//generally incomplete
   if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
   RTIME(d,k=ex(wd(*a,*n)))
+  grnt=0;
 #ifdef DEBUG
   if(o&&k)O("Elapsed: %.7f\n",d);
 #endif

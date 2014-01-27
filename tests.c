@@ -35,8 +35,8 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a);
-  K y = X(b);
+  K x = X(a); grnt=0;
+  K y = X(b); grnt=0;
   I m=matchI(x,y);
 
   if(!m)
@@ -206,7 +206,7 @@ Z I tests02()
   TC(15 20 25, f:{a:x; 1 2 3{a+x*y}\\:5} ;f 10)   // issue #234 (extra escape needed for C)
   TC(99, f:{a:x; 2{a+x+y}/42}; f 55)              // issue #234
   TC(29, g:{a:x; 2{a+x+y}/!6}; g 1; g 2)          // issue #235 case 1
-  TC_("1 1", "{a:x;{a}()}'1 2")  // issue #235: INCORRECT result test. Included to show NO memory leak. 
+  TC_("1 2", "{a:x;{a}()}'1 2")                   // issue #235 case 2
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
