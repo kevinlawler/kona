@@ -768,7 +768,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       K x = d;
       if(x->c) {d=kclone(x); cd(x);}
     }
-    else
+    else if((*w)->t!=6)
     { 
       K x = *w;
       if(x->c>1) {*w=kclone(x); cd(x);}
