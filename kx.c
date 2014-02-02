@@ -25,6 +25,7 @@ __thread K prnt=0; // Parent of Subfunction
 __thread I f1s=1;  // Flag 1 for Subfunctions
 __thread I f2s=0;  // Flag 2 for Subfunctions
 __thread K grnt=0; // GrandParent of Subfunction
+__thread V toCd=0; // delayed cd
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -709,14 +710,19 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   //ci(k) was R 0; ...  put this here for f/[x;y;z]
   if(!v || !*v)R k?(1==k->n)?ci(kK(k)[0]):ci(k):(K)(L)DT_END_OFFSET; //? '1 + _n' -> domain err, '1 +' -> 1+ . but '4: . ""' -> 6 
 
-  if(bk(*v)) R *v;  // ; case
+  if(bk(*v))    // ; case
+  {
+    if(toCd && grnt && ((K)toCd)->c) {cd((K)toCd); toCd=0;}
+    R *v;
+  }
 
   if(!v[1] && !k){  // n case
     K z=ex_(*v,1);
     if(z>(K)DT_SIZE && z->t==7 && z->n==3){
       if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n){
-        K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-        K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); 
+        K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
+        K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
+        cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; toCd=kV(prnt)[CACHE_TREE];
       }
       prnt=z;
     }
