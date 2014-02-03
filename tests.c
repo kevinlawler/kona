@@ -205,10 +205,12 @@ Z I tests02()
   TC_("0 0 0 1 0 0 0 0 0 0", "f:{a:!x;{3=x!10}'a};f 10")         // issue #232
   TC(15 20 25, f:{a:x; 1 2 3{a+x*y}\\:5} ;f 10)   // issue #234 (extra escape needed for C)
   TC(99, f:{a:x; 2{a+x+y}/42}; f 55)              // issue #234
-  TC(29, g:{a:x; 2{a+x+y}/!6}; g 1; g 2)          // issue #235 case 1
-  TC_("1 2", "{a:x;{a}()}'1 2")                   // issue #235 case 2
-  TC(123, f:{a:x; {a+x}}; g:f 123; h:f 456; g 0)  // issue #235 case 3a
-  TC(456, f:{a:x; {a+x}}; g:f 123; h:f 456; h 0)  // issue #235 case 3b
+  TC(29, g:{a:x; 2{a+x+y}/!6}; g 1; g 2)                    // issue #235 case 1
+  TC_("1 2", "{a:x;{a}()}'1 2")                             // issue #235 case 2
+  TC(123, f:{a:x; {a+x}}; g:f 123; h:f 456; g 0)            // issue #235 case 3a
+  TC(456, f:{a:x; {a+x}}; g:f 123; h:f 456; h 0)            // issue #235 case 3b
+  TC(10, f:{a:x; g::{a+x}; a+:a; h::{a+x}}; f 10; g 0)      // issue #235 case 4a
+  TC(20, f:{a:x; g::{a+x}; a+:a; h::{a+x}}; f 10; g 0; h 0) // issue #235 case 4b
   TC(_n, f:{a}; {a:x; f()}1)                      // issue #236
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
