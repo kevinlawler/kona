@@ -713,8 +713,10 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   if(!v[1] && !k){  // n case
     K z=ex_(*v,1);
-    if(z>(K)DT_SIZE && z->t==7 && z->n==3){
-      if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n){
+    if(z>(K)DT_SIZE && z->t==7 && z->n==3)
+    {
+      if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n)
+      {
         K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
         K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
         cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0;
@@ -731,7 +733,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     K z= ex_(*v,1);
     if(z && prnt && z->t==7 && z->n==3 && 
        kV(prnt)[CACHE_TREE] && kK(prnt)[LOCALS]->n && !kK(prnt)[PARAMS]->n &&
-       kV(z)[LOCALS] && !kK(z)[LOCALS]->n){
+       kV(z)[LOCALS] && !kK(z)[LOCALS]->n)
+    {
       K j0=dot_monadic(kV(prnt)[CACHE_TREE]); K j1=dot_monadic(kV(z)[LOCALS]); 
       K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2);
       cd(j0); cd(j1); cd(j2); f1s=0; prnt=z; 
@@ -739,7 +742,6 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     else if(z>(K)DT_SIZE && z->t==7 && z->n==3 && prnt && f1s && kK(prnt)[LOCALS]->n
          && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n)
     {
-      //O("prnt: "); sd(prnt); O("chld: "); sd(z);
       K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
       K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
     }
