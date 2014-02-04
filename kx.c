@@ -857,7 +857,9 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
   *v=VA(t3)?t3:(V)&t3;
+  if(*(v+i)==offsetEach)grnt=prnt;
   e=dv_ex(0,v+i,t2); *v=u;
+  if(*(v+i)==offsetEach)grnt=0;
   cd(t2); if(!VA(t3)) cd(t3);
   R e; 
 }
