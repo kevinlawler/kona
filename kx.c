@@ -316,7 +316,7 @@ Z K dv_ex(K a, V *p, K b)
   else{
     if(stk>2e6) R kerr("stack");
     stk++; tmp=vf_ex(*p,g); stk--;
-    if(grnt && !prnt) prnt=grnt;
+    if(grnt && !prnt) prnt=grnt;         // causes latest error in nsl ray.k (worked before 1/27/14 commit)
   }
 
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
@@ -853,9 +853,9 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
   *v=VA(t3)?t3:(V)&t3;
-  if(*(v+i)==offsetEach)grnt=prnt;
+  if(*(v+i)==(V)offsetEach)grnt=prnt;
   e=dv_ex(0,v+i,t2); *v=u;
-  if(*(v+i)==offsetEach)grnt=0;
+  if(*(v+i)==(V)offsetEach)grnt=0;
   cd(t2); if(!VA(t3)) cd(t3);
   R e; 
 }
