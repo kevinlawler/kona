@@ -315,10 +315,6 @@ Z K dv_ex(K a, V *p, K b)
   if(flag) tmp=vf_ex(*p,b); 
   else{
     if(stk>2e6) R kerr("stack");
-    if(prnt && !grnt && prnt->t==7 && prnt->n==3 && kK(prnt)[CODE]->t==-3) 
-    {
-      if (NULL!=strstr(kC(kK(prnt)[CODE]),"{")) grnt=prnt;
-    }
     stk++; tmp=vf_ex(*p,g); stk--;
     if(grnt && !prnt) prnt=grnt;
   }
