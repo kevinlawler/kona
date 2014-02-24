@@ -475,8 +475,10 @@ K vf_ex(V q, K g)
 
       DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; if(r && i<r->n) *e=ci(kK(r)[i]); if(!*e && j<g->n) *e=ci(kK(g)[j++])) //merge in: CONJ with function args
 
-      if(!(fw=kV(f)[CACHE_WD]))
+      I t=0;
+      if( !(fw=kV(f)[CACHE_WD]) || (t=(K*)kS(kK(fw)[CODE])[1]>(K*)DT_SIZE) )
       {
+        if(t) cd(kV(f)[CACHE_WD]);
         K fc = kclone(f); //clone the function to pass for _f
         cd(kV(fc)[CONJ]);kV(fc)[CONJ]=0;
         kV(fc)[DEPTH]++;

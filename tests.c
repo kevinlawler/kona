@@ -212,6 +212,7 @@ Z I tests02()
   TC(10, f:{a:x; g::{a+x}; a+:a; h::{a+x}}; f 10; g 0)      // issue #235 case 4a
   TC(20, f:{a:x; g::{a+x}; a+:a; h::{a+x}}; f 10; g 0; h 0) // issue #235 case 4b
   TC(_n, f:{a}; {a:x; f()}1)                      // issue #236
+  TC(1, f: {x {x}/ 1}; f 1; f 1)                  // issue #237
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
