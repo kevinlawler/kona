@@ -88,7 +88,8 @@ Z K overMonad(K a, V *p, K b)
 
   if(useN) //n f/x
   {
-    DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); U(u=c))
+    I f=0;
+    DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); if(f && c==b && c==u)cd(c); f=1; U(u=c))
     c=c?c:ci(b);
   }
   else if(useB) // b f/x

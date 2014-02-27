@@ -214,8 +214,8 @@ Z I tests02()
   TC(_n, f:{a}; {a:x; f()}1)                      // issue #236
   TC(1, f: {x {x}/ 1}; f 1; f 1)                  // issue #237
   TC(1, f:{x}; g:{x f/1}; g 1; g 1)               // issue #238 case 1
-  //TC(1, f:{x}; g:{x f/1}; g 2)                  // issue #238 case 2 (memory leak)
-  //TC(1, f:{x}; g:{x f/1}; g 1; g 2)             // issue #238 case 3 (memory leak)
+  TC(1, f:{x}; g:{x f/1}; g 2)                    // issue #238 case 2
+  TC(1, f:{x}; g:{x f/1}; g 1; g 2)               // issue #238 case 3
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
