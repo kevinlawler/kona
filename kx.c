@@ -20,7 +20,8 @@ I cirRef_(K p,K y,I f);
 __thread I fer=0;  // Flag Early Return 
 __thread I fwh=0;  // Flag While
 __thread I stk=0;  // Stack counter
-__thread I proj=0; // Projection 
+__thread I prj=0;  // Projection flag
+__thread I prj2=0; // 2nd Projection flag
 __thread K prnt=0; // Parent of Subfunction 
 __thread I f1s=1;  // Flag 1 for Subfunctions
 __thread I f2s=0;  // Flag 2 for Subfunctions
@@ -430,7 +431,7 @@ K vf_ex(V q, K g)
       if(!m)GC;
       K *q=kK(m);
       DO(m->n, q[i]=ci(kK(r)[i]); if(!q[i] && j<gn) q[i]=ci(kK(g)[j++]))   
-      if(proj){V*w=&kW(f)[1]; z=bv_ex(w,m);}
+      if(prj){V*w=&kW(f)[1]; z=bv_ex(w,m);}
       else z=ex2(kW(f),m); 
       cd(m);
     )
@@ -526,7 +527,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
 K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
   U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
-  K z=ex_(&a,0); cd(a); fer=fwh=stk=proj=f2s=0; f1s=1; prnt=0; R z; }
+  K z=ex_(&a,0); cd(a); fer=fwh=stk=prj=prj2=f2s=0; f1s=1; prnt=0; R z; }
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
@@ -560,16 +561,20 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
       I i=p->n-2; //not the terminating NULL, but the entry before
       V*q=(V*) kK(p)+i;
 
-      if(k->n >1 && !sva(*q) && adverbClass(*q) )
+      K t=0; if(k->n==1) t=first(k);
+      if((k->n>1 || (t && t->n==1)) && !sva(*q) && adverbClass(*q))
       {
-        DO(k->n, if(!kK(k)[i])proj=1) 
-        if(!proj) //***** could be the _n() <-> ;;; replacement above *****
+        if(k->n==1 && !prj2)k->n=2;     
+        prj2=1;
+        DO(k->n, if(!kK(k)[i])prj=1) 
+        if(!prj) //***** could be the _n() <-> ;;; replacement above *****
         {
           x=bv_ex(q,k);
           cd(z);
           R x;
         }
       }
+      cd(t);
       /////////////////////////
       x=vf_ex(&z,k); cd(z); z=x; //copy/paste
       /////////////////////////
