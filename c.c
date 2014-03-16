@@ -51,7 +51,7 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
 {
   if(scrLim>124){O("limit\n");  R kerr("stack");} scrLim++;  
   FILE*f=loadf(s);
-  P(!f,_n())
+  if(!f){O("%s.k: file not found\n",s); R _n();}
   lines(f);
   fclose(f);
   scrLim--;
