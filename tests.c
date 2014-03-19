@@ -217,6 +217,7 @@ Z I tests02()
   TC(1, f:{x}; g:{x f/1}; g 2)                    // issue #238 case 2
   TC(1, f:{x}; g:{x f/1}; g 1; g 2)               // issue #238 case 3
   TC(22, {[e]{[x]e}1}@22)                         // issue #239
+  TC_( "(7 0;7 1;7 2)", "f:{(7;x)}; {[n]a:n;f'[!a]}[3]; {[n]a:n;f'[!a]}[3]")  // issue #243
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )

@@ -840,13 +840,14 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     {
       if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n)
       {
-        if(kV(t3)[CACHE_WD])
+        if(kV(t3)[CACHE_WD] && !kV(t3)[CACHE_TREE])
         {
           f2s=1;
-          cd(kK(t3)[CACHE_TREE]); kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
+          kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
         }
         else if(kK(t3)[PARAMS]->n || grnt)
         {
+          cd(kK(t3)[CACHE_TREE]);
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
           K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
         }
