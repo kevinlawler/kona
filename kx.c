@@ -717,10 +717,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   if(!v[1] && !k){  // n case
     K z=ex_(*v,1);
-    if(z>(K)DT_SIZE && z->t==7 && z->n==3)
-    {
-      if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n)
-      {
+    if(z>(K)DT_SIZE && z->t==7 && z->n==3){
+      if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n){
         K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
         K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
         cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0;
@@ -777,13 +775,11 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(1!=sva(v[1])){d=ex1(v+(offsetColon==v[1]?2:3),k,0,0,1); }   // oom -- except it's ok for d to be 0 elsewhere
     d=bk(d)?0:d;
 
-    if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5)) )
-    {
+    if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5)) ){
       K x = d;
       if(x->c) {d=kclone(x); cd(x);}
     }
-    else if((*w)->t!=6)
-    { 
+    else if((*w)->t!=6){ 
       K x = *w;
       if(x->c>1) {*w=kclone(x); cd(x);}
     }
@@ -797,22 +793,17 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   while(v[1] && adverbClass(v[2+i])) i++;
   //TODO: Catch 0-returned-errors here and below
-  if(!sva(v[0]) && (i || 2==sva(v[1])))   // na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
-  {
+  if(!sva(v[0]) && (i || 2==sva(v[1]))){   // na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
     t2=ex2(v+2+i,k); //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
-    if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3)
-    {
-      if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n)
-      {
-        if(kK(prnt)[CACHE_TREE]->n)
-        {
+    if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
+      if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n){
+        if(kK(prnt)[CACHE_TREE]->n){
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
           K j2=join(j0,j1); cd(kK(t3)[CACHE_TREE]); kV(t3)[CACHE_TREE]=dot_monadic(j2); 
           cd(j0); cd(j1); cd(j2); f2s=1;
         }
-        else if(kV(prnt)[CONJ]) 
-        {
+        else if(kV(prnt)[CONJ]) {
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
           K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
         }
@@ -821,7 +812,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     }
 
       //if(v[1]!=t3) if(!VA(t3)) show(t3);//for use with below
-      u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;.  Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
+      u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;.  
+              //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3;
     t0=ex_(*v,1);
     if(!prnt && t0->t==7 && t0->n==3)prnt=t0;
@@ -834,26 +826,19 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   i=0; while(adverbClass(v[1+i])) i++; //ALT'Y: i=adverbClass(b)?i+1:0;
   t2=ex2(v+1+i,k); //oom. these cannot be placed into single function call b/c order of eval is unspecified
   t3=ex_(*v,1);
-  if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3)
-  {
-    if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n)
-    {
-      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n)
-      {
-        if(kV(t3)[CACHE_WD] && !kV(t3)[CACHE_TREE])
-        {
-          f2s=1;
-          kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
+  if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
+    if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n){
+      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n){
+        if(kV(t3)[CACHE_WD] && !kV(t3)[CACHE_TREE]){
+          f2s=1; kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
         }
-        else if(kK(t3)[PARAMS]->n || grnt)
-        {
-          if(kV(t3)[CACHE_TREE] && kK(t3)[CACHE_TREE]->n){cd(kK(t3)[CACHE_TREE]); kV(t3)[CACHE_TREE]=0;}
-          K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-          K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
+        else if(kK(t3)[PARAMS]->n || grnt){
+          K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(j0,j1);
+          if(kV(t3)[CACHE_TREE] && kK(t3)[CACHE_TREE]->n)cd(kK(t3)[CACHE_TREE]);
+          kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
         }
       }
-      else 
-      {
+      else {
         K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
         K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
       }
@@ -870,16 +855,14 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   R e; 
 }
 
-I cirRef(K x,K y)
-{
+I cirRef(K x,K y){
   I f=0;
   if(xt==6 || !y || (yt!=0 && yt!=5) || ABS((L)(x))<DT_SIZE) R 0;
   DO(yn, f=cirRef_(x,kK(y)[yn-i-1],f))
   R f;
 }
 
-I cirRef_(K x,K y,I f)
-{
+I cirRef_(K x,K y,I f){
   if(x==y)f=1;
   DO(yn, if(!f && (yt==0 || yt==5)) f=cirRef_(x,kK(y)[yn-i-1],f))
   R f;
