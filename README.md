@@ -1,6 +1,6 @@
 # Kona
 
-![Kona](kona.png)
+![Kona](https://raw.githubusercontent.com/kevinlawler/kona/master/Kona.png)
 
 What is Kona?
 -------------
