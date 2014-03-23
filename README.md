@@ -1,20 +1,35 @@
-Kona wiki: https://github.com/kevinlawler/kona/wiki
+# Kona
 
-To compile (OS X/Linux/BSD/Cygwin):
+<hr/>
 
-    make           #gmake on BSD
+![Kona](kona.png)
 
-To start the interpreter
+What is Kona?
+-------------
+<hr/>
 
-    ./k
+Kona is the open-source implementation of the K programming language. If you don't know APL, then this is the place to start. K is an ASCII-based APL. KDB (or Q) is the popular database software built on top of K. K was originally designed by Arthur Whitney and Kx Systems. Kona is unaffiliated with Kx.
 
-To start the interpreter with tests in debug mode 
+Installation
+------------
 
-    ./k_test
+<hr/>
 
-rlwrap makes the k command line interface much nicer. rlwrap adds history and eliminates the "^[[A^[[A^[[D^[[C^..." problem
+Navigate to the file you want to install Kona, then type:
 
-    rlwrap ./k
+    git clone https://github.com/kevinlawler/kona.git
+    cd kona
+    make                                #gamke on BSD
+    
+Then once in the file run:
+
+    ./k                      #./k_test for debug mode
+    
+Further Information
+-------------------
+
+<hr/>
+
+You can find further information about Kona at [the wiki](https://github.com/kevinlawler/kona/wiki).
 
 
-Kona is the open-source implementation of the K programming language. If you don't know APL, then this is the place to start. K is an ASCII-based APL. KDB (or Q) is the popular database software built on top of K. K was originally designed by Arthur Whitney and Kx Systems. Kona is unaffiliated with Kx. See the intro screencast: http://www.youtube.com/watch?v=bmiq47E5N-w   Screencast on MapReduce: http://www.youtube.com/watch?v=WBXsCeW9qfc
