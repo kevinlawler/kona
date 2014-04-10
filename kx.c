@@ -508,10 +508,12 @@ cleanup:
     if(fef==-1){
       K d=kK(kK(KTREE)[0])[1]; K x=0;
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"x")){x=kclone(kK(d)[i]); break;})
-      K p=kK(g)[0];
-      cd(kK(x)[1]); kK(x)[1]=kclone(p);
-      K xe=enlist(x); K x2=dot_monadic(xe);
-      cd(kK(z)[LOCALS]); kK(z)[LOCALS]=x2; cd(x); cd(xe);
+      if(x){
+        K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p);
+        K xe=enlist(x); K x2=dot_monadic(xe);
+        cd(kK(z)[LOCALS]); kK(z)[LOCALS]=x2; cd(x); cd(xe);
+      }
+      else fef=-2;
     }
     else fef=-2;
   }
