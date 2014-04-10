@@ -26,7 +26,7 @@ __thread K prnt=0; // Parent of Subfunction
 __thread I f1s=1;  // Flag 1 for Subfunctions
 __thread I f2s=0;  // Flag 2 for Subfunctions
 __thread K grnt=0; // GrandParent of Subfunction
-I fef=-2;          // Flag enclosing function
+I fef=0;           // Flag enclosing function
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -499,23 +499,21 @@ K vf_ex(V q, K g)
 
 cleanup:
 
-  if(z && fef==-2){
+  if(z && !fef){
     if(z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"x"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){
-      fef=-1;
-      DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"x")){fef=i; break;} )
+      fef=1;
+      DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"x")){fef=0; break;} )
     }
 
-    if(fef==-1){
+    if(fef){
       K d=kK(kK(KTREE)[0])[1]; K x=0;
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"x")){x=kclone(kK(d)[i]); break;})
       if(x){
         K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p);
         K xe=enlist(x); K x2=dot_monadic(xe);
         cd(kK(z)[LOCALS]); kK(z)[LOCALS]=x2; cd(x); cd(xe);
-      }
-      else fef=-2;
-    }
-    else fef=-2;
+      } else fef=0;
+    } else fef=0;
   }
 
   cd(g);

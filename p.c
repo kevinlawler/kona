@@ -221,7 +221,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
 {
   if(!s) R 0;
 
-  if(fef==-1 && func && kV(func)[LOCALS] && kK(func)[LOCALS]->n){fef=-2;
+  if(fef && func && kV(func)[LOCALS] && kK(func)[LOCALS]->n){fef=0;
     K j0=dot_monadic(*dict); K j1=dot_monadic(kK(func)[LOCALS]); K j2=join(j0,j1);
     cd(*dict); *dict=dot_monadic(j2); cd(j0); cd(j1); cd(j2);  
   }
