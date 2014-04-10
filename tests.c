@@ -35,8 +35,8 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a);
-  K y = X(b);
+  fef=-2; K x = X(a);
+  fef=-2; K y = X(b);
   I m=matchI(x,y);
 
   if(!m)
@@ -218,6 +218,10 @@ Z I tests02()
   TC(1, f:{x}; g:{x f/1}; g 1; g 2)               // issue #238 case 3
   TC(22, {[e]{[x]e}1}@22)                         // issue #239
   TC_( "(7 0;7 1;7 2)", "f:{(7;x)}; {[n]a:n;f'[!a]}[3]; {[n]a:n;f'[!a]}[3]")  // issue #243
+  TC(456 123, f:{{[a]a,x}}123; f 456)             // issue #220
+  TC(456 123, x:999; f:{{[a]a,x}}123; f 456)      // issue #220
+  TC(3, {{[a]a+x}}[1][2])                         // issue #220
+  TC(1 2, {a:x;{[b](a;b)}y}[1;2])                 // issue #220
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
