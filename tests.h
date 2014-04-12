@@ -28,4 +28,3 @@ extern I test_print;
 I tc(S a,S b);
 I tp(I x);
 S ts(I x);
-extern I fef;
