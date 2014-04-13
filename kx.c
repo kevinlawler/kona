@@ -507,7 +507,9 @@ K vf_ex(V q, K g)
     if(x){
       K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p);
       K xe=enlist(x); K x2=dot_monadic(xe);
-      cd(kK(z)[LOCALS]); kK(z)[LOCALS]=x2; cd(x); cd(xe);
+      K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,xe);
+      cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); 
+      cd(x); cd(xe); cd(x2); cd(j0); cd(j2);
     }
   }
 

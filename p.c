@@ -221,16 +221,6 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
 {
   if(!s) R 0;
 
-  I ff=0;
-  if(func && kV(func)[LOCALS] && kK(func)[LOCALS]->n){
-    DO(kK(func)[LOCALS]->n, if(!strcmp(*kS(kK(kK(kK(func)[LOCALS])[i])[0]),"x")){ff=1; break;} ) 
-    if(ff)DO((*dict)->n, if(!strcmp(*kS(kK(kK(*dict)[i])[0]),"x")){ff=0; break;})
-  } 
-  if(ff){
-    K j0=dot_monadic(*dict); K j1=dot_monadic(kK(func)[LOCALS]); K j2=join(j0,j1);
-    cd(*dict); *dict=dot_monadic(j2); cd(j0); cd(j1); cd(j2);  
-  }
-
   I i=0;while(i<n && isspace(s[i]))i++;if('\\'==s[i])R backslash(s+i,n); //isspace lets \n through... odd but probably fine
 
   PDA p=0;
