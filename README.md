@@ -7,7 +7,7 @@ What is Kona?
 
 Kona is the open-source implementation of the K programming language. K is in the APL family of languages. If you are an expert programmer who doesn't know an APL but wants to learn one, then this is the place to start. The K language is ASCII-based so you don't need a special keyboard.
 
-For many people, K is the preferred APL dialect. It tends to be popular with investment bankers, the performance obsessed, analysts with endless data, blasé experts, and other smart people with not a lot of time. K is a vertical language, meaning, fewer machines and fewer keystrokes do the same job, at the expense of a higher clock rate. It is a demanding language. For this reason, K tends to be inappropriate for large teams. Perhaps the right way to think of it is as special ops gear.
+For many people, K is the preferred APL dialect. It tends to be popular with investment bankers, the performance obsessed, analysts with endless data, blasé experts, and other smart people with not a lot of time. K is a vertical language, meaning, fewer machines and fewer keystrokes do the same job, at the expense of a higher clock rate. It is a demanding language.
 
 K was originally designed by Arthur Whitney and [Kx Systems](http://kx.com/). Praise for K should be taken to refer to Kx's K. Kx sells a popular database called KDB+. People can and do create networked trading platforms in hours. If your business needs production K support, you can [evaluate KDB+ prior to purchasing from Kx](http://kx.com/software-download.php), or possibly speak with Kx consulting partner [First Derivatives](http://www.firstderivatives.com/).
 
