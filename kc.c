@@ -63,7 +63,8 @@ cleanup:
 //   R c==-1?n:c;
 // }
 
-I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));R 0;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
+I lines(FILE*f) {S a=0;I n=0;PDA p=0; grnt=0; while(-1!=line(f,&a,&n,&p));R 0;}
+  //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
 {
   S s=0; I b=0,c=0,m=0;

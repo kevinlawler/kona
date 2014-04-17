@@ -25,7 +25,7 @@ __thread I prj2=0; // 2nd Projection flag
 __thread K prnt=0; // Parent of Subfunction 
 __thread I f1s=1;  // Flag 1 for Subfunctions
 __thread I f2s=0;  // Flag 2 for Subfunctions
-__thread K grnt=0; // GrandParent of Subfunction
+         K grnt=0; // GrandParent of Subfunction
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
