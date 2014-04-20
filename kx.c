@@ -25,7 +25,11 @@ __thread I prj2=0; // 2nd Projection flag
 __thread K prnt=0; // Parent of Subfunction 
 __thread I f1s=1;  // Flag 1 for Subfunctions
 __thread I f2s=0;  // Flag 2 for Subfunctions
-         K grnt=0; // GrandParent of Subfunction
+__thread K grnt=0; // GrandParent of Subfunction
+__thread K encf=0; // Enclosing Function
+__thread I encp=0; // Enclosing Function Param
+__thread I frg=0;  // Flag reset globals
+__thread I frr=1;  // Flag reroute
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -316,9 +320,10 @@ Z K dv_ex(K a, V *p, K b)
   }
   if(flag) tmp=vf_ex(*p,b); 
   else{
-    if(stk>2e6) R kerr("stack");
-    stk++; tmp=vf_ex(*p,g); stk--;
-    if(grnt && !prnt) prnt=grnt;
+    if(stk>2e6) R kerr("stack"); stk++; 
+    if(frr && encf && (K*)DT_SIZE<(K*)*p)tmp=vf_ex(&encf,g);
+    else tmp=vf_ex(*p,g);
+    stk--; if(grnt && !prnt) prnt=grnt;
   }
 
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
@@ -496,19 +501,36 @@ K vf_ex(V q, K g)
     )
   }
 
-  I ff=0;
-  if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"x"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){
-    ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"x")){ff=0; break;} )
-  }  
-  if(ff){
-    K d=kK(kK(KTREE)[0])[1]; K x=0;
-    DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"x")){x=kclone(kK(d)[i]); break;})
-    if(x){
-      K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p);
-      K xe=enlist(x); K x2=dot_monadic(xe);
-      K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,xe);
-      cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); 
-      cd(x); cd(xe); cd(x2); cd(j0); cd(j2);
+  if(encp==1){      // Access to parameters from enclosing function
+    I ff=0;
+    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"y"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){ 
+      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"y")){ff=0; break;} )
+    }  
+    if(ff){
+      K d=kK(kK(KTREE)[0])[1]; K y=0;
+      DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"y")){y=kclone(kK(d)[i]); break;})
+      if(y){
+        K p=kK(g)[0]; cd(kK(y)[1]); kK(y)[1]=kclone(p); K ye=enlist(y); K y2=dot_monadic(ye);
+        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,ye);
+        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); 
+        cd(y); cd(ye); cd(y2); cd(j0); cd(j2); encp=2;
+      }
+    }
+  }
+  if(encp==0){
+    I ff=0;
+    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"x"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){
+      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"x")){ff=0; break;} )
+    }  
+    if(ff){
+      K d=kK(kK(KTREE)[0])[1]; K x=0;
+      DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"x")){x=kclone(kK(d)[i]); break;})
+      if(x){
+        K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p); K xe=enlist(x); K x2=dot_monadic(xe);
+        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,xe);
+        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); 
+        cd(x); cd(xe); cd(x2); cd(j0); cd(j2); encp=1;
+      }
     }
   }
 
@@ -555,7 +577,7 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
 
   SW(r)
   {
-    CS(0, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){cd(z); U(x=ex1(v+1+i,0,&i,n,1)) z=bk(x)?_n():x; if(fer)R z;})//  c:9;a+b;c:1 
+    CS(0, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){cd(z); frg++; x=ex1(v+1+i,0,&i,n,1); frg--; if(!frg){encp=0; frr=1; if(encf){cd(encf); encf=0;} if(grnt){cd(grnt); grnt=0;}} U(x) z=bk(x)?_n():x; if(fer)R z;})//  c:9;a+b;c:1 
     CS(4, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){U(x=ex1(v+1+i,0,&i,n,1)) if(fer)R x; x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); if(i==n) R x; z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;}a=*kI(z);cd(z); if(a){x=ex1(v+i+1,0,&i,n,1); R x=bk(x)?_n():x;} else while(i<n&&!bk(v[i]))i++; } R _n())
     CSR(5,)CSR(6,)CS(7, do{I i=0; U(x=ex1(v,0,&i,0,1)) if(fer)R x; x=bk(x)?_n():x; z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;}a=*kI(z);cd(z);i=0;if(b){while(++i<n&&!bk(v[i])); if(i>=n)break;}SW(r){CSR(5,)CS(6,if(a&&b){x=ex0(v+i+1,0,0); if(fer)R x; cd(x);})CS(7,DO2(a, x=ex0(v+i+1,0,0); if(fer)R x; cd(x);))}}while(6==r && a); R _n())
     CD: z=newK(0,n?e:0); if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){if(offsetColon==(v+1+i)[0] && (v+1+i)[1]>(V)DT_SIZE)fer=1; x=ex1(v+1+i,0,&i,n,0); if(fer){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}// (c:9;a+b;c:1) oom
@@ -570,7 +592,11 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
 
     if(!j && 0==k->t) DO(k->n,if(!kK(k)[i])kK(k)[i]=_n()) //Fill in 0-type NULLs with _n
 
-    if(z->t!=7 ||z->n!=1||(j<k->n && !(0==j && k->n==1))) { x=vf_ex(&z,k); cd(z); R z=x;} //(0==j untested) project if necessary, reuse vf_ex.
+    if(z->t!=7 ||z->n!=1||(j<k->n && !(0==j && k->n==1))) {    //(0==j untested) project if necessary, reuse vf_ex.
+      if(encf && (K*)DT_SIZE<(K*)&z){frr=0; x=vf_ex(&encf,k);}
+      else x=vf_ex(&z,k);
+      cd(z); R z=x;
+    } 
     else // checking if looks like f'[] or f/[] or ...
     {
       K p = kV(z)[CODE];
@@ -735,10 +761,12 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     K z=ex_(*v,1);
     if(z>(K)DT_SIZE && z->t==7 && z->n==3){
       if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n){
-        K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
-        K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
-        cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0;
+        K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(j0,j1); 
+        if(encp==0)kV(z)[CACHE_TREE]=dot_monadic(j2); if(encp==1)kV(z)[CACHE_TREE]=dot_monadic(j1);
+        cd(j0); cd(j1); cd(j2); cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0;
       }
+      if(prnt && kV(prnt)[CODE] && kK(prnt)[CODE]->t==-3 && kC(kK(prnt)[CODE])[0]=="{"[0] &&
+        kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0] && strchr(kC(kK(prnt)[CODE]),"y"[0])){encf=prnt; ci(encf);}
       prnt=z;
     }
     R z; 
