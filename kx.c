@@ -29,7 +29,6 @@ __thread K grnt=0; // GrandParent of Subfunction
 __thread K encf=0; // Enclosing Function
 __thread I encp=0; // Enclosing Function Param
 __thread I frg=0;  // Flag reset globals
-__thread I frr=1;  // Flag reroute
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -320,8 +319,8 @@ Z K dv_ex(K a, V *p, K b)
   }
   if(flag) tmp=vf_ex(*p,b); 
   else{
-    if(stk>2e6) R kerr("stack"); stk++; 
-    if(frr && encf && (K*)DT_SIZE<(K*)*p)tmp=vf_ex(&encf,g);
+    if(stk>2e6) R kerr("stack"); stk++;
+    if(encp && (encp!=2 || (strchr(kC(kK(encf)[CODE]),"z"[0]))) && encp!=3 && (K*)DT_SIZE<(K*)*p)tmp=vf_ex(&encf,g);
     else tmp=vf_ex(*p,g);
     stk--; if(grnt && !prnt) prnt=grnt;
   }
@@ -494,13 +493,29 @@ K vf_ex(V q, K g)
         cd(fc);
       }
 
-      ci(fw);
-      z=ex(fw); 
+      ci(fw); z=ex(fw); 
       DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; )
       stk--;
     )
   }
 
+  if(encp==2){
+    I ff=0;
+    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"z"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){
+      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"z")){ff=0; break;} )
+    }  
+    if(ff){
+      K d=kK(kK(KTREE)[0])[1]; K w=0;
+      DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"z")){w=kclone(kK(d)[i]); break;})
+      if(w){
+        K p=kK(g)[0]; cd(kK(w)[1]); kK(w)[1]=kclone(p);
+        K we=enlist(w); K w2=dot_monadic(we);
+        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,we);
+        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2);
+        cd(w); cd(we); cd(w2); cd(j0); cd(j2); encp=3;
+      }
+    }
+  }
   if(encp==1){      // Access to parameters from enclosing function
     I ff=0;
     if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"y"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){ 
@@ -565,7 +580,8 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
 K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
   U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
-  K z=ex_(&a,0); cd(a); fer=fwh=stk=prj=prj2=f2s=0; f1s=1; prnt=0; R z; }
+  K z=ex_(&a,0); cd(a); fer=fwh=stk=prj=prj2=f2s=0; f1s=1; if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0; R z; 
+}
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
 {
@@ -577,7 +593,7 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
 
   SW(r)
   {
-    CS(0, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){cd(z); frg++; x=ex1(v+1+i,0,&i,n,1); frg--; if(!frg){encp=0; frr=1; if(encf){cd(encf); encf=0;} if(grnt){cd(grnt); grnt=0;}} U(x) z=bk(x)?_n():x; if(fer)R z;})//  c:9;a+b;c:1 
+    CS(0, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){cd(z); frg++; x=ex1(v+1+i,0,&i,n,1); frg--; if(!frg){encp=0; if(encf){cd(encf); encf=0;} if(grnt){cd(grnt); grnt=0;}} U(x) z=bk(x)?_n():x; if(fer)R z;})//  c:9;a+b;c:1 
     CS(4, for(i=-1;i<n;i++)if(-1==i||bk(v[i])){U(x=ex1(v+1+i,0,&i,n,1)) if(fer)R x; x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); if(i==n) R x; z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;}a=*kI(z);cd(z); if(a){x=ex1(v+i+1,0,&i,n,1); R x=bk(x)?_n():x;} else while(i<n&&!bk(v[i]))i++; } R _n())
     CSR(5,)CSR(6,)CS(7, do{I i=0; U(x=ex1(v,0,&i,0,1)) if(fer)R x; x=bk(x)?_n():x; z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;}a=*kI(z);cd(z);i=0;if(b){while(++i<n&&!bk(v[i])); if(i>=n)break;}SW(r){CSR(5,)CS(6,if(a&&b){x=ex0(v+i+1,0,0); if(fer)R x; cd(x);})CS(7,DO2(a, x=ex0(v+i+1,0,0); if(fer)R x; cd(x);))}}while(6==r && a); R _n())
     CD: z=newK(0,n?e:0); if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){if(offsetColon==(v+1+i)[0] && (v+1+i)[1]>(V)DT_SIZE)fer=1; x=ex1(v+1+i,0,&i,n,0); if(fer){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}// (c:9;a+b;c:1) oom
@@ -593,9 +609,10 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
     if(!j && 0==k->t) DO(k->n,if(!kK(k)[i])kK(k)[i]=_n()) //Fill in 0-type NULLs with _n
 
     if(z->t!=7 ||z->n!=1||(j<k->n && !(0==j && k->n==1))) {    //(0==j untested) project if necessary, reuse vf_ex.
-      if(encf && (K*)DT_SIZE<(K*)&z){frr=0; x=vf_ex(&encf,k);}
+      if(encf && (K*)DT_SIZE<(K*)&z)x=vf_ex(&encf,k);
       else x=vf_ex(&z,k);
-      cd(z); R z=x;
+      if(encp!=3)cd(z);
+      R z=x;
     } 
     else // checking if looks like f'[] or f/[] or ...
     {
@@ -767,7 +784,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       }
       if(prnt && kV(prnt)[CODE] && kK(prnt)[CODE]->t==-3 && kC(kK(prnt)[CODE])[0]=="{"[0] &&
         kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0] && strchr(kC(kK(prnt)[CODE]),"y"[0])){encf=prnt; ci(encf);}
-      prnt=z;
+      if(encp!=2 || !prnt)prnt=z; 
+      else {cd(z); R prnt;}
     }
     R z; 
   }
@@ -895,7 +913,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   if(*(v+i)==(V)offsetEach)grnt=prnt;
   e=dv_ex(0,v+i,t2); *v=u;
   if(*(v+i)==(V)offsetEach)grnt=0;
-  cd(t2); if(!VA(t3)) cd(t3);
+  cd(t2); if(!VA(t3) && encp!=3) cd(t3);
   R e; 
 }
 

@@ -224,6 +224,8 @@ Z I tests02()
   TC(1 2, {a:x;{[b](a;b)}y}[1;2])                 // issue #220
   TC(3 1 2, f:{{[a]a,x,y}}[1]2; f 3)              // issue #244
   TC(3 1 2, {{[a]a,x,y}}[1][2]3)                  // issue #244
+  TC(4 1 2 3, f:{{[a]a,x,y,z}}[1][2]3; f 4)       // issue #247
+  TC(4 1 2 3, {{[a]a,x,y,z}}[1][2][3]4)           // issue #247
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
