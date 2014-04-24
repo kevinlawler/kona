@@ -499,7 +499,7 @@ K vf_ex(V q, K g)
     )
   }
 
-  if(encp==2){
+  if(encp==2){      // Access the parameters of an enclosing function
     I ff=0;
     if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"z"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){
       ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"z")){ff=0; break;} )
@@ -508,15 +508,14 @@ K vf_ex(V q, K g)
       K d=kK(kK(KTREE)[0])[1]; K w=0;
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"z")){w=kclone(kK(d)[i]); break;})
       if(w){
-        K p=kK(g)[0]; cd(kK(w)[1]); kK(w)[1]=kclone(p);
-        K we=enlist(w); K w2=dot_monadic(we);
+        K p=kK(g)[0]; cd(kK(w)[1]); kK(w)[1]=kclone(p); K we=enlist(w);
         K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,we);
         cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2);
-        cd(w); cd(we); cd(w2); cd(j0); cd(j2); encp=3;
+        cd(w); cd(we); cd(j0); cd(j2); encp=3;
       }
     }
   }
-  if(encp==1){      // Access to parameters from enclosing function
+  if(encp==1){
     I ff=0;
     if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"y"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){ 
       ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"y")){ff=0; break;} )
@@ -525,10 +524,10 @@ K vf_ex(V q, K g)
       K d=kK(kK(KTREE)[0])[1]; K y=0;
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"y")){y=kclone(kK(d)[i]); break;})
       if(y){
-        K p=kK(g)[0]; cd(kK(y)[1]); kK(y)[1]=kclone(p); K ye=enlist(y); K y2=dot_monadic(ye);
+        K p=kK(g)[0]; cd(kK(y)[1]); kK(y)[1]=kclone(p); K ye=enlist(y);
         K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,ye);
         cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); 
-        cd(y); cd(ye); cd(y2); cd(j0); cd(j2); encp=2;
+        cd(y); cd(ye); cd(j0); cd(j2); encp=2;
       }
     }
   }
@@ -541,10 +540,10 @@ K vf_ex(V q, K g)
       K d=kK(kK(KTREE)[0])[1]; K x=0;
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"x")){x=kclone(kK(d)[i]); break;})
       if(x){
-        K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p); K xe=enlist(x); K x2=dot_monadic(xe);
+        K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p); K xe=enlist(x);
         K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,xe);
         cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); 
-        cd(x); cd(xe); cd(x2); cd(j0); cd(j2); encp=1;
+        cd(x); cd(xe); cd(j0); cd(j2); encp=1;
       }
     }
   }
