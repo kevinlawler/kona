@@ -789,7 +789,10 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     R z; 
   }
 
-  if(!v[1] && sva(*v)){ R vf_ex(*v,k);}  //TODO: (,/:) and (,\:) both valence 2  
+  if(!v[1] && sva(*v)){      //TODO: (,/:) and (,\:) both valence 2  
+    if(*v==(V)0x7b && k->t==0 && kK(k)[2]->t==-3)kK(k)[2]=enlist(kK(k)[2]);
+    R vf_ex(*v,k);
+  }
   //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
 
   if(bk(v[1])){

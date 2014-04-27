@@ -1036,6 +1036,7 @@ Z I testsBook()
   TC(_ssr[1;2], (_ssr 1) 2)
   TC(_ssr[()], _ssr ())
   TC(_ssr[("this";"is";,"at")], _ssr ("this";"is";,"at"))
+  TC(_ssr[("this";"is";,"at")], _ssr ("this";"is";"at"))
   TC("that", _ssr["this";"is";,"at"])
 
   //Regressions
