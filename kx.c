@@ -634,8 +634,12 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/re
       }
       cd(t);
       /////////////////////////
-      if(z->t==7 && z->n==1 && kK(kK(z)[CODE])[0]==offsetSSR && k->t==0 && k->n==3 && kK(k)[2]->t==-3)
-        kK(k)[2]=enlist(kK(k)[2]);
+      if(z->t==7 && z->n==1 && kK(kK(z)[CODE])[0]==offsetSSR && k->t==0 && k->n==3 && ABS(kK(k)[2]->t)==3){
+        K x=kK(k)[2];
+        if(kK(k)[2]->n==1 && kK(k)[2]->t==3){K y=enlist(kK(k)[2]); kK(k)[2]=enlist(y); cd(y);}
+        else kK(k)[2]=enlist(kK(k)[2]);
+        cd(x);
+      }
       x=vf_ex(&z,k); cd(z); z=x; //copy/paste
       /////////////////////////
     }
