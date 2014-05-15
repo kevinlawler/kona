@@ -1,4 +1,4 @@
-# Kona
+# [Kona](http://kona.github.io/)
 
 ![Kona](https://raw.githubusercontent.com/kevinlawler/kona/master/Kona.png)
 
@@ -16,6 +16,12 @@ Kx's KDB+ uses the Q language, and is built on top of K4. Kx used to sell a data
 
 Installation
 ------------
+
+**Windows**
+
+You can find an executable version of Kona [here](https://github.com/kevinlawler/kona/releases/tag/Win.3.0).
+
+**Build from source**
 
 Navigate to the file you want to install Kona, then type:
 
