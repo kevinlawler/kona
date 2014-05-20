@@ -411,7 +411,7 @@ K vf_ex(V q, K g)
 
   I ii=o->n-2; //not the terminating NULL, but the entry before
   V*u=(V*) kK(o)+ii;
-  if(2==n && 1==adverbClass(*u) ) n=gn; //   / \ '  but maybe should exclude '
+  if(2==n && o->t!=-3 && 1==adverbClass(*u) ) n=gn; //   / \ '  but maybe should exclude '
 
   if(n && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
   {
