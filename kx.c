@@ -409,7 +409,7 @@ K vf_ex(V q, K g)
   K o=kV(f)[CODE]; K p=kV(f)[PARAMS]; K s=kV(f)[LOCALS]; K r=kV(f)[CONJ]; 
   I special = 1==t && !r && (offsetAt==*kW(f) || offsetDot==*kW(f) || offsetWhat==*kW(f)); //_ssr is not special (not overloaded)
 
-  if(o->t!=3){
+  if(o->t!=-3){
     I ii=o->n-2; //not the terminating NULL, but the entry before
     V*u=(V*) kK(o)+ii;
     if(2==n && 1==adverbClass(*u) ) n=gn; //   / \ '  but maybe should exclude '
