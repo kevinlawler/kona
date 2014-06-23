@@ -27,12 +27,12 @@ Navigate to the file you want to install Kona, then type:
 
     git clone https://github.com/kevinlawler/kona.git
     cd kona
-    make                                #gamke on BSD
-    
+    make                                #gmake on BSD
+
 Then once in the file run:
 
     ./k                      #./k_test for debug mode
-    
+
 Further Information
 -------------------
 
