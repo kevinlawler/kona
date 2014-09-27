@@ -196,8 +196,9 @@ K take(K a, K b)
  else if(1==ABS(bt))DO(n,kI(z)[i]=bn?kI(b)[(i+k)%m]:0)
  else if(0==    bt )DO(n,kK(z)[i]=bn?ci(kK(b)[(i+k)%m]):_n()) 
  else if(5<=    bt )DO(n,kK(z)[i]=ci(b))
- R z;
+ R demote(z);
 }
+
 K take_reshape(K a, K b)
 { //K3.2 will accept empty lists that aren't type -1 (as left arg)
   P(a->n && 1!=ABS(a->t),IE)
