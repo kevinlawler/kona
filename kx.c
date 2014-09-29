@@ -844,7 +844,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(1!=sva(v[1])){d=ex1(v+(offsetColon==v[1]?2:3),k,0,0,1); }   // oom -- except it's ok for d to be 0 elsewhere
     d=bk(d)?0:d;
 
-    if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5)) ){
+    if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5 || ABS(d->t)!=d->t)) ){
       K x = d;
       if(x->c) {d=kclone(x); cd(x);}
     }
