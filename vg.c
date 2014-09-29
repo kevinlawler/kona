@@ -259,7 +259,7 @@ K drop(K a, K b)
   else if(-1==bt)DO(zn,kI(z)[i]=kI(b)[i+c])
   else if( 0==bt)DO(zn,kK(z)[i]=ci(kK(b)[i+c]))
 
-  R z;
+  R demote(z);
 }
 
 K cut(K a, K b)

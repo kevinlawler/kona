@@ -64,6 +64,7 @@ K kclone(K a)//Deep copy -- eliminate where possible
 
 K collapse(K x) //oom
 {
+  if(xt==1 && xn==1) R x;
   K z;
   if(1==xn){ z=ci(*kK(x)); cd(x);} 
   else z=demote(x);
@@ -88,6 +89,7 @@ K demote(K a)//Attempt to force unnaturally occurring lists into vectors
   else if(2==p)DO(n,kF(z)[i]=*kF(kK(a)[i]))
   else if(1==p)DO(n,kI(z)[i]=*kI(kK(a)[i]))
   cd(a);
+  if(z->t==-1 && z->n==1) z->t=1;
   R z;
 }
 K promote(K a)//Identity on lists. Lists from vectors. Pseudo-enlist on atoms (always 0-lists).
