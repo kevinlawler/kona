@@ -36,7 +36,7 @@ lib: $(LIB)
 $(LIB): $(OBJS) src/kapi.o
 	$(AR) crv $@ $(OBJS) src/kapi.o
 
-kapi-test: kapi-test.o $(LIB)
+kapi-test: src/kapi-test.o $(LIB)
 	$(CC) ${CFLAGS} $^ -o $@ -L. -lkona $(LDFLAGS)
 
 k: CFLAGS += $(PRODFLAGS)
