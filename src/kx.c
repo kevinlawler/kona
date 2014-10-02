@@ -332,7 +332,7 @@ Z K dv_ex(K a, V *p, K b)
 //1. Use PARAMETER list (or XYZ tuple) to merge CONJ and ARGS-G into LOCAL-DICT-TREE
 //2. Execute as normal, except
 //   a. The LOCAL-DICT-TREE acts as the "KTREE"
-//   b. Double-colon assignment :: adds to the dictionary in CONTEXT
+//   b. Double-colon assignment :: adds to the dictionary in CONTeXT
 
 //Note:  a:{c::1}       <--- even without executing c is set (_n) in context
 //       a:{{d::1}}     <--- d set in context (_n, if executed then 1)

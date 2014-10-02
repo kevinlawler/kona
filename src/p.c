@@ -421,7 +421,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       ((K)z)->n=3;
                       memcpy(kC(g),s+k+1,r-2);
 
-                      kV(z)[CONTEXT] = func?kV(func)[CONTEXT]:__d;
+                      kV(z)[CONTeXT] = func?kV(func)[CONTeXT]:__d;
 
                       K* zdict = (K*)kV(z)+PARAMS;
                       K* ydict = (K*)kV(z)+LOCALS;
@@ -518,12 +518,12 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                         }
                         else if((q=DE(*dict,u))) z=EVP(q); //If func has its local, use it
                         //else if(':'==s[k+r] && ':'==s[k+r+1] && -MARK_VERB==m[k+r+1])
-                        //  {m[k+r]=MARK_NAME; r++; z=denameS(kV(func)[CONTEXT],u);} //m[]=  probably superfluous 
+                        //  {m[k+r]=MARK_NAME; r++; z=denameS(kV(func)[CONTeXT],u);} //m[]=  probably superfluous 
                         else if(-MARK_VERB==m[k+r] && ':'==s[k+r+1] && -MARK_VERB==m[k+r+1])
-                          {if(':'==s[k+r])r++; z=denameS(kV(func)[CONTEXT],u,1);}
+                          {if(':'==s[k+r])r++; z=denameS(kV(func)[CONTeXT],u,1);}
                         else if(dict==(K*)kV(func)+LOCALS && ':'==s[k+r] && -MARK_VERB==m[k+r]) z=denameD(dict,u,1); 
                           //K3.2:  a+:1 format applies to context-globals not locals
-                        else z=denameS(kV(func)[CONTEXT],u,1);//Otherwise check the context (refactor with above?) 
+                        else z=denameS(kV(func)[CONTeXT],u,1);//Otherwise check the context (refactor with above?) 
                           //The way this else-branch is set up, {b;b:1} will create context-global b though K3.2 won't. Seems OK
                       }
                       else z=denameD(dict,u,1);

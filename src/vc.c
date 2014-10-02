@@ -69,7 +69,7 @@ I matchI(K a, K b)
             DO(an, c=kW(a)[i];d=kW(b)[i]; if(VA(c)||VA(d)){if(c!=d) R 0;} else if(!matchI(*c,*d)) R 0) //TODO: Projection (up above?)
         )
       CS(2, )//TODO
-      CS(3, if(kV(a)[CONTEXT] != kV(b)[CONTEXT])R 0; R matchI(kV(a)[CODE],kV(b)[CODE])) //TODO: Projection (up above?)
+      CS(3, if(kV(a)[CONTeXT] != kV(b)[CONTeXT])R 0; R matchI(kV(a)[CODE],kV(b)[CODE])) //TODO: Projection (up above?)
     }
   }
   R 1;
