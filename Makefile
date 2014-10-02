@@ -7,9 +7,9 @@ DEVFLAGS = -O0 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
 
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
-OBJS= 0.o c.o getline.o mt.o p.o r.o \
-      k.o kc.o kx.o kg.o km.o kn.o ko.o ks.o \
-      v.o va.o vc.o vd.o vf.o vg.o vq.o
+OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+      src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
+      src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 
 # k_test versions of OBJS
 OBJS_T= $(shell echo ${OBJS} | sed -e "s/\.o/.t.o/g")
@@ -33,18 +33,18 @@ all: k k_test
 
 lib: $(LIB) 
 
-$(LIB): $(OBJS) kapi.o
-	$(AR) crv $@ $(OBJS) kapi.o
+$(LIB): $(OBJS) src/kapi.o
+	$(AR) crv $@ $(OBJS) src/kapi.o
 
 kapi-test: kapi-test.o $(LIB)
 	$(CC) ${CFLAGS} $^ -o $@ -L. -lkona $(LDFLAGS)
 
 k: CFLAGS += $(PRODFLAGS)
-k: $(OBJS) main.o
+k: $(OBJS) src/main.o
 	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
 
 k_test: CFLAGS += $(DEVFLAGS)
-k_test: $(OBJS_T) main.t.o tests.t.o
+k_test: $(OBJS_T) src/main.t.o src/tests.t.o
 	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
 
 k_dyn: CFLAGS += $(PRODFLAGS)
@@ -57,7 +57,7 @@ install:
 	install k $(PREFIX)/bin/k
 
 clean:
-	$(RM) -r k k_test k.dSYM k_test.dSYM *.o
+	$(RM) -r k k_test k.dSYM k_test.dSYM src/*.o
 
 TAGS: *.c *.h
 	etags *.[ch]
@@ -68,28 +68,29 @@ TAGS: *.c *.h
 .PHONY: all clean install
 
 # Dependencies.
-*.o: incs.h ts.h Makefile k.h
-0.c: 0.h km.h v.h vf.h
-c.c: c.h
-getline.c: 0.h getline.h
-k.c: r.h kc.h kx.h kg.h km.h kn.h ko.h ks.h tests.h v.h va.h vc.h vd.h vf.h vg.h vq.h
-kc.c: kc.h
-kx.c: kx.h km.h
-kg.c: kg.h km.h
-km.c: km.h
-kn.c: kn.h
-ko.c: km.h ko.h
-ks.c: ks.h
-p.c: km.h p.h v.h vf.h
-r.c: r.h va.h vf.h vg.h
-tests.c: tests.h
-v.c: scalar.h km.h 0.h v.h
-va.c: scalar.h r.h vc.h
-vc.c: scalar.h km.h ko.h vc.h
-vd.c: km.h p.h r.h v.h vd.h
-vf.c: km.h vf.h
-vg.c: kg.h km.h v.h vc.h
-vq.c: r.h v.h vq.h
-kapi.c: kona.h
+src/*.o: src/incs.h src/ts.h Makefile src/k.h
+src/0.c: src/0.h src/km.h src/v.h src/vf.h
+src/c.c: src/c.h
+src/getline.c: src/0.h src/getline.h
+src/k.c: src/r.h src/kc.h src/kx.h src/kg.h src/km.h src/kn.h src/ko.h src/ks.h \
+         src/tests.h src/v.h src/va.h src/vc.h src/vd.h src/vf.h src/vg.h src/vq.h
+src/kc.c: src/kc.h
+src/kx.c: src/kx.h src/km.h
+src/kg.c: src/kg.h src/km.h
+src/km.c: src/km.h
+src/kn.c: src/kn.h
+src/ko.c: src/km.h src/ko.h
+src/ks.c: src/ks.h
+src/p.c: src/km.h src/p.h src/v.h src/vf.h
+src/r.c: src/r.h src/va.h src/vf.h src/vg.h
+src/tests.c: src/tests.h
+src/v.c: src/scalar.h src/km.h src/0.h src/v.h
+src/va.c: src/scalar.h src/r.h src/vc.h
+src/vc.c: src/scalar.h src/km.h src/ko.h src/vc.h
+src/vd.c: src/km.h src/p.h src/r.h src/v.h src/vd.h
+src/vf.c: src/km.h src/vf.h
+src/vg.c: src/kg.h src/km.h src/v.h src/vc.h
+src/vq.c: src/r.h src/v.h src/vq.h
+src/kapi.c: src/kona.h
 
 # DO NOT DELETE
