@@ -1,6 +1,19 @@
 #ifndef INCS_H
 #define INCS_H
 
+#ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <stdint.h>
+#include <_mingw.h>
+#include <winsock2.h>
+#include <windef.h>
+#include <ws2tcpip.h>
+#else
+#include <netdb.h>
+#endif
+
 #include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,7 +24,6 @@
 #include <ctype.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <netdb.h>
 #include <fnmatch.h>
 #include <dlfcn.h>
 #include <sys/mman.h>  //mmap
