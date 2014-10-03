@@ -41,7 +41,7 @@ I PP=7;   //Print Precision Digits
 I PPMAX=19;
 C PPON=1;
 I maX(I a,I b){R a>b?a:b;}
-I min(I a,I b){R a<b?a:b;}
+I miN(I a,I b){R a<b?a:b;}
 
 K X(S s){R XN(s,strlen(s));}  
 Z K XN(S s,I n){R ex(wd(s,n));} //asserts ex(x) has first-line U(x)
