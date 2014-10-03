@@ -20,6 +20,10 @@
 #include "vg.h"
 #include "vq.h"
 
+#ifdef WIN32
+extern I listener;
+#endif
+
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
 extern K kerr(cS s){ R snprintf(errmsg,256,"%s",s),(K)0;} 
 Z I oerr(){R O("%s %s\n",errmsg,"error");}
@@ -524,6 +528,9 @@ V krec[1000000];
 
 void finally()
 {
+#ifdef WIN32
+if(PORT) {closescket(listener); WSACleanup();)
+#endif
 #ifdef DEBUG   
 tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
 //valgrind --leak-check=full --show-reachable=yes /tmp/a.out
