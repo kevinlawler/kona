@@ -44,9 +44,7 @@ I getdelim_(S *s,size_t * __restrict__ n,I d,FILE *f)
 
 #if defined(__OpenBSD__) || defined(__NetBSD__) ||  \
    (defined(__MACH__) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1070)
-I getdelim(S *s,I*n, I d, FILE *f);
-
-I getline(S *s,I*n, FILE *f){ return getdelim(s,n,'\n',f);}
+I getline(S *s,I*n, FILE *f){ R getdelim(s,n,'\n',f);}
 I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
 {
   unsigned char *q;
@@ -63,7 +61,7 @@ I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
     if (__sferror(f) || expander(s, 1)) goto error;
     funlockfile(f);
     (*s)[0] = '\0';
-    return *n=-1;
+    R *n=-1;
   }
 
   while ((q = memchr(f->_p, d, f->_r)) == NULL)
@@ -84,26 +82,23 @@ I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
     /* Invariant: *s has space for at least w+1 bytes. */
     (*s)[w] = '\0';
     funlockfile(f);
-    return *n=w;
+    R *n=w;
 
   error:
     f->_flags |= __SERR;
     funlockfile(f);
-    return *n=-1;
+    R *n=-1;
 }
 #endif
 
 #ifdef WIN32
-I getline(S *s,I*n, FILE *f){ return getdelim(s,n,'\n',f);}
+I getline(S *s,I*n, FILE *f){ R getdelim(s,n,'\n',f);}
 I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, file
-  //unsigned char *q;
-  O("s: %s\n",s); O("sizeof(s): %d\n",sizeof(s));
-  char *q;
-  I w=0;
+  char *q; I w=0;
   if (!s) {errno = EINVAL; goto error;}
   if (f->_cnt <= 0) {
     if (expander(s, 1)) goto error;
-    (*s)[0] = '\0'; return *n=-1;
+    (*s)[0] = '\0'; R *n=-1;
   }
   while ((q = memchr(f->_ptr, d, f->_cnt)) == NULL) {
     if (appender(s, &w, (S) f->_ptr, f->_cnt)) goto error;
@@ -111,8 +106,7 @@ I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, fi
   }
   q++;  /* snarf the delimiter, too */
   if (appender(s, &w, (S) f->_ptr, q - f->_ptr)) goto error;
-  f->_cnt -= q - f->_ptr;
-  f->_ptr = q;
+  f->_cnt -= q - f->_ptr; f->_ptr = q;
   done: (*s)[w] = '\0'; R *n=w;
   error: R *n=-1;
 }
