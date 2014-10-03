@@ -40,7 +40,7 @@ S LS;     //special symbol for locals (repeated,invisble)
 I PP=7;   //Print Precision Digits
 I PPMAX=19;
 C PPON=1;
-I max(I a,I b){R a>b?a:b;}
+I maX(I a,I b){R a>b?a:b;}
 I min(I a,I b){R a<b?a:b;}
 
 K X(S s){R XN(s,strlen(s));}  

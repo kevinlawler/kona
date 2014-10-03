@@ -40,7 +40,7 @@ extern K KTREE;
 K *denameD(K *d,S t,I create);
 K wd_(S s,I n,K *dict,K func);
 K wd(S s,I n);
-I max(I a,I b);
+I maX(I a,I b);
 I mark(I *m,I k,I t);
 enum mark_members {MARK_UNMARKED,MARK_IGNORE,MARK_BRACKET,MARK_END,MARK_PAREN,MARK_BRACE,MARK_QUOTE,MARK_SYMBOL,
                   MARK_NAME,MARK_NUMBER,MARK_VERB,MARK_ADVERB,MARK_CONDITIONAL,MARK_COUNT};

@@ -209,7 +209,7 @@ enum mark_members{MARK_UNMARKED,MARK_IGNORE,MARK_BRACKET,MARK_END,MARK_PAREN,MAR
 Z I overcount(I*m,I n) {I c=0,p=0;DO(n, if( WORD_START(m[i]) && !(m[i]==p && GREEDY_START(p))){p=m[i];c++;}) R c; }
 
 I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
-#define marker(a,b) DO(n,i+=max(0,-1+mark(m+i,a(s,n,i,m),b))) 
+#define marker(a,b) DO(n,i+=maX(0,-1+mark(m+i,a(s,n,i,m),b))) 
 //Some parse error cases missing...but it seems OK/preferable to ignore them e.g.  _t.a or 'a.....' (floor t.a or a. ...)
 //K3.2: whitespace between ANY_TOKEN and adverb fails
 //K3.2: if brackets [] not flush with token to left, parse error "0 1 2[0]" ok but "0 1 2 [1]" not ok
@@ -294,7 +294,7 @@ Z C unescape(S s, I*k) //*k - return is composed of how many [escaped] chars
   R (C) (UC) MIN(a,255);
 }
 //assumes s[0:n-1] could be the inside, [exclusive] of any complete MARK_QUOTE token ; checks !isodigit(s[n])
-Z I unescaped_size(S s,I n){I k=0;DO(n,k++;if('\\'==s[i])i+=max(1,odigitlen3(s+i+1)))R k;}
+Z I unescaped_size(S s,I n){I k=0;DO(n,k++;if('\\'==s[i])i+=maX(1,odigitlen3(s+i+1)))R k;}
 Z I unescaped_fill(S d, S s, I n){I k=0,q;DO(n,d[k++]=unescape(s+i,&q);i+=q-1) R k;} 
 
 S param_dfa = 
