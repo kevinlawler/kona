@@ -92,3 +92,28 @@ I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
     return *n=-1;
 }
 #endif
+
+#ifdef WIN32
+I getline(S *s,I*n, FILE *f){ return getdelim(s,n,'\n',f);}
+I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, file
+  //unsigned char *q;
+  O("s: %s\n",s); O("sizeof(s): %d\n",sizeof(s));
+  char *q;
+  I w=0;
+  if (!s) {errno = EINVAL; goto error;}
+  if (f->_cnt <= 0) {
+    if (expander(s, 1)) goto error;
+    (*s)[0] = '\0'; return *n=-1;
+  }
+  while ((q = memchr(f->_ptr, d, f->_cnt)) == NULL) {
+    if (appender(s, &w, (S) f->_ptr, f->_cnt)) goto error;
+    goto done;  /* hit EOF */
+  }
+  q++;  /* snarf the delimiter, too */
+  if (appender(s, &w, (S) f->_ptr, q - f->_ptr)) goto error;
+  f->_cnt -= q - f->_ptr;
+  f->_ptr = q;
+  done: (*s)[w] = '\0'; R *n=w;
+  error: R *n=-1;
+}
+#endif
