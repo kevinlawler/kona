@@ -1,3 +1,4 @@
+;
 extern K KFIXED;
 K cd(K a);
 void finally();
