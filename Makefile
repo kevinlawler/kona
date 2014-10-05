@@ -65,7 +65,7 @@ install:
 	install k $(PREFIX)/bin/k
 
 clean:
-	$(RM) -r k.exe k_test.exe k.dSYM k_test.dSYM src/*.o src/win/*.o
+	$(RM) -r k k_test *.exe k.dSYM k_test.dSYM src/*.o src/win/*.o
 
 TAGS: *.c *.h
 	etags *.[ch]
