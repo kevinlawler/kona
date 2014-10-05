@@ -13,7 +13,6 @@
 
 #ifndef WIN32
 #include <netinet/tcp.h>
-Z void handle_SIGINT(int sig) { interrupted = 1; }
 #else
 #include <sys/types.h>
 #include <sys/sysconf.h>
@@ -138,6 +137,8 @@ void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
 
 
 #ifndef WIN32
+
+Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));R 0;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
