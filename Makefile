@@ -1,5 +1,5 @@
-CC=gcc
 PREFIX = /usr/local
+LDFLAGS = -lm
 CFLAGS=-g
 PRODFLAGS = -O3 #-pg -g3
 LIB=libkona.a
@@ -7,17 +7,9 @@ DEVFLAGS = -O0 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
 
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
-ifeq (mingw32_nt-6.2,$(OS))
-LDFLAGS = -lws2_32 -static -lpthread
-OBJS= src/win/mman.o src/win/dlfcn.o src/0.o src/c.o src/getline.o src/mt.o src/p.o \
-      src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
-      src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
-else
-LDFLAGS = -lm
 OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
       src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
-endif
 
 # k_test versions of OBJS
 OBJS_T= $(shell echo ${OBJS} | sed -e "s/\.o/.t.o/g")
@@ -65,7 +57,7 @@ install:
 	install k $(PREFIX)/bin/k
 
 clean:
-	$(RM) -r k k_test *.exe k.dSYM k_test.dSYM src/*.o src/win/*.o
+	$(RM) -r k k_test k.dSYM k_test.dSYM src/*.o
 
 TAGS: *.c *.h
 	etags *.[ch]
@@ -76,13 +68,7 @@ TAGS: *.c *.h
 .PHONY: all clean install
 
 # Dependencies.
-ifeq (mingw32_nt-6.2,$(OS))
-src/win/dlfcn.c: src/win/dlfcn.h
-src/win/mman.c: src/win/mman.h
-src/*.o: src/incs.h src/ts.h Makefile src/k.h src/win/mman.h src/win/dlfcn.h
-else
 src/*.o: src/incs.h src/ts.h Makefile src/k.h
-endif
 src/0.c: src/0.h src/km.h src/v.h src/vf.h
 src/c.c: src/c.h
 src/getline.c: src/0.h src/getline.h
@@ -95,7 +81,6 @@ src/km.c: src/km.h
 src/kn.c: src/kn.h
 src/ko.c: src/km.h src/ko.h
 src/ks.c: src/ks.h
-
 src/p.c: src/km.h src/p.h src/v.h src/vf.h
 src/r.c: src/r.h src/va.h src/vf.h src/vg.h
 src/tests.c: src/tests.h
