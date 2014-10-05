@@ -2,7 +2,12 @@
 #include "incs.h"
 #include "getline.h"
 
+#ifndef WIN32
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
+#else
+#include <unistd.h>
+#include <sys/mman.h>
+#endif
 
 #if defined(__OpenBSD__) || defined(__FreeBSD__)  || defined(__NetBSD__)
 #include <sys/socket.h>
@@ -438,7 +443,11 @@ K _1m(K x) //Keeps binary files mapped
 
   S v;
   //These mmap arguments are present in Arthur's code. WRITE+PRIVATE lets reference count be modified without affecting file
+#ifndef WIN32  
   if(MAP_FAILED==(v=mmap(0,s,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,0)))R SE;
+#else
+  if(MAP_FAILED==(v=mmap(0,s,PROT_READ|PROT_WRITE,MAP_PRIVATE,f,0)))R SE;
+#endif
 
   //TODO: verify that the file is valid K data. For -1,-2,-3 types (at least) you can avoid scanning the whole thing and check size
   I b=0;
@@ -476,7 +485,11 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) //File descriptor, moving * into mmap, fix
     I mod = offset&(PG-1); //offset must be a multiple of the pagesize
     length+=mod;
     offset-=mod;
+#ifndef WIN32
     if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,offset))){R SE;}
+#else
+    if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE,f,offset))){R SE;}
+#endif
     z=(K)(((V)u+mod)-3*sizeof(I)); //3*sizeof(I) for c,t,n
     //if(1<=t || 3<=t){dd(z->n)} // ???
   }
@@ -835,49 +848,6 @@ K _2d(K a,K b)
   R z;
 }
 
-//TODO: Manual's section on interprocess communication. {-h, .m.u, .m.c, .m.g, .m.s, .m.h}
-K _3m(K x)
-{
-  if(1==xt){I i=close(*kI(x)); R i?DOE:_n();} // 3: 1
-  else P(xt|| xn!=2 || kK(x)[0]->t!=4 || kK(x)[1]->t!=1, TE)
-  //3:`"999.999.999.999",1234   // same host: 3:`,1234
-  S host=CSK(*kK(x)), errstr;
-  char port[256];
-  snprintf(port,256,"%lld",*kI(kK(x)[1]));
-
-  int sockfd;
-  struct addrinfo hints, *servinfo, *p; 
-  int rv;
-  memset(&hints, 0, sizeof hints); 
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-
-  if ((rv = getaddrinfo(host, port, &hints, &servinfo)) != 0) { fprintf(stderr, "conn: %s\n", gai_strerror(rv)); R DOE; }
-  // loop through all the results and connect to the first we can
-  for(p = servinfo; p != NULL; p = p->ai_next) 
-    if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {  continue; } //perror("client: socket");
-    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) { errstr=strerror(errno); close(sockfd);  continue; } //perror("client: connect");
-    else break;
-
-  if (p == NULL) { fprintf(stderr, "conn: failed to connect (%s)\n", errstr);freeaddrinfo(servinfo); R DOE; }
-
-  //char s[INET6_ADDRSTRLEN];
-  //inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
-  //O("client: connecting to %s\n", s);
-  I yes=1;
-  setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I));//disable nagle
-#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)  || defined(__NetBSD__)
-  setsockopt(sockfd, SOL_SOCKET,  SO_NOSIGPIPE,&yes, sizeof(I)); 
-#endif
-  freeaddrinfo(servinfo); 
-
-  //Z C m[ 8]; if(-1==sendall(sockfd,(S)&m,sizeof m))R DOE; //not really sure what this handshake is for, 32-bit K3.2 requires it
-
-  wipe_tape(sockfd);
-  R Ki(sockfd);
-}
-
-
 Z I sendall(I s,S b,I k){I t=0,r=k,n=0;while(t<k){n=send(s,b+t,r,0);if(-1==n)break;t+=n;r-=n;}R -1==n?n:0;}//from beej
 
 I ksender(I sockfd,K y,I t)
@@ -930,7 +900,11 @@ K _4d(K x,K y) //see _3d
   I sockfd = *kI(x);
   P(-1==ksender(sockfd,y,1),DOE)
   K z=0;
+#ifndef WIN32
   while(!(z=read_tape(sockfd,1)));
+#else
+  while(!(z=read_tape(0,sockfd,1)));
+#endif
   P(!z || z==(K)-1,DOE)
   R z;
 }
@@ -979,9 +953,12 @@ K _5d(K x,K y)
   if(s < 4*sizeof(I)) R 0; //TODO: err, file is malformed
 
   //TODO: regular file read + rewind?
-  I ft,fn,g;
+  I ft,fn;
+#ifndef WIN32
+  I g;
   g=pread(f,&ft,sizeof(ft),2*sizeof(I)); if(!g)show(kerr("pread"));
   g=pread(f,&fn,sizeof(ft),2*sizeof(I)+sizeof(ft)); if(!g)show(kerr("pread"));
+#endif
 
   if( (yt>0&&yt!=5) || ft != yt) R 0; //TODO: type error
   
@@ -1078,3 +1055,95 @@ K _6d(K a,K b) //A lot of this is copy/paste from 0: dyadic write
   R _n();
 }
 
+#ifndef WIN32
+
+//TODO: Manual's section on interprocess communication. {-h, .m.u, .m.c, .m.g, .m.s, .m.h}
+K _3m(K x)
+{
+  if(1==xt){I i=close(*kI(x)); R i?DOE:_n();} // 3: 1
+  else P(xt|| xn!=2 || kK(x)[0]->t!=4 || kK(x)[1]->t!=1, TE)
+  //3:`"999.999.999.999",1234   // same host: 3:`,1234
+  S host=CSK(*kK(x)), errstr;
+  char port[256];
+  snprintf(port,256,"%lld",*kI(kK(x)[1]));
+
+  int sockfd;
+  struct addrinfo hints, *servinfo, *p; 
+  int rv;
+  memset(&hints, 0, sizeof hints); 
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+
+  if ((rv = getaddrinfo(host, port, &hints, &servinfo)) != 0) { fprintf(stderr, "conn: %s\n", gai_strerror(rv)); R DOE; }
+  // loop through all the results and connect to the first we can
+  for(p = servinfo; p != NULL; p = p->ai_next) 
+    if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {  continue; } //perror("client: socket");
+    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) { errstr=strerror(errno); close(sockfd);  continue; } //perror("client: connect");
+    else break;
+
+  if (p == NULL) { fprintf(stderr, "conn: failed to connect (%s)\n", errstr);freeaddrinfo(servinfo); R DOE; }
+
+  //char s[INET6_ADDRSTRLEN];
+  //inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
+  //O("client: connecting to %s\n", s);
+  I yes=1;
+  setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I));//disable nagle
+#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)  || defined(__NetBSD__)
+  setsockopt(sockfd, SOL_SOCKET,  SO_NOSIGPIPE,&yes, sizeof(I)); 
+#endif
+  freeaddrinfo(servinfo); 
+
+  //Z C m[ 8]; if(-1==sendall(sockfd,(S)&m,sizeof m))R DOE; //not really sure what this handshake is for, 32-bit K3.2 requires it
+
+  wipe_tape(sockfd);
+  R Ki(sockfd);
+}
+
+#else
+
+//TODO: Manual's section on interprocess communication. {-h, .m.u, .m.c, .m.g, .m.s, .m.h}
+K _3m(K x)
+{
+  if(1==xt){I i=close(*kI(x)); R i?DOE:_n();} // 3: 1
+  else P(xt|| xn!=2 || kK(x)[0]->t!=4 || kK(x)[1]->t!=1, TE)
+  //3:`"999.999.999.999",1234   // same host: 3:`,1234
+  S host=CSK(*kK(x)); char port[256]; snprintf(port,256,"%lld",*kI(kK(x)[1]));
+
+  // initialize WinSock
+  WSADATA wsaData;
+  int err = WSAStartup(MAKEWORD(2,2), &wsaData);
+  if(err != 0) O("WSAStartup failed with error: %d\n",err);
+  if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
+    { O("Could not find useable version of Winsock.dll\n"); exit(1); }
+  PORT=port;  //need this for finally() to cleanup WinSock
+
+  struct addrinfo *servinfo = NULL, *p = NULL, hints;
+  ZeroMemory( &hints, sizeof(hints));
+  hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
+
+  int rv = getaddrinfo(host, port, &hints, &servinfo);
+  if(rv != 0) { O("getaddrinfo failed:%d\n", rv); exit(4); }
+  //else O("getaddressinfo OK\n");
+
+  SOCKET sockfd = INVALID_SOCKET;
+  p=servinfo; sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+  if(sockfd == INVALID_SOCKET) { O("Error at socket():%ld]n", WSAGetLastError()); freeaddrinfo(servinfo); exit(4); } 
+  //else O("socket() OK\n");
+
+  // loop through all the results and connect to the first we can
+  for(p = servinfo; p != NULL; p = p->ai_next) 
+    if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) 
+      { perror("client: socket()"); O("client socket(): %ld\n", WSAGetLastError()); continue; }
+    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) 
+      { O("client connect(): %d\n", WSAGetLastError()); close(sockfd); continue; }
+    else break;
+
+  if (p == NULL) { fprintf(stderr, "conn: failed to connect (%d)\n", WSAGetLastError());freeaddrinfo(servinfo); R DOE; }
+  I yes=1; setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (cS)&yes, sizeof(I));//disable nagle
+  freeaddrinfo(servinfo); 
+   
+  //wipe_tape(sockfd);
+  R Ki(sockfd); 
+}
+
+#endif

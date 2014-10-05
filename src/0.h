@@ -4,7 +4,6 @@ K _5d(K x,K y);
 void printAtDepth(V u,K a,I d,I x,I vdep,I b);
 K _5m(K x);
 K _4m(K x);
-K read_tape(I i,I type);
 K _4d(K x,K y);
 K kap(K *a,V v);
 K popen_charvec(C *cmd);
@@ -44,3 +43,9 @@ K newK(I t,I n);
 I stat_sz(S u,I *n);
 S CSK(K x);
 K _0m(K a);
+
+#ifndef WIN32
+K read_tape(I i,I type);
+#else
+K read_tape(I i,I j,I type);
+#endif
