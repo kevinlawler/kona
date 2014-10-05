@@ -30,14 +30,12 @@ I kinit();
 extern K KFIXED;
 K load(S s);
 I args(int n,S *v);
-K read_tape(I i,I type);
 I wipe_tape(I i);
 extern S PORT;
 I attend();
 extern fd_set master;
 K wd(S s,I n);
 K ex(K a);
-I line(FILE *f,S *a,I *n,PDA *p);
 I lines(FILE *f);
 K kap(K *a,V v);
 K cd(K a);
@@ -54,3 +52,11 @@ I prompt(I n);
 extern I adverb_ct;
 extern I vn_ct,vm_ct,vd_ct,vt_ct;
 extern I interrupted;
+
+#ifndef WIN32
+K read_tape(I i,I type);
+I line(FILE *f,S *a,I *n,PDA *p);
+#else
+K read_tape(I i,I j,I type);
+I line(S f, S *a, I *n, PDA *p);
+#endif
