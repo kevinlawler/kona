@@ -15,7 +15,6 @@
 #include <netinet/tcp.h>
 #else
 #include <sys/types.h>
-#include <sys/sysconf.h>
 #include <pthread.h>
 ;    // Need semicolon, probably missing from <pthread.h>.
 #endif

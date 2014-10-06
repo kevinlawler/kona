@@ -1,12 +1,13 @@
-#include <dlfcn.h>
 #include "incs.h"
 #include "getline.h"
 
 #ifndef WIN32
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
+#include <dlfcn.h>
 #else
 #include <unistd.h>
-#include <sys/mman.h>
+#include "win/dlfcn.h"
+#include "win/mman.h"
 #endif
 
 #if defined(__OpenBSD__) || defined(__FreeBSD__)  || defined(__NetBSD__)

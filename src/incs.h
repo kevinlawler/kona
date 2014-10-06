@@ -10,8 +10,13 @@
 #include <winsock2.h>
 #include <windef.h>
 #include <ws2tcpip.h>
+#include "win/dlfcn.h"
+#include "win/mman.h"  //mmap
 #else
+#include <fnmatch.h>
 #include <netdb.h>
+#include <dlfcn.h>
+#include <sys/mman.h>  //mmap
 #endif
 
 #include <limits.h>
@@ -24,9 +29,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <fnmatch.h>
-#include <dlfcn.h>
-#include <sys/mman.h>  //mmap
+
 #include <unistd.h>    //sbrk,sysconf
 #include <fcntl.h>     //O_RDWR etc
 #include <pthread.h>
