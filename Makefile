@@ -1,5 +1,4 @@
 PREFIX = /usr/local
-LDFLAGS = -lm
 CFLAGS=-g
 PRODFLAGS = -O3 #-pg -g3
 LIB=libkona.a
@@ -7,27 +6,60 @@ DEVFLAGS = -O0 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
 
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
+# Win-64
+ifeq (mingw32_nt-6.2,$(OS))
+CC=gcc
+LDFLAGS = -lws2_32 -static -lpthread
+OBJS= src/win/mman.o src/win/dlfcn.o src/0.o src/c.o src/getline.o src/mt.o src/p.o \
+      src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
+      src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+endif
+
+# Win-32
+ifeq (mingw32_nt-6.0,$(OS))
+CC=gcc
+LDFLAGS = -lws2_32 -static -lpthread
+OBJS= src/win/mman.o src/win/dlfcn.o src/0.o src/c.o src/getline.o src/mt.o src/p.o \
+      src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
+      src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+endif
+
+ifeq (linux,$(OS))
 OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
       src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+LDFLAGS = -lm -ldl
+endif
+
+ifeq (freebsd,$(OS))
+LDFLAGS = -lm
+OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+      src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
+      src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+endif
+
+ifeq (openbsd,$(OS))
+LDFLAGS = -lm
+OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+      src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
+      src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+endif
+
+ifeq (darwin,$(OS))
+LDFLAGS = -lm
+OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+      src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
+      src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+PRODFLAGS += -fast
+endif
+
+ifeq (sunos,$(OS))
+LDFLAGS += -lsocket
+PRODFLAGS += -fast
+endif
 
 # k_test versions of OBJS
 OBJS_T= $(shell echo ${OBJS} | sed -e "s/\.o/.t.o/g")
-
-ifeq (linux,$(OS))
-	LDFLAGS += -ldl
-endif
-ifeq (freebsd,$(OS))
-endif
-ifeq (openbsd,$(OS))
-endif
-ifeq (darwin,$(OS))
-  PRODFLAGS += -fast
-endif
-ifeq (sunos,$(OS))
-	LDFLAGS += -lsocket
-  PRODFLAGS += -fast
-endif
 
 all: k k_test
 
@@ -57,7 +89,7 @@ install:
 	install k $(PREFIX)/bin/k
 
 clean:
-	$(RM) -r k k_test k.dSYM k_test.dSYM src/*.o
+	$(RM) -r k k_test *.exe k.dSYM k_test.dSYM src/*.o src/win/*.o
 
 TAGS: *.c *.h
 	etags *.[ch]
@@ -68,7 +100,38 @@ TAGS: *.c *.h
 .PHONY: all clean install
 
 # Dependencies.
+ifeq (mingw32_nt-6.2,$(OS))
+src/win/dlfcn.c: src/win/dlfcn.h
+src/win/mman.c: src/win/mman.h
+src/*.o: src/incs.h src/ts.h Makefile src/k.h src/win/mman.h src/win/dlfcn.h
+endif
+
+ifeq (mingw32_nt-6.0,$(OS))
+src/win/dlfcn.c: src/win/dlfcn.h
+src/win/mman.c: src/win/mman.h
+src/*.o: src/incs.h src/ts.h Makefile src/k.h src/win/mman.h src/win/dlfcn.h
+endif
+
+ifeq (linux,$(OS))
 src/*.o: src/incs.h src/ts.h Makefile src/k.h
+endif
+
+ifeq (freebsd,$(OS))
+src/*.o: src/incs.h src/ts.h Makefile src/k.h
+endif
+
+ifeq (openbsd,$(OS))
+src/*.o: src/incs.h src/ts.h Makefile src/k.h
+endif
+
+ifeq (darwin,$(OS))
+src/*.o: src/incs.h src/ts.h Makefile src/k.h
+endif
+
+ifeq (sunos,$(OS))
+src/*.o: src/incs.h src/ts.h Makefile src/k.h
+endif
+
 src/0.c: src/0.h src/km.h src/v.h src/vf.h
 src/c.c: src/c.h
 src/getline.c: src/0.h src/getline.h
