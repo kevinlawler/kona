@@ -675,17 +675,18 @@ Z void svdcmp(F **a, I m, I n, F *w, F **v, F *t)
 }
 
 #ifdef WIN32
-K _setenv(K a,K b) {O("_setenv not yet available in Windows\n"); R _n();}
+int setenv(cS name, cS value, int overwrite)
+{
+    int errcode = 0;
+    if(!overwrite) {
+        size_t envsize = 0;
+        errcode = getenv_s(&envsize, NULL, 0, name);
+        if(errcode || envsize) R errcode;
+    }
+    R _putenv_s(name, value);
+}
 K _sm(K a,K b) {O("_sm not yet available in Windows\n"); R (K)0;}
 #else
-K _setenv(K a,K b) {
-  I at=a->t, bt=b->t;
-  P(at!=4 && bt!=-3,TE)//strictly these types
-  I r=setenv(*kS(a),CSK(b),1);
-  P(r,SE)
-  R _n();
-}
-
 K _sm(K a,K b) //lfop: PathMatchSpec (or copy small BSD fnmatch.c code)
 {
   //Support wildcards: ?*[^-]
@@ -711,6 +712,14 @@ K _sm(K a,K b) //lfop: PathMatchSpec (or copy small BSD fnmatch.c code)
   R Ki(f); //oom
 }
 #endif
+
+K _setenv(K a,K b) {
+  I at=a->t, bt=b->t;
+  P(at!=4 && bt!=-3,TE)//strictly these types
+  I r=setenv(*kS(a),CSK(b),1);
+  P(r,SE)
+  R _n();
+}
 
 //TODO: comprehensive tests for _ss "?[^-]"    "cool sleep fun" _ss "s[l][e][e]?"  word boundaries "15 0150 15" _ss `"15" etc.
 K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of pattern appears to cause brute-force
