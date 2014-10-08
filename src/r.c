@@ -719,7 +719,7 @@ K _sm(K a,K b) //lfop: PathMatchSpec (or copy small BSD fnmatch.c code)
     R demote(z);
   }
 
-  I f=fnmatch(CSK(a),CSK(b),FNM_NOESCAPE)?0:1; //wildcard matching
+  I f=fnmatch(CSK(b),CSK(a),FNM_NOESCAPE)?0:1; //wildcard matching
 
   R Ki(f); //oom
 }
