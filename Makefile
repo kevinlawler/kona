@@ -10,7 +10,8 @@ OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 ifeq (mingw32_nt-6.2,$(OS))
 CC=gcc
 LDFLAGS = -lws2_32 -static -lpthread
-OBJS= src/win/mman.o src/win/dlfcn.o src/0.o src/c.o src/getline.o src/mt.o src/p.o \
+OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
+      src/0.o src/c.o src/getline.o src/mt.o src/p.o \
       src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
       src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 endif
@@ -19,7 +20,8 @@ endif
 ifeq (mingw32_nt-6.0,$(OS))
 CC=gcc
 LDFLAGS = -lws2_32 -static -lpthread
-OBJS= src/win/mman.o src/win/dlfcn.o src/0.o src/c.o src/getline.o src/mt.o src/p.o \
+OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
+      src/0.o src/c.o src/getline.o src/mt.o src/p.o \
       src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
       src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 endif
@@ -103,12 +105,16 @@ TAGS: *.c *.h
 ifeq (mingw32_nt-6.2,$(OS))
 src/win/dlfcn.c: src/win/dlfcn.h
 src/win/mman.c: src/win/mman.h
+src/win/safe-ctype.c: src/win/safe-ctype.h
+src/win/fnmatch.c: src/win/fnmatch.h src/win/safe-ctype.h src/win/ansidecl.h
 src/*.o: src/incs.h src/ts.h Makefile src/k.h src/win/mman.h src/win/dlfcn.h
 endif
 
 ifeq (mingw32_nt-6.0,$(OS))
 src/win/dlfcn.c: src/win/dlfcn.h
 src/win/mman.c: src/win/mman.h
+src/win/safe-ctype.c: src/win/safe-ctype.h
+src/sin/fnmatch.c src/win/fnmatch.h src/win/safe-ctype.h src/win/ansidecl.h
 src/*.o: src/incs.h src/ts.h Makefile src/k.h src/win/mman.h src/win/dlfcn.h
 endif
 

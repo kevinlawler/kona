@@ -13,6 +13,10 @@
 #include "vf.h"
 #include "vg.h"
 
+#ifdef WIN32
+#include "win/fnmatch.h"
+#endif
+
 //Reserved verbs/functions (_verb)
 
 K _vs(K x,K y);
@@ -685,8 +689,16 @@ int setenv(cS name, cS value, int overwrite)
     }
     R _putenv_s(name, value);
 }
-K _sm(K a,K b) {O("_sm not yet available in Windows\n"); R (K)0;}
-#else
+#endif
+
+K _setenv(K a,K b) {
+  I at=a->t, bt=b->t;
+  P(at!=4 && bt!=-3,TE)//strictly these types
+  I r=setenv(*kS(a),CSK(b),1);
+  P(r,SE)
+  R _n();
+}
+
 K _sm(K a,K b) //lfop: PathMatchSpec (or copy small BSD fnmatch.c code)
 {
   //Support wildcards: ?*[^-]
@@ -710,15 +722,6 @@ K _sm(K a,K b) //lfop: PathMatchSpec (or copy small BSD fnmatch.c code)
   I f=fnmatch(CSK(a),CSK(b),FNM_NOESCAPE)?0:1; //wildcard matching
 
   R Ki(f); //oom
-}
-#endif
-
-K _setenv(K a,K b) {
-  I at=a->t, bt=b->t;
-  P(at!=4 && bt!=-3,TE)//strictly these types
-  I r=setenv(*kS(a),CSK(b),1);
-  P(r,SE)
-  R _n();
 }
 
 //TODO: comprehensive tests for _ss "?[^-]"    "cool sleep fun" _ss "s[l][e][e]?"  word boundaries "15 0150 15" _ss `"15" etc.
