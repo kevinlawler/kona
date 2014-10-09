@@ -679,9 +679,9 @@ Z void svdcmp(F **a, I m, I n, F *w, F **v, F *t)
 }
 
 #ifdef WIN32
-int setenv(cS name, cS value, int overwrite)
+I setenv(cS name, cS value, I overwrite)
 {
-    int errcode = 0;
+    I errcode = 0;
     if(!overwrite) {
         size_t envsize = 0;
         errcode = getenv_s(&envsize, NULL, 0, name);
