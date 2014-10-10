@@ -114,7 +114,7 @@ ifeq (mingw32_nt-6.0,$(OS))
 src/win/dlfcn.c: src/win/dlfcn.h
 src/win/mman.c: src/win/mman.h
 src/win/safe-ctype.c: src/win/safe-ctype.h
-src/sin/fnmatch.c src/win/fnmatch.h src/win/safe-ctype.h src/win/ansidecl.h
+src/sin/fnmatch.c: src/win/fnmatch.h src/win/safe-ctype.h src/win/ansidecl.h
 src/*.o: src/incs.h src/ts.h Makefile src/k.h src/win/mman.h src/win/dlfcn.h
 endif
 
