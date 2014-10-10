@@ -716,7 +716,7 @@ K _sm(K a,K b) //lfop: PathMatchSpec (or copy small BSD fnmatch.c code)
     b=y?promote(b):b;//mm/o (unnecessary for t=0)
     K z=newK(0,x?a->n:b->n);
     DO(z->n, kK(z)[i]=_sm(x?kK(a)[i]:a,y?kK(b)[i]:b))
-    R demote(z);
+    cd(a); R demote(z);
   }
 
   I f=fnmatch(CSK(b),CSK(a),FNM_NOESCAPE)?0:1; //wildcard matching

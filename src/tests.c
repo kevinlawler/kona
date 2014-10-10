@@ -555,8 +555,9 @@ Z I tests02()
   TC(3 4 5, x:2 3#!6; y:x; z:y[1]; y[1;1]:99; z)
   TC(3.1 4.1 5.1, x:.1+2 3#!6; y:x; z:y[1]; y[1;1]:99.1; z)
 
-  TC(1 1 0, ("a.c";"foo.h";"bc") _sm "*.[ch]")
-  TC_("0 1 0 0", "`one `two `three `four _sm $`two")
+  TC(1 0, ("a.c";"bc") _sm "*.[ch]")
+  TC_("0 1", "($`one;$`two) _sm $`two")
+  TC_("0 1", "`one `two  _sm $`two")
   TC_("$`xxx", "`hostname _setenv $`xxx; _getenv `hostname")
 
   R 0; 
