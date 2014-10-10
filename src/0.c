@@ -874,9 +874,10 @@ K _3d(K x,K y) //'async' TCP
   //I n; //DO(10, if ((n = send(sockfd, buf, -1 + sizeof buf, 0)) == -1) { perror("send error"); R DOE; } else hi(OK))
 }
 
-K popen_charvec(C *cmd)
+#ifndef WIN32
+K popen_charvec(S cmd)
 {
-  FILE *f; K z; K l; S s=0; I n=0;
+  FILE *f; K z,l; S s=0; I n=0;
   f=popen(cmd,"r");
   P(!f,_n())
   z=newK(0,0); //oom
@@ -889,7 +890,20 @@ K popen_charvec(C *cmd)
   pclose(f);
   R z;
 }
-
+#else
+K popen_charvec(S cmd) {
+  FILE *f; K z,l; C s[128]; S p;
+  f=_popen(cmd,"r"); P(!f,_n())
+  z=newK(0,0);
+  while(fgets(s, 128, f))
+  { p=strchr(s,*"\n");
+    l=newK(-3,p-s);
+    strncpy(kC(l),s,p-s);
+    kap(&z,&l);
+  }
+  _pclose(f); R z;
+}
+#endif
 
 K _4d(K x,K y) //see _3d
 {
