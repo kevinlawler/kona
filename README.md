@@ -23,6 +23,7 @@ You can find an executable version of Kona [here](https://github.com/kevinlawler
 
 **Build from source**
 
+For OSX, Linux, BSD and Cygwin:
 Navigate to the file you want to install Kona, then type:
 
     git clone https://github.com/kevinlawler/kona.git
@@ -32,6 +33,9 @@ Navigate to the file you want to install Kona, then type:
 Then once in the file run:
 
     ./k                      #./k_test for debug mode
+
+For Windows: 
+same process, but you will need MinGW-w64 (Mingw-builds project package).
 
 Further Information
 -------------------
