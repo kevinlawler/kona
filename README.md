@@ -19,7 +19,7 @@ Installation
 
 **Windows**
 
-You can find an executable version of Kona [here](https://github.com/kevinlawler/kona/releases/tag/Win.3.0).
+You can find an executable version of Kona [here](https://github.com/kevinlawler/kona/releases).
 
 **Build from source**
 
