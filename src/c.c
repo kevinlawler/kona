@@ -425,6 +425,9 @@ K backslash(S s, I n)
   // \kr \cd  ?
 
   if(isspace(s[1]))s++; //Allow system commands to be executed without preceding space
+#ifdef WIN32
+  s++;
+#endif
   R system(s)?DOE:_n();
 }
 
