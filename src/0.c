@@ -865,7 +865,8 @@ I ksender(I sockfd,K y,I t)
 
 K _3d(K x,K y) //'async' TCP
 {
-  P(4==xt && !**kS(x), NYI) //TODO: `3:string   os set command, e.g. `3:"k bck"
+  S s=(V)kS(y);
+  if(4==xt && !**kS(x)) R system(s)?DOE:_n();
   P(1!=xt, TE)
   P(-1==ksender(*kI(x),y,0),DOE)
   R _n();
