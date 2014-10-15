@@ -113,6 +113,7 @@ K bsD(S s, I n) {    //backslash d   \d
     else if(s[3]==*"k") { __d=".k"; R _n();}
     else R NYI;
   }
+  if(n==5 && s[3]==*"." && s[4]==*"k") { __d=".k"; R _n();}
   else R NYI;
 }
 
