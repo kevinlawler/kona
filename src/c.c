@@ -107,6 +107,15 @@ K precision(UI n) {if(n>PPMAX)R DOE; PPON=n!=0; PP=PPON?n:PPMAX; R _n();}
 
 K precision_(void){R PPON?Ki(PP):Ki(0);}
 
+K bsD(S s, I n) {    //backslash d   \d
+  if(n==4) {
+    if(s[3]==*".") { __d=""; R _n();}
+    else if(s[3]==*"k") { __d=".k"; R _n();}
+    else R NYI;
+  }
+  else R NYI;
+}
+
 K backslash(S s, I n)
 {
   S t; C b;
@@ -250,7 +259,7 @@ K backslash(S s, I n)
               "while[x;e1;...;en] while x do e.  while[a>b; f a; a-:1] \n"
               "/ starts a comment. Must begin a line or have a space before\n"
               "\\ is trace when beginning an expression inside a function (todo)\n"
-              ": is early return when beginning an expression inside a function (todo)\n"
+              ": is early return when beginning an expression inside a function\n"
               "' is signal (todo)\n"
               );
       )
@@ -407,7 +416,7 @@ K backslash(S s, I n)
       CS('a',R NYI)
       CS('b',R NYI)
       CS('c',R NYI)
-      CS('d',R NYI) // have some functionality for \d ..  (possibly \d ^)
+      CS('d',R bsD(s,n))
       CS('e',R NYI)
       CS('i',R NYI)
       CS('l',R load(t))
