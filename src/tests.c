@@ -559,6 +559,7 @@ Z I tests02()
   TC_("0 1", "($`one;$`two) _sm $`two")
   TC_("0 1", "`one `two  _sm $`two")
   TC_("$`xxx", "`hostname _setenv $`xxx; _getenv `hostname")
+  TC(".k", ."\\d a"; ."\\d .k"; $_d)  // check for memory leaks
 
   R 0; 
 }
