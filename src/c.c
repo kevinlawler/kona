@@ -4,6 +4,7 @@
 #include "c.h"
 
 Z I filexist(S s);
+Z K backslash_d(S s,I n,K*dict); 
 Z K backslash_s(S s);
 Z K backslash_t(S s);
 Z K precision_(void);
@@ -66,57 +67,9 @@ I stepopt(S s,I n)
   else R 3;
 }
 
-Z K backslash_s(S s)
-{
-  S t,u=0,w; I c=0,d,n,m=0,l=0;
-  FILE*f=loadf(s);
-  K k=0,y=0,z=0;
-  P(!f,_n());
-  while(0<(c=wds(&y,f)))
-  { n=y->n; t=kC(y);
-    w=t; while(isspace(*w++))l++;
-    if(l==n||!n){if(y)cd(y); y=0; continue;}
-    O("%s ",t);
-    if(-1==getline_(&u,&m,stdin))GC;
-    d=stepopt(u,m);
-    if(d==1){if(y)cd(y); y=0; continue;}else if(d==2)GC;
-    show(k=ex(wd(t,n)));
-    if(k){cd(k); k=0;}
-    if(y){cd(y); y=0;}
-    do{
-      prompt(1);
-      if(0>wds_(&z,stdin,1))GC;
-      w=kC(z); l=z->n;
-      d=stepopt(w,l);
-      if(d==1){if(z)cd(z); z=0; break;}else if(d==2)GC;
-      show(k=ex(wd(w,l)));
-      if(k){cd(k); k=0;}
-      if(z){cd(z); z=0;}
-    }while(d==0||d==3);
-  }
-cleanup:
-  fclose(f);
-  if(u)free(u);
-  if(k)cd(k);
-  if(y)cd(y);
-  if(z)cd(z);
-  R _n();
-}
-
 K precision(UI n) {if(n>PPMAX)R DOE; PPON=n!=0; PP=PPON?n:PPMAX; R _n();}
 
 K precision_(void){R PPON?Ki(PP):Ki(0);}
-
-K bsD(S s,I n,K*dict) {   // backslash d   \d
-  if(n==4 && s[3]==*".") { __d=""; R _n();}
-  if(n==5 && s[3]==*"." && s[4]==*"k") { __d=".k"; R _n();}
-  if(isalpha(s[3])) { 
-    denameD(dict,s+3,1);
-    C z[256]; strcpy(z,__d); strcat(z,"."); strcat(z,s+3); __d=(S)sp(z);
-    R _n();
-  }
-  else R NYI;
-}
 
 K backslash(S s, I n, K*dict)
 {
@@ -418,7 +371,7 @@ K backslash(S s, I n, K*dict)
       CS('a',R NYI)
       CS('b',R NYI)
       CS('c',R NYI)
-      CS('d',R bsD(s,n,dict))
+      CS('d',R backslash_d(s,n,dict))
       CS('e',R NYI)
       CS('i',R NYI)
       CS('l',R load(t))
@@ -442,6 +395,53 @@ K backslash(S s, I n, K*dict)
   R system(s)?DOE:_n();
 }
 
+Z K backslash_d(S s,I n,K*dict) {
+  if(n==4 && s[3]==*".") { __d=""; R _n();}
+  if(n==5 && s[3]==*"." && s[4]==*"k") { __d=".k"; R _n();}
+  if(isalpha(s[3])) { 
+    denameD(dict,s+3,1);
+    C z[256]; strcpy(z,__d); strcat(z,"."); strcat(z,s+3); __d=(S)sp(z);
+    R _n();
+  }
+  else R NYI;
+}
+
+Z K backslash_s(S s)
+{
+  S t,u=0,w; I c=0,d,n,m=0,l=0;
+  FILE*f=loadf(s);
+  K k=0,y=0,z=0;
+  P(!f,_n());
+  while(0<(c=wds(&y,f)))
+  { n=y->n; t=kC(y);
+    w=t; while(isspace(*w++))l++;
+    if(l==n||!n){if(y)cd(y); y=0; continue;}
+    O("%s ",t);
+    if(-1==getline_(&u,&m,stdin))GC;
+    d=stepopt(u,m);
+    if(d==1){if(y)cd(y); y=0; continue;}else if(d==2)GC;
+    show(k=ex(wd(t,n)));
+    if(k){cd(k); k=0;}
+    if(y){cd(y); y=0;}
+    do{
+      prompt(1);
+      if(0>wds_(&z,stdin,1))GC;
+      w=kC(z); l=z->n;
+      d=stepopt(w,l);
+      if(d==1){if(z)cd(z); z=0; break;}else if(d==2)GC;
+      show(k=ex(wd(w,l)));
+      if(k){cd(k); k=0;}
+      if(z){cd(z); z=0;}
+    }while(d==0||d==3);
+  }
+cleanup:
+  fclose(f);
+  if(u)free(u);
+  if(k)cd(k);
+  if(y)cd(y);
+  if(z)cd(z);
+  R _n();
+}
 
 Z K backslash_t(S s)
 {
@@ -450,7 +450,6 @@ Z K backslash_t(S s)
   d=(clock()-d)/((F)CLOCKS_PER_SEC/1000);
   R Ki(d);
 }
-
 
 #ifdef __MACH__
 #include <mach/mach.h>
