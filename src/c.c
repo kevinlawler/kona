@@ -107,17 +107,18 @@ K precision(UI n) {if(n>PPMAX)R DOE; PPON=n!=0; PP=PPON?n:PPMAX; R _n();}
 
 K precision_(void){R PPON?Ki(PP):Ki(0);}
 
-K bsD(S s, I n) {    //backslash d   \d
-  if(n==4) {
-    if(s[3]==*".") { __d=""; R _n();}
-    else if(s[3]==*"k") { __d=".k"; R _n();}
-    else R NYI;
-  }
+K bsD(S s,I n,K*dict) {   // backslash d   \d
+  if(n==4 && s[3]==*".") { __d=""; R _n();}
   if(n==5 && s[3]==*"." && s[4]==*"k") { __d=".k"; R _n();}
+  if(isalpha(s[3])) { 
+    denameD(dict,s+3,1);
+    C z[256]; strcpy(z,__d); strcat(z,"."); strcat(z,s+3); __d=(S)sp(z);
+    R _n();
+  }
   else R NYI;
 }
 
-K backslash(S s, I n)
+K backslash(S s, I n, K*dict)
 {
   S t; C b;
   if(1==n) //TODO: if error or waiting on matching )]} then \ will resolve
@@ -417,7 +418,7 @@ K backslash(S s, I n)
       CS('a',R NYI)
       CS('b',R NYI)
       CS('c',R NYI)
-      CS('d',R bsD(s,n))
+      CS('d',R bsD(s,n,dict))
       CS('e',R NYI)
       CS('i',R NYI)
       CS('l',R load(t))

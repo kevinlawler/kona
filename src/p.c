@@ -221,7 +221,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
 {
   if(!s) R 0;
 
-  I i=0;while(i<n && isspace(s[i]))i++;if('\\'==s[i])R backslash(s+i,n); //isspace lets \n through... odd but probably fine
+  I i=0;while(i<n && isspace(s[i]))i++;if('\\'==s[i])R backslash(s+i,n,dict); //isspace lets \n through... odd but probably fine
 
   PDA p=0;
   K km=newK(-1,1+n); U(km) I *m = kI(km);//marks 

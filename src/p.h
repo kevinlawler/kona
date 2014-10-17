@@ -34,7 +34,7 @@ K Kv();
 K cd(K a);
 void pdafree(PDA p);
 K newK(I t,I n);
-K backslash(S s,I n);
+K backslash(S s,I n,K*dict);
 extern S __d;
 extern K KTREE;
 K *denameD(K *d,S t,I create);
