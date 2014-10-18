@@ -397,15 +397,15 @@ K backslash(S s, I n, K*dict)
 
 Z K backslash_d(S s,I n,K*dict) {
   if(n==4 && s[3]==*".") { __d=""; R _n();}
-  //if(n==5 && s[3]==*"." && s[4]==*"k") { __d=".k"; R _n();}
+  if(n==5 && s[3]==*"." && s[4]==*"k") { __d=".k"; R _n();}
   if(isalpha(s[3])) { 
     denameD(dict,s+3,1);
     C z[256]; strcpy(z,__d); strcat(z,"."); strcat(z,s+3); __d=(S)sp(z);
     R _n();
   }
-  if(s[3]==*"." && s[4]==*"k") {denameD(&KTREE,s+3,1); __d=(S)sp(s+3); R _n();}
-  else O("absolute backslash-d should begin with .k\n"); 
-  R _n();
+  if(n>=5 && s[3]==*"." && s[4]==*"k" && s[5]==*".") {denameD(&KTREE,s+3,1); __d=(S)sp(s+3); R _n();}
+  if(n>=5 && s[3]==*"." && (s[4]!=*"k" || s[5]!=*".")) {O("absolute backslash-d should begin with .k.\n"); R _n();} 
+  R NYI;
 }
 
 Z K backslash_s(S s)
