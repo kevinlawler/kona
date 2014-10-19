@@ -37,6 +37,10 @@ Then, while in the "kona" directory, run:
 For Windows: 
 Pretty much the same process, but you will need MinGW-w64 (Mingw-builds project package).  To start up Kona from a native Widows "cmd", just type "k" when in the "kona" directory, as "./k" won't work.
 
+**Input Issues**
+
+If you experience input issues with the command-line interpreter, such as visible arrow keys, try the `rlwrap` utility and see if it solves your problem.
+
 Further Information
 -------------------
 
