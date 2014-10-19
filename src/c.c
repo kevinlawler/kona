@@ -396,16 +396,27 @@ K backslash(S s, I n, K*dict)
 }
 
 Z K backslash_d(S s,I n,K*dict) {
+  C z[256];
   if(n==4 && s[3]==*".") { __d=""; R _n();}
+  if(n==4 && s[3]==*"^") {
+    if(strlen(__d)==0) R _n();
+    if(strlen(__d)==2) {__d=""; R _n();}
+    if(strlen(__d)>3) {
+      I c=0,i=0;
+      for(i=0;i<strlen(__d);i++) if(__d[i]==*".")c=i;
+      strcpy(z,__d); z[c]=*"\0"; __d=(S)sp(z);
+      R _n();
+    }
+  }
   if(n==5 && s[3]==*"." && s[4]==*"k") { __d=".k"; R _n();}
   if(n==5 && s[3]==*"." && s[4]!=*"k") {O("absolute backslash-d should begin with .k\n"); R _n();} 
   if(isalpha(s[3])) { 
     denameD(dict,s+3,1);
-    C z[256]; strcpy(z,__d); strcat(z,"."); strcat(z,s+3); __d=(S)sp(z);
+    strcpy(z,__d); strcat(z,"."); strcat(z,s+3); __d=(S)sp(z);
     R _n();
   }
   if(n>=6 && s[3]==*"." && s[4]==*"k" && s[5]==*".") {denameD(&KTREE,s+3,1); __d=(S)sp(s+3); R _n();}
-  if(n>=6 && s[3]==*"." && (s[4]!=*"k" || s[5]!=*".")) {O("absolute backslash-d should begin with .k.\n"); R _n();} 
+  if(n>=6 && s[3]==*"." && (s[4]!=*"k" || s[5]!=*".")) {O("absolute backslash-d should begin with .k.\n"); R _n();}
   R NYI;
 }
 
