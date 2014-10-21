@@ -5,13 +5,13 @@
 What is Kona?
 -------------
 
-Kona is the open-source implementation of the K programming language. K is a synthesis of APL and LISP. Although many of the capabilities come from APL, the fundamental data construct is not the matrix. Like LISP, it is the list.  Also, like LISP, the K language is ASCII-based, so you don't need a special keyboard.
+Kona is the open-source implementation of the K programming language. K is a synthesis of APL and LISP. Although many of the capabilities come from APL, the fundamental data construct is quite different. In APL the construct is a multi-dimensional matrix-like array, where the dimension of the array can range from 0 to some maximum. In K (like LISP), the fundamental data construct is a list.  Also, like LISP, the K language is ASCII-based, so you don't need a special keyboard.
 
-For many people, K is the preferred APL dialect. It tends to be popular with investment bankers, the performance obsessed, analysts with big data, and other smart people with not a lot of time. It is a demanding language.
+For many people, K is the preferred APL dialect. It tends to be popular with investment bankers, the performance obsessed, analysts with big data, and other smart people with time constraints. It is a demanding language.
 
 K was originally designed by Arthur Whitney and [Kx Systems](http://kx.com/). Praise for K should be taken to refer to Kx's K. Kx sells a popular database called KDB+. People can and do create networked trading platforms in hours. If your business needs production K support, you can [evaluate KDB+ prior to purchasing from Kx](http://kx.com/software-download.php), or possibly speak with Kx consulting partner [First Derivatives](http://www.firstderivatives.com/).
 
-Kx's KDB+ uses the Q language, and is built on top of K4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of K3, an earlier K. To the confusion of all, these terms are used interchangeably. Kx's K3 is basically no longer available. Kona is a reimplementation of that K. Kona targets K3 but includes features from K4 and elsewhere. Kona is unaffiliated with Kx.
+Kx's KDB+ uses the Q language, and is built on top of K4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of K3, an earlier K. To the confusion of all, these terms are used interchangeably. Kx's K3 is basically no longer available. While you get K4 with KDB+, K4 is proprietary to Kx and no documentation is available. Kona is a reimplementation that targets K3 but includes features inferred from K4 and elsewhere. Kona is unaffiliated with Kx.
 
 
 Installation
