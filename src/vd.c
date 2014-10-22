@@ -59,9 +59,18 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
 
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   if(0==b->t && 0==b->n) R ci(a);//Empty list is identity
+
+  K z=0;
+  if(at==4 && bt==0) {
+    C s[256]; strcpy(s,__d); strcat(s,"."); strcat(s,*kS(a));
+    K *aa=denameD(&KTREE,(S)sp(s),1);
+    K *f=&kK(b)[0];
+    z=of2(*aa,f,bn>0?1+f:0,bn-1);
+    R z;
+  }
+
   P(0<at && at<5 && 6!=bt,TE)
   //At is either <=0 or dict or nil. b is not ()
-  K z=0;
   if(6==at)
   { // _n . x  for various x in K3.2
     if     (1==bt)z=ci(b);
