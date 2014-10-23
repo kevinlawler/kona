@@ -11,7 +11,7 @@ For many people, K was the preferred APL dialect. When it was available, it tend
 
 K was originally designed by Arthur Whitney and [Kx Systems](http://kx.com/). Praise for K should be taken to refer to Kx's K. Kx sells a popular database called KDB+. People can and do create networked trading platforms in hours. If your business needs production support, you can [evaluate KDB+ prior to purchasing from Kx](http://kx.com/software-download.php), or possibly speak with Kx consulting partner [First Derivatives](http://www.firstderivatives.com/).  The 32-bit version of KDB+ is available for free.
 
-Kx's KDB+ uses the Q language, and is built on top of K4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of K3, an earlier K. To the confusion of all, these terms are used interchangeably. Kx's K3 is basically no longer available. While you get K4 with KDB+, K4 is proprietary to Kx and no documentation is available. Kona is a reimplementation that targets K3 but includes features inferred from K4 or implemented elsewhere. Kona is unaffiliated with Kx.
+Kx's KDB+ uses the Q language, and is built on top of K4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of K3, an earlier K. Prior to that, Kx sold K2 as its primary product. To the confusion of all, these terms are used interchangeably. Kx's K3 and K2 are basically no longer available. While you get K4 with KDB+, K4 is proprietary to Kx and no documentation is available. Kona is a reimplementation that targets K3 but includes features inferred from K4 or implemented elsewhere. Kona is unaffiliated with Kx.
 
 
 Installation
