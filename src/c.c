@@ -397,6 +397,8 @@ K backslash(S s, I n, K*dict)
 
 Z K backslash_d(S s,I n,K*dict) {
   C z[256];
+  //I len=strlen(__d); if(n==2){K r=newK(-3,len); strncpy(kC(r),__d,len); R r;}  // yields contents of __d enclosed in quotes
+  if(n==2) {O("%s\n",__d); R _n();}  // yields contents of __d without quotes (same as k3.2)
   if(n==4 && s[3]==*".") { __d=""; R _n();}
   if(n==4 && s[3]==*"^") {
     if(strlen(__d)==0) R _n();
