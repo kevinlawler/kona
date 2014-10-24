@@ -3,6 +3,8 @@
 #include "k.h"
 #include "c.h"
 
+S sp(S k);
+K*denameD(K*d,S t,I create);
 Z I filexist(S s);
 Z K backslash_d(S s,I n,K*dict); 
 Z K backslash_s(S s);
