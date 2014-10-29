@@ -485,9 +485,28 @@ Z K workspace(S s)
   kI(z)[1]=t_info.virtual_size;
   kI(z)[2]=0;
   R z;
-
-  #else
-  R NYI;
   #endif
+
+  #ifdef WIN32
+    HANDLE hDPH;
+    PROCESS_HEAP_ENTRY Entry;
+    hDPH = GetProcessHeap();  // handle for Default Process Heap
+    if (hDPH == NULL) {O("Failed to retrieve the default process heap\n"); R _n();}
+    if (HeapLock(hDPH) == FALSE) {O("Failed to lock heap\n"); R _n();}
+    Entry.lpData = NULL;
+    if (HeapWalk(hDPH, &Entry) != FALSE) {
+      if ((Entry.wFlags & PROCESS_HEAP_REGION) != 0) {
+          O("Default Process Heap\n %d bytes committed   %d bytes uncommitted  First block address:%#p   Last block address:%#p\n",
+                   Entry.Region.dwCommittedSize,
+                   Entry.Region.dwUnCommittedSize,
+                   Entry.Region.lpFirstBlock,
+                   Entry.Region.lpLastBlock);
+      }
+    }
+    if (HeapUnlock(hDPH) == FALSE) {O("Failed to unlock heap\n"); R _n();}
+    R _n();
+  #endif
+
+  R NYI;
 }
 
