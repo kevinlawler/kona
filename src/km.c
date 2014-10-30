@@ -29,7 +29,7 @@ V KP[sizeof(V)*8+1]; //KPOOL
 I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
 
 #if UINTPTR_MAX >= 0xffffffffffffffff //64 bit
-#define MAX_OBJECT_LENGTH (((UI)1) << 45) //for catching obviously incorrect allocations
+#define MAX_OBJECT_LENGTH (((unsigned long long)1) << 45) //for catching obviously incorrect allocations
 #else 
 #define MAX_OBJECT_LENGTH (II - 1) //for catching obviously incorrect allocations
 #endif
@@ -115,11 +115,7 @@ Z I nearPG(I i){ I k=((size_t)i)&(PG-1);R k?i+PG-k:i;}//up 0,8,...,8,16,16,...
 K newK(I t, I n)
 { 
   K z;
-#if defined(WIN64)
-  if(n>35e12)R ME;//coarse (ignores bytes per type). but sz can overflow
-#else
-  if(n>MAX_OBJECT_LENGTH)R ME;//coarse (ignores bytes per type). but sz can overflow
-#endif
+  if(n>0 && n>MAX_OBJECT_LENGTH)R ME;//coarse (ignores bytes per type). but sz can overflow
   I k=sz(t,n);
   U(z=kalloc(k))
   //^^ relies on MAP_ANON being zero-filled for 0==t || 5==t (cd() the half-complete), 3==ABS(t) kC(z)[n]=0 (+-3 types emulate c-string)
