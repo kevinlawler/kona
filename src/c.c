@@ -11,6 +11,7 @@ Z K backslash_s(S s);
 Z K backslash_t(S s);
 Z K precision_(void);
 Z K workspace(S s);
+I fUsed=0;
 extern I scrLim;
 
 void boilerplate()
@@ -469,6 +470,9 @@ Z K backslash_t(S s)
   R Ki(d);
 }
 
+Z K workspace(S s) { fUsed=1;  R _n(); }
+
+/*
 #ifdef __MACH__
 #include <mach/mach.h>
 #include <mach/mach_types.h>
@@ -509,4 +513,4 @@ Z K workspace(S s)
 
   R NYI;
 }
-
+*/

@@ -27,6 +27,7 @@
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
 V KP[sizeof(V)*8+1]; //KPOOL
 I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
+F mUsed=0.0, mMax=0.0;
 
 #if UINTPTR_MAX >= 0xffffffffffffffff //64 bit
 #define MAX_OBJECT_LENGTH (((unsigned long long)1) << 45) //for catching obviously incorrect allocations
@@ -150,6 +151,7 @@ Z V unpool(I r)
     *L=z;
   }
   z=*L;*L=*z;*z=0;
+  mUsed += pow(2.0,(F)r);  if(mUsed>mMax)mMax=mUsed;
   R z;
 }
 
@@ -188,6 +190,7 @@ I repool(V v,I r)//assert r < KP_MAX
   memset(v,0,((I)1)<<r);
   *(V*)v=KP[r];
   KP[r]=v;
+  mUsed -= pow(2.0,(F)r);
   R 0;
 }
 Z I kexpander(K*p,I n) //expand only. 

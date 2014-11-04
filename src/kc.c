@@ -167,6 +167,7 @@ cleanup:
   if(*a)free(*a);*a=0;*n=0;
   if(s)free(s);s=0;
 done:
+  if(fUsed){O("used : %lld\n",(I)mUsed);  O("max  : %lld\n",(I)mMax);  fUsed=0;}
   if(o)prompt(b); 
   R c;
 }
