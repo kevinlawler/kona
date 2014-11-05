@@ -85,7 +85,9 @@ K cd(K x)
   I o=((size_t)x)&(PG-1);//file-mapped? 1:
   I k=sz(xt,xn), r=lsz(k);
   //assert file-maps have sizeof(V)==o and unpooled blocks never do (reasonable)
-  if(sizeof(V)==o || r>KP_MAX)munmap(((V)x)-o,k+o); //(file-mapped or really big) do not go back into pool. 
+  if(sizeof(V)==o || r>KP_MAX){    //(file-mapped or really big) do not go back into pool.
+    munmap(((V)x)-o,k+o);    if(r>KP_MAX) mUsed -= (k+o);
+  }
   else repool(x,r);
   R 0;
 }
@@ -134,7 +136,13 @@ Z V kalloc(I k) //bytes. assumes k>0
   R unpool(r);
 }
 
-Z V amem(I k){K z;if(MAP_FAILED==(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME; R z;}
+Z V amem(I k) {
+  K z;
+  if(MAP_FAILED==(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME;
+  I r=lsz(k); if(r>KP_MAX){ mUsed += k;  if(mUsed>mMax)mMax=mUsed; }
+  R z;
+}
+
 Z V unpool(I r)
 {
   V*z;

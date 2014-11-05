@@ -167,7 +167,7 @@ cleanup:
   if(*a)free(*a);*a=0;*n=0;
   if(s)free(s);s=0;
 done:
-  if(fUsed){O("used : %lld\n",(I)mUsed);  O("max  : %lld\n",(I)mMax);  fUsed=0;}
+  if(fUsed){O("used now : %lld\n",(I)mUsed);  O("max used : %lld\n",(I)mMax);  fUsed=0;}
   if(o)prompt(b); 
   R c;
 }
@@ -310,7 +310,6 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
 cleanup:
   if(*p)pdafree(*p); *p=0; *a=0; *n=0; s=0;
 done:
-  if(fUsed){O("used : %lld\n",(I)mUsed);  O("max  : %lld\n",(I)mMax);  fUsed=0;}
   if(o)prompt(b); R c;
 }
 
