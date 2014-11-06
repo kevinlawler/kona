@@ -7,7 +7,7 @@ K Kd();
 extern K KTREE;
 extern F mUsed;
 extern F mMax;
-extern I fUsed;
+extern I fWksp;
 I test();
 extern S IFS[3];
 extern S IFP[3];

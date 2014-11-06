@@ -9,9 +9,9 @@ Z I filexist(S s);
 Z K backslash_d(S s,I n,K*dict); 
 Z K backslash_s(S s);
 Z K backslash_t(S s);
+Z K backslash_w(S s);
 Z K precision_(void);
-Z K workspace(S s);
-I fUsed=0;
+I fWksp=0;
 extern I scrLim;
 
 void boilerplate()
@@ -384,7 +384,7 @@ K backslash(S s, I n, K*dict)
       CS('s',R backslash_s(t))
       CS('t',R backslash_t(t)) //TODO: also \t [digits]
       CS('v',R NYI)
-      CS('w',R workspace(s)) //used,allocated,mapped. lfop: Linux & 'ps' use /proc/self/stat or /proc/<MY_PID>/stat
+      CS('w',R backslash_w(s)) //used,allocated,mapped. lfop: Linux & 'ps' use /proc/self/stat or /proc/<MY_PID>/stat
     }
     R _n();
   }
@@ -462,55 +462,11 @@ cleanup:
   R _n();
 }
 
-Z K backslash_t(S s)
-{
+Z K backslash_t(S s) {
   I d=clock(); 
   cd(X(s));
   d=(clock()-d)/((F)CLOCKS_PER_SEC/1000);
   R Ki(d);
 }
 
-Z K workspace(S s) { fUsed=1;  R _n(); }
-
-/*
-#ifdef __MACH__
-#include <mach/mach.h>
-#include <mach/mach_types.h>
-#include <mach/task.h> 
-#endif
-Z K workspace(S s)
-{
-  #ifdef __MACH__
-  K z=newK(-1,3); U(z)
-  struct task_basic_info t_info;
-  mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
-  if(KERN_SUCCESS != task_info(mach_task_self(),TASK_BASIC_INFO,(int *)&t_info,&t_info_count)) R 0;
-  kI(z)[0]=t_info.resident_size;
-  kI(z)[1]=t_info.virtual_size;
-  kI(z)[2]=0;
-  R z;
-  #endif
-
-  #ifdef WIN32
-    HANDLE hDPH;
-    PROCESS_HEAP_ENTRY Entry;
-    hDPH = GetProcessHeap();  // handle for Default Process Heap
-    if (hDPH == NULL) {O("Failed to retrieve the default process heap\n"); R _n();}
-    if (HeapLock(hDPH) == FALSE) {O("Failed to lock heap\n"); R _n();}
-    Entry.lpData = NULL;
-    if (HeapWalk(hDPH, &Entry) != FALSE) {
-      if ((Entry.wFlags & PROCESS_HEAP_REGION) != 0) {
-          O("Default Process Heap\n %d bytes committed   %d bytes uncommitted  First block address:%#p   Last block address:%#p\n",
-                   Entry.Region.dwCommittedSize,
-                   Entry.Region.dwUnCommittedSize,
-                   Entry.Region.lpFirstBlock,
-                   Entry.Region.lpLastBlock);
-      }
-    }
-    if (HeapUnlock(hDPH) == FALSE) {O("Failed to unlock heap\n"); R _n();}
-    R _n();
-  #endif
-
-  R NYI;
-}
-*/
+Z K backslash_w(S s) { fWksp=1;  R _n(); }
