@@ -6,12 +6,14 @@
 S sp(S k);
 K*denameD(K*d,S t,I create);
 Z I filexist(S s);
+Z K backslash_b(S s,I n); 
 Z K backslash_d(S s,I n,K*dict); 
 Z K backslash_s(S s);
 Z K backslash_t(S s);
 Z K backslash_w(S s);
 Z K precision_(void);
 I fWksp=0;
+S fBreak = "n";
 extern I scrLim;
 
 void boilerplate()
@@ -372,7 +374,7 @@ K backslash(S s, I n, K*dict)
       )
       CS('`',R NYI)
       CS('a',R NYI)
-      CS('b',R NYI)
+      CS('b',R backslash_b(s,n))
       CS('c',R NYI)
       CS('d',R backslash_d(s,n,dict))
       CS('e',R NYI)
@@ -396,6 +398,14 @@ K backslash(S s, I n, K*dict)
   s++;
 #endif
   R system(s)?DOE:_n();
+}
+
+Z K backslash_b(S s,I n) {
+  if(n==2) {O("%s\n",fBreak); R _n();}
+  if(n==4 && s[3]==*"n") { fBreak="n"; O("none NYI\n"); R _n(); }
+  if(n==4 && s[3]==*"t") { fBreak="t"; O("trace NYI\n"); R _n(); }
+  if(n==4 && s[3]==*"s") { fBreak="s"; O("stop NYI\n"); R _n(); }
+  O("valid options are: n, s, t\n"); R _n();
 }
 
 Z K backslash_d(S s,I n,K*dict) {
