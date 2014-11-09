@@ -12,9 +12,13 @@ Z K backslash_s(S s);
 Z K backslash_t(S s);
 Z K backslash_w(S s);
 Z K precision_(void);
-I fWksp=0;
-S fBreak = "t";
 extern I scrLim;
+I fWksp=0;
+#ifdef DEBUG
+S fBreak = "n";
+#else
+S fBreak = "t";
+#endif
 
 void boilerplate()
 {
