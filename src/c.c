@@ -404,7 +404,7 @@ Z K backslash_b(S s,I n) {
   if(n==2) {O("%s\n",fBreak); R _n();}
   if(n==4 && s[3]==*"n") { fBreak="n"; R _n(); }
   if(n==4 && s[3]==*"t") { fBreak="t"; R _n(); }
-  if(n==4 && s[3]==*"s") { fBreak="s"; O("stop NYI\n"); R _n(); }
+  if(n==4 && s[3]==*"s") { fBreak="s"; R _n(); }
   O("valid options are: n, s, t\n"); R _n();
 }
 

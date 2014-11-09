@@ -740,6 +740,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
     if(offsetScan==(L)*w) {
       if(0==strcmp(fBreak,"n")) R ex2(w+1,k);
       if(0==strcmp(fBreak,"t")) {K xx=ex2(w+1,k); show(xx); R xx;}
+      if(0==strcmp(fBreak,"s")) {K xx=ex2(w+1,k); fer=1; R xx;}
     }
     else  R NYI;
   }
