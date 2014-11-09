@@ -13,7 +13,7 @@ Z K backslash_t(S s);
 Z K backslash_w(S s);
 Z K precision_(void);
 I fWksp=0;
-S fBreak = "n";
+S fBreak = "t";
 extern I scrLim;
 
 void boilerplate()
