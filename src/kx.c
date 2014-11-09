@@ -736,7 +736,10 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
   if(offsetColon==w[0] && (L)w[1]>DT_SIZE && (L)w[2]>DT_SIZE && fwh==0) 
     {fer=1; if(f)*i=n; else *i=-1; K tmp=*(K*)*(w+1); R ci(tmp); }
   //if(in(*w,adverbs)) R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
-  if( DT_ADVERB_OFFSET <= (L)*w && (L)*w < DT_VERB_OFFSET )R NYI;
+  if( DT_ADVERB_OFFSET <= (L)*w && (L)*w < DT_VERB_OFFSET ) {
+    if(8==(L)*w && 0==strcmp(fBreak,"n")) R ex2(w+1,k);
+    else  R NYI;
+  }
 
   I c=0; while(w[c] && !bk(w[c])){c++; if(offsetColon==w[c-1])break;} //must break or assignment is n^2  (a:b:c:1)
 
