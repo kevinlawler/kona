@@ -7,13 +7,16 @@ S sp(S k);
 K*denameD(K*d,S t,I create);
 Z I filexist(S s);
 Z K backslash_b(S s,I n); 
-Z K backslash_d(S s,I n,K*dict); 
+Z K backslash_d(S s,I n,K*dict);
+Z K backslash_e(S s,I n);
 Z K backslash_s(S s);
 Z K backslash_t(S s);
 Z K backslash_w(S s);
 Z K precision_(void);
 extern I scrLim;
+I fError = 0;
 I fWksp=0;
+
 #ifdef DEBUG
 S fBreak = "n";
 #else
@@ -381,7 +384,7 @@ K backslash(S s, I n, K*dict)
       CS('b',R backslash_b(s,n))
       CS('c',R NYI)
       CS('d',R backslash_d(s,n,dict))
-      CS('e',R NYI)
+      CS('e',R backslash_e(s,n))
       CS('i',R NYI)
       CS('l',R load(t))
       CS('m',R NYI) //shows nonstandard system commands
@@ -437,6 +440,13 @@ Z K backslash_d(S s,I n,K*dict) {
   if(n>=6 && s[3]==*"." && s[4]==*"k" && s[5]==*".") {denameD(&KTREE,s+3,1); __d=(S)sp(s+3); R _n();}
   if(n>=6 && s[3]==*"." && (s[4]!=*"k" || s[5]!=*".")) {O("absolute backslash-d should begin with .k.\n"); R _n();}
   R NYI;
+}
+
+Z K backslash_e(S s,I n) {
+  if(n==2) {O("%lld\n",fError); R _n();}
+  if(n==4 && s[3]==*"0") { fError=0; O("Error-0 NYI\n"); R _n(); }
+  if(n==4 && s[3]==*"1") { fError=1; O("Error-1 NYI\n"); R _n(); }
+  O("valid options are: 0, 1\n"); R _n();
 }
 
 Z K backslash_s(S s)
