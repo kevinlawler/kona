@@ -179,7 +179,7 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b); snprintf(errmsg,256,"%s","undescribed"); 
+  if(o)prompt(b); kerr("undescribed"); 
   R c;
 }
 
@@ -327,7 +327,7 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b); snprintf(errmsg,256,"%s","undescribed");
+  if(o)prompt(b); kerr("undescribed");
   R c;
 }
 
