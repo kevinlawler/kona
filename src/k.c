@@ -279,6 +279,7 @@ K show(K a)
   printAtDepth(0,a,0,0,0,0);
   if(a && a->t!=6)O("\n");  
   if(!a)oerr();
+  if(strcmp(errmsg,"undescribed") && a)oerr();
   R a;
 }
 

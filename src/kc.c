@@ -179,7 +179,7 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b); 
+  if(o)prompt(b); snprintf(errmsg,256,"%s","undescribed"); 
   R c;
 }
 
@@ -327,7 +327,8 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b); R c;
+  if(o)prompt(b); snprintf(errmsg,256,"%s","undescribed");
+  R c;
 }
 
 fd_set master;  int listener=0;  int fds[10],nfds;  
