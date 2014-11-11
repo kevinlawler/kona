@@ -278,7 +278,7 @@ K show(K a)
 {
   printAtDepth(0,a,0,0,0,0);
   if(a && a->t!=6)O("\n");
-  if(!a || (strcmp(errmsg,"undescribed") && a)) { oerr(); O("%s\n",Line); }
+  if(!a || (strcmp(errmsg,"undescribed") && a)) { oerr(); if(fError)O("%s\n",Line); }
   R a;
 }
 

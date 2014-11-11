@@ -14,7 +14,7 @@ Z K backslash_t(S s);
 Z K backslash_w(S s);
 Z K precision_(void);
 extern I scrLim;
-I fError = 0;
+I fError = 1;
 I fWksp=0;
 
 #ifdef DEBUG
@@ -444,8 +444,8 @@ Z K backslash_d(S s,I n,K*dict) {
 
 Z K backslash_e(S s,I n) {
   if(n==2) {O("%lld\n",fError); R _n();}
-  if(n==4 && s[3]==*"0") { fError=0; O("Error-0 NYI\n"); R _n(); }
-  if(n==4 && s[3]==*"1") { fError=1; O("Error-1 NYI\n"); R _n(); }
+  if(n==4 && s[3]==*"0") { fError=0; R _n(); }
+  if(n==4 && s[3]==*"1") { fError=1; R _n(); }
   O("valid options are: 0, 1\n"); R _n();
 }
 
