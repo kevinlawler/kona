@@ -3,6 +3,7 @@ extern K KFIXED;
 K cd(K a);
 void finally();
 extern I PG;
+extern S Line;
 #if defined(DEBUG)
 extern V krec[1000000];
 extern I kreci;

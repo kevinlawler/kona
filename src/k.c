@@ -277,9 +277,8 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
 K show(K a)
 {
   printAtDepth(0,a,0,0,0,0);
-  if(a && a->t!=6)O("\n");  
-  if(!a)oerr();
-  if(strcmp(errmsg,"undescribed") && a)oerr();
+  if(a && a->t!=6)O("\n");
+  if(!a || (strcmp(errmsg,"undescribed") && a)) { oerr(); O("%s\n",Line); }
   R a;
 }
 
