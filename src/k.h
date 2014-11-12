@@ -5,15 +5,16 @@ void finally();
 extern I PG;
 extern I fError;
 extern S Line;
+extern __thread I fer;
+
 #if defined(DEBUG)
 extern V krec[1000000];
 extern I kreci;
-#endif
-I lsz(I k);
-I repool(V v,I r);
-#if defined(DEBUG)
 void tf(N n);
 #endif
+
+I lsz(I k);
+I repool(V v,I r);
 I attend();
 void boilerplate();
 I kinit();

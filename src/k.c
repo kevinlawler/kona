@@ -25,7 +25,7 @@ extern I listener;
 #endif
 
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
-extern K kerr(cS s){ R snprintf(errmsg,256,"%s",s),(K)0;} 
+extern K kerr(cS s){ if(!strcmp(s,"undescribed"))fer=1; R snprintf(errmsg,256,"%s",s),(K)0; } 
 Z I oerr(){R O("%s %s\n",errmsg,"error");}
 
 Z K XN(S s,I n);
@@ -278,7 +278,7 @@ K show(K a)
 {
   printAtDepth(0,a,0,0,0,0);
   if(a && a->t!=6)O("\n");
-  if(!a || (strcmp(errmsg,"undescribed") && a)) { oerr(); if(fError)O("%s\n",Line); }
+  if(!a)oerr();
   R a;
 }
 
