@@ -167,7 +167,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(o&&k)O("Elapsed: %.7f\n",d);
 #endif
   if(o)show(k);
-  if(fError && strcmp(errmsg,"undescribed") && k) {oerr(); O("%s\n",Line);}
+  if(strcmp(errmsg,"undescribed") && k) {oerr(); if(fError)O("%s\n",Line);}
   cd(k);
 cleanup:
   if(*p)pdafree(*p);*p=0;
