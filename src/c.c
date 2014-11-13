@@ -14,7 +14,7 @@ Z K backslash_t(S s);
 Z K backslash_w(S s);
 Z K precision_(void);
 extern I scrLim;
-I fError = 0;
+I fError = 1;
 I fWksp=0;
 
 #ifdef DEBUG
