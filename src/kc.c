@@ -20,6 +20,7 @@
 #endif
 
 Z I randomBits();
+Z I oerr(){R O("%s %s\n",errmsg,"error");}
 
 I interrupted=0;;
 I scrLim=0;           // script load limit
