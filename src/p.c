@@ -228,8 +228,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
   PDA p=0;
   K km=newK(-1,1+n); U(km) I *m = kI(km);//marks 
   I e=complete(s,n,&p,m);if(p){pdafree(p);p=0;} //Mark all ([{ and comments and quotes
-  if(e){cd(km); R PE;}
-  Line=s;
+  Line=s; if(e){cd(km); R PE;}
 
   K v = Kv(); M(v,km)
   v->n=0; //7-0 "waiting" to be executed/potentially condensed ... set "isTenseWordfunc" -- wordfunc 'needing' execution
