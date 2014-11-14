@@ -167,10 +167,12 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
 #ifdef DEBUG
   if(o&&k)O("Elapsed: %.7f\n",d);
 #endif
-  if(o)show(k);
-  if(strcmp(errmsg,"undescribed")) {oerr(); if(fError)O("%s\n",Line);}
-  cd(k);
+  if(o)show(k); cd(k);
 cleanup:
+  if(strcmp(errmsg,"undescribed")) {
+    oerr(); 
+    if(fError){ if(Line)O("%s\n",Line); else O("%s\n",*a); }
+  }
   if(*p)pdafree(*p);*p=0;
   if(*a)free(*a);*a=0;*n=0;
   if(s)free(s);s=0;
