@@ -8,6 +8,7 @@ extern K KTREE;
 extern F mUsed;
 extern F mMax;
 extern I fWksp;
+extern __thread I fer;
 I test();
 extern S IFS[3];
 extern S IFP[3];

@@ -323,7 +323,16 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
 #endif
   if(o)show(k); cd(k);
 cleanup:
-  if(*p)pdafree(*p); *p=0; *a=0; *n=0; s=0;
+  if(strcmp(errmsg,"undescribed")) {
+    oerr();
+    if(fError){
+      if(Line)O("%s\n",Line);
+      else O("%s\n",*a);
+    }
+  }
+  if(*p)pdafree(*p);*p=0;
+  if(*a)free(*a);*a=0;*n=0;
+  if(s)free(s);s=0;
 done:
   if(fWksp) {
     O("used now : %lld\n",(I)mUsed);  
@@ -331,7 +340,7 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b); kerr("undescribed");
+  if(o)prompt(b); kerr("undescribed"); fer=0;
   R c;
 }
 
