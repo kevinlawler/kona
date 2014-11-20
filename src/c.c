@@ -71,7 +71,11 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   lines(f);
   fclose(f);
   scrLim--;
-  fLoad=0; prompt(0);
+  fLoad=0;
+  kerr("open-in-next-line");
+  oerr();
+  O("%s\n",Line);
+  prompt(0); kerr("undescribed");
   R _n();
 }
 

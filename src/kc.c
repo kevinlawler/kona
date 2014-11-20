@@ -20,11 +20,12 @@
 #endif
 
 Z I randomBits();
-Z I oerr(){R O("%s %s\n",errmsg,"error");}
+I oerr(){R O("%s %s\n",errmsg,"error");}
 
 I interrupted=0;;
 I scrLim=0;           // script load limit
 I fCheck=0;
+I fCmplt=0;
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
 
@@ -164,6 +165,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
 {
   S s=0; I b=0,c=0,m=0;
   K k; F d;
+  fCmplt=0;
 
   //I o = isatty(STDIN) && f==stdin; //display results to stdout?
   I o = isatty(STDIN); //display results to stdout?
@@ -173,11 +175,11 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
     if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }
   }
   appender(a,n,s,c);//"strcat"(a,s)
-  I v=complete(*a,*n,p,0); //will allocate if p is null
+  fCmplt=complete(*a,*n,p,0); //will allocate if p is null
   b=parsedepth(*p);
-  if(v==3){show(kerr("nest")); GC;} 
-  if(v==2){show(kerr("unmatched")); b=0; GC;}
-  if(v==1) goto done;//generally incomplete
+  if(fCmplt==3){show(kerr("nest")); GC;} 
+  if(fCmplt==2){show(kerr("unmatched")); b=0; GC;}
+  if(fCmplt==1) goto done;//generally incomplete
   if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
   RTIME(d,k=ex(wd(*a,*n)))
 #ifdef DEBUG
@@ -202,7 +204,8 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o && !fLoad)prompt(b+fCheck); kerr("undescribed"); fer=0; 
+  if(o && !fLoad)prompt(b+fCheck); 
+  kerr("undescribed"); fer=0; 
   R c;
 }
 
@@ -338,14 +341,15 @@ I lines(FILE*f) {
 
 pthread_mutex_t execute_mutex = PTHREAD_MUTEX_INITIALIZER;
 I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
+  fCmplt=0;
   I b=0,c=0;  int status;  K k;  F d;
   I o = isatty(STDIN); //display results to stdout?
   appender(a,n,s,c=strlen(s));//"strcat"(a,s)
-  I v=complete(*a,*n,p,0); //will allocate if p is null
+  fCmplt=complete(*a,*n,p,0); //will allocate if p is null
   b=parsedepth(*p);
-  if(v==3){show(kerr("nest")); GC;} 
-  if(v==2){show(kerr("unmatched")); b=0; GC;}
-  if(v==1) goto done;//generally incomplete
+  if(fCmplt==3){show(kerr("nest")); GC;} 
+  if(fCmplt==2){show(kerr("unmatched")); b=0; GC;}
+  if(fCmplt==1) goto done;//generally incomplete
   if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
   status = pthread_mutex_lock(&execute_mutex); 
   if(status != 0) {perror("Lock mutex in line()"); abort();}
@@ -374,7 +378,9 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o && !fLoad){prompt(b+fCheck);} kerr("undescribed"); fer=0;
+  if(o && !fLoad)prompt(b+fCheck); 
+  kerr("undescribed"); 
+  fer=0;
   R c;
 }
 
@@ -431,7 +437,7 @@ void *socket_thread(void *arg) {
   I nxt=0;   //Next socket position to use
     
   K z=0;
-  for(;;) {
+  for(;;) {   // main loop for Windows clients (sockets)
     read_fds = master;
     i=select(nfd,&read_fds,0,0,0); if(-1==i) O("select error\n");
     if(FD_ISSET(listener, &read_fds)) {
@@ -475,7 +481,7 @@ I attend()
      status = pthread_create(&thread, NULL, socket_thread, NULL);
      if (status != 0) {perror("Create socket thread"); abort();}
   }
-  for(;;) {   // main loop for Windows  
+  for(;;) {   // main loop for Windows stdin
     scrLim = 0;  
     char s[300]; 
     for(;;) {
