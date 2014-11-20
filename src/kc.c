@@ -202,7 +202,7 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b+fCheck); kerr("undescribed"); fer=0; 
+  if(o && !fLoad)prompt(b+fCheck); kerr("undescribed"); fer=0; 
   R c;
 }
 
@@ -374,7 +374,7 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b+fCheck); kerr("undescribed"); fer=0;
+  if(o && !fLoad){prompt(b+fCheck);} kerr("undescribed"); fer=0;
   R c;
 }
 
