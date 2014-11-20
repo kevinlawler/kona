@@ -24,6 +24,7 @@ Z I oerr(){R O("%s %s\n",errmsg,"error");}
 
 I interrupted=0;;
 I scrLim=0;           // script load limit
+I fCheck=0;
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
 
@@ -144,6 +145,18 @@ Z I nodeCount(N n) {R nodeCount_(n)-1;}
 
 #ifndef WIN32
 
+Z I check() {
+  fCheck=1;
+  kerr("undescribed");
+  prompt(1);
+  S a=0;  I n=0;  PDA q=0;
+  for(;;) { 
+    line(stdin, &a, &n, &q);
+    if(fCheck==0) R 0; 
+  }
+  O("\n"); fCheck=0; R 0;
+}
+
 Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));R 0;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
@@ -156,6 +169,9 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   I o = isatty(STDIN); //display results to stdout?
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
+  if(fCheck==1) {
+    if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }
+  }
   appender(a,n,s,c);//"strcat"(a,s)
   I v=complete(*a,*n,p,0); //will allocate if p is null
   b=parsedepth(*p);
@@ -171,7 +187,10 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
 cleanup:
   if(strcmp(errmsg,"undescribed")) {
     oerr(); 
-    if(fError){ if(Line)O("%s\n",Line); else O("%s\n",*a); }
+    if(fError) {
+      if(Line) { O("%s\n",Line); check(); } 
+      else O("%s\n",*a); 
+    }
   }
   if(*p)pdafree(*p);*p=0;
   if(*a)free(*a);*a=0;*n=0;
@@ -183,7 +202,7 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b); kerr("undescribed"); fer=0; 
+  if(o)prompt(b+fCheck); kerr("undescribed"); fer=0; 
   R c;
 }
 
@@ -290,6 +309,21 @@ I attend() //K3.2 uses fcntl somewhere
 
 #else
 
+Z I check() {
+  fCheck=1;
+  kerr("undescribed");
+  prompt(1);
+  char s[300];
+  S a=0;  I n=0;  PDA q=0;
+  for(;;) {
+    fgets(s, sizeof(s), stdin);
+    if(s[0]==4) exit(0);
+    if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }
+    line(s, &a, &n, &q);
+  }
+  O("\n"); fCheck=0; R 0;
+}
+
 PHANDLER_ROUTINE handle_SIGINT(int sig) {
   //no point in setting "interrupted=1", as exit happens anyway. 
   //calling exit(0) explicitly cleans up with finally().
@@ -325,8 +359,8 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
 cleanup:
   if(strcmp(errmsg,"undescribed")) {
     oerr();
-    if(fError){
-      if(Line)O("%s\n",Line);
+    if(fError) {
+      if(Line) { O("%s\n",Line); check(); }
       else O("%s\n",*a);
     }
   }
@@ -340,7 +374,7 @@ done:
     O("symbols  : %lld\n",nodeCount(SYMBOLS));
     fWksp=0;
   }
-  if(o)prompt(b); kerr("undescribed"); fer=0;
+  if(o)prompt(b+fCheck); kerr("undescribed"); fer=0;
   R c;
 }
 
@@ -441,14 +475,13 @@ I attend()
      status = pthread_create(&thread, NULL, socket_thread, NULL);
      if (status != 0) {perror("Create socket thread"); abort();}
   }
-  for(;;) {       // main loop  
+  for(;;) {   // main loop for Windows  
     scrLim = 0;  
     char s[300]; 
     for(;;) {
       fgets(s, sizeof(s), stdin);
       if(s[0]==4) exit(0);
       line(s, &a, &n, &q);
-      //O("OK ... \n  "); if(q || n || a)O("  ");  //for testing socket thread
     }    
   }
   R 0;
