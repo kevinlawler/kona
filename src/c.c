@@ -75,7 +75,7 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   kerr("open-in-next-line");
   oerr();
   O("%s\n",Line);
-  prompt(0); kerr("undescribed");
+  prompt(0); kerr("undescribed"); fer=0;
   R _n();
 }
 
