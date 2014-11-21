@@ -64,18 +64,13 @@ Z FILE *loadf(S s)
 
 K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
 {
-  fLoad=1;
+  fLoad=1; fCmplt=0;
   if(scrLim>124){O("limit\n");  R kerr("stack");} scrLim++;  
   FILE*f=loadf(s);
   if(!f){O("%s.k: file not found\n",s); R FE;}
-  lines(f);
-  fclose(f);
-  scrLim--;
-  fLoad=0;
-  kerr("open-in-next-line");
-  oerr();
-  O("%s\n",Line);
-  prompt(0); kerr("undescribed"); fer=0;
+  lines(f); fclose(f); scrLim--;
+  if(fCmplt==1) { kerr("open-in-next-line"); oerr(); O("%s\n",Line); }
+  kerr("undescribed"); fer=fCmplt=fLoad=0; prompt(0);
   R _n();
 }
 
