@@ -146,7 +146,7 @@ Z I nodeCount(N n) {R nodeCount_(n)-1;}
 
 #ifndef WIN32
 
-Z I check() {
+Z I check() {      //in suspended execution mode: allows checking of state at time of error
   fCheck=1;
   kerr("undescribed");
   prompt(1);
@@ -171,7 +171,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   if(fCheck==1) {
-    if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }
+    if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }      //escape suspended exection with single backslash
   }
   appender(a,n,s,c);//"strcat"(a,s)
   I v=complete(*a,*n,p,0); //will allocate if p is null
@@ -187,10 +187,15 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(o)show(k); cd(k);
 cleanup:
   if(strcmp(errmsg,"undescribed")) {
-    oerr(); 
+    oerr();
     if(fError) {
-      if(Line) { O("%s\n",Line); check(); } 
-      else O("%s\n",*a); 
+      if(Line) {
+        O("%s\n",Line); I cnt=0,i;
+        for(i=0;i<strlen(Line);i++) { if(Line[i]==*fnc) cnt=cnt+1; }
+        if(cnt==1) { S ptr=strchr(Line,*fnc); DO(ptr-Line,O(" ")) O("^\n"); }
+        check();          //enter suspended execution mode for checking 
+      }
+      else O("%s\n",*a);
     }
   }
   if(*p)pdafree(*p);*p=0;

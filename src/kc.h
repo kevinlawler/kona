@@ -14,6 +14,7 @@ I test();
 extern S IFS[3];
 extern S IFP[3];
 extern S LS;
+extern S fnc;
 S sp(S k);
 extern S __d;
 K Kn();

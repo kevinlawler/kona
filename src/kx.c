@@ -29,6 +29,7 @@ __thread K grnt=0; // GrandParent of Subfunction
 __thread K encf=0; // Enclosing Function
 __thread I encp=0; // Enclosing Function Param
 __thread I frg=0;  // Flag reset globals
+         S fnc=0;  // Most recent function from Dispatch Table
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -380,7 +381,7 @@ K vf_ex(V q, K g)
   if(gn > 2 && (q==offsetAt   || q==offsetDot )){ z= (q==offsetAt?at_tetradic:dot_tetradic)(a,b,c,d); GC;}
   //common verbs
 
-  if(2==k && a && b){ z=((K(*)(K,K))DT[(L)q].func)(a,b); GC;}
+  if(2==k && a && b){ fnc=DT[(L)q].text; z=((K(*)(K,K))DT[(L)q].func)(a,b); GC;}
   //? (+).1 -> err ; {[a;b]a+b} 1 -> err
   if(2==k && !a){VE; GC;} //Reachable? Projection?
 
