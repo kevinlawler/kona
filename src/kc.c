@@ -195,7 +195,7 @@ cleanup:
           for(i=0;i<strlen(Line);i++) { if(Line[i]==*fnc) cnt=cnt+1; }
           if(cnt==1) { S ptr=strchr(Line,*fnc); DO(ptr-Line,O(" ")) O("^\n"); }
         }
-        check();          //enter suspended execution mode for checking 
+        check();          //enter suspended execution mode for checking
       }
       else O("%s\n",*a);
     }
@@ -369,7 +369,14 @@ cleanup:
   if(strcmp(errmsg,"undescribed")) {
     oerr();
     if(fError) {
-      if(Line) { O("%s\n",Line); check(); }
+      if(Line) {
+        O("%s\n",Line); I cnt=0,i;
+        if(fnc) {
+          for(i=0;i<strlen(Line);i++) { if(Line[i]==*fnc) cnt=cnt+1; }
+          if(cnt==1) { S ptr=strchr(Line,*fnc); DO(ptr-Line,O(" ")) O("^\n"); }
+        }
+        check();          //enter suspended execution mode for checking
+      }
       else O("%s\n",*a);
     }
   }
@@ -384,8 +391,7 @@ done:
     fWksp=0;
   }
   if(o && !fLoad)prompt(b+fCheck); 
-  kerr("undescribed"); 
-  fer=0;
+  kerr("undescribed"); fer=0; fnc=0;
   R c;
 }
 
