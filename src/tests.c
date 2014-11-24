@@ -35,8 +35,8 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a); kerr("undescribed");
-  K y = X(b); kerr("undescribed");
+  K x = X(a);
+  K y = X(b);
   I m=matchI(x,y);
 
   if(!m)

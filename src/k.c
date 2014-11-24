@@ -45,7 +45,7 @@ C PPON=1;
 I maX(I a,I b){R a>b?a:b;}
 I miN(I a,I b){R a<b?a:b;}
 
-K X(S s){R XN(s,strlen(s));}  
+K X(S s){kerr("undescribed"); R XN(s,strlen(s));}  
 Z K XN(S s,I n){R ex(wd(s,n));} //asserts ex(x) has first-line U(x)
 K KX(K x){R XN(CSK(x),xn);}  //assumes 3==ABS(xt)
 
