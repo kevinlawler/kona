@@ -873,7 +873,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   while(v[1] && adverbClass(v[2+i])) i++;
   //TODO: Catch 0-returned-errors here and below
   if(!sva(v[0]) && (i || 2==sva(v[1]))){   // na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
-    t2=ex2(v+2+i,k); //these cannot be placed into single function call b/c order of eval is unspecified
+    t2=ex2(v+2+i,k); if(fer && strcmp(errmsg,"undescribed")) R t2;
+       //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
     if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
       if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n){
