@@ -894,7 +894,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;.  
               //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3;
-    t0=ex_(*v,1);
+    t0=ex_(*v,1); if(fer && strcmp(errmsg,"undescribed")){cd(t2); R(t0);}
     if(!prnt && t0->t==7 && t0->n==3)prnt=t0;
     e= dv_ex(t0,v+1+i,t2); v[1]=u;
     cd(t0); cd(t2); if(!VA(t3)) cd(t3);

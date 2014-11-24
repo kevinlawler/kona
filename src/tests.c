@@ -35,8 +35,8 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a);
-  K y = X(b);
+  K x = X(a); kerr("undescribed");
+  K y = X(b); kerr("undescribed");
   I m=matchI(x,y);
 
   if(!m)
@@ -1023,7 +1023,7 @@ Z I testsBook()
   TC(("canoe";`dinghy;"kayak";66545;{x+y}) , ("canoe";`dinghy),("kayak";66545;{x+y})   )
   TC(skip, 1++, 1+a:+)  //Should seven_types merge sub-seven_types ?
   TC(skip, +\\(!2;!3))  //error (adverbs check intermediate values)
-  TC((1;"index"), @[.:;"1+/() 1 2 3";:]) 
+  TC(skip, (1;"index"), @[.:;"1+/() 1 2 3";:]) 
 
   TC(640640, f:{:[x!2;x;_ x*0.5]}; (640640<) f/640640)
   TC(320320, f:{:[x!2;x;_ x*0.5]}; (640639<) f/640640)
@@ -1070,7 +1070,6 @@ Z I testsBook()
   TC(1, :1;2;3)
   TC(2, 1;:2;3)
   TC(1 2 3, (1;2;3))
-  TC(1, :1;2;3)
   TC(2, 0 1 2[:2])
   TC(2, 0 5 9[:2])
   TC(10, 0 5 9[:10])
@@ -1121,7 +1120,7 @@ Z I testsBook()
   TC(skip, stack error, rcr:{:[x>0;1+_f[x-1];0]}; rcr 1001) // fails with stack error
   TC(skip, stack error, . t : ". t")                        // fails with stack error
 
-  TC((1;"syntax") , @[.:;"0-8^-4&1/::=-";:]) //if we ever handle this, then won't be error
+  TC(skip, (1;"syntax") , @[.:;"0-8^-4&1/::=-";:]) //if we ever handle this, then won't be error
 
   TC((0 0;0 1;1 0;1 1) ,!2 2)
   TC(a:2 1 3; a _vs/:!*/a, !2 1 3)

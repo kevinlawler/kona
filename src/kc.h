@@ -10,6 +10,7 @@ extern F mMax;
 extern I fWksp;
 extern __thread I fer;
 extern I fLoad;
+extern C errmsg[256];
 I test();
 extern S IFS[3];
 extern S IFP[3];

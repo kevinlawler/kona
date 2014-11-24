@@ -123,7 +123,6 @@ extern I SEED;
 extern K KTREE;
 extern N SYMBOLS;
 K kerr(cS s);
-extern C errmsg[256];
 extern L DT_SIZE, DT_END_OFFSET, DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VERB_OFFSET;
 extern TR DT[];
 extern L offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
