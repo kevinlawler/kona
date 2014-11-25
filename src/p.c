@@ -218,7 +218,7 @@ I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 //      this rule doesn't apply to function argument lists, eg: f:{  [a] 1} is ok. however f: {\n\n  [a;b;d]  1+1} not ok
 //      so the check probably has to do with whether some useful symbol occurred on the line already
 //other errors: syntax error
-K wd(S s, I n){R wd_(s,n,denameD(&KTREE,__d,1),0);}
+K wd(S s, I n){Line=s; R wd_(s,n,denameD(&KTREE,__d,1),0);}
 K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
 {
   if(!s) R 0;
@@ -228,7 +228,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s d
   PDA p=0;
   K km=newK(-1,1+n); U(km) I *m = kI(km);//marks 
   I e=complete(s,n,&p,m);if(p){pdafree(p);p=0;} //Mark all ([{ and comments and quotes
-  Line=s; if(e){cd(km); R PE;}
+  if(e){cd(km); R PE;}
 
   K v = Kv(); M(v,km)
   v->n=0; //7-0 "waiting" to be executed/potentially condensed ... set "isTenseWordfunc" -- wordfunc 'needing' execution
