@@ -4,7 +4,6 @@ K cd(K a);
 void finally();
 extern I PG;
 extern I fError;
-extern S Line;
 extern __thread I fer;
 
 #if defined(DEBUG)

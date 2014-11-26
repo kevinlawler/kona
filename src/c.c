@@ -69,7 +69,7 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   FILE*f=loadf(s);
   if(!f){O("%s.k: file not found\n",s); R FE;}
   lines(f); fclose(f); scrLim--;
-  if(fCmplt==1) { kerr("open-in-next-line"); oerr(); O("%s\n",Line); }
+  if(fCmplt==1) { kerr("open-in-next-line"); oerr(); }
   kerr("undescribed"); fer=fCmplt=fLoad=0; prompt(0);
   R _n();
 }
