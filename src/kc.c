@@ -187,16 +187,16 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(o)show(k); cd(k);
 cleanup:
   if(strcmp(errmsg,"undescribed")) {
-    oerr();
+    oerr(); I ctl=0;
     if(fError) {
       if(strlen(lineA)) {
         O("%s\n",lineA); I cnt=0,i;
         if(fnc) {
           for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
-          if(cnt==1) { S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
+          if(cnt==1) { ctl=1; S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
         }
       }
-      if(strlen(lineB)) {
+      if(strlen(lineB) && !ctl) {
         O("%s\n",lineB); I cnt=0,i;
         if(fnc) {
           for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
