@@ -147,20 +147,16 @@ Z I nodeCount(N n) {R nodeCount_(n)-1;}
 #ifndef WIN32
 
 Z I check() {      //in suspended execution mode: allows checking of state at time of error
-  fCheck=1;
-  kerr("undescribed");
-  prompt(1);
-  S a=0;  I n=0;  PDA q=0;
-  for(;;) { 
-    line(stdin, &a, &n, &q);
-    if(fCheck==0) R 0; 
-  }
-  O("\n"); fCheck=0; R 0;
+  fCheck=1; kerr("undescribed"); prompt(1); S a=0;  I n=0;  PDA q=0;
+  for(;;) { line(stdin, &a, &n, &q); if(fCheck==0)R 0; }
+  O("\n"); fCheck=0; 
+  R 0;
 }
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
 
-I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));R 0;}//You could put lines(stdin) in main() to have not-multiplexed command-line-only input
+I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p));R 0;}
+    //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
 {
   S s=0; I b=0,c=0,m=0;
@@ -170,53 +166,39 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   I o = isatty(STDIN); //display results to stdout?
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
-  if(fCheck==1) {
-    if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }      //escape suspended exection with single backslash
-  }
-  appender(a,n,s,c);//"strcat"(a,s)
-  I v=complete(*a,*n,p,0); //will allocate if p is null
+  if(fCheck==1) { if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }}   //escape suspended exection with single backslash
+  appender(a,n,s,c);         //"strcat"(a,s)
+  I v=complete(*a,*n,p,0);   //will allocate if p is null
   b=parsedepth(*p);
-  if(v==3){show(kerr("nest")); GC;} 
-  if(v==2){show(kerr("unmatched")); b=0; GC;}
-  if(v==1){fCmplt=1; goto done;}         //generally incomplete
-  if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
+  if(v==3) { show(kerr("nest")); GC; } 
+  if(v==2) { show(kerr("unmatched")); b=0; GC; }
+  if(v==1) { fCmplt=1; goto done; }         //generally incomplete
+  if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
   RTIME(d,k=ex(wd(*a,*n)))
-#ifdef DEBUG
-  if(o&&k)O("Elapsed: %.7f\n",d);
-#endif
+  #ifdef DEBUG
+    if(o&&k)O("Elapsed: %.7f\n",d);
+  #endif
   if(o)show(k); cd(k);
 cleanup:
-  if(strcmp(errmsg,"undescribed")) {
-    oerr(); I ctl=0;
+  if(strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
     if(fError) {
       if(strlen(lineA)) {
-        if(fnc) {
-          I cnt=0,i; for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
-          if(cnt==1) { ctl=1; O("%s\n",lineA); S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
-        }
-      }
+        if(fnc) { I cnt=0,i; 
+          for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
+          if(cnt==1) { ctl=1; O("%s\n",lineA); S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }}}
       if(strlen(lineB) && !ctl) {
-        if(fnc) {
-          I cnt=0,i; for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
-          if(cnt==1) { O("%s\n",lineB); S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }
-        }
-      }
+        if(fnc) { I cnt=0,i; O("%s\n",lineB);
+          for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
+          if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }}}
       if(lineA || lineB)  check();          //enter suspended execution mode for checking
-      if(!lineA && !lineB) O("%s\n",*a);
-    }
-  }
+      if(!lineA && !lineB) O("%s\n",*a); }}
   if(*p)pdafree(*p);*p=0;
   if(*a)free(*a);*a=0;*n=0;
   if(s)free(s);s=0;
 done:
-  if(fWksp) {
-    O("used now : %lld\n",(I)mUsed);  
-    O("max used : %lld\n",(I)mMax);  
-    O("symbols  : %lld\n",nodeCount(SYMBOLS));
-    fWksp=0;
-  }
-  if(o && !fLoad)prompt(b+fCheck); 
-  kerr("undescribed"); fer=0; fnc=0; lineA=lineB=0;
+  if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax); O("symbols  : %lld\n",nodeCount(SYMBOLS)); fWksp=0; }
+  if(o && !fLoad)prompt(b+fCheck);
+  kerr("undescribed"); fer=0; fnc=lineA=lineB=0;
   R c;
 }
 
