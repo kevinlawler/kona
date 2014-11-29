@@ -17,19 +17,21 @@ Z V ex_(V a,I r);
 I cirRef(K p,K y);
 I cirRef_(K p,K y,I f);
 
-__thread I fer=0;  // Flag Early Return 
-__thread I fwh=0;  // Flag While
-__thread I stk=0;  // Stack counter
-__thread I prj=0;  // Projection flag
-__thread I prj2=0; // 2nd Projection flag
-__thread K prnt=0; // Parent of Subfunction 
-__thread I f1s=1;  // Flag 1 for Subfunctions
-__thread I f2s=0;  // Flag 2 for Subfunctions
-__thread K grnt=0; // GrandParent of Subfunction
-__thread K encf=0; // Enclosing Function
-__thread I encp=0; // Enclosing Function Param
-__thread I frg=0;  // Flag reset globals
-         S fnc=0;  // Most recent function from Dispatch Table
+__thread I fer=0;    // Flag Early Return 
+__thread I fwh=0;    // Flag While
+__thread I stk=0;    // Stack counter
+__thread I prj=0;    // Projection flag
+__thread I prj2=0;   // 2nd Projection flag
+__thread K prnt=0;   // Parent of Subfunction 
+__thread I f1s=1;    // Flag 1 for Subfunctions
+__thread I f2s=0;    // Flag 2 for Subfunctions
+__thread K grnt=0;   // GrandParent of Subfunction
+__thread K encf=0;   // Enclosing Function
+__thread I encp=0;   // Enclosing Function Param
+__thread I frg=0;    // Flag reset globals
+         S fnc=0;    // Most recent function from Dispatch Table
+         V fncp[128];// DT pointers of executed functions
+         I fnci=0;   // indicator of next function pointer position
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -381,7 +383,9 @@ K vf_ex(V q, K g)
   if(gn > 2 && (q==offsetAt   || q==offsetDot )){ z= (q==offsetAt?at_tetradic:dot_tetradic)(a,b,c,d); GC;}
   //common verbs
 
-  if(2==k && a && b){ fnc=DT[(L)q].text; z=((K(*)(K,K))DT[(L)q].func)(a,b); GC;}
+  if(2==k && a && b){ fnc=DT[(L)q].text; 
+    if(fnci<127){fncp[fnci]=q; fnci++;} 
+    z=((K(*)(K,K))DT[(L)q].func)(a,b); GC;}
   //? (+).1 -> err ; {[a;b]a+b} 1 -> err
   if(2==k && !a){VE; GC;} //Reachable? Projection?
 

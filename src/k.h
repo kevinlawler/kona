@@ -5,6 +5,7 @@ void finally();
 extern I PG;
 extern I fError;
 extern __thread I fer;
+extern I fnci;
 
 #if defined(DEBUG)
 extern V krec[1000000];

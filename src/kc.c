@@ -185,11 +185,17 @@ cleanup:
       if(strlen(lineA)) {
         if(fnc) { I cnt=0,i; 
           for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
-          if(cnt==1) { ctl=1; O("%s\n",lineA); S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }}}
+          if(cnt==1) { ctl=1; O("%s\n",lineA); S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
+          if(cnt>1 && fnci) { I num=0; 
+            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; } 
+            O("at execution instance %lld of %s\n",num,fnc); }}}
       if(strlen(lineB) && !ctl && strcmp(lineA,lineB)) {
         if(fnc) { I cnt=0,i; O("%s\n",lineB);
           for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
-          if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }}}
+          if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }
+          if(cnt>1 && fnci) { I num=0; 
+            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; } 
+            O("at execution instance %lld of %s\n",num,fnc); }}}
       if(lineA || lineB)  check();          //enter suspended execution mode for checking
       if(!lineA && !lineB) O("%s\n",*a); }}
   if(*p)pdafree(*p);*p=0;
@@ -198,7 +204,7 @@ cleanup:
 done:
   if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax); O("symbols  : %lld\n",nodeCount(SYMBOLS)); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
-  kerr("undescribed"); fer=0; fnc=lineA=lineB=0;
+  kerr("undescribed"); fer=fnci=0; fnc=lineA=lineB=0;
   R c;
 }
 
@@ -353,37 +359,31 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
 #endif
   if(o)show(k); cd(k);
 cleanup:
-  if(strcmp(errmsg,"undescribed")) {
-    oerr(); I ctl=0;
+  if(strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
     if(fError) {
       if(strlen(lineA)) {
-        if(fnc) {
-          I cnt=0,i; for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
+        if(fnc) { I cnt=0,i; 
+          for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
           if(cnt==1) { ctl=1; O("%s\n",lineA); S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
-        }
-      }
-      if(strlen(lineB) && !ctl) {
-        if(fnc) {
-          I cnt=0,i; for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
-          if(cnt==1) { O("%s\n",lineB); S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }
-        }
-      }
+          if(cnt>1 && fnci) { I num=0; 
+            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; } 
+            O("at execution instance %lld of %s\n",num,fnc); }}}
+      if(strlen(lineB) && !ctl && strcmp(lineA,lineB)) {
+        if(fnc) { I cnt=0,i; O("%s\n",lineB);
+          for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
+          if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }
+          if(cnt>1 && fnci) { I num=0; 
+            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; } 
+            O("at execution instance %lld of %s\n",num,fnc); }}}
       if(lineA || lineB)  check();          //enter suspended execution mode for checking
-      if(!lineA && !lineB) O("%s\n",*a);
-    }
-  }
+      if(!lineA && !lineB) O("%s\n",*a); }}
   if(*p)pdafree(*p);*p=0;
   if(*a)free(*a);*a=0;*n=0;
   if(s)free(s);s=0;
 done:
-  if(fWksp) {
-    O("used now : %lld\n",(I)mUsed);  
-    O("max used : %lld\n",(I)mMax);  
-    O("symbols  : %lld\n",nodeCount(SYMBOLS));
-    fWksp=0;
-  }
-  if(o && !fLoad)prompt(b+fCheck); 
-  kerr("undescribed"); fer=0; fnc=0;
+  if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax); O("symbols  : %lld\n",nodeCount(SYMBOLS)); fWksp=0; }
+  if(o && !fLoad)prompt(b+fCheck);
+  kerr("undescribed"); fer=fnci=0; fnc=lineA=lineB=0;
   R c;
 }
 

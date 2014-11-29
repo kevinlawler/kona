@@ -18,6 +18,8 @@ extern S IFS[3];
 extern S IFP[3];
 extern S LS;
 extern S fnc;
+extern V fncp[128];
+extern I fnci;
 S sp(S k);
 extern S __d;
 K Kn();
