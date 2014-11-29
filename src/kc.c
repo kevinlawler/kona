@@ -186,7 +186,7 @@ cleanup:
         if(fnc) { I cnt=0,i; 
           for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
           if(cnt==1) { ctl=1; O("%s\n",lineA); S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }}}
-      if(strlen(lineB) && !ctl) {
+      if(strlen(lineB) && !ctl && strcmp(lineA,lineB)) {
         if(fnc) { I cnt=0,i; O("%s\n",lineB);
           for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
           if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }}}
