@@ -8,23 +8,23 @@ K _jd(K a);
 K _f();
 K _n();
 I test();
-#if defined(DEBUG)
-extern V krec[1000000];
-#endif
 K cd(K a);
 K show(K a);
 I matchI(K a,K b);
 K X(S s);
 K Kd();
 extern K KTREE;
-#if defined(DEBUG)
-extern I kreci;
-#endif
 I SC(S a,S b);
 extern F testtime;
 extern I tests;
 extern I passed;
 extern I test_print;
+extern S lineB;
 I tc(S a,S b);
 I tp(I x);
 S ts(I x);
+
+#if defined(DEBUG)
+extern V krec[1000000];
+extern I kreci;
+#endif
