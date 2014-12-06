@@ -563,6 +563,8 @@ Z I tests02()
   TC(".k", ."\\d a"; ."\\d .k"; $_d)  // check for memory leaks
   TC(1 2, a:.((`b;1);(`c;2)); `a[`b`c])
   TC(3, a:1; \\b:2; c:3) // check: \b n
+  TC(5, a[5])
+  TC(5 6, a[5 6])
 
   R 0; 
 }
