@@ -20,6 +20,7 @@ I cirRef_(K p,K y,I f);
 __thread I fer=0;    // Flag Early Return 
 __thread I fwh=0;    // Flag While
 __thread I stk=0;    // Stack counter
+__thread I stk1=0;   // Additional stack counter
 __thread I prj=0;    // Projection flag
 __thread I prj2=0;   // 2nd Projection flag
 __thread K prnt=0;   // Parent of Subfunction 
@@ -500,7 +501,7 @@ K vf_ex(V q, K g)
         cd(fc);
       }
 
-      ci(fw); z=ex(fw); 
+      ci(fw); if(stk1>1e4) R kerr("stack"); stk1++; z=ex(fw); stk1--; 
       DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; )
       stk--;
     )
@@ -586,7 +587,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
 K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
   U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
-  K z=ex_(&a,0); cd(a); fer=fwh=stk=prj=prj2=f2s=0; f1s=1; if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0; R z; 
+  K z=ex_(&a,0); cd(a); fer=fwh=stk=stk1=prj=prj2=f2s=0; f1s=1; if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0; R z; 
 }
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
