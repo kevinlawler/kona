@@ -76,7 +76,7 @@ I test()
   O("Test pass rate: %.4f, Total: %lld, Passed: %lld, Skipped: %lld, Failed: %lld, Time: %fs\n", rate,tests,passed,skipped,failed,testtime);
   I r=1==rate;
   O("%s\n", ts(r));
-  testtime=0; lineB=0;
+  testtime=0; lineB=0; kerr("undescribed");
   R r;
 }
 
@@ -565,6 +565,7 @@ Z I tests02()
   TC(3, a:1; \\b:2; c:3) // check: \b n
   TC(5, a[5])
   TC(5 6, a[5 6])
+  TC(a:{a[x]}; a 5, )  
 
   R 0; 
 }

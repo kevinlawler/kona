@@ -501,7 +501,12 @@ K vf_ex(V q, K g)
         cd(fc);
       }
 
-      ci(fw); if(stk1>1e4) R kerr("stack"); stk1++; z=ex(fw); stk1--; 
+      #ifdef DEBUG
+      if(stk1>5) {cd(g); kerr("stack"); R _n();}
+      #else
+      if(stk1>1e3) {cd(g); kerr("stack"); R _n();}
+      #endif
+      ci(fw); stk1++; z=ex(fw); stk1--;
       DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; )
       stk--;
     )
