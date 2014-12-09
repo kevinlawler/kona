@@ -565,6 +565,8 @@ Z I tests02()
   TC(3, a:1; \\b:2; c:3) // check: \b n
   TC(5, a[5])
   TC(5 6, a[5 6])
+  TC(5, a 5)
+  TC(5 6, a 5 6)
   TC(a:{a[x]}; a 5, )  
 
   R 0; 

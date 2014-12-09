@@ -76,8 +76,9 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
     if     (1==bt)z=ci(b);
     else if(4==ABS(bt))z=_n(); 
     else if(0==bn && (-1==bt || -2==bt))z=_n();
-    else if(0==bt && 1==bn && 1==ABS((*kK(b))->t))z=kclone(*kK(b));
-    else if(6==bt || 0==bt || (-3==bt && 0==bn))z=newK(0,0);
+    else if(0==bt && 1==bn)z=kclone(*kK(b));
+    else if(0==bt) z=demote(kclone(b));
+    else if(6==bt || (-3==bt && 0==bn))z=newK(0,0);
     else R TE;
   }
   else if(6==bt) 
