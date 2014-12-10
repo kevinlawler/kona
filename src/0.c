@@ -917,9 +917,9 @@ K _4d(K x,K y) //see _3d
   P(-1==ksender(sockfd,y,1),DOE)
   K z=0;
 #ifndef WIN32
-  while(!(z=read_tape(sockfd,1)));
+  while(!(z=read_tape(sockfd,1))){}
 #else
-  while(!(z=read_tape(0,sockfd,1)));
+  while(!(z=read_tape(0,sockfd,1))){}
 #endif
   P(!z || z==(K)-1,DOE)
   R z;

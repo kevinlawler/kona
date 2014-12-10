@@ -407,7 +407,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                             }
                           *o=EVP(q);
                         }
-                        else if(7==(*f)->t && 3==(*f)->n) ;// for {} function add args to local dictionary (huh??)
+                        else if(7==(*f)->t && 3==(*f)->n){} // for {} function add args to local dictionary (huh??)
                       }
 
                       kV(g)[CONJ]=z;
@@ -600,7 +600,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
     CS(MARK_END    ,  z=(V)(DT_OFFSET(end)))
   }
 
-  if(!z) ; //TODO: handle null z, which can happen
+  if(!z){} //TODO: handle null z, which can happen
 
   switch(-M) //Things that need to be stored locally
   {

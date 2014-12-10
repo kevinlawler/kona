@@ -16,7 +16,7 @@ Z I tests02();
 Z I tests01();
 Z I testsBook();
 
-#define TC_(x, y ) {S s=ts(tp(tc(x, y))); if(test_print) fprintf(stderr, "%s:%u: TC( " x " , " y " ) ... %s\n", __FILE__, __LINE__,s); test_print=0; }
+#define TC_(x, y ) {S s=ts(tp(tc(x, y))); if(test_print) fprintf(stderr, "%s:%u: TC( %s , %s ) ... %s\n", __FILE__, __LINE__, x, y, s); test_print=0; }
 #define TC(x,...) TC_(#x,#__VA_ARGS__)
 
 I passed=0, skipped=0, failed=0;

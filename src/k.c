@@ -185,7 +185,7 @@ Z int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: m
   else //5: monadic
   { 
     I n=vsnprintf(b,512,s,args);
-    if(!kapn(u,b,n)); //todo: err handling
+    if(!kapn(u,b,n)){} //todo: err handling
   }
   va_end (args);
   R 0;
