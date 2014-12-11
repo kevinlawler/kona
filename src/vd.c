@@ -29,8 +29,7 @@ Z K of2(K d, K *x, K *y, I s)
   {
     if(dt!=0)R 0;//TODO: Error - must be 0 if s!=0 ... ?
     I k;
-    DO(fn, k=kI(f)[i]; P(k>=dn,XE))
-    if(!kK(d)[*kI(f)]) R XE;
+    DO(fn, k=kI(f)[i]; P(k>=dn,XE)) P(k<0,XE)
     if(1==ft) R of2(kK(d)[*kI(f)], y, 1+y, s-1);//Don't increase depth, just move on
     U(z=newK(0,fn))
     DO(fn, M(z,kK(z)[i]=of2(kK(d)[kI(f)[i]], y, 1+y, s-1)))
