@@ -30,7 +30,8 @@ K equals(K a, K b)
   I zn=at>0?bn:an;
   K z=newK(t,zn); //oom
 #define EQ(x, y) (x) == (y)
-  if     (2==AT && 2==BT) SCALAR_EXPR_FUN(FC, kI(z), kF(a), kF(b), ?0:1)
+  if     (2==AT && 2==BT) { SCALAR_EXPR_FUN(FC, kI(z), kF(a), kF(b), ?0:1)     
+         DO(zn, if(kF(a)[i]!=kF(a)[i] && kF(b)[i]!=kF(b)[i]) kI(z)[i]=1)}
   else if(2==AT && 1==BT) SCALAR_EXPR_FUN(FC, kI(z), kF(a), kI(b), ?0:1)
   else if(1==AT && 2==BT) SCALAR_EXPR_FUN(FC, kI(z), kI(a), kF(b), ?0:1)
   else if(1==AT && 1==BT) SCALAR_OP_CASE(EQ, kI(z), kI(a), kI(b))
