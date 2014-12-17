@@ -392,7 +392,13 @@ K enumerate(K a)
     }
     R z;
   }
-  else if(1==t || 2==t){I n= t==1?*kI(a):(I)*kF(a); P(n<0,DOE) z=newK(-1,n); U(z) DO(n,kI(z)[i]=i)}//could instead be (in)?tolerant ceil/floor
+  else if(1==t || 2==t) {    //could instead be (in)?tolerant ceil/floor
+    I n= t==1?*kI(a):(I)*kF(a);
+    #if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
+    if(n>2e8) R LMT;
+    #endif 
+    P(n<0,DOE) z=newK(-1,n); 
+    U(z) DO(n,kI(z)[i]=i) }
   else R DOE;
   R z;
 }
