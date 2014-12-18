@@ -1,4 +1,4 @@
-﻿#include "incs.h"
+#include "incs.h"
 #include "tests.h"
 #include "k.h"
 
