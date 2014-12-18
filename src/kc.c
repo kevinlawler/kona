@@ -180,6 +180,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   #endif
   if(o)show(k); cd(k);
 cleanup:
+  if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   if(strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
     if(fError) {
       if(lineA) {
