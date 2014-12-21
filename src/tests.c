@@ -484,7 +484,11 @@ Z I tests02()
   TC(6 7 8, (21>+/)(2+)/!3)
   TC((1;"wsfull"),@[.:;"0I#0";:])
   TC((1;"wsfull"),@[.:;"&0I";:])
+  #if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
+  TC((1;"limit"),@[.:;"!0I";:])
+  #else
   TC((1;"wsfull"),@[.:;"!0I";:])
+  #endif
 
   TC(1 3    ,  +\\ 1 2)
   TC(1 3.0  ,  +\\ 1.0 2.0)
