@@ -146,7 +146,7 @@ Z I nodeCount(N n) {R nodeCount_(n)-1;}
 
 #ifndef WIN32
 
-Z I check() {      //in suspended execution mode: allows checking of state at time of error
+I check() {      //in suspended execution mode: allows checking of state at time of error
   fCheck=1; kerr("undescribed"); prompt(1); S a=0;  I n=0;  PDA q=0;
   for(;;) { line(stdin, &a, &n, &q); if(fCheck==0)R 0; }
   O("\n"); fCheck=0; 

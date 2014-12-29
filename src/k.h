@@ -20,6 +20,7 @@ void boilerplate();
 I kinit();
 int main(int argc,S *argv);
 K show(K a);
+I check();
 K _i();
 void printAtDepth(V u,K a,I d,I x,I vdep,I b);
 K kapn(K *a,V v,I n);
