@@ -79,6 +79,7 @@ K tr_st(K x){   //trace_stop
   if(0==strcmp(fBreak,"t"))show(x);
   if(0==strcmp(fBreak,"s")){O("stop\n"); O("%s\n",lineA); check();}
   R ci(x); }
+K rtrn(K x) {fer=1; R ci(x);}
 K eachright(){R 0;} K eachleft(){R 0;} K eachpair(){R 0;}
 
 C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
@@ -512,8 +513,9 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 2, _vs,"_vs",{0}},
   {0, 3, _ssr,"_ssr",{0}},
   {0, 1, tr_st," \\",{0}},  //trace_stop
+  {0, 1, rtrn,":",{0}},     //return
   //^^Add new rows here^^
-  {-1,-1,TABLE_END,0,{0}} //sentinel
+  {-1,-1,TABLE_END,0,{0}}   //sentinel
 };
 
 K TABLE_END(){R 0;}
