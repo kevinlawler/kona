@@ -65,11 +65,15 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
     C s[256]; strcpy(s,__d); strcat(s,"."); strcat(s,*kS(a));
     K *aa=denameD(&KTREE,(S)sp(s),1);
     K *f=&kK(b)[0];
-    z=of2(*aa,f,bn>0?1+f:0,bn-1);
-    R z;
+    R of2(*aa,f,bn>0?1+f:0,bn-1);
   }
 
-  if(at==4 && bt==1){ci(b); R b;}
+  if(at==4 && bt==1){
+    C s[256]; strcpy(s,__d); strcat(s,"."); strcat(s,*kS(a));
+    K *aa=denameD(&KTREE,(S)sp(s),1);
+    R of(*aa,b);
+  }
+
   P(0<at && at<5 && 6!=bt,TE)
   //At is either <=0 or dict or nil. b is not ()
   if(6==at)
