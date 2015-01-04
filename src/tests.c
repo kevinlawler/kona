@@ -578,6 +578,8 @@ Z I tests02()
   TC(1, `a@1)         //issue #291
   TC(1 2 3, `a@1 2 3) //issue #291
   TC(9, a:8 9 4; `a . 1) //issue #292
+  TC(9, a:8 9 4; `a @ 1)     //issue #293
+  TC(9 4, a:8 9 4; `a @ 1 2) //issue #293
 
   R 0; 
 }

@@ -50,3 +50,4 @@ K at(K x,K y);
 K itemAtIndex(K a,I i);
 K *denameS(S dir_string,S t, I create);
 K *lookupEVOrCreate(K *p,S k);
+K of(K a, K b);
