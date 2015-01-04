@@ -574,6 +574,7 @@ Z I tests02()
   TC(5, a 5)
   TC(5 6, a 5 6)
   TC(a:{a[x]}; a 5, )  
+  TC(1, `a.1)   //issue #290
 
   R 0; 
 }

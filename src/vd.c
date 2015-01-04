@@ -69,6 +69,7 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
     R z;
   }
 
+  if(at==4 && bt==1){ci(b); R b;}
   P(0<at && at<5 && 6!=bt,TE)
   //At is either <=0 or dict or nil. b is not ()
   if(6==at)
