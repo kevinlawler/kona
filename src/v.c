@@ -180,7 +180,9 @@ K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/director
 K at(K x, K y)
 {
   K a,z;
-  if(4==xt)R NYI; //TODO: Value/Execute when 4==xt ... weird cases: (first a:1) 
+  if(xt==4)
+    if(1==ABS(yt)){ci(y); R y;}
+    else R NYI;  //TODO: Value/Execute when 4==xt ... weird cases: (first a:1)
   if(7!=xt)R at_verb(x,y);
   a=enlist(y);
   M(a)
