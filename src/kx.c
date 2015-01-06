@@ -828,7 +828,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2);
       cd(j0); cd(j1); cd(j2); f1s=0; prnt=z; 
     }
-    else if(z>(K)DT_SIZE && z->t==7 && z->n==3 && prnt && f1s && kK(prnt)[LOCALS]->n
+    else if(z>(K)DT_SIZE && z->t==7 && z->n==3 && prnt && f1s && kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n
          && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n)
     {
       K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
