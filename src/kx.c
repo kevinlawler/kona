@@ -820,7 +820,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   if(bk(v[1])) {
     K z= ex_(*v,1);
     if(prnt && kV(prnt)[PARAMS] && !kK(prnt)[PARAMS]->n && kV(z)[LOCALS] && !kK(z)[LOCALS]->n) {
-      K j0=dot_monadic(kV(prnt)[CACHE_TREE]); kV(z)[CACHE_TREE]=dot_monadic(j0); cd(j0); prnt=z; }
+      kV(z)[CACHE_TREE]=kclone(kK(prnt)[CACHE_TREE]); prnt=z; }
     else if(prnt && kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n && kV(z)[PARAMS] && kK(z)[PARAMS]->n) {
       K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
       K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); }
