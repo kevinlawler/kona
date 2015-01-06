@@ -24,7 +24,7 @@ __thread I stk1=0;   // Additional stack counter
 __thread I prj=0;    // Projection flag
 __thread I prj2=0;   // 2nd Projection flag
 __thread K prnt=0;   // Parent of Subfunction 
-__thread I f2s=0;    // Flag for Subfunctions
+__thread I fsf=0;    // Flag for Subfunctions
 __thread K grnt=0;   // GrandParent of Subfunction
 __thread K encf=0;   // Enclosing Function
 __thread I encp=0;   // Enclosing Function Param
@@ -479,7 +479,7 @@ K vf_ex(V q, K g)
         kV(f)[CACHE_TREE]=tree;
       }
 
-        if(f2s && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
+        if(fsf && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
         K j0=dot_monadic(kV(prnt)[LOCALS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
         K j2=join(j0,j1); cd(kV(prnt)[CACHE_TREE]); kV(prnt)[CACHE_TREE]=dot_monadic(j2);
         cd(j0); cd(j1); cd(j2); tree=kV(prnt)[CACHE_TREE]; 
@@ -591,7 +591,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
 K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
   U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
-  K z=ex_(&a,0); cd(a); fer=fwh=stk=stk1=prj=prj2=f2s=0; if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0; R z; 
+  K z=ex_(&a,0); cd(a); fer=fwh=stk=stk1=prj=prj2=fsf=0; if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0; R z; 
 }
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
@@ -880,7 +880,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         if(kK(prnt)[CACHE_TREE]->n){
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
           K j2=join(j0,j1); cd(kK(t3)[CACHE_TREE]); kV(t3)[CACHE_TREE]=dot_monadic(j2); 
-          cd(j0); cd(j1); cd(j2); f2s=1;
+          cd(j0); cd(j1); cd(j2); fsf=1;
         }
         else if(kV(prnt)[CONJ]) {
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
@@ -906,24 +906,17 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   t2=ex2(v+1+i,k); //oom. these cannot be placed into single function call b/c order of eval is unspecified
   t3=ex_(*v,1);
   if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
-    if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n){
-      if(kK(prnt)[CACHE_TREE]->n && kK(prnt)[LOCALS]->n){
-        if(kV(t3)[CACHE_WD] && !kV(t3)[CACHE_TREE]){
-          f2s=1; kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);
-        }
+    if(prnt && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n){
+      if(kK(prnt)[LOCALS]->n){
+        if(kV(t3)[CACHE_WD] && !kV(t3)[CACHE_TREE]){kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);}
         else if(kK(t3)[PARAMS]->n || grnt){
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(j0,j1);
           if(kV(t3)[CACHE_TREE] && kK(t3)[CACHE_TREE]->n)cd(kK(t3)[CACHE_TREE]);
-          kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
-        }
-      }
+          kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
       else {
         K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-        K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
-      }
-    }
-    prnt=t3; 
-  }
+        K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
+    prnt=t3; }
 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
   *v=VA(t3)?t3:(V)&t3;
