@@ -24,8 +24,7 @@ __thread I stk1=0;   // Additional stack counter
 __thread I prj=0;    // Projection flag
 __thread I prj2=0;   // 2nd Projection flag
 __thread K prnt=0;   // Parent of Subfunction 
-__thread I f1s=1;    // Flag 1 for Subfunctions
-__thread I f2s=0;    // Flag 2 for Subfunctions
+__thread I f2s=0;    // Flag for Subfunctions
 __thread K grnt=0;   // GrandParent of Subfunction
 __thread K encf=0;   // Enclosing Function
 __thread I encp=0;   // Enclosing Function Param
@@ -592,7 +591,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
 K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
   U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
-  K z=ex_(&a,0); cd(a); fer=fwh=stk=stk1=prj=prj2=f2s=0; f1s=1; if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0; R z; 
+  K z=ex_(&a,0); cd(a); fer=fwh=stk=stk1=prj=prj2=f2s=0; if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0; R z; 
 }
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
@@ -802,7 +801,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   if(!v[1] && !k){  // n case
     K z=ex_(*v,1);
     if(z>(K)DT_SIZE && z->t==7 && z->n==3){
-      if(prnt && f1s && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && !kK(z)[LOCALS]->n){
+      if(prnt && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && !kK(z)[LOCALS]->n){
         K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(j0,j1); 
         if(encp==0)kV(z)[CACHE_TREE]=dot_monadic(j2); if(encp==1)kV(z)[CACHE_TREE]=dot_monadic(j1);
         cd(j0); cd(j1); cd(j2); cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0;
@@ -818,24 +817,14 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   if(!v[1] && sva(*v)) R vf_ex(*v,k);     //TODO: (,/:) and (,\:) both valence 2 
   //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
 
-  if(bk(v[1])){
+  if(bk(v[1])) {
     K z= ex_(*v,1);
-    if(z && prnt && z->t==7 && z->n==3 && 
-       kV(prnt)[CACHE_TREE] && kK(prnt)[LOCALS]->n && !kK(prnt)[PARAMS]->n &&
-       kV(z)[LOCALS] && !kK(z)[LOCALS]->n)
-    {
-      K j0=dot_monadic(kV(prnt)[CACHE_TREE]); K j1=dot_monadic(kV(z)[LOCALS]); 
-      K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2);
-      cd(j0); cd(j1); cd(j2); f1s=0; prnt=z; 
-    }
-    else if(z>(K)DT_SIZE && z->t==7 && z->n==3 && prnt && f1s && kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n
-         && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && kK(z)[PARAMS]->n)
-    {
+    if(prnt && kV(prnt)[PARAMS] && !kK(prnt)[PARAMS]->n && kV(z)[LOCALS] && !kK(z)[LOCALS]->n) {
+      K j0=dot_monadic(kV(prnt)[CACHE_TREE]); kV(z)[CACHE_TREE]=dot_monadic(j0); cd(j0); prnt=z; }
+    else if(prnt && kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n && kV(z)[PARAMS] && kK(z)[PARAMS]->n) {
       K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-      K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
-    }
-    R z; 
-  }
+      K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); }
+    R z; }
 
   if(!VA(*v) && (offsetColon == v[1] || (VA(v[1]) && offsetColon==v[2]) ) ) //Handle assignment
   {
