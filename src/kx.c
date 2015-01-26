@@ -471,34 +471,23 @@ K vf_ex(V q, K g)
 
       I j=0; K*e; K fw;
 
-      if(!(tree=kV(f)[CACHE_TREE]))  //could merge this and and CACHE_WD check by duplicating the arg merge DO
-      {
+      if(!(tree=kV(f)[CACHE_TREE])) {  //could merge this and and CACHE_WD check by duplicating the arg merge DO
         tree=newK(5,p->n+s->n); if(!tree) {stk--; GC;} //note: cleanup is unusual -- could turn into double labels
         DO(tree->n, if(!(kK(tree)[i]=newK(0,3))){cd(tree); stk--; GC;}) //shallow dict copy -- dictionary entry pool?
         DO(tree->n, DO2(3,  kK(DI(tree,i))[j] = ci(kK((i<p->n?DI(p,i):DI(s,i-p->n)))[j])))//shallow copy
-        kV(f)[CACHE_TREE]=tree;
-      }
-
-        if(fsf && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
+        kV(f)[CACHE_TREE]=tree; }
+      if(fsf && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
         K j0=dot_monadic(kV(prnt)[LOCALS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
         K j2=join(j0,j1); cd(kV(prnt)[CACHE_TREE]); kV(prnt)[CACHE_TREE]=dot_monadic(j2);
-        cd(j0); cd(j1); cd(j2); tree=kV(prnt)[CACHE_TREE]; 
-        cd(kV(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; 
-      }
+        cd(j0); cd(j1); cd(j2); tree=kV(prnt)[CACHE_TREE]; cd(kV(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; }
 
       DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; if(r && i<r->n) *e=ci(kK(r)[i]); if(!*e && j<g->n) *e=ci(kK(g)[j++])) //merge in: CONJ with function args
 
       fw=kV(f)[CACHE_WD]; I t=0;
-      if(!fw || (t=(V)kS(kK(fw)[CODE])[0] || (K*)kS(kK(fw)[CODE])[1]>(K*)DT_SIZE) )
-      {
-        if(t) cd(kV(f)[CACHE_WD]);
-        K fc = kclone(f); //clone the function to pass for _f
-        cd(kV(fc)[CONJ]);kV(fc)[CONJ]=0;
-        kV(fc)[DEPTH]++;
-        fw = wd_(kC(o),o->n,&tree,fc);
-        kV(f)[CACHE_WD]=fw;
-        cd(fc);
-      }
+      if(!fw || (t=(V)kS(kK(fw)[CODE])[0] || (K*)kS(kK(fw)[CODE])[1]>(K*)DT_SIZE) ) {
+        if(t) cd(kV(f)[CACHE_WD]); K fc = kclone(f); //clone the function to pass for _f
+        cd(kV(fc)[CONJ]); kV(fc)[CONJ]=0;
+        kV(fc)[DEPTH]++; fw=wd_(kC(o),o->n,&tree,fc); kV(f)[CACHE_WD]=fw; cd(fc); }
 
       #ifdef DEBUG
       if(stk1>5) {cd(g); kerr("stack"); R _n();}
@@ -513,52 +502,37 @@ K vf_ex(V q, K g)
 
   if(encp==2){      // Access the parameters of an enclosing function
     I ff=0;
-    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"z"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){
-      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"z")){ff=0; break;} )
-    }  
-    if(ff){
+    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"z"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n) {
+      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"z")){ff=0; break;} ) }  
+    if(ff) {
       K d=kK(kK(KTREE)[0])[1]; K w=0;
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"z")){w=kclone(kK(d)[i]); break;})
       if(w){
         K p=kK(g)[0]; cd(kK(w)[1]); kK(w)[1]=kclone(p); K we=enlist(w);
         K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,we);
-        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2);
-        cd(w); cd(we); cd(j0); cd(j2); encp=3;
-      }
-    }
-  }
+        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); cd(w); cd(we); cd(j0); cd(j2); encp=3; } } }
   if(encp==1){
     I ff=0;
-    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"y"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){ 
-      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"y")){ff=0; break;} )
-    }  
-    if(ff){
+    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"y"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n) { 
+      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"y")){ff=0; break;} ) }  
+    if(ff) {
       K d=kK(kK(KTREE)[0])[1]; K y=0;
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"y")){y=kclone(kK(d)[i]); break;})
-      if(y){
+      if(y) {
         K p=kK(g)[0]; cd(kK(y)[1]); kK(y)[1]=kclone(p); K ye=enlist(y);
         K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,ye);
-        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); 
-        cd(y); cd(ye); cd(j0); cd(j2); encp=2;
-      }
-    }
-  }
-  if(encp==0){
+        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); cd(y); cd(ye); cd(j0); cd(j2); encp=2; } } }
+  if(encp==0) {
     I ff=0;
-    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"x"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n){
-      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"x")){ff=0; break;} )
-    }  
-    if(ff){
+    if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"x"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n) {
+      ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"x")){ff=0; break;} ) }  
+    if(ff) {
       K d=kK(kK(KTREE)[0])[1]; K x=0;
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"x")){x=kclone(kK(d)[i]); break;})
-      if(x){
+      if(x) {
         K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p); K xe=enlist(x);
         K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,xe);
-        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); 
-        cd(x); cd(xe); cd(j0); cd(j2); encp=1;
-      }
-    }
-  }
+        cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); cd(x); cd(xe); cd(j0); cd(j2); encp=1; } } }
 
 cleanup:
   cd(g);
@@ -798,21 +772,18 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   if(bk(*v)) R *v;  // ; case
 
-  if(!v[1] && !k){  // n case
+  if(!v[1] && !k) {  // n case
     K z=ex_(*v,1);
-    if(z>(K)DT_SIZE && z->t==7 && z->n==3){
-      if(prnt && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && !kK(z)[LOCALS]->n){
+    if(z>(K)DT_SIZE && z->t==7 && z->n==3) {
+      if(prnt && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && !kK(z)[LOCALS]->n) {
         K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(j0,j1); 
         if(encp==0)kV(z)[CACHE_TREE]=dot_monadic(j2); if(encp==1)kV(z)[CACHE_TREE]=dot_monadic(j1);
-        cd(j0); cd(j1); cd(j2); cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0;
-      }
+        cd(j0); cd(j1); cd(j2); cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; }
       if(prnt && kV(prnt)[CODE] && kK(prnt)[CODE]->t==-3 && kC(kK(prnt)[CODE])[0]=="{"[0] &&
         kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0] && strchr(kC(kK(prnt)[CODE]),"y"[0])){encf=prnt; ci(encf);}
       if(encp!=2 || !prnt)prnt=z; 
-      else {cd(z); R prnt;}
-    }
-    R z; 
-  }
+      else {cd(z); R prnt;} }
+    R z; }
 
   if(!v[1] && sva(*v)) R vf_ex(*v,k);     //TODO: (,/:) and (,\:) both valence 2 
   //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
@@ -871,35 +842,28 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   while(v[1] && adverbClass(v[2+i])) i++;
   //TODO: Catch 0-returned-errors here and below
-  if(!sva(v[0]) && (i || 2==sva(v[1]))){   // na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
+  if(!sva(v[0]) && (i || 2==sva(v[1]))) {  //na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
     t2=ex2(v+2+i,k); if(fer && strcmp(errmsg,"undescribed")) R t2;
        //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
-    if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
-      if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n){
-        if(kK(prnt)[CACHE_TREE]->n){
+    if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3) {
+      if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n) {
+        if(kK(prnt)[CACHE_TREE]->n) {
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-          K j2=join(j0,j1); cd(kK(t3)[CACHE_TREE]); kV(t3)[CACHE_TREE]=dot_monadic(j2); 
-          cd(j0); cd(j1); cd(j2); fsf=1;
-        }
+          K j2=join(j0,j1); cd(kK(t3)[CACHE_TREE]); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); fsf=1; }
         else if(kV(prnt)[CONJ]) {
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-          K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
-        }
-      }
-      prnt=t3; 
-    }
+          K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
+      prnt=t3; }
 
-      //if(v[1]!=t3) if(!VA(t3)) show(t3);//for use with below
-      u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;.  
-              //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
+    //if(v[1]!=t3) if(!VA(t3)) show(t3);//for use with below
+    u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;.  
+            //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3;
     t0=ex_(*v,1); if(fer && strcmp(errmsg,"undescribed")){cd(t2); R(t0);}
     if(!prnt && t0->t==7 && t0->n==3)prnt=t0;
-    e= dv_ex(t0,v+1+i,t2); v[1]=u;
-    cd(t0); cd(t2); if(!VA(t3)) cd(t3);
-    R e; 
-  }
+    e= dv_ex(t0,v+1+i,t2); v[1]=u; cd(t0); cd(t2); if(!VA(t3)) cd(t3);
+    R e; }
 
   //vn. case
   i=0; while(adverbClass(v[1+i])) i++; //ALT'Y: i=adverbClass(b)?i+1:0;
