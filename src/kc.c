@@ -312,7 +312,7 @@ I attend() //K3.2 uses fcntl somewhere
 
 #else
 
-Z I check() {
+I check() {
   fCheck=1;
   kerr("undescribed");
   prompt(1);
