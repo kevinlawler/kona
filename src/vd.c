@@ -74,7 +74,7 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
     R of(*aa,b);
   }
 
-  P(0<at && at<5 && 6!=bt,TE)
+  P(0<at && at<5 && 6!=bt,RE)
   //At is either <=0 or dict or nil. b is not ()
   if(6==at)
   { // _n . x  for various x in K3.2
@@ -103,7 +103,7 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
   else if(0 >at)
   {
     if(1==ABS(bt))z=at_verb(a,b);
-    else if(0==bt){K k; P(bn!=1,TE) z=newK(0,bn);DO(bn,k=at_verb(a,kK(b)[i]); M(k,z) kK(z)[i]=k) z=collapse(z);} 
+    else if(0==bt){K k; P(bn!=1,RE) z=newK(0,bn);DO(bn,k=at_verb(a,kK(b)[i]); M(k,z) kK(z)[i]=k) z=collapse(z);} 
     else R TE;
   }
   R z;

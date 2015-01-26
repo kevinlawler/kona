@@ -431,7 +431,7 @@ Z I tests02()
   TC( (@[.:;"a:(0 1;2 3); a[0][1]:9";:] ), (1;"parse") )  
   TC( (@[.:;"(1):2";:] ), (0;2) )    //optional, differs from K3.2
   TC( (@[.:;"a: 1 1 1; a/[0] +: 10";:] ), (1;"valence") ) //not clear here. think ... +:10 is ... index flip 10. Should be parse err?
-  TC( (@[.:;"5 (a:5)/1";:] ), (1;"type") )  
+  TC( (@[.:;"5 (a:5)/1";:] ), (1;"rank") )  
 
   TC(13, ({x(|+\\)\\1 1} 5)[5;0])
   TC( (.[.:;,"@[a-b]";:]) , (1;"type") ) //specific err not important
