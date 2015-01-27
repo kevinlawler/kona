@@ -181,13 +181,13 @@ K at(K x, K y)
 {
   K a,z;
 
-  if(xt==4)
+  if(xt==4) {
     if(1==ABS(yt)){
       C s[256]; strcpy(s,__d); strcat(s,"."); strcat(s,*kS(x));
       K *xx=denameD(&KTREE,(S)sp(s),1);
       if(6==(*xx)->t) R ci(y);
       else R of(*xx,y);}
-    else R NYI;
+    else R NYI; }
 
   if(7!=xt)R at_verb(x,y);
   a=enlist(y);
