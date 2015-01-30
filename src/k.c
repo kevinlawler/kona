@@ -46,7 +46,7 @@ I maX(I a,I b){R a>b?a:b;}
 I miN(I a,I b){R a<b?a:b;}
 
 K X(S s){kerr("undescribed"); fnci=0; R XN(s,strlen(s));}  
-K XN(S s,I n){  //asserts ex(x) has first-line U(x)
+Z K XN(S s,I n){  //asserts ex(x) has first-line U(x)
   S newS=recur(s);
   if(newS) R ex(wd(newS,strlen(newS)));
   else  R ex(wd(s,n));
