@@ -6,6 +6,7 @@ extern I PG;
 extern I fError;
 extern __thread I fer;
 extern I fnci;
+extern S recur(S x);
 
 #if defined(DEBUG)
 extern V krec[1000000];

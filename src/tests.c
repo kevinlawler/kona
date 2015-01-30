@@ -573,7 +573,8 @@ Z I tests02()
   TC(5 6, a[5 6])
   TC(5, a 5)
   TC(5 6, a 5 6)
-  TC(a:{a[x]}; a 5, )  
+  TC(a:{a[x]}; a 5, )
+  TC(4 3 2 1 0, r:{:[x;x,r[x-1];0]}; r[4]) 
   TC(1, `a.1)   //issue #290
   TC(1, `a@1)         //issue #291
   TC(1 2 3, `a@1 2 3) //issue #291

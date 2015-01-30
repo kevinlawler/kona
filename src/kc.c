@@ -155,6 +155,24 @@ I check() {      //in suspended execution mode: allows checking of state at time
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
 
+S recur(S s){
+  I sl=strlen(s); I f=0,i,j,k,c=1;
+  for(i=0;i<sl-1;i++){ if(s[i]==':' && s[i+1]=='{') {f=1; break;} } //find begin :{ which is i
+  if(!f) R NULL;
+  for(j=i-1;j>=0;j--){ if(!isalnum(s[j])) break; } //find begin-name, which is j+1
+  for(k=i+2;k<sl;k++){ if(s[k]=='{')c++; if(s[k]=='}')c--; if(!c)break; } //find end-} which is k
+  I n=1+(i-1)-(j+1); char nm[n+1]; strncpy(nm, s+i-n, n); nm[n]='\0'; //n is strlen(nm)
+  I m=k-i-2; char st[m+1]; strncpy(st, s+i+2, m); st[m]='\0'; //m is strlen(st)
+  S rem=strstr(st,nm); S res;
+  if(rem && ':'!=*(rem+strlen(nm))) {
+    res=malloc(1+sl+(2-n)); I ii,beg=k-strlen(rem);
+    for(ii=0;ii<beg;ii++){res[ii]=s[ii];}
+    res[beg]='_'; res[beg+1]='f';
+    for(ii=n;ii<strlen(rem);ii++){res[beg+ii+2-n]=rem[ii];}
+    for(ii=k;ii<sl+1;ii++){res[ii+2-n]=s[ii];} }
+  R res;
+}
+
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p)){} R 0;}
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
@@ -174,6 +192,9 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(v==2) { show(kerr("unmatched")); b=0; GC; }
   if(v==1) { fCmplt=1; goto done; }         //generally incomplete
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
+
+  S newA=recur(*a); if(newA){ if(*a)free(*a);*a=0;*n=0; *a=newA; *n=strlen(newA); }
+
   RTIME(d,k=ex(wd(*a,*n)))
   #ifdef DEBUG
     if(o&&k)O("Elapsed: %.7f\n",d);
