@@ -169,8 +169,9 @@ S recur(S s){
     for(ii=0;ii<beg;ii++){res[ii]=s[ii];}
     res[beg]='_'; res[beg+1]='f';
     for(ii=n;ii<strlen(rem);ii++){res[beg+ii+2-n]=rem[ii];}
-    for(ii=k;ii<sl+1;ii++){res[ii+2-n]=s[ii];} }
-  R res;
+    for(ii=k;ii<sl+1;ii++){res[ii+2-n]=s[ii];}
+    R res;}
+  else R NULL;
 }
 
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p)){} R 0;}
