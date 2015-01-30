@@ -194,7 +194,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(v==1) { fCmplt=1; goto done; }         //generally incomplete
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
 
-  S newA=recur(*a); if(newA){ if(*a)free(*a);*a=0;*n=0; *a=newA; *n=strlen(newA); }
+  S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; *n=strlen(newA); }
 
   RTIME(d,k=ex(wd(*a,*n)))
   #ifdef DEBUG
