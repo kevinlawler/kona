@@ -204,7 +204,8 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
 
   trim(*a); *n=strlen(*a);  //avoids segfaults in corner cases when manipulating input line with recur
-  S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; *n=strlen(newA); }
+  S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
+  *n=strlen(*a); //strlen might have been  reduced in 'trim' or in 'recur'
 
   RTIME(d,k=ex(wd(*a,*n)))
   #ifdef DEBUG
