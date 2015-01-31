@@ -144,17 +144,6 @@ Z I nodeCount_(N n) {
 }
 Z I nodeCount(N n) {R nodeCount_(n)-1;}
 
-#ifndef WIN32
-
-I check() {      //in suspended execution mode: allows checking of state at time of error
-  fCheck=1; kerr("undescribed"); prompt(1); S a=0;  I n=0;  PDA q=0;
-  for(;;) { line(stdin, &a, &n, &q); if(fCheck==0)R 0; }
-  O("\n"); fCheck=0; 
-  R 0;
-}
-
-Z void handle_SIGINT(int sig) { interrupted = 1; }
-
 S recur(S s){
   I sl=strlen(s); I f=0,i,j,k,c=1;
   for(i=0;i<sl-1;i++){ if(s[i]==':' && s[i+1]=='{') {f=1; break;} } //find begin :{ which is i
@@ -182,6 +171,17 @@ Z I trim(S s){
     if((s[c-1]==':' || s[c-1]=='{') && s[c-2]==' ' && (c-2)>0){s[c-2]=s[c-1]; c--;} }
   R 0;
 }
+
+#ifndef WIN32
+
+I check() {      //in suspended execution mode: allows checking of state at time of error
+  fCheck=1; kerr("undescribed"); prompt(1); S a=0;  I n=0;  PDA q=0;
+  for(;;) { line(stdin, &a, &n, &q); if(fCheck==0)R 0; }
+  O("\n"); fCheck=0;
+  R 0;
+}
+
+Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p)){} R 0;}
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
@@ -383,6 +383,11 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
   if(v==2){show(kerr("unmatched")); b=0; GC;}
   if(v==1){fCmplt=1; goto done;}         //generally incomplete
   if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
+
+  trim(*a); //avoids segfaults in corner cases when manipulating input line with recur
+  S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
+  *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
+
   status = pthread_mutex_lock(&execute_mutex); 
   if(status != 0) {perror("Lock mutex in line()"); abort();}
   RTIME(d,k=ex(wd(*a,*n)))
