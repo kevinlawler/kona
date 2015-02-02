@@ -64,10 +64,8 @@ extern I adverb_ct;
 extern I vn_ct,vm_ct,vd_ct,vt_ct;
 extern I interrupted;
 
-#ifdef FreeBSD
-extern _IO_ssize_t getline (char **__restrict __lineptr,
-			    size_t *__restrict __n,
-			    FILE *__restrict __stream) __wur;
+#ifdef __FreeBSD__
+extern ssize_t getline(S *lineptr, size_t *n, FILE *f);
 #endif
 
 #ifndef WIN32
