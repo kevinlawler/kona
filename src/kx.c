@@ -370,6 +370,12 @@ K vf_ex(V q, K g)
   I k=sva(q);
   I n=-1,j=0;
   if(!k&&!(*(V*)q)){cd(g); R 0;}// (2="2") 2 err
+
+  K h=0;
+  if((UI)q>DT_SIZE){ h=(K)(*(V*)q);
+     if(h->t==7 && kK(h)[CODE] && kK(h)[CODE]->t==-4 && kK(h)[CODE]->n==3 && (UI)kK(kK(h)[CODE])[0]>DT_SIZE
+       && (*(K*)(kS(kK(h)[CODE])[0]))->t==0 ) { z=dot(*(K*)(kS(kK(h)[CODE])[0]),g); GC; } }
+
   if(( k || ((K)(*(V*)q))->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn > (n=valence(q)) && !(!n && 1>=gn))){VE; GC;} 
     //could remove 1>=gn condition ?
   I argc=0; DO(gn,if(kK(g)[i])argc++)
