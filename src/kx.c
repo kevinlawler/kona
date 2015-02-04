@@ -265,42 +265,30 @@ Z K dv_ex(K a, V *p, K b)
   //if(k>2 && !(adverbClass(*p) && !VA(*o)))k=2;
   if(k>2)k=2;
 
-  if(2==k || (k==0 && offsetScan==(UI)*p)) 
-  {
-    if ((L)adverb == offsetOver) R overDyad(a, p, b);
-    if ((L)adverb == offsetScan) R scanDyad(a, p, b);
-    if ((L)adverb == offsetEach)
-      {
+  if(2==k || (k==0 && (UI)adverb==offsetScan)) {
+    if ((UI)adverb == offsetOver) R overDyad(a, p, b);
+    if ((UI)adverb == offsetScan) R scanDyad(a, p, b);
+    if ((UI)adverb == offsetEach) {
       if(!a) adverb = (V)offsetEachright;
       else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE;
       else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
       else if (a->t > 0) adverb = (V)offsetEachright;
       else if(b->t > 0) adverb = (V)offsetEachleft;
-      else
-      {
-        //a and b both lists/vectors of size an
-        a=promote(a);
-        b=promote(b);
-        M(a,b)
-        K z = newK(0,a->n);
-        M(z,a,b)
+      else {       //a and b both lists/vectors of size an
+        a=promote(a); b=promote(b); M(a,b)
+        K z = newK(0,a->n); M(z,a,b)
         K k;
         DO(a->n, k=dv_ex(kK(a)[i],p-1,kK(b)[i]); M(k,z,a,b) kK(z)[i]=k)
-        cd(a);
-        cd(b);
-        R demote(z);
-      }
-    }
-  } else if(2 > k)
-  {
-    if ((L)adverb == offsetOver) R overMonad(a, p, b);
-    if ((L)adverb == offsetScan) R scanMonad(a, p, b);
-    if ((L)adverb == offsetEach) R each2(a, p, b);
-  }
+        cd(a); cd(b);
+        R demote(z); } } }
+  else if(2 > k) {
+    if ((UI)adverb == offsetOver) R overMonad(a, p, b);
+    if ((UI)adverb == offsetScan) R scanMonad(a, p, b);
+    if ((UI)adverb == offsetEach) R each2(a, p, b); }
 
-  if((L)adverb == offsetEachright) R eachright2(a, p, b);
-  if((L)adverb == offsetEachleft) R eachleft2(a, p, b);
-  if((L)adverb == offsetEachpair) R eachpair2(a, p, b);
+  if((UI)adverb == offsetEachright) R eachright2(a, p, b);
+  if((UI)adverb == offsetEachleft) R eachleft2(a, p, b);
+  if((UI)adverb == offsetEachpair) R eachpair2(a, p, b);
 
   //this could be better ??
   I gn=0;
@@ -317,16 +305,13 @@ Z K dv_ex(K a, V *p, K b)
     V*p1=*p;
     if((UI)*p1>DT_SIZE){
       K p2=*p1;
-      if(7!=p2->t && -1!=p2->t) flag=1;
-    }
-  }
+      if(7!=p2->t && -1!=p2->t) flag=1; } }
   if(flag) tmp=vf_ex(*p,b); 
-  else{
+  else {
     if(stk>2e6) R kerr("stack"); stk++;
     if(encp && (encp!=2 || (strchr(kC(kK(encf)[CODE]),"z"[0]))) && encp!=3 && DT_SIZE<(UI)*p)tmp=vf_ex(&encf,g);
     else tmp=vf_ex(*p,g);
-    stk--; if(grnt && !prnt) prnt=grnt;
-  }
+    stk--; if(grnt && !prnt) prnt=grnt; }
 
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
   R tmp;
