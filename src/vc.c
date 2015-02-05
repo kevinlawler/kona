@@ -80,9 +80,9 @@ K match(K a, K b){R Ki(matchI(a,b));}
 
 Z K lessmore(K a, K b, I x)
 {
-
-  if (!x){K c=a;a=b;b=c; } //NB: If primitives modify a but not b (or vice-versa. e.g. reuse of refcount 1 objects) 
-                           //this should be reviewed. in q it can effect dicts (borror). see backup for unfactored ver.
+  if (!x && (a->t >= b->t || a->n==1 || ABS(a->t)==3) ){K c=a;a=b;b=c; }
+     //NB: If primitives modify a but not b (or vice-versa. e.g. reuse of refcount 1 objects) 
+     //this should be reviewed. in q it can effect dicts (borror). see backup for unfactored ver.
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   if(at <=0 && bt <= 0 && an != bn) R LE;
   I AT=ABS(at), BT=ABS(bt);
