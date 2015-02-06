@@ -416,9 +416,7 @@ cleanup:
             O("at execution instance %lld of %s\n",num,fnc); }}}
       if(lineA || lineB)  check();          //enter suspended execution mode for checking
       if(!lineA && !lineB) O("%s\n",*a); }}
-  if(*p)pdafree(*p);*p=0;
-  if(*a)free(*a);*a=0;*n=0;
-  if(s)free(s);s=0;
+  if(*p)pdafree(*p);*p=0; *a=0; *n=0; s=0;
 done:
   if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax); O("symbols  : %lld\n",nodeCount(SYMBOLS)); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
