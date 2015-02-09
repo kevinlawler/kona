@@ -55,26 +55,19 @@ cleanup:
 
 K KONA_ARGS; //saved values from argv[1:]
 
-I args(int n,S*v)
-{
-  K a;
-  I c, len;
-  U(KONA_ARGS=newK(0, n))
-  DO(n, { len=strlen(v[i]); 
-          if(!(a=newK(-3, len))){cd(KONA_ARGS);R 0;} 
-          strncpy(kC(a),v[i],len); 
-          kK(KONA_ARGS)[i]=a;
-        }
-    );
-  while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c)
-  {
-    K k;
-    CS('h',O("%d\n", atoi(optarg)))
-    CS('i',PORT=optarg)
-    CS('e', cd(X(optarg)); exit(0) )
-    CS('x', k=X(optarg); printAtDepth(0,k,0,0,0,0); O("\n"); cd(k); exit(0) )
-    CSR(':',)CS('?', O("%c ",optopt); show(kerr("opt")))
-  }
+I args(int n,S*v) {
+  K a,k; I c,len; U(KONA_ARGS=newK(0, n))
+  DO(n, len=strlen(v[i]); 
+        if(!(a=newK(-3, len))){cd(KONA_ARGS);R 0;} 
+        strncpy(kC(a),v[i],len); 
+        kK(KONA_ARGS)[i]=a )
+  while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c) {
+    CS('h',  O("%d\n", atoi(optarg)); prompt(0) )
+    CS('i',  PORT=optarg)
+    CS('e',  cd(X(optarg)); exit(0) )
+    CS('x',  k=X(optarg); printAtDepth(0,k,0,0,0,0); O("\n"); cd(k); exit(0) )
+    CSR(':', )
+    CS('?',  O("%c\nabort",optopt); exit(0)) }
   while(optind < n) load(v[optind++]);
   R 0;
 }
