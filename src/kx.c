@@ -363,8 +363,21 @@ K vf_ex(V q, K g)
      if(h->t==7 && kK(h)[CODE] && kK(h)[CODE]->t==-4 && kK(h)[CODE]->n==3 && (UI)kK(kK(h)[CODE])[0]>DT_SIZE
        && (*(K*)(kS(kK(h)[CODE])[0]))->t==0 ) { z=dot(*(K*)(kS(kK(h)[CODE])[0]),g); GC; } }
 
-  if(( k || ((K)(*(V*)q))->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn > (n=valence(q)) && !(!n && 1>=gn))){VE; GC;} 
+  if(( k || ((K)(*(V*)q))->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn > (n=valence(q)) && !(!n && 1>=gn))){
     //could remove 1>=gn condition ?
+    if(g->t==0 && g->n==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { 
+      V w[5];
+      w[0]=&(kK(g)[0]);
+      w[1]=(V)kS(kK(*(K*)q)[CODE])[0];
+      w[2]=(V)offsetOver;
+      w[3]=&(kK(g)[1]);
+      w[4]=(V)0;
+      z=overMonad(*(K*)w[0], &w[2], *(K*)w[3]); GC;
+    }
+    else {VE; GC;}
+  }
+
+
   I argc=0; DO(gn,if(kK(g)[i])argc++)
 
   K a=0,b=0,c=0,d=0;
