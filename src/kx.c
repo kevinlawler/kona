@@ -292,15 +292,11 @@ Z K dv_ex(K a, V *p, K b)
 
   //this could be better ??
   I gn=0;
-  if      (valence(*p)>=2 && a && b) gn=2;
-  else if (a) {
-    V ps[4]; ps[0]=&a; ps[1]=(V)1; ps[2]=&b; ps[3]=(V)0;
-    K vv=ex0(&ps[0],0,2);
-    ps[0]=(V)*(p); ps[1]=(V)0;
-    K uu= ex0(&ps[0],vv,1); cd(vv); 
-    R uu;
-  }
-  else if (b) gn=1;
+  if(valence(*p)>=2 && a && b) gn=2;
+  else if(a) {
+    V q[4]; q[0]=&a; q[1]=(V)1; q[2]=&b; q[3]=(V)0; K u=ex0(&q[0],0,2);
+    q[0]=(V)*p; q[1]=(V)0; K v= ex0(&q[0],u,1); cd(u); R v; }
+  else if(b) gn=1;
 
   K g=newK(0,gn);U(g);
   if(gn > 1) kK(g)[1]=b;
