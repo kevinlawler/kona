@@ -293,7 +293,7 @@ Z K dv_ex(K a, V *p, K b)
   //this could be better ??
   I gn=0;
   if(valence(*p)>=2 && a && b) gn=2;
-  else if(a) {
+  else if(a) {  //issue #296
     V q[4]; q[0]=&a; q[1]=(V)1; q[2]=&b; q[3]=(V)0; K u=ex0(&q[0],0,2);
     q[0]=(V)*p; q[1]=(V)0; K v= ex0(&q[0],u,1); cd(u); R v; }
   else if(b) gn=1;
@@ -358,31 +358,23 @@ K vf_ex(V q, K g)
   I n=-1,j=0;
   if(!k&&!(*(V*)q)){cd(g); R 0;}// (2="2") 2 err
 
-  K h=0;
+  K h=0;  //issue #297
   if((UI)q>DT_SIZE){ h=(K)(*(V*)q);
      if(h->t==7 && kK(h)[CODE] && kK(h)[CODE]->t==-4 && kK(h)[CODE]->n==3 && (UI)kK(kK(h)[CODE])[0]>DT_SIZE
        && (*(K*)(kS(kK(h)[CODE])[0]))->t==0 ) { z=dot(*(K*)(kS(kK(h)[CODE])[0]),g); GC; } }
 
-  if(( k || ((K)(*(V*)q))->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn > (n=valence(q)) && !(!n && 1>=gn))){
+  if((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>(n=valence(q)) && !(!n && 1>=gn))){
     //could remove 1>=gn condition ?
-    if(g->t==0 && g->n==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { 
-      V w[5];
-      w[0]=&(kK(g)[0]);
-      w[1]=(V)kS(kK(*(K*)q)[CODE])[0];
-      w[2]=(V)offsetOver;
-      w[3]=&(kK(g)[1]);
-      w[4]=(V)0;
-      z=overMonad(*(K*)w[0], &w[2], *(K*)w[3]); GC;
-    }
-    else {VE; GC;}
-  }
-
+    if(g->t==0 && g->n==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { //issue #277 
+      V w[5]; w[0]=&(kK(g)[0]); w[1]=(V)kS(kK(*(K*)q)[CODE])[0];
+      w[2]=(V)offsetOver; w[3]=&(kK(g)[1]); w[4]=(V)0;
+      z=overMonad(*(K*)w[0], &w[2], *(K*)w[3]); GC; }
+    else {VE; GC;} }
 
   I argc=0; DO(gn,if(kK(g)[i])argc++)
 
   K a=0,b=0,c=0,d=0;
   if(gn >0) a=kK(g)[0]; if(gn >1) b=kK(g)[1]; if(gn >2) c=kK(g)[2]; if(gn >3) d=kK(g)[3];
-
 
   //valence overloaded verbs 
   if(gn > 2 && (q==offsetWhat || q==offsetSSR)){ z=(q==offsetWhat?what_triadic:_ssr)(a,b,c); GC; }
