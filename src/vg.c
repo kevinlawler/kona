@@ -26,7 +26,11 @@ Z K grade_updown(K a, I r)
   {
     I x,u=II,v=-II;//MIN,MAX
     DO(an, x=kI(a)[i]; if(x<u)u=x; if(x>v)v=x;)  
-    if(v-u < 87654321) R distributionGrade(a,r,u,v);//Magic Number
+    #ifdef __int128
+    if((__int128)v-(__int128)u < 87654321 && v-u > 0) R distributionGrade(a,r,u,v);//Magic Number
+    #else  
+    if(v-u < 87654321 && v-u > 0) R distributionGrade(a,r,u,v);//Magic Number
+    #endif
   }
   if(-1==at || -2==at)
   {
