@@ -562,7 +562,8 @@ I wrep(K x,V v,I y)//write representation. see rep(). y in {0,1}->{net, disk}
   else if( '\007'==t || '\010'==t) //TODO: write seven_types to disk //TODO: calculate return length r optimally for seven_type since seven_type can nest 
   {
     //outdated
-    //if(1==xn && 1==kVC(x)->n-1){ K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m] = diff(k,s==1?vm:vd); }  //TODO: work for more than just unreserved monadic, dyadic verbs
+    if(1==xn && 1==kVC(x)->n-1){ K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon; }  
+      //TODO: work for more than just unreserved monadic, dyadic verbs
   }
   else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x)); } memcpy(d,s,b);}
 
@@ -640,7 +641,7 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
     CS( 6,) //no-op
     //TODO: verb cases:  +, {x}, 2:("f",2)  (third case probably not supported but see). Do projections get written? Note: _bd (-); _bd (+); _bd (:); etc are revealing
     //using old K3 IO format, using outdated Kona internal verb representation:
-    CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; *kK(f)=offsetColon; r+=000000000000000;)
+    CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; *kK(f)=(V)(L)w[1+m]; r+=000000000000000;)
     CD: R NE; //unsupported type. was:  if(t<-4 || t>7 || n<0) R NE; //verbs actually have some weird types though. 8==\010, etc
   }
   
