@@ -620,7 +620,7 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
   else if(-3==t) r+=(1+n)*sizeof(C); //appears to need final '\0' or eval size limit ???
   if(s < r) R NE;//(could instead have these errors occuring individually in the switch statement)
 
-  K z=(-4 <= t && t<= 6)? newK(t,n):Kv(); U(z)
+  K f,z=(-4 <= t && t<= 6)? newK(t,n):Kv(); U(z)
 
 
   I c=0; // k->n counter
@@ -640,7 +640,7 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
     CS( 6,) //no-op
     //TODO: verb cases:  +, {x}, 2:("f",2)  (third case probably not supported but see). Do projections get written? Note: _bd (-); _bd (+); _bd (:); etc are revealing
     //using old K3 IO format, using outdated Kona internal verb representation:
-    //CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; *kK(f)=(K)('\007'==t?vm+w[1+m]+1:(vd+w[1+m]));  r+=000000000000000;)
+    CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; *kK(f)=offsetColon; r+=000000000000000;)
     CD: R NE; //unsupported type. was:  if(t<-4 || t>7 || n<0) R NE; //verbs actually have some weird types though. 8==\010, etc
   }
   
