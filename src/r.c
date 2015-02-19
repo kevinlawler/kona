@@ -113,7 +113,8 @@ K _bd(K x)//This differs from K3.2 in order to support 64-bit
   m->a=*(S)&u;//little-endian?
   m->n=s-sizeof(M1);
   wrep(x,sizeof(M1)+(V)m,0); //assert #bytes in x or z couldn't change
-  if(z->n==96 && kC(z)[80]==7)kC(z)[88]=0;
+  if(z->n==96 && kC(z)[80]==7)R NYI;  //4-arg case with 4th arg of type 7
+  if(z->n==80 && kC(z)[64]==7)R NYI;  //3-arg case with 3rd arg of type 7
   R z; 
 } 
 
