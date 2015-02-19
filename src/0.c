@@ -561,9 +561,10 @@ I wrep(K x,V v,I y)//write representation. see rep(). y in {0,1}->{net, disk}
   else if(-4==t) DO(n, s=1+strlen(kS(x)[i]); memcpy(d+r,kS(x)[i],s); r+=s )
   else if( '\007'==t || '\010'==t) //TODO: write seven_types to disk //TODO: calculate return length r optimally for seven_type since seven_type can nest 
   {
-    //outdated
-    if(1==xn && 1==kVC(x)->n-1){ K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon; }  
+    if(1==xn && 1==kVC(x)->n-1 && offsetColon==(V)kS(kK(x)[CODE])[0]){ 
+      K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon; }  
       //TODO: work for more than just unreserved monadic, dyadic verbs
+    else {fer=1; R (L)SYE;}
   }
   else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x)); } memcpy(d,s,b);}
 
