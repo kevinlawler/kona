@@ -1084,6 +1084,7 @@ Z I testsBook()
   TC("that", _ssr["this";"is";"at"])
   TC("asdf", _ssr["gsdf";"g";,"a"])
   TC("asdf", _ssr["gsdf";"g";"a"])
+  TC("abcda", _ssr["abcda";"a";"e"])   //issue #302
 
   //Regressions
   TC(2, _2.5)

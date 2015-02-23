@@ -251,7 +251,7 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
   if(0==bn && (-1==bt || 0==bt ||  5==pt || 6==pt)) R 0;//Identity TODO ????
   P(0==bn && bt <= 0,IE)
 
-  P(y && !atomI(b) && !atomI(y) && bn != yn, LE )
+  P(y && !atomI(b) && !atomI(y) && bn != yn, (K)0 )
 
   I n=(y && atomI(b))?yn:bn;
   I argc = y?2:1;
