@@ -236,7 +236,7 @@ K dot_tetradic_2(K *g, K b, K c, K y)
 //TODO: All this must be rewritten to handle function-local-dictionaries and global
 K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
 {
-  if(isColonDyadic(c) && !y) //'Error Trap'
+  if(isColonDyadic(c) && !y && !kV(c)[CONJ]) //'Error Trap'
   {
     K d = newK(0,2); 
     K i = Ki(0);
