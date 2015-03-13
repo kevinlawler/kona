@@ -233,7 +233,7 @@ Z I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
 
 K specialAmendDot(K c, K args) //If c is like colon_dyadic return args@1, else dot
 {
-  if(isColonDyadic(c)) R 2==args->n?ci(kK(args)[1]):_n();
+  if(isColonDyadic(c) && !kV(c)[CONJ]) R 2==args->n?ci(kK(args)[1]):_n();
   R vf_ex(&c,args);
 }
 
