@@ -180,7 +180,7 @@ Z I mark_verb(S s,I n,I i,I*m)
 Z I mark_conditional(S s,I n,I k,I*m) // :[1;`true;`false]
 {
   S t[]={"if","do","while"};
-  if(s[k]==':' && s[k+1]=='[' && !m[k])R 1; // :[1;`true;`false]
+  if(s[k]==':' && s[k+1]=='[' && s[k+2]!=';' && !m[k])R 1; // :[1;`true;`false]
   else if(m[k]==-MARK_NAME) DO(AE(t), I c=strlen(t[i]); if(!strncmp(s+k,t[i],c)&&s[k+c]=='[')R c)
   R 0;
 }
