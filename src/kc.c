@@ -156,7 +156,7 @@ S recur(S s){
   else R NULL;
 }
 
-Z I trim(S s){         //This version is faulty  {,/ :[x;y;z]} becomes {,/:[x;y;z]}
+Z I trim(S s){
   if(s[0]=='\\') R 0; I b=0,c=0,d=0;
   for(d=0;d<1+strlen(s);d++){
     if(s[d]!=' '){s[c]=s[d]; c++; b=0;}
