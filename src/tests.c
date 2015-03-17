@@ -35,8 +35,8 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a);
-  K y = X(b);
+  K x = X(a); fer=0;
+  K y = X(b); fer=0;
   I m=matchI(x,y);
 
   if(!m)
@@ -480,8 +480,8 @@ Z I tests02()
   TC(2,a:2 3;a@*:0) 
   TC(0=#:,a:0;a=#:)
 
-  TC(_n, do[3;."\" \"_sv 1"]) //bv_ex error mishandling was causing crash
-  TC(_n, do[3;."1_sv \" \""]) //^^
+  TC(skip, _n, do[3;."\" \"_sv 1"]) //bv_ex error mishandling caused crash  //k2.8 and Kona yield "type error" not _n
+  TC(_n, do[3;."1_sv \" \""])       //^^    //k2.8 yields _n   Kona yields "type error" (Probably a Kona error.) 
   
   TC(6 7 8, (21>+/)(2+)/!3)
   TC((1;"wsfull"),@[.:;"0I#0";:])
