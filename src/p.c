@@ -225,11 +225,12 @@ I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 //      so the check probably has to do with whether some useful symbol occurred on the line already
 //other errors: syntax error
 K wd(S s, I n){lineA=s; R wd_(s,n,denameD(&KTREE,__d,1),0);}
-K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
+K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; 
+                                //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
 {
   if(!s) R 0;
 
-  I i=0;while(i<n && isspace(s[i]))i++; if('\\'==s[i] && (lineB==0 || strlen(s)==2)) R backslash(s+i,n,dict); 
+  I i=0;while(i<n && isspace(s[i]))i++; if('\\'==s[i]) R backslash(s+i,n,dict);  
     //isspace lets \n through... odd but probably fine
 
   PDA p=0;
