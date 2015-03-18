@@ -230,6 +230,7 @@ Z I tests02()
   TC(4 1 2 3, {{[a]a,x,y,z}}[1][2][3]4)           // issue #247
   TC(2 1, a:1;{a:2;{a}[]}[],a)                    // issue #287
   TC(2 1, a:1;{a:2;{a+x}[0]}[],a)                 // issue #287
+  TC( (0;"s"), {@[b;"s";:]}[] )                   // issue #313
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
