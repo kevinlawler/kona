@@ -157,10 +157,11 @@ S recur(S s){
 }
 
 Z I trim(S s){
-  if(s[0]=='\\') R 0; I b=0,c=0,d=0;
-  for(d=0;d<1+strlen(s);d++){
+  I b=0,c=0,d=0,f=0;
+  for(f=0;f<1+strlen(s);f++){if(s[f]!=' ') break;}
+  for(d=f;d<1+strlen(s);d++){
     if(s[d]!=' '){s[c]=s[d]; c++; b=0;}
-    else if(!b)  {s[c]=s[d]; c++; b=1;}
+    else if(!b) {s[c]=s[d]; c++; b=1;}
     if(c>2 && (s[c-1]==':' || s[c-1]=='{') && s[c-2]==' ' && s[c-3]!='/'){s[c-2]=s[c-1]; c--;} }
   R 0; }
 
