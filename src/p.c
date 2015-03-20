@@ -229,9 +229,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ;
                                 //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
 {
   if(!s) R 0;
-
-  I i=0;while(i<n && isspace(s[i]))i++; if('\\'==s[i]) R backslash(s+i,n,dict);  
-    //isspace lets \n through... odd but probably fine
+  if('\\'==s[0] && fbs){fbs=0; R backslash(s,n,dict);}  
 
   PDA p=0;
   K km=newK(-1,1+n); U(km) I *m = kI(km);//marks 

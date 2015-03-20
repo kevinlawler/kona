@@ -4,6 +4,7 @@ K Ks(S x);
 K make(K a);
 K kclone(K a);
 extern S __d;
+extern I fbs;
 K *denameS(S dir_string,S t,I create);
 extern C errmsg[256];
 I isColonDyadic(K x);

@@ -22,10 +22,11 @@
 Z I randomBits();
 I oerr(){R O("%s %s\n",errmsg,"error");}
 
-I interrupted=0;;
-I scrLim=0;           // script load limit
+I interrupted=0;
+I scrLim=0;           //script load limit
 I fCheck=0;
 I fCmplt=0;
+I fbs=0;              //backslash flag
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
 
@@ -199,6 +200,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   trim(*a); //avoids segfaults in corner cases when manipulating input line with recur
   S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
+  if((*a)[0]=='\\')fbs=1; else fbs=0;
 
   RTIME(d,k=ex(wd(*a,*n)))
   #ifdef DEBUG
@@ -382,6 +384,7 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
   trim(*a); //avoids segfaults in corner cases when manipulating input line with recur
   S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
+  if((*a)[0]=='\\')fbs=1; else fbs=0;
 
   status = pthread_mutex_lock(&execute_mutex); 
   if(status != 0) {perror("Lock mutex in line()"); abort();}

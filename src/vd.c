@@ -310,17 +310,15 @@ Z K makeable(K a) //TODO: this has to be reworked. can't hang out raw in dot_mon
   R (K)1;
 }
 
-K dot_monadic(K x)
-{
-  if(3==ABS(xt))R KX(x);
-  if(4==xt)
-  { 
+K dot_monadic(K x) {
+  if(3==ABS(xt)){
+    S s=kC(x); if(s[0]=='\\')fbs=1; else fbs=0;
+    R KX(x); }
+  if(4==xt)  { 
     K *p = denameS(__d,*kS(x),0);
     if(!p) R DOE;
-    R ci(*p);
-  }
+    R ci(*p); }
   if(5==xt)R unmake(x);
   if(makeable(x))R make(x);
-  R vf_ex(offsetDot,x);
-}  
+  R vf_ex(offsetDot,x); }  
 
