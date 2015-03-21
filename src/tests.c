@@ -379,6 +379,7 @@ Z I tests02()
  
   TC(skip, 0, (_+[2;]) 11) //segfault
   TC((1;"parse"),  @[.:;"if[1; `0:“bad unicode quotes”]";:]) 
+  TC(1, 40<#0:"README.md")
 
   //f'[x;y;z;...]
   TC_("6", "f:{x+y+z}; f'[1;2;3]")
