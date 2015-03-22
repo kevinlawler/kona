@@ -327,7 +327,9 @@ Z I param_validate(S s,I n) // Works on ([]) and {[]} but pass inside exclusive 
 }
 
 //TODO: capture - oom all
-I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string length, pos in string, markings; OUT words, current #words; IN locals-storage, names-storage, charfunc/NULL
+I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) 
+  //IN string, string length, pos in string, markings; 
+  //OUT words, current #words; IN locals-storage, names-storage, charfunc/NULL
 {
   V z=0,*p=w+*d; *p=0;
   I r=1,v=0,y=0,a,b=0,c;S u="",e;K g;I l;
@@ -590,8 +592,9 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       else if(modifier_colon){m[k+r]*=-1; r++; a=1; grab=1;} //grab monad ':' sign
 
                       i=0;
-                      if(r-grab==1) {z=(V)(DT_VERB_OFFSET+2*charsVerb(s[k])+(1==a?0:1));}
-
+                      if(r-grab==1) {
+                        z=(V)(DT_VERB_OFFSET+2*charsVerb(s[k])+(1==a?0:1));
+                        if(z==(V)0x3d && s[k]!=':')z=(V)0x7c; }
                       else
                       { j=(V)atol(s+k);
                         i=DT_SPECIAL_VERB_OFFSET;
@@ -601,11 +604,12 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) //IN string, string le
                       }
 
                       //Assignment is not supported for nested bracket: a[][][] +: 1  <--- parse error
-                      //save ':' if       a    []?        :    y    ;?        ---> colon   verb (should be covered except for   0   :  `file  -> 0:`file )
+                      //save ':' if       a    []?        :    y    ;?        ---> colon   
+                      //                         verb (should be covered except for   0   :  `file  -> 0:`file )
                       //save ':' if       a    []?    +   :         ;?        ---> monadic verb
                       //save ':' if       a    []?    +   :    y    ;?        ---> dyadic  verb
-                      //what passes for y?  <--- anything that isn't an end/\0, except colon  verb will go on to ex1 to the right and assign _n
-                      //if(z==(V)0x3d)z=(V)0x7c;
+                      //what passes for y?  <--- anything that isn't an end/\0, except colon  
+                      //                         verb will go on to ex1 to the right and assign _n
       )
     CS(MARK_ADVERB ,  z=(V)(DT_ADVERB_OFFSET+charsAdverb(s[k])+(r>1?3:0)))
     CS(MARK_END    ,  z=(V)(DT_OFFSET(end)))
