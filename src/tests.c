@@ -483,8 +483,7 @@ Z I tests02()
   TC(0=#:,a:0;a=#:)
 
   TC(skip, _n, do[3;."\" \"_sv 1"]) //bv_ex error mishandling caused crash  //k2.8 and Kona yield "type error" not _n
-  TC(skip, _n, do[3;."1_sv \" \""])       //^^    //k2.8 yields _n   Kona yields "type error" (Probably a Kona error.)
-            //skipping this last test until issue #315 is resolved. 
+  TC(skip, _n, do[3;."1_sv \" \""]) //^^    //k2.8 yields _n   Kona yields "type error" (Kona seems correct. See ref p.221)
   
   TC(6 7 8, (21>+/)(2+)/!3)
   TC((1;"wsfull"),@[.:;"0I#0";:])
