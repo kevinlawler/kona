@@ -179,7 +179,7 @@ Z K each2(K a, V *p, K b)
     K z = newK(0,bn),d=0; U(z)
     K g;
     if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(0,p-1,g); cd(g); M(d,z) kK(z)[i]=d)
-    if(0==bt) DO(bn, d=dv_ex(0,p-1,kK(b)[i]); if(grnt && !prnt)prnt=grnt; M(d,z) kK(z)[i]=d)
+    if(0==bt) DO(bn, d=dv_ex(0,p-1,kK(b)[i]); if(grnt && !prnt)prnt=ci(grnt); M(d,z) kK(z)[i]=d)
     R demote(z);
   }
 }
@@ -313,7 +313,7 @@ Z K dv_ex(K a, V *p, K b)
     if(stk>2e6) R kerr("stack"); stk++;
     if(encp && (encp!=2 || (strchr(kC(kK(encf)[CODE]),"z"[0]))) && encp!=3 && DT_SIZE<(UI)*p)tmp=vf_ex(&encf,g);
     else tmp=vf_ex(*p,g);
-    stk--; if(grnt && !prnt) prnt=grnt; }
+    stk--; if(grnt && !prnt)prnt=ci(grnt); }
 
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
   R tmp;
@@ -561,7 +561,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
   U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
   K z=ex_(&a,0); cd(a); if(fer==1)fer=0; 
-  fwh=stk=stk1=prj=prj2=fsf=0; if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0; R z; 
+  fwh=stk=stk1=prj=prj2=fsf=0; if(prnt)cd(prnt); prnt=0; R z; 
 }
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} 
@@ -800,8 +800,11 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         if(encp==0)kV(z)[CACHE_TREE]=dot_monadic(j2); if(encp==1)kV(z)[CACHE_TREE]=dot_monadic(j1);
         cd(j0); cd(j1); cd(j2); cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; }
       if(prnt && kV(prnt)[CODE] && kK(prnt)[CODE]->t==-3 && kC(kK(prnt)[CODE])[0]=="{"[0] &&
-        kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0] && strchr(kC(kK(prnt)[CODE]),"y"[0])){encf=prnt; ci(encf);}
-      if(encp!=2 || !prnt)prnt=z; 
+        kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0] && strchr(kC(kK(prnt)[CODE]),"y"[0])){
+        if(encf)cd(encf); encf=ci(prnt);}
+      if(encp!=2 || !prnt){
+        if(prnt){if(grnt)cd(grnt); grnt=prnt;}
+        prnt=ci(z);} 
       else {cd(z); R prnt;} }
     R z; }
 
@@ -812,7 +815,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(prnt && z->t==7) {
       if(kV(prnt)[PARAMS] && !kK(prnt)[PARAMS]->n && kV(z)[LOCALS] && !kK(z)[LOCALS]->n
          && kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n) {
-        kV(z)[CACHE_TREE]=kclone(kK(prnt)[CACHE_TREE]); prnt=z; }
+        kV(z)[CACHE_TREE]=kclone(kK(prnt)[CACHE_TREE]); if(prnt)cd(prnt); prnt=ci(z); }
       else if(kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n && kV(z)[PARAMS] && kK(z)[PARAMS]->n) {
         K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
         K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
@@ -875,14 +878,14 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         else if(kV(prnt)[CONJ]) {
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
           K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
-      prnt=t3; }
+      if(prnt)cd(prnt); prnt=ci(t3); }
 
     //if(v[1]!=t3) if(!VA(t3)) show(t3);//for use with below
     u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;.  
             //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3;
     t0=ex_(*v,1); if(fer && strcmp(errmsg,"undescribed")){cd(t2); R(t0);}
-    if(!prnt && t0->t==7 && t0->n==3)prnt=t0;
+    if(!prnt && t0->t==7 && t0->n==3){if(prnt)cd(prnt); prnt=ci(t0);}
     e= dv_ex(t0,v+1+i,t2); v[1]=u; cd(t0); cd(t2); if(!VA(t3)) cd(t3);
     R e; }
 
@@ -901,14 +904,14 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       else {
         K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
         K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
-    prnt=t3; }
+    if(prnt)cd(prnt); prnt=ci(t3); }
 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
   *v=VA(t3)?t3:(V)&t3;
-  if(*(v+i)==(V)offsetEach)grnt=prnt;
+  if(*(v+i)==(V)offsetEach){if(grnt)cd(grnt); grnt=ci(prnt);}
   e=dv_ex(0,v+i,t2); *v=u;
-  if(*(v+i)==(V)offsetEach)grnt=0;
-  cd(t2); if(!VA(t3) && encp!=3) cd(t3);
+  if(*(v+i)==(V)offsetEach){if(grnt)cd(grnt); grnt=0;}
+  cd(t2); if(!VA(t3) && (encp!=3 || (encp==3 && kV(t3)[CACHE_WD])))cd(t3);
   R e; 
 }
 
