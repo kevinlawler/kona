@@ -231,6 +231,7 @@ Z I tests02()
   TC(2 1, a:1;{a:2;{a}[]}[],a)                    // issue #287
   TC(2 1, a:1;{a:2;{a+x}[0]}[],a)                 // issue #287
   TC( (0;"s"), {@[b;"s";:]}[] )                   // issue #313
+  TC(5 3, {m:{x,y}[5]; {m[x]}[3]}[])              // issue #309
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )

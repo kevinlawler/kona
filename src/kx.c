@@ -572,17 +572,17 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
   b=e>1;
 
   K z=0, x;
-
   SW(r)
   {
-    CS(0, for(i=-1;i<n;i++)
+    CS(0, for(i=-1;i<n;i++)                      //  c:9;a+b;c:1
             if(-1==i||bk(v[i])){
               cd(z); frg++; x=ex1(v+1+i,0,&i,n,1); frg--; 
               if(!frg){encp=0; 
                 if(encf){cd(encf); encf=0;} 
                 if(grnt){cd(grnt); grnt=0;}} 
               U(x) z=bk(x)?_n():x; 
-              if(fer)R z;})  //  c:9;a+b;c:1 
+              if(fer)R z; 
+              if(grnt && (!prnt || prnt->c==2)){if(prnt)cd(prnt); prnt=ci(grnt);} })
     CS(4, for(i=-1;i<n;i++)
             if(-1==i||bk(v[i])){
               U(x=ex1(v+1+i,0,&i,n,1)) 
