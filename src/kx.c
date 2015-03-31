@@ -803,8 +803,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0] && strchr(kC(kK(prnt)[CODE]),"y"[0])){
         if(encf)cd(encf); encf=ci(prnt);}
       if(encp!=2 || !prnt){
-        if(prnt){if(grnt)cd(grnt); grnt=prnt;}
-        prnt=ci(z);} 
+        if(prnt){if(grnt)cd(grnt); grnt=prnt;} prnt=ci(z);}
+        //more verbosely: if(prnt){if(grnt)cd(grnt); grnt=ci(prnt); cd(prnt);} prnt=ci(z);} 
       else {cd(z); R prnt;} }
     R z; }
 
@@ -912,6 +912,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   e=dv_ex(0,v+i,t2); *v=u;
   if(*(v+i)==(V)offsetEach){if(grnt)cd(grnt); grnt=0;}
   cd(t2); if(!VA(t3) && (encp!=3 || (encp==3 && kV(t3)[CACHE_WD])))cd(t3);
+    //the encp conditions address the 2 variations of issue #247, neither of which work in k2.8 or k3.2
   R e; 
 }
 
