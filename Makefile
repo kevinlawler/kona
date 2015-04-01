@@ -9,6 +9,7 @@ OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 # Win-64
 ifeq (mingw32_nt-6.2,$(OS))
 CC=gcc
+PRODFLAGS += -D_FILE_OFFSET_BITS=64
 LDFLAGS = -lws2_32 -static -lpthread
 OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
       src/0.o src/c.o src/getline.o src/mt.o src/p.o \
