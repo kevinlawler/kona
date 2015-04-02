@@ -85,7 +85,7 @@ K _0m(K a)
   DO(s, if('\n'!=v[i])kK(z)[d]=(V)1+(L)kK(z)[d]; else d++) //2nd run: count lengths (cheat & use pointers' space)
   DO(c,e=(L)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
   e=0;
-  DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n;) //3rd run: populate 
+  DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n;) //3rd run: populate
 
 cleanup:
   if(v){if(b)free(v);else munmap(v,s);}
@@ -123,17 +123,17 @@ Z K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
 
   if(3==ABS(t))s=n;
   else DO(n,s+=1+kK(b)[i]->n) //0-list adds newlines
- 
+
   I f=m[0]?open(m,O_RDWR|O_CREAT|O_TRUNC,07777):1; //stdout if m is ` or "" or "\000..." (is O_TRUNC necessary when we have ftruncate below?)
   P(f<0,DOE)
 
   if(1==f) //write to stdout
   {
     I r;
-    if(3==ABS(t)) {r=write(f,kC(b),s); if(!r)show(kerr("write"));} 
+    if(3==ABS(t)) {r=write(f,kC(b),s); if(!r)show(kerr("write"));}
       //This is duplicated but I don't see how to factor it right now (choose write/memcpy funcs?)
-    else DO(n, k=kK(b)[i]; 
-      if(3==ABS(k->t)) {r=write(f,kC(k),k->n); if(!r)show(kerr("write"));} 
+    else DO(n, k=kK(b)[i];
+      if(3==ABS(k->t)) {r=write(f,kC(k),k->n); if(!r)show(kerr("write"));}
       r=write(f,"\n",1); if(!r)show(kerr("write"));)
   }
   else     //write to mmap'd file
@@ -153,7 +153,7 @@ Z K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
     else DO(n, k=kK(b)[i]; if(3==ABS(k->t)){memcpy(v+c,kC(k),k->n); c+=k->n;} v[c++]='\n'; )
 
     //msync(v,s,MS_SYNC|MS_INVALIDATE); //slow
-    munmap(v,s); 
+    munmap(v,s);
   }
 
   R _n();
@@ -174,9 +174,9 @@ Z K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a
   P(3 != ABS(bt) && 4 != bt && 0 != bt, TE)
 
   I fc=0; //field count
-  DO(cn,if(' '==kC(c)[i])continue; if(stringHasChar("IFCS",kC(c)[i])) fc++; else R TE)  
+  DO(cn,if(' '==kC(c)[i])continue; if(stringHasChar("IFCS",kC(c)[i])) fc++; else R TE)
   I w=1,x;
-  DO(dn, x=kI(d)[i]; P(x<=0, LE) w+=x) 
+  DO(dn, x=kI(d)[i]; P(x<=0, LE) w+=x)
 
   K ff=b,k; I fb=0,fn=0; //mostly for bt!=0
 
@@ -194,14 +194,14 @@ Z K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a
   }
 
   I s; P(stat_sz(CSK(ff),&s),SE)
- 
+
   if(bt) fn=s;
 
   //if(fn<0 || fb+fb>s || fn%w) R 0; //length error. omitted to reduce errors
 
   if(fn<0) fn=0; //suppress error
   if(fb<0) fb=0; //in K3.2 fb<0 is ok
-  fb=MIN(fb,MAX(0,s-1)); 
+  fb=MIN(fb,MAX(0,s-1));
   if(fb+fn > s) fn = s-fb;
 
   I f=open(CSK(ff),0);
@@ -213,7 +213,7 @@ Z K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a
 
   I r=0,t=0;
   DO(fn, if(v[fb+i]=='\n')if(t==w-1){r++;t=0;}else t=0;else t++)//count valid rows
-           
+
   //if(t || r != fn/w )R 0; //Omitted: K3.2 length error + mm/o
 
   z=newK(0,fc);
@@ -228,15 +228,15 @@ Z K _0d_read(K a,K b)   //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a
     while(u+t<fn && '\n'!=v[u+t])t++;
     if(t==w-1 && '\n'==v[u+t])
     {
-      //read row 
+      //read row
       y=u;
       e=x=0;
       K q=0;
       DO(cn, x=kI(d)[i];
-             k=kK(z)[e++]; 
+             k=kK(z)[e++];
              switch(kC(c)[i])
              {
-               CS(' ', e--) 
+               CS(' ', e--)
                                                                                                   //TODO: errors should still unmap
                CS('I', m=strdupn(v+y,x); if(!m)R 0; q=formKiCS(m); kI(k)[p]=q?*kI(q):IN; free(m)) //oom m; q is ok because formKiCS unusual
                CS('F', m=strdupn(v+y,x); if(!m)R 0; q=formKfCS(m); kF(k)[p]=q?*kF(q):FN; free(m)) //oom m; q is ok because formKfCS unusual
@@ -286,13 +286,13 @@ Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file (no column headings)  (s;"
   S m; I u=0,t=0,p=0,n=0,h=0; C*tok; C y[2]; y[0]=w; K k;
   for(;u<=fn;u+=t+1,t=0) {
     while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=(L)NULL)t++;
-    if(v[u+t]=='\n' || v[u+t]==(L)NULL) { 
+    if(v[u+t]=='\n' || v[u+t]==(L)NULL) {
       K q=0; e=h=0;
-      m=strdupn(v+u,t); 
+      m=strdupn(v+u,t);
       if(!m) R 0;
       if(m[0]!=(L)NULL){
         tok=strtok(m,y);
-        k=kK(z)[e++]; 
+        k=kK(z)[e++];
         switch(kC(c)[h++]) {
           CS(' ', e--)
           CS('I', q=formKiCS(tok); kI(k)[p]=q?*kI(q):IN;)
@@ -318,7 +318,7 @@ Z K _0d_rdDsv(K a,K b)     // read delim-sep-val-file (no column headings)  (s;"
       }
       free(m);
     }
-    p++; 
+    p++;
   }
 
 cleanup:
@@ -357,12 +357,12 @@ Z K _0d_rdDsvWc(K a,K b)     // read delim-sep-val-file-with-columm-headings    
   S m; I u=0,t=0,p=0,n=0,h=0; C*tok; C y[2]; y[0]=w; K k;
   for(;u<=fn;u+=t+1,t=0) {
     while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=(L)NULL)t++;
-    if(0==n++ && (v[u+t]=='\n' || v[u+t]==(L)NULL)) { 
+    if(0==n++ && (v[u+t]=='\n' || v[u+t]==(L)NULL)) {
       e=h=0;
       m=strdupn(v+u,t); if(!m) R 0;
       if(m[0]!=(L)NULL){
         tok=strtok(m,y);
-        k=kK(z)[e++]; 
+        k=kK(z)[e++];
         if(kC(c)[h++]==' ') e--;
         else kS(kK(z)[0])[p++]=sp(tok);
         while(tok != NULL){
@@ -429,10 +429,10 @@ K _1m(K x) //Keeps binary files mapped
   I sm = strlen(m);
   S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");  //lfop (lower-case l on Windows -- differs from 'L' in manual)
   U(e)
-  
+
   struct stat c; //lfop windows: GetFileSizeEx
 
-  I f=open(e,0); //Try the extended version of the filename first
+  I f=open(e,O_RDWR); //Try the extended version of the filename first
   if(f>=0) stat(e,&c);
   else {f=open(m,0); stat(m,&c);} //Then try the plain version
   free(e);
@@ -444,7 +444,7 @@ K _1m(K x) //Keeps binary files mapped
 
   S v;
   //These mmap arguments are present in Arthur's code. WRITE+PRIVATE lets reference count be modified without affecting file
-#ifndef WIN32  
+#ifndef WIN32
   if(MAP_FAILED==(v=mmap(0,s,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,0)))R SE;
 #else
   if(MAP_FAILED==(v=mmap(0,s,PROT_READ|PROT_WRITE,MAP_PRIVATE,f,0)))R SE;
@@ -454,28 +454,28 @@ K _1m(K x) //Keeps binary files mapped
   I b=0;
   K z = _1m_r(f,v,v,v+s,&b);
   close(f);
-  munmap(v,s); 
+  munmap(v,s);
   R z;
-} 
+}
 
 Z K _1m_r(I f,V fixed, V v,V aft,I*b) //File descriptor, moving * into mmap, fixed * to last mmapped+1, bytes read
 {
   I s=aft-v; //subtle but signed not big enough to hold max difference here
   if(s < 4*sizeof(I)) R NE; // file is malformed
 
-  I*w=(I*)v; 
+  I*w=(I*)v;
 
   I t=w[2], n=w[3];
   if(t<-4||t>7||n<0) R NE; //malformed
 
   if(4==ABS(t) || 7==t || (1<=t && t<=3) ) R _2m_r(v,aft,b); //These are read and not mapped
 
-  I r=4*sizeof(I); if(0!=t&&5!=t) r+=bp(t)*n+(-3==t)-(t>0)*sizeof(I); 
+  I r=4*sizeof(I); if(0!=t&&5!=t) r+=bp(t)*n+(-3==t)-(t>0)*sizeof(I);
 
   //0!=t&&5!=t <=> ((-3<=t&&t<=3)||6==t)
 
   if(s<r) R NE; //malformed
-  
+
   K z,x;
   if(0==t||5==t){z=newK(t,n); DO(n,x=_1m_r(f,fixed,v+r,aft,&r); if(!x){cd(z);R 0;} kK(z)[i]=x; ) }
   else   //map lists to file. atoms are allocated not mapped
@@ -516,9 +516,9 @@ Z K _1d_write(K x,K y)
   //Note: all file objects must be at least 4*sizeof(I) bytes...fixes bugs in K3.2, too
   //K3.2 Bug - "a"1:`a;2:"a" or 1:"a" - wsfull, tries to read sym but didn't write enough bytes?
   I n=disk(y);
-  
+
   //Copy-pasted from 2:
-  S m=CSK(x); 
+  S m=CSK(x);
   I sm = strlen(m);
   S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");  //lfop (lower-case l on Windows -- differs from 'L' in manual)
   U(e)
@@ -537,7 +537,7 @@ Z K _1d_write(K x,K y)
   wrep(y,v,1);
 
   //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
-  munmap(v,n); 
+  munmap(v,n);
 
   R _n();
 }
@@ -559,10 +559,10 @@ I wrep(K x,V v,I y)//write representation. see rep(). y in {0,1}->{net, disk}
   I r=0,s;
   if(0==t||5==t) DO(n, V point = d+r; I delta = wrep(kK(x)[i],point,y); r+=delta )
   else if(-4==t) DO(n, s=1+strlen(kS(x)[i]); memcpy(d+r,kS(x)[i],s); r+=s )
-  else if( '\007'==t || '\010'==t) //TODO: write seven_types to disk //TODO: calculate return length r optimally for seven_type since seven_type can nest 
+  else if( '\007'==t || '\010'==t) //TODO: write seven_types to disk //TODO: calculate return length r optimally for seven_type since seven_type can nest
   {
-    if(1==xn && 1==kVC(x)->n-1 && offsetColon==(V)kS(kK(x)[CODE])[0]){ 
-      K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon; }  
+    if(1==xn && 1==kVC(x)->n-1 && offsetColon==(V)kS(kK(x)[CODE])[0]){
+      K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon; }
       //TODO: work for more than just unreserved monadic, dyadic verbs
     else R (L)SYE;
   }
@@ -572,12 +572,12 @@ I wrep(K x,V v,I y)//write representation. see rep(). y in {0,1}->{net, disk}
 }
 
 Z I disk(K x){R rep(x,1);}//how many bytes does this take on disk?
-I rep(K x,I y) //#bytes in certain net/disk representations 
+I rep(K x,I y) //#bytes in certain net/disk representations
 {
   //Notes on verbs/functions: (changes must go to rep(),wrep(),and rrep()
   //_bd (%:) is type 7
   //_bd (%) is type 8
-  //_bd {x} is type 10 
+  //_bd {x} is type 10
   //_bd (+/) is type 20, -': -/ -\ all seem to have have their own types
   //projection causes nonce error
 
@@ -604,7 +604,7 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
 
   I*w=(I*)v; //Note: sizeof(I) probably 8, meaning this won't read old 32-bit K files
 
-  I r=(2+m)*sizeof(I); //accumulates #bytes of the file required for this structure 
+  I r=(2+m)*sizeof(I); //accumulates #bytes of the file required for this structure
 
   P(s<r,NE)
   if(y)P(-3!=w[0],NE)
@@ -629,7 +629,7 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
   switch(t) //most of this can be refactored into changing parameters to a single memcpy call
   {
     CSR( 0,)//fall through
-    CS ( 5,while(v+r < aft && c < n) { K k=rrep(v+r,aft,&r,y); M(z,k) memcpy(&(kK(z)[c++]),&k,sizeof(K)); } if(c!=n){cd(z);R NE;} ) 
+    CS ( 5,while(v+r < aft && c < n) { K k=rrep(v+r,aft,&r,y); M(z,k) memcpy(&(kK(z)[c++]),&k,sizeof(K)); } if(c!=n){cd(z);R NE;} )
 
     CS(-4,while(v+r < aft && c < n) r+=rrep_4(kS(z)+c++,v+r,aft); P(c!=n,NE) ) //TODO: oom
     CS(-3,memcpy(kC(z),w+2+m,n*sizeof(C)))//K3.2 does not verify final '\0' (does not read any extra bytes at all)
@@ -645,14 +645,14 @@ K rrep(V v, V aft,I*b, I y)//why aft? maybe not the best? but invariant. size co
     CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; *kK(f)=(V)(L)w[1+m]; r+=000000000000000;)
     CD: R NE; //unsupported type. was:  if(t<-4 || t>7 || n<0) R NE; //verbs actually have some weird types though. 8==\010, etc
   }
-  
+
   *b+= MAX(r,(2+m)*sizeof(I));
   R z;
 }
 
 Z I rrep_4(S*z,S a,S t) //type4 reader for 2: monadic
 {
-  S d=a; 
+  S d=a;
   while(a<t && *a)a++;
   I c=a-d;
   S e=strdupn(d,c); //oom
@@ -689,7 +689,7 @@ Z K _1d_read(K a,K b)
   DO(cn,g=kC(c)[i];if(' '==g)continue;if(stringHasChar(types,g))fc++;else R TE;if(islower(g)&&fixed[charpos(types,g)]!=kI(d)[i])R LE)
 
   I w=0,x; //Note: w=0 here, but w=1 in 0:dyadic
-  DO(dn, x=kI(d)[i]; P(x<=0,LE) w+=x) 
+  DO(dn, x=kI(d)[i]; P(x<=0,LE) w+=x)
 
   K ff=b,k; I fb=0,fn=0; //mostly for bt!=0
 
@@ -707,14 +707,14 @@ Z K _1d_read(K a,K b)
   }
 
   I s; P(stat_sz(CSK(ff),&s),SE)
- 
+
   if(bt) fn=s;
 
   //if(fn<0 || fb+fn>s || fn%w) R 0; //length error. omitted to reduce errors
 
   if(fn<0) fn=0; //suppress error
   if(fb<0) fb=0; //in K3.2 fb<0 is ok
-  fb=MIN(fb,MAX(0,s-1)); 
+  fb=MIN(fb,MAX(0,s-1));
   if(fb+fn > s) fn = s-fb;
 
   I f=open(CSK(ff),0);
@@ -743,22 +743,22 @@ Z K _1d_read(K a,K b)
   V p=v + fb_off_by;
 
   //cbsijfdmIFCSDZM
-  for(j=0;j<r;j++) //read row 
+  for(j=0;j<r;j++) //read row
   {
     e=0;
     for(i=0;i<cn;i++)
     {
            x=kI(d)[i];
-           K q=kK(z)[e++]; 
+           K q=kK(z)[e++];
            S u;
-           switch(g=kC(c)[i]) 
+           switch(g=kC(c)[i])
            {
-             CS(' ', e--) 
-             CS('c',kC(q)[j]=*((      C*)p)) 
-             CS('b',kI(q)[j]=*(( int8_t*)p)) 
-             CS('s',kI(q)[j]=*((int16_t*)p)) 
-             CS('i',kI(q)[j]=*((int32_t*)p)) 
-             CS('j',kI(q)[j]=*((      I*)p)) 
+             CS(' ', e--)
+             CS('c',kC(q)[j]=*((      C*)p))
+             CS('b',kI(q)[j]=*(( int8_t*)p))
+             CS('s',kI(q)[j]=*((int16_t*)p))
+             CS('i',kI(q)[j]=*((int32_t*)p))
+             CS('j',kI(q)[j]=*((      I*)p))
              CS('f',kF(q)[j]=*((  float*)p))
              CS('d',kF(q)[j]=*((      F*)p))
              CS('m', ) //TODO: fill in remaining character reads
@@ -797,9 +797,9 @@ K _2m(K a) //again, minor copy/paste here
   I sm = strlen(m);
   S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");  //lfop (lower-case l on Windows -- differs from 'L' in manual)
   U(e)
-  
+
   I s,f=open(e,0); //Try the extended version of the filename first
-  if(f>=0) P(stat_sz(e,&s),SE) 
+  if(f>=0) P(stat_sz(e,&s),SE)
   else {f=open(m,0); P(stat_sz(m,&s),SE)} //Then try the plain version
   free(e);
   P(f<0,DOE)
@@ -809,11 +809,11 @@ K _2m(K a) //again, minor copy/paste here
   close(f);
 
   //K3.2 Bug: does not check boundary and will segfault on bad binary data (e.g., char vec with lying size of >> pagesize)
-  //reading past boundary will segfault. pass boundary? 
+  //reading past boundary will segfault. pass boundary?
   I b=0;
   K z=_2m_r(v,v+s,&b);
   //if(!z); //continue to unmap
-  munmap(v,s); 
+  munmap(v,s);
   R z;
 }
 
@@ -955,7 +955,7 @@ K _5d(K x,K y)
   I sm = strlen(m);
   S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");  //TODO: lfop (lower-case l on Windows -- differs from 'L' in manual)
   if(!e)R 0; //TODO: oom
-  
+
   struct stat c; //lfop windows: GetFileSizeEx
 
   I f=open(e,O_RDWR,07777); //Try the extended version of the filename first
@@ -979,7 +979,7 @@ K _5d(K x,K y)
 #endif
 
   if( (yt>0&&yt!=5) || ft != yt) R 0; //TODO: type error
-  
+
   I b = disk(y) - 4*sizeof(I) - (-3==yt); //-3 type overwrites preexisting '\0' terminator
   I n = s + b;
 
@@ -1001,12 +1001,12 @@ K _5d(K x,K y)
   else if(-4==yt) DO(yn, s=1+strlen(kS(y)[i]); memcpy(d+r,kS(y)[i],s); r+=s )
   else if(-3==yt) {memcpy(d-1,ke(y),n*sizeof(C)); ((S)d)[yn]=0;} // ((S)d)[yn]=0 unnecessary?
   else if(-2==yt)  memcpy(d,ke(y),y->n*sizeof(F));
-  else if(-1==yt)  memcpy(d,ke(y),y->n*sizeof(I)); 
- 
-  //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
-  munmap(v,n); 
+  else if(-1==yt)  memcpy(d,ke(y),y->n*sizeof(I));
 
-  R Ki(fn+yn); //mm/o 
+  //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
+  munmap(v,n);
+
+  R Ki(fn+yn); //mm/o
 }
 
 K _6m(K x) { R readVector(x,-3);} //Believe 6:"file.K" to be equivalent to "c"1:"file.K"
@@ -1015,7 +1015,7 @@ Z K readVector(K x,I t)//This is largely copy/pasted from 0:. Written only for -
   P(4!=xt && 3!=ABS(xt), TE)
 
   I s; P(stat_sz(CSK(x),&s),SE)
- 
+
   I f=open(CSK(x),0);
   P(f<0, DOE)
   S v;
@@ -1024,8 +1024,8 @@ Z K readVector(K x,I t)//This is largely copy/pasted from 0:. Written only for -
   close(f);
 
   K z=newK(t,ceil(s/(F)bp(t)));//TODO: oom (unmap, etc.)
-  memcpy(ke(z),v,s); //K3.2 on -1 and 2 leave garbage here for files not a multiple of sizeof(I) or sizeof(F) 
-  munmap(v,s); 
+  memcpy(ke(z),v,s); //K3.2 on -1 and 2 leave garbage here for files not a multiple of sizeof(I) or sizeof(F)
+  munmap(v,s);
   R z;
 }
 
@@ -1067,7 +1067,7 @@ K _6d(K a,K b) //A lot of this is copy/paste from 0: dyadic write
     close(f);
     memcpy(v+e,kC(b),n);
     msync(v+e,n,MS_SYNC|MS_INVALIDATE); //keep msync for _6d ??? see issue 163
-    munmap(v,e+n); 
+    munmap(v,e+n);
   }
 
   R _n();
@@ -1086,15 +1086,15 @@ K _3m(K x)
   snprintf(port,256,"%lld",*kI(kK(x)[1]));
 
   int sockfd;
-  struct addrinfo hints, *servinfo, *p; 
+  struct addrinfo hints, *servinfo, *p;
   int rv;
-  memset(&hints, 0, sizeof hints); 
+  memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
   if ((rv = getaddrinfo(host, port, &hints, &servinfo)) != 0) { fprintf(stderr, "conn: %s\n", gai_strerror(rv)); R DOE; }
   // loop through all the results and connect to the first we can
-  for(p = servinfo; p != NULL; p = p->ai_next) 
+  for(p = servinfo; p != NULL; p = p->ai_next)
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {  continue; } //perror("client: socket");
     else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) { errstr=strerror(errno); close(sockfd);  continue; } //perror("client: connect");
     else break;
@@ -1107,9 +1107,9 @@ K _3m(K x)
   I yes=1;
   setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I));//disable nagle
 #if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)  || defined(__NetBSD__)
-  setsockopt(sockfd, SOL_SOCKET,  SO_NOSIGPIPE,&yes, sizeof(I)); 
+  setsockopt(sockfd, SOL_SOCKET,  SO_NOSIGPIPE,&yes, sizeof(I));
 #endif
-  freeaddrinfo(servinfo); 
+  freeaddrinfo(servinfo);
 
   //Z C m[ 8]; if(-1==sendall(sockfd,(S)&m,sizeof m))R DOE; //not really sure what this handshake is for, 32-bit K3.2 requires it
 
@@ -1145,23 +1145,23 @@ K _3m(K x)
 
   SOCKET sockfd = INVALID_SOCKET;
   p=servinfo; sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-  if(sockfd == INVALID_SOCKET) { O("Error at socket():%ld]n", WSAGetLastError()); freeaddrinfo(servinfo); exit(4); } 
+  if(sockfd == INVALID_SOCKET) { O("Error at socket():%ld]n", WSAGetLastError()); freeaddrinfo(servinfo); exit(4); }
   //else O("socket() OK\n");
 
   // loop through all the results and connect to the first we can
-  for(p = servinfo; p != NULL; p = p->ai_next) 
-    if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) 
+  for(p = servinfo; p != NULL; p = p->ai_next)
+    if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
       { perror("client: socket()"); O("client socket(): %ld\n", WSAGetLastError()); continue; }
-    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) 
+    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)
       { O("client connect(): %d\n", WSAGetLastError()); close(sockfd); continue; }
     else break;
 
   if (p == NULL) { fprintf(stderr, "conn: failed to connect (%d)\n", WSAGetLastError());freeaddrinfo(servinfo); R DOE; }
   I yes=1; setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (cS)&yes, sizeof(I));//disable nagle
-  freeaddrinfo(servinfo); 
-   
+  freeaddrinfo(servinfo);
+
   //wipe_tape(sockfd);
-  R Ki(sockfd); 
+  R Ki(sockfd);
 }
 
 #endif
