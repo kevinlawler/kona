@@ -434,7 +434,7 @@ K _1m(K x) //Keeps binary files mapped
 
   I f=open(e,O_RDWR); //Try the extended version of the filename first
   if(f>=0) stat(e,&c);
-  else {f=open(m,0); stat(m,&c);} //Then try the plain version
+  else {f=open(m,O_RDWR); stat(m,&c);} //Then try the plain version
   free(e);
 
   P(f<0,DOE)
@@ -492,6 +492,9 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) //File descriptor, moving * into mmap, fix
     if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE,f,offset))){R SE;}
 #endif
     z=(K)(((V)u+mod)-3*sizeof(I)); //3*sizeof(I) for c,t,n
+
+    //ref count should be reset to 1 after mapping
+    ((K)z)->c=1;
     //if(1<=t || 3<=t){dd(z->n)} // ???
   }
 
