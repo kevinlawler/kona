@@ -140,7 +140,8 @@ Z I nodeCount(N n) {R nodeCount_(n)-1;}
 
 S recur(S s){
   I sl=strlen(s); I f=0,i,j,k,c=1;
-  for(i=0;i<sl-1;i++){ if(s[i]==':' && s[i+1]=='{') {f=1; break;} } //find begin :{ which is i
+  for(i=1;i<sl-1;i++){if(s[i]==':' && s[i+1]=='{' && (isalnum(s[i-1]) || s[i-1]==' '))
+    {f=1; break;} } //find begin :{ which is i
   if(!f) R NULL;
   for(j=i-1;j>=0;j--){ if(!isalnum(s[j])) break; } //find begin-name, which is j+1
   for(k=i+2;k<sl;k++){ if(s[k]=='{')c++; if(s[k]=='}')c--; if(!c)break; } //find end-} which is k
