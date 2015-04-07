@@ -85,7 +85,9 @@ K cd(K x)
   I o=((size_t)x)&(PG-1);//file-mapped? 1:
   I k=sz(xt,xn), r=lsz(k);
   //assert file-maps have sizeof(V)==o and unpooled blocks never do (reasonable)
-  if(sizeof(V)==o || r>KP_MAX){    //(file-mapped or really big) do not go back into pool.
+  //in 32-bit Linux: sizeof(V)==4 but file-maps have o==8
+  //in 64-bit Linux: sizeof(V)==8 and file-maps have o==8
+  if(o==8 || r>KP_MAX){    //(file-mapped or really big) do not go back into pool.
     munmap(((V)x)-o,k+o);    if(r>KP_MAX) mUsed -= (k+o);
   }
   else repool(x,r);
