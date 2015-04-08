@@ -216,6 +216,8 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
 
 K dot_tetradic_2(K *g, K b, K c, K y)
 {
+  if(c->t==7){V q=kV(kS(c)[CODE])[0]; fnc=DT[(L)q].text; if(fnci<127){fncp[fnci]=q; fnci++;}}
+
   I bt=b->t, bn=countI(b);
 
   if(0==bn || 6==bt)

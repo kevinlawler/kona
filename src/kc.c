@@ -212,15 +212,15 @@ cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
   if(strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
-    if(fError) {
-      if(lineA) {
-        if(fnc) { I cnt=0,i;
+    if(fError){
+      if(lineA){
+        if(fnc){ I cnt=0,i;
           if(strlen(fnc)==1)for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
           else for(i=0;i<strlen(lineA)-1;i++) {if(lineA[i]==fnc[0]) if(lineA[i+1]==fnc[1]) {ptr=&lineA[i]; cnt++;}}
           if(cnt==1) { ctl=1; O("%s\n",lineA); if(!ptr)ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
           if(cnt>1 && fnci && fnci<127) { I num=0; 
-            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; } 
-            O("at execution instance %lld of \"%s\"\n",num,fnc); }}}
+            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
+            O("%s\n",lineA); O("at execution instance %lld of \"%s\"\n",num,fnc); }}}
       if(lineB && !ctl && strcmp(lineA,lineB)) {
         if(fnc) { I cnt=0,i; O("%s\n",lineB);
           for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
