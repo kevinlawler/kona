@@ -35,7 +35,7 @@ Then, while in the "kona" directory, run:
     ./k                      #./k_test for debug mode
 
 For Windows: 
-Pretty much the same process, but you will need MinGW-w64 (Mingw-builds project package).  To start up Kona from a native Widows "cmd", just type "k" when in the "kona" directory, as "./k" won't work.
+Pretty much the same process, but you will need MinGW-w64 (Mingw-builds project package), and you will need MSYS (or MSYS2) for bash.  You can start up Kona from MSYS, or from a native Windows "cmd" session.  In MSYS, type "./k" or just type "k" when in the "kona" directory. When in "cmd" just type "k" as "./k" won't work.  You can also double-click on k.exe from Windows Explorer.
 
 **Input Issues**
 
