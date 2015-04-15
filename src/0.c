@@ -876,7 +876,7 @@ K _3d(K x,K y) //'async' TCP
  
   I res=-1;
   if(y->t==-3)res=ksender(*kI(x),y,0);
-  else if(y->t==0 && y->n==4 && kK(y)[3]->t==7 && kK(y)[3]->n==3 && kK(kK(kK(y)[2])[CODE])[0]==(V)0x3c){
+  else if(y->t==0 && y->n==4 && kK(y)[3]->t==7 && kK(y)[3]->n==3 && kK(kK(kK(y)[2])[CODE])[0]==(V)offsetColon){
     S sym=*kS(kK(y)[0]); I lenS=strlen(sym);
     S cod=(S)kS(kK(kK(y)[3])[CODE]); I lenC=strlen(cod);
     C str[lenS+lenC+4]; I i=0;
