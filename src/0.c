@@ -873,7 +873,20 @@ K _3d(K x,K y) //'async' TCP
   S s=(V)kS(y);
   if(4==xt && !**kS(x)) R system(s)?DOE:_n();
   P(1!=xt, TE)
-  P(-1==ksender(*kI(x),y,0),DOE)
+ 
+  I res=-1;
+  if(y->t==-3)res=ksender(*kI(x),y,0);
+  else if(y->t==0 && y->n==4 && kK(y)[3]->t==7 && kK(y)[3]->n==3 && kK(kK(kK(y)[2])[CODE])[0]==(V)0x3c){
+    S sym=*kS(kK(y)[0]); I lenS=strlen(sym);
+    S cod=(S)kS(kK(kK(y)[3])[CODE]); I lenC=strlen(cod);
+    C str[lenS+lenC+4]; I i=0;
+    for(i=0;i<lenS;i++)str[i]=sym[i];
+    for(i=0;i<lenC;i++)str[i+lenS+2]=cod[i];
+    str[lenS]=':'; str[lenS+1]='{'; str[lenS+lenC+2]='}'; str[lenS+lenC+3]='\0';
+    K q=Ks(str); res=ksender(*kI(x),q,0); cd(q); }
+  else R NYI;
+
+  P(-1==res,DOE)
   R _n();
   //Communicate with 32-bit K3.2, but see _3m where handshake is purposefully broken
   //C buf[]="\001\000\000\000\020\000\000\000\375\377\377\377\007\000\000\000`0:$`hi\000";
