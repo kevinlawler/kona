@@ -879,20 +879,38 @@ K _3d(K x,K y) //'async' TCP
   else if(y->t==0 && y->n==4 && kK(y)[3]->t==7 && kK(y)[3]->n==3 && kK(y)[1]->t==0 && kK(y)[1]->n==0
     && kK(kK(kK(y)[2])[CODE])[0]==(V)offsetColon){
       S sym=*kS(kK(y)[0]); I lenS=strlen(sym);
-      S cod=(S)kS(kK(kK(y)[3])[CODE]); I lenC=strlen(cod);
+      S cod=kC(kK(kK(y)[3])[CODE]); I lenC=strlen(cod);
       C str[lenS+lenC+4]; I i=0;
       for(i=0;i<lenS;i++)str[i]=sym[i];
       for(i=0;i<lenC;i++)str[i+lenS+2]=cod[i];
       str[lenS]=':'; str[lenS+1]='{'; str[lenS+lenC+2]='}'; str[lenS+lenC+3]='\0';
       K q=Ks(str); res=ksender(*kI(x),q,0); cd(q); }
+  else if(y->t==0 && y->n==4 && kK(y)[3]->t==7 && kK(y)[3]->n==1 && kK(y)[1]->t==0 && kK(y)[1]->n==0
+    && kK(kK(kK(y)[2])[CODE])[0]==(V)offsetColon){
+      S sym=*kS(kK(y)[0]); I lenS=strlen(sym);
+      S cod=kC(_5m(kK(y)[3])); I lenC=strlen(cod);
+      C str[lenS+lenC+2]; I i=0;
+      for(i=0;i<lenS;i++)str[i]=sym[i];
+      for(i=0;i<lenC;i++)str[i+lenS+1]=cod[i];
+      str[lenS]=':'; str[lenS+lenC+1]='\0';
+      K q=Ks(str); res=ksender(*kI(x),q,0); cd(q); }
   else if(y->t==0 && y->n==3 && kK(y)[2]->t==7 && kK(y)[2]->n==3 && kK(y)[1]->t==0 && kK(y)[1]->n==0) {
     S sym=*kS(kK(y)[0]); I lenS=strlen(sym);
-    S cod=(S)kS(kK(kK(y)[2])[CODE]); I lenC=strlen(cod);
+    S cod=kC(kK(kK(y)[2])[CODE]); I lenC=strlen(cod);
     C str[(2*lenS)+lenC+4]; I i=0;
     for(i=0;i<lenS;i++)str[i]=sym[i];
     for(i=0;i<lenC;i++)str[i+lenS+2]=cod[i];
     for(i=0;i<lenS;i++)str[i+lenS+lenC+3]=sym[i];
     str[lenS]=':'; str[lenS+1]='{'; str[lenS+lenC+2]='}'; str[(2*lenS)+lenC+3]='\0';
+    K q=Ks(str); res=ksender(*kI(x),q,0); cd(q); }
+  else if(y->t==0 && y->n==3 && kK(y)[2]->t==7 && kK(y)[2]->n==1 && kK(y)[1]->t==0 && kK(y)[1]->n==0) {
+    S sym=*kS(kK(y)[0]); I lenS=strlen(sym);
+    S cod=kC(_5m(kK(y)[2])); I lenC=strlen(cod);
+    C str[(2*lenS)+lenC+2]; I i=0;
+    for(i=0;i<lenS;i++)str[i]=sym[i];
+    for(i=0;i<lenC;i++)str[i+lenS+1]=cod[i];
+    for(i=0;i<lenS;i++)str[i+lenS+lenC+1]=sym[i];
+    str[lenS]=':'; str[(2*lenS)+lenC+1]='\0';
     K q=Ks(str); res=ksender(*kI(x),q,0); cd(q); }
   else R NYI;
 
