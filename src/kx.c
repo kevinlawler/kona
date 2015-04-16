@@ -550,7 +550,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
     y=ex_(kV(x)+CONJ,2); //Use 0-type with NULLS if passing to function
     U(y); 
     if(y->t == 0 && y->n==0){cd(y); y=_n();}
-    if(fer) R y;
+    if(fer && !fCheck) R y;
   }
   z=ex0(kW(x),y,r);  //eval wd()
   cd(y);
@@ -606,7 +606,7 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
     CD: z=newK(0,n?e:0); 
         if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){         
           if(offsetColon==(v+1+i)[0] && (UI)(v+1+i)[1]>DT_SIZE)fer=1; x=ex1(v+1+i,0,&i,n,0); 
-          if(fer){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}  // (c:9;a+b;c:1) oom
+          if(fer && !fCheck){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}  // (c:9;a+b;c:1) oom
   }
 
   //Note on brackets: [] is _n, not (). Expression [1;1] (0-type with two atoms) is different from [1 1] (integer vector)
@@ -811,7 +811,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   if(!v[1] && sva(*v)) R vf_ex(*v,k);     //TODO: (,/:) and (,\:) both valence 2 
   //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
 
-  if(bk(v[1])) { K z= ex_(*v,1); if(fer==2)R (K)0;
+  if(bk(v[1])) { K z= ex_(*v,1); if(fer==2 && !fCheck)R (K)0;
     if(prnt && z->t==7) {
       if(kV(prnt)[PARAMS] && !kK(prnt)[PARAMS]->n && kV(z)[LOCALS] && !kK(z)[LOCALS]->n
          && kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n) {

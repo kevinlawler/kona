@@ -6,6 +6,7 @@ extern V offsetSSR,offsetWhat,offsetAt,offsetDot,offsetColon;
 extern I adverb_ct;
 extern V adverbs[];
 extern S fBreak;
+extern I fCheck;
 K kap(K *a,V v);
 K itemAtIndex(K a,I i);
 K ex1(V *w,K k,I *i,I n,I f);
