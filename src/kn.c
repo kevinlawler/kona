@@ -4,7 +4,7 @@
 #include "k.h"
 #include "kn.h"
 
-#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__ANDROID__)
 #include <sys/socket.h>
 #include <netinet/in.h>
 #endif
