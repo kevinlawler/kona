@@ -6,10 +6,6 @@ DEVFLAGS = -O0 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
 
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
-ifeq ($(findstring $(CC),android),)
-    OS=android
-endif
-
 # Win-64
 ifeq (mingw32_nt-6.2,$(OS))
 CC=gcc
