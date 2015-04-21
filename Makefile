@@ -27,6 +27,19 @@ OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
       src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 endif
 
+ifeq (android,$(OS))
+CC=arm-linux-androideabi-gcc
+OBJS= src/0.o src/c.o src/getline.o src/getline_android.o src/mt.o src/p.o  \
+      src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o  \
+      src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+LDFLAGS = -Wl,--gc-sections -Wl,-z,nocopyreloc -lgcc -no-canonical-prefixes \
+          -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -mthumb \
+          -lc -lm -ldl
+CFLAGS += -fpic -ffunction-sections -funwind-tables -fstack-protector \
+          -no-canonical-prefixes -mtune=xscale -msoft-float -mthumb \
+          -fomit-frame-pointer -fno-strict-aliasing
+endif
+
 ifeq (linux,$(OS))
 OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
@@ -66,7 +79,7 @@ OBJS_T= $(shell echo ${OBJS} | sed -e "s/\.o/.t.o/g")
 
 all: k k_test
 
-lib: $(LIB) 
+lib: $(LIB)
 
 $(LIB): $(OBJS) src/kapi.o
 	$(AR) crv $@ $(OBJS) src/kapi.o
@@ -100,7 +113,7 @@ TAGS: *.c *.h
 %.t.o: %.c
 	$(CC) $(CFLAGS) -c $(CPPFLAGS) -o $@ $<
 
-.PHONY: all clean install
+.PHONY: all clean install android-debug
 
 # Dependencies.
 ifeq (mingw32_nt-6.2,$(OS))
