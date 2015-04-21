@@ -359,13 +359,18 @@ K vf_ex(V q, K g)
   if(!k&&!(*(V*)q)){cd(g); R 0;}// (2="2") 2 err
 
   K h=0;  //issue #297
-  if((UI)q>DT_SIZE){ h=(K)(*(V*)q);
+  if(q>(V)DT_SIZE){ h=(K)(*(V*)q);
      if(h->t==7 && kK(h)[CODE] && kK(h)[CODE]->t==-4 && kK(h)[CODE]->n==3 && (UI)kK(kK(h)[CODE])[0]>DT_SIZE
        && (*(K*)(kS(kK(h)[CODE])[0]))->t==0 ) { z=dot(*(K*)(kS(kK(h)[CODE])[0]),g); GC; } }
 
-  if((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>(n=valence(q)) && !(!n && 1>=gn))){
-    //could remove 1>=gn condition ?
-    if(g->t==0 && g->n==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { //issue #277 
+  n=valence(q); I ee=0;
+  if(q>(V)DT_SIZE){
+    K e=*(K*)q; 
+    if(e->t==7 && e->n==1 && (V)kS(kK(e)[CODE])[0]>(V)DT_SIZE && (*(K*)kS(kK(e)[CODE])[0])->t==7){n=2; ee=1;}}
+
+  if( ((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>n && !(!n && 1>=gn)))
+      || (ee && kV(g)[0] && kV(g)[1]) ){
+    if(g->t==0 && gn==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { //issue #277 
       V w[5]; w[0]=&(kK(g)[0]); w[1]=(V)kS(kK(*(K*)q)[CODE])[0];
       w[2]=(V)offsetOver; w[3]=&(kK(g)[1]); w[4]=(V)0;
       z=overMonad(*(K*)w[0], &w[2], *(K*)w[3]); GC; }
