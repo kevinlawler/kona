@@ -32,7 +32,7 @@ __thread I frg=0;    // Flag reset globals
          S fnc=0;    // Most recent function from Dispatch Table
          V fncp[128];// DT pointers of executed functions
          I fnci=0;   // indicator of next function pointer position
-         I fom=0;    // Flag overMonad
+         I fom=0;    // Flag overMonad (curried)
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -284,8 +284,8 @@ Z K dv_ex(K a, V *p, K b)
         R demote(z); } } }
   else if(2 > k) {
     if ((UI)adverb == offsetOver) {
-      if(fom) R overMonad(kK(b)[0],p,kK(b)[1]);
-      else    R overMonad(a, p, b); }
+      if(!fom)  R overMonad(a, p, b);
+      else      R overMonad(kK(b)[0],p,kK(b)[1]); }
     if ((UI)adverb == offsetScan) R scanMonad(a, p, b);
     if ((UI)adverb == offsetEach) R each2(a, p, b); }
 
