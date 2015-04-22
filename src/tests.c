@@ -35,8 +35,8 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a); fer=0;
-  K y = X(b); fer=0;
+  K x = X(a); fer=fom=0;
+  K y = X(b); fer=fom=0;
   I m=matchI(x,y);
 
   if(!m)
@@ -590,6 +590,10 @@ Z I tests02()
   TC(2 2#0, 2<2 2#1)         //issue #299
   TC(6, m:3 4#!12; 1 m\\2)   //issue #296
   TC(2 3 7 43 1807 3263443, {x, 1+*/x}/[5;2])  //issue #277
+  TC(13, f:{x+1}; 2 f/11)                 //issue #325a
+  TC(13, f:{x+1}; f/[2;11])               //issue #325b
+  TC(13, f:{x+1}; f/[;11] 2)              //issue #325c
+  TC(1968 880, _mul[(3 5;1 3)]/[;1 0] 5)  //issue #325d
 
   R 0; 
 }

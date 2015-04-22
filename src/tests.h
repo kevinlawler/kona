@@ -20,6 +20,7 @@ extern I tests;
 extern I passed;
 extern I test_print;
 extern S lineB;
+extern I fom;
 I tc(S a,S b);
 I tp(I x);
 S ts(I x);
