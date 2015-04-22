@@ -32,6 +32,7 @@ __thread I frg=0;    // Flag reset globals
          S fnc=0;    // Most recent function from Dispatch Table
          V fncp[128];// DT pointers of executed functions
          I fnci=0;   // indicator of next function pointer position
+         I fom=0;    // Flag overMonad
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b)
@@ -282,7 +283,9 @@ Z K dv_ex(K a, V *p, K b)
         cd(a); cd(b);
         R demote(z); } } }
   else if(2 > k) {
-    if ((UI)adverb == offsetOver) R overMonad(a, p, b);
+    if ((UI)adverb == offsetOver) {
+      if(fom) R overMonad(kK(b)[0],p,kK(b)[1]);
+      else    R overMonad(a, p, b); }
     if ((UI)adverb == offsetScan) R scanMonad(a, p, b);
     if ((UI)adverb == offsetEach) R each2(a, p, b); }
 
@@ -368,12 +371,13 @@ K vf_ex(V q, K g)
     K e=*(K*)q; 
     if(e->t==7 && e->n==1 && (V)kS(kK(e)[CODE])[0]>(V)DT_SIZE && (*(K*)kS(kK(e)[CODE])[0])->t==7){n=2; ee=1;}}
 
+  if(ee && !kV(g)[0] && kV(g)[1])fom=1;
+
   if( ((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>n && !(!n && 1>=gn)))
       || (ee && kV(g)[0] && kV(g)[1]) ){
     if(g->t==0 && gn==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { //issue #277 
-      V w[5]; w[0]=&(kK(g)[0]); w[1]=(V)kS(kK(*(K*)q)[CODE])[0];
-      w[2]=(V)offsetOver; w[3]=&(kK(g)[1]); w[4]=(V)0;
-      z=overMonad(*(K*)w[0], &w[2], *(K*)w[3]); GC; }
+      V w[2]; w[0]=(V)kS(kK(*(K*)q)[CODE])[0]; w[1]=(V)offsetOver;
+      z=overMonad(kK(g)[0], &w[1], kK(g)[1]); GC; }
     else {VE; GC;} }
 
   I argc=0; DO(gn,if(kK(g)[i])argc++)

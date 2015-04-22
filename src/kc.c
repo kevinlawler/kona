@@ -236,7 +236,7 @@ cleanup:
 done:
   if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax); O("symbols  : %lld\n",nodeCount(SYMBOLS)); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
-  kerr("undescribed"); fer=fnci=0; fnc=lineA=lineB=0;
+  kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
   R c;
 }
 
@@ -419,7 +419,7 @@ cleanup:
 done:
   if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax); O("symbols  : %lld\n",nodeCount(SYMBOLS)); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
-  kerr("undescribed"); fer=fnci=0; fnc=lineA=lineB=0;
+  kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
   R c;
 }
 
