@@ -23,7 +23,7 @@ You can find an executable version of Kona [here](https://github.com/kevinlawler
 
 **Build from source**
 
-For OSX, Linux, BSD and Cygwin:
+For OSX, Linux, BSD, Cygwin and Android:
 Navigate to the directory you want to install Kona, then type:
 
     git clone https://github.com/kevinlawler/kona.git
@@ -33,6 +33,10 @@ Navigate to the directory you want to install Kona, then type:
 Then, while in the "kona" directory, run:
 
     ./k                      #./k_test for debug mode
+
+Android builds are similar, but you must set use this command when running `make`:
+
+    make OS=android
 
 For Windows: 
 Pretty much the same process, but you will need MinGW-w64 (Mingw-builds project package), and you will need MSYS (or MSYS2) for bash.  You can start up Kona from MSYS, or from a native Windows "cmd" session.  In MSYS, type "./k" or just type "k" when in the "kona" directory. When in "cmd" just type "k" as "./k" won't work.  You can also double-click on k.exe from Windows Explorer.

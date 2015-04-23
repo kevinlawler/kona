@@ -35,7 +35,7 @@ OBJS= src/0.o src/c.o src/getline.o src/getline_android.o src/mt.o src/p.o  \
 LDFLAGS = -Wl,--gc-sections -Wl,-z,nocopyreloc -lgcc -no-canonical-prefixes \
           -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -mthumb \
           -lc -lm -ldl
-CFLAGS += -fpic -ffunction-sections -funwind-tables -fstack-protector \
+CFLAGS += -fPIE -fpic -ffunction-sections -funwind-tables -fstack-protector \
           -no-canonical-prefixes -mtune=xscale -msoft-float -mthumb \
           -fomit-frame-pointer -fno-strict-aliasing
 endif
