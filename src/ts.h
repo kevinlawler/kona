@@ -92,4 +92,8 @@ typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; /
 #define dd(x) dump((I)x,"%lld")
 #define er(x) {fprintf(stderr, "%s:%u: %s\n",__FILE__, __LINE__, #x);}
 
+#ifndef WIN32
+#define __thread
+#endif
+
 #endif
