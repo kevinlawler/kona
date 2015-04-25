@@ -127,6 +127,7 @@ Z K _0d_write(K a,K b) //assumes a->t in {3,-3,4}
   I f=m[0]?open(m,O_RDWR|O_CREAT|O_TRUNC,07777):1; //stdout if m is ` or "" or "\000..." (is O_TRUNC necessary when we have ftruncate below?)
   P(f<0,DOE)
 
+  if(!strcmp(m,"/dev/fd/1") || !strcmp(m,"/dev/stdout"))f=1;
   if(1==f) //write to stdout
   {
     I r;
