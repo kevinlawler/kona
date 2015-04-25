@@ -63,8 +63,8 @@ K _0m(K a)
 
   I b=0,s=0;
   S v=0;
-  K z;
-  if(4==t && !**kS(a)){
+  K z; S m; if(3==ABS(t))m=CSK(a);
+  if( (4==t && !**kS(a)) || (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) ){
     b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);
     P(freopen_stdin() == NULL, FE)
     if(b==-1){z=newK(0,0); GC;}
