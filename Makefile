@@ -69,6 +69,13 @@ OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
 PRODFLAGS += -fast
 endif
 
+ifeq (cygwin_nt-6.3,$(OS))
+OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+      src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
+      src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+LDFLAGS = -lm
+endif
+
 ifeq (sunos,$(OS))
 LDFLAGS += -lsocket
 PRODFLAGS += -fast

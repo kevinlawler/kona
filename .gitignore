@@ -6,4 +6,5 @@ kona_test
 *.[oa]
 *.exe
 *.*~
+*~
 TAGS
