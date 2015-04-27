@@ -56,32 +56,45 @@ Z V freopen_stdin() {
 #endif
 }
 
-K _0m(K a)
-{
-  I t=a->t;
-  P(4!=t && 3!=ABS(t), TE)
+K _0m(K a) {
+  I t=a->t; P(4!=t && 3!=ABS(t), TE)
+  I b=0,s=0; S v=0; K z=0; S m; if(3==ABS(t))m=CSK(a);
 
-  I b=0,s=0;
-  S v=0;
-  K z; S m; if(3==ABS(t))m=CSK(a);
-  if( (4==t && !**kS(a)) || (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) ){
+  struct stat sb; I ff=0;
+  if(3==ABS(t)){
+    if(stat(m,&sb)==-1)R FE;
+    if((sb.st_mode & S_IFMT)==S_IFIFO)ff=1;}
+
+  if(ff){
+    I fn,i,j; C buf[256]; z=newK(0,0);
+    fn= open(m, O_RDONLY);
+    while (read(fn, &buf, 256) > 0) {
+      j=256;
+      for(i=0;i<256;i++){
+        if(i>j){buf[i]='\0'; break;}
+        if(buf[i]=='\n')j=i; }
+      K y=0;
+      if(strlen(buf)<3)y=newK(3,strlen(buf)-1);
+      else y=newK(-3,strlen(buf)-1);
+      buf[strlen(buf)-1]='\0';
+      memcpy(kC(y),&buf,strlen(buf));
+      kap(&z,&y);
+      cd(y); }
+    GC; }
+  else if( (4==t && !**kS(a)) || (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) ){
     b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);
     P(freopen_stdin() == NULL, FE)
-    if(b==-1){z=newK(0,0); GC;}
-  }
-  else
-  {
+    if(b==-1){z=newK(0,0); GC;} }
+  else {
     I f=open(CSK(a),0);
     P(f<0,DOE)
     P(stat_sz(CSK(a),&s),SE)
     if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
-    close(f);
-  }
+    close(f); }
+
   I c=s?1:0,d=0,e;
   DO(s, if('\n'==v[i] && i < s-1)c++) //1st run: count \n
-  K k;
-  z=newK(0,c);
-  if(!z) GC;
+  K k; z=newK(0,c); if(!z) GC;
   DO(s, if('\n'!=v[i])kK(z)[d]=(V)1+(L)kK(z)[d]; else d++) //2nd run: count lengths (cheat & use pointers' space)
   DO(c,e=(L)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
   e=0;
