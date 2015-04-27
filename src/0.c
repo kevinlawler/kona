@@ -123,15 +123,11 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
 
   struct stat sb; if(stat(m,&sb)==-1)R FE;
   if((sb.st_mode & S_IFMT)==S_IFIFO){                                 //write to FIFO
-    if(3==ABS(t)){
-      f=open(m,O_WRONLY);
-      S msg=kC(b); if(write(f, msg, strlen(msg)+1)==-1) R WE;
-      close(f); R _n(); }
-    else if(0==t){
-      f=open(m,O_WRONLY); S msg;
-      DO(n, if(ABS(kK(b)[i]->t)!=3) R DOE; msg=kC(kK(b)[i]); if(write(f, msg, strlen(msg)+1)==-1) R WE;)
-      close(f); R _n(); } 
-    else R DOE; }
+    f=open(m,O_WRONLY); P(f<0,DOE)
+    if(3==ABS(t)){S msg=kC(b); if(write(f, msg, strlen(msg)+1)==-1) R WE;}
+    else if(0==t){S msg; DO(n, if(ABS(kK(b)[i]->t)!=3) R DOE; msg=kC(kK(b)[i]); if(write(f, msg, strlen(msg)+1)==-1) R WE;)}
+    else {close(f); R DOE;} 
+    close(f); R _n(); }
 
   if(3==ABS(t))s=n;
   else DO(n,s+=1+kK(b)[i]->n) //0-list adds newlines
