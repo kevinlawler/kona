@@ -69,17 +69,13 @@ K _0m(K a) {
     I fn,i,j; C buf[256]; z=newK(0,0);
     fn= open(m, O_RDONLY);
     while (read(fn, &buf, 256) > 0) {
-      j=256;
+      j=256; K y=0;
       for(i=0;i<256;i++){
-        if(i>j){buf[i]='\0'; break;}
+        if(i>j){buf[j]='\0'; break;}
         if(buf[i]=='\n')j=i; }
-      K y=0;
-      if(strlen(buf)<3)y=newK(3,strlen(buf)-1);
-      else y=newK(-3,strlen(buf)-1);
-      buf[strlen(buf)-1]='\0';
+      y=newK((strlen(buf)<2)?3:-3,strlen(buf));
       memcpy(kC(y),&buf,strlen(buf));
-      kap(&z,&y);
-      cd(y); }
+      kap(&z,&y); cd(y); }
     GC; }
   else if( (4==t && !**kS(a)) || (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) ){
     b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);
