@@ -119,7 +119,6 @@ extern I PPMAX;
 extern I PP;
 extern S LS;
 extern K NIL;
-extern S PORT;
 extern S __d;
 extern I SEED;
 extern K KTREE;
@@ -129,3 +128,7 @@ extern L DT_SIZE, DT_END_OFFSET, DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VE
 extern TR DT[];
 extern L offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
 K TABLE_END();
+
+#ifdef WIN32
+extern S PORT;
+#endif

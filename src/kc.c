@@ -55,6 +55,7 @@ cleanup:
 }
 
 K KONA_ARGS; //saved values from argv[1:]
+S PORT;
 
 I args(int n,S*v) {
   K a,k; I c,len; U(KONA_ARGS=newK(0, n))

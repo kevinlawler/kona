@@ -43,7 +43,6 @@ extern K KFIXED;
 K load(S s);
 I args(int n,S *v);
 I wipe_tape(I i);
-extern S PORT;
 I attend();
 extern fd_set master;
 K wd(S s,I n);
