@@ -338,17 +338,13 @@ I attend() //K3.2 uses fcntl somewhere
 #else
 
 I check() {
-  fCheck=1;
-  kerr("undescribed");
-  prompt(1);
-  char s[300];
-  S a=0;  I n=0;  PDA q=0;
+  fCheck=1; kerr("undescribed"); prompt(1); C s[300]; S a=0; I n=0; PDA q=0;
   for(;;) {
     fgets(s, sizeof(s), stdin);
-    if(s[0]==4) exit(0);
-    if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }
+    if(s[0]==4)exit(0);             // ^D
+    if(s[0]==92 && s[1]==10)break;  // '\' and NL
     line(s, &a, &n, &q); }
-  O("\n"); fCheck=0; R 0;
+  fCheck=0; R 0;
 }
 
 PHANDLER_ROUTINE handle_SIGINT(int sig) {
