@@ -36,12 +36,11 @@ I wds_(K*a,FILE*f,I l) {
   I o=isatty(STDIN)&&f==stdin;
   if(-1==(c=getline_(&s,(size_t * __restrict__)&n,f)))GC;
   appender(&t,&m,s,n);
-  while(1==(v=complete(t,m,&p,0)))
-  { b=parsedepth(p);
+  while(1==(v=complete(t,m,&p,0))) {
+    b=parsedepth(p);
     if(o)prompt(b+l);
     if(-1==(c=getline_(&s,(size_t * __restrict__)&n,f)))GC;
-    appender(&t,&m,s,n);
-  }
+    appender(&t,&m,s,n); }
   SW(v){CS(2,show(kerr("unmatched"));GC) CS(3,show(kerr("nest")); GC)}
   z=newK(-3,m-1);
   strncpy(kC(z),t,m-1);
@@ -55,8 +54,8 @@ cleanup:
 }
 
 K KONA_ARGS; //saved values from argv[1:]
-S PORT;
-
+S IPC_PORT=0;
+S HTTP_PORT=0;
 I args(int n,S*v) {
   K a,k; I c,len; U(KONA_ARGS=newK(0, n))
   DO(n, len=strlen(v[i]); 
@@ -64,8 +63,8 @@ I args(int n,S*v) {
         strncpy(kC(a),v[i],len); 
         kK(KONA_ARGS)[i]=a )
   while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c) {
-    CS('h',  O("%d\n", atoi(optarg)); prompt(0) )
-    CS('i',  PORT=optarg)
+    CS('h',  if(IPC_PORT)O("-i accepted, cannot also have -h\n"); else HTTP_PORT=optarg)
+    CS('i',  if(HTTP_PORT)O("-h accepted, cannot also have -i\n"); else IPC_PORT=optarg)
     CS('e',  cd(X(optarg)); exit(0) )
     CS('x',  k=X(optarg); printAtDepth(0,k,0,0,0,0); O("\n"); cd(k); exit(0) )
     CSR(':', )
@@ -75,14 +74,15 @@ I args(int n,S*v) {
 }
 
 K KFIXED;
-I kinit() //oom (return bad)
-{
+I kinit() {       //oom (return bad)
   atexit(finally);
-#ifndef WIN32
+
+  #ifndef WIN32
   PG = sysconf(_SC_PAGE_SIZE);
-#else
+  #else
   SYSTEM_INFO si; GetSystemInfo(&si); PG = si.dwPageSize;
-#endif
+  #endif
+
   if(PG&(PG-1)){er(Pagesize not power of 2); exit(1);}
 
   DT_SIZE                 = DT_OFFSET(TABLE_END);
@@ -111,9 +111,11 @@ I kinit() //oom (return bad)
   NIL=Kn();
   KFIXED=newK(0,0); kap(&KFIXED,&NIL);cd(NIL);
   __d = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
-#ifdef DEBUG
+
+  #ifdef DEBUG
   test();
-#endif
+  #endif
+
   KTREE=Kd();//Initalize. Alt, KTREE=_(.,(`k;));
   K x=newEntry(sp("k"));
   kap(&KTREE,&x); cd(x);
@@ -205,9 +207,11 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if((*a)[0]=='\\')fbs=1; else fbs=0;
 
   RTIME(d,k=ex(wd(*a,*n)))
+
   #ifdef DEBUG
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
+
   if(o)show(k); cd(k);
 cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
@@ -278,68 +282,57 @@ I attend() //K3.2 uses fcntl somewhere
 
   //TODO: do we need SO_KEEPALIVE or SO_LINGER
 
-  if(PORT)
-  {
-    if ((rv = getaddrinfo(NULL, PORT, &hints, &ai)) != 0) { fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1); }
-    for(p = ai; p != NULL; p = p->ai_next)
-    {
+  if(IPC_PORT || HTTP_PORT) {
+    if(IPC_PORT){
+      if((rv=getaddrinfo(NULL, IPC_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}}
+    if(HTTP_PORT){
+      if((rv=getaddrinfo(NULL, HTTP_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}}
+    for(p = ai; p != NULL; p = p->ai_next) {
       listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
       if (listener < 0) continue;
       // lose the "address already in use" error message 
-#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
+
+      #if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
       setsockopt(listener, SOL_SOCKET, SO_REUSEADDR | SO_NOSIGPIPE , &yes, sizeof(I)); 
-#endif
+      #endif
+
       if (bind(listener, p->ai_addr, p->ai_addrlen) < 0) { close(listener); continue; }
-      break;
-    }
+      break; }
     //K3.2 k aborts/exits if port is in use. k -i 1234. OK.  k -i 1234 ->  "i\nabort\n" exit;
     if (p == NULL) { fprintf(stderr, "server: failed to bind\n"); exit(2); } 
     freeaddrinfo(ai); 
     if (listen(listener, 10) == -1) { perror("listen"); exit(3); }
     FD_SET(listener, &master);
-    fdmax = listener; 
-  }
+    fdmax = listener; }
 
-
-  for(;;) // main loop  
-  {
+  for(;;) { // main loop  
     scrLim = 0;
     read_fds = master; // copy it 
-    if (-1==select(fdmax+1,&read_fds,0,0,0)) //null timeval -> select blocks
-    {
+    if (-1==select(fdmax+1,&read_fds,0,0,0)) {  //null timeval -> select blocks
       if (errno == EINTR) { interrupted = 0; errno = 0; } //ignore, was interrupted by C-c
-      else {perror("select");exit(4);}
-    }
+      else {perror("select");exit(4);} }
     
     // run through the existing connections looking for data to read 
     for(i = 0; i <= fdmax; i++) 
-      if (FD_ISSET(i, &read_fds))
-      {
-        if(i==STDIN)
-        {
+      if (FD_ISSET(i, &read_fds)) {
+        if(i==STDIN) {
           nbytes=line(stdin,&a,&n,&q);
           if(nbytes<=0){
-            if(!PORT) exit(0); //Catch CTRL+D 
-            else FD_CLR(i,&master);} 
-        }
-        else if(i == listener) // handle new connections 
-        {
+            if(!IPC_PORT && !HTTP_PORT) exit(0); //Catch CTRL+D 
+            else FD_CLR(i,&master);} }
+        else if(i == listener) {         // handle new connections 
           addrlen = sizeof remoteaddr; 
           newfd = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
           if (newfd == -1) perror("accept"); 
-          else
-          {
+          else  {
             wipe_tape(newfd); //new conn needs this since connections can die without notification (right?)
             FD_SET(newfd, &master); // add to master set 
             if (newfd > fdmax) fdmax = newfd;
-            setsockopt(newfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I)); //disable nagle
-            //printf("server: new connection from %s on socket %d\n", inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN), newfd);
-          }
-        } 
+            setsockopt(newfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I)); } }//disable nagle
+            //printf("server: new connection from %s on socket %d\n", inet_ntop(remoteaddr.ss_family, 
+            //        get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN), newfd);
         else if(a) continue; //K3.2 blocks if in the middle of processing the command-line (should we sleep here?)
-        else read_tape(i,0);
-      }
-  }
+        else read_tape(i,0); } }
 }
 
 #else
@@ -354,8 +347,7 @@ I check() {
     fgets(s, sizeof(s), stdin);
     if(s[0]==4) exit(0);
     if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }
-    line(s, &a, &n, &q);
-  }
+    line(s, &a, &n, &q); }
   O("\n"); fCheck=0; R 0;
 }
 
@@ -393,9 +385,11 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
   RTIME(d,k=ex(wd(*a,*n)))
   status = pthread_mutex_unlock(&execute_mutex); 
   if(status != 0) {perror("Unlock mutex in line()"); abort();}
-#ifdef DEBUG
+
+  #ifdef DEBUG
   if(o&&k)O("Elapsed: %.7f\n",d);
-#endif
+  #endif
+
   if(o)show(k); cd(k);
 cleanup:
   if(strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
@@ -435,8 +429,7 @@ void *socket_thread(void *arg) {
   int err = WSAStartup(MAKEWORD(2,2), &wsaData);
   if(err != 0) O("WSAStartup failed with error: %d\n",err);
   if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2){  //verify
-    O("Could not find useable version of Winsock.dll\n"); exit(1);
-  }
+    O("Could not find useable version of Winsock.dll\n"); exit(1); }
 
   // create socket for server
   struct addrinfo *result=NULL, *ptr=NULL, hints; 
@@ -446,10 +439,11 @@ void *socket_thread(void *arg) {
   hints.ai_protocol = IPPROTO_TCP;
   hints.ai_flags =    AI_PASSIVE;
 
-  // resolve local address and port 
-  if ((rv = getaddrinfo(NULL, PORT, &hints, &result)) != 0) {
-    O("server: %s\n", gai_strerror(rv)); exit(1); 
-  }
+  // resolve local address and port
+  if(IPC_PORT){
+    if((rv = getaddrinfo(NULL, IPC_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
+  if(HTTP_PORT){
+    if((rv = getaddrinfo(NULL, HTTP_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
 
   // create listener with socket()
   listener = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
@@ -459,14 +453,11 @@ void *socket_thread(void *arg) {
   int bRes = bind(listener, result->ai_addr, (int)result->ai_addrlen);
   if(bRes == SOCKET_ERROR) {
      O("bind failed with error: %d\n", WSAGetLastError());
-     freeaddrinfo(result); exit(1);
-  }
+     freeaddrinfo(result); exit(1); }
   if (ptr == NULL)  ;  //eliminates unused variable warning
   freeaddrinfo(result);
     
-  if (listen(listener, 10) == SOCKET_ERROR) { 
-    O("listen() failed with error: %ld\n", WSAGetLastError()); exit(3); 
-  } 
+  if(listen(listener, 10)==SOCKET_ERROR){O("listen() failed with error: %ld\n", WSAGetLastError()); exit(3);} 
   else FD_SET(listener, &master);
 
   SOCKET SockSet[10]; 
@@ -485,9 +476,7 @@ void *socket_thread(void *arg) {
       if(SockSet[nxt]==INVALID_SOCKET) exit(4); 
       else {
         FD_SET(SockSet[nxt], &master); nfd++; 
-        if(!free) {nca++; nxt=nca;}
-      }
-    } 
+        if(!free) {nca++; nxt=nca;} } } 
     else {
       for(i=0; i<nca; i++) {
         if(FD_ISSET(SockSet[i], &read_fds)) {
@@ -495,41 +484,30 @@ void *socket_thread(void *arg) {
           if(z) {
             FD_CLR(SockSet[i], &master); FD_ZERO(&read_fds);
             closesocket(SockSet[i]); SockSet[i]=INVALID_SOCKET;
-            wipe_tape(i); nfd--;
-          }
-        }
-      }        
-    }
+            wipe_tape(i); nfd--; } } } }
     free=0;
-    for(i=0; i<nca; i++) {
-      if(SockSet[i]==INVALID_SOCKET) {free=1; nxt=i; break;}
-    }
-  }   
+    for(i=0; i<nca; i++) {if(SockSet[i]==INVALID_SOCKET) {free=1; nxt=i; break;} } }   
   R 0;     
 }
 
-I attend()
-{
+I attend() {
   S a=0;I n=0; PDA q=0; //command-line processing variables
   
   //set up SIGINT handler, so C-c can break infinite loops cleanly
   SetConsoleCtrlHandler((PHANDLER_ROUTINE)handle_SIGINT, TRUE);
 
-  if(PORT) {
+  if(IPC_PORT || HTTP_PORT) {
      int status;
      pthread_t thread;
      status = pthread_create(&thread, NULL, socket_thread, NULL);
-     if (status != 0) {perror("Create socket thread"); abort();}
-  }
+     if (status != 0) {perror("Create socket thread"); abort();} }
   for(;;) {   // main loop for Windows stdin
     scrLim = 0;  
     char s[300]; 
     for(;;) {
       fgets(s, sizeof(s), stdin);
       if(s[0]==4) exit(0);
-      line(s, &a, &n, &q);
-    }    
-  }
+      line(s, &a, &n, &q); } }
   R 0;
 }     
 
