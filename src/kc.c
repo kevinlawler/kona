@@ -277,6 +277,7 @@ I attend() //K3.2 uses fcntl somewhere
   hints.ai_family = AF_UNSPEC; 
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
+  hints.ai_protocol = 0;             //explicitly state "any protocol"
 
   FD_SET(STDIN, &master);
 
