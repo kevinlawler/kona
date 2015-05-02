@@ -286,6 +286,7 @@ I attend() //K3.2 uses fcntl somewhere
     if(IPC_PORT){
       if((rv=getaddrinfo(NULL, IPC_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}}
     if(HTTP_PORT){
+      O("HTTP_PORT recognized\n");
       if((rv=getaddrinfo(NULL, HTTP_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}}
     for(p = ai; p != NULL; p = p->ai_next) {
       listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
@@ -321,6 +322,7 @@ I attend() //K3.2 uses fcntl somewhere
             if(!IPC_PORT && !HTTP_PORT) exit(0); //Catch CTRL+D 
             else FD_CLR(i,&master);} }
         else if(i == listener) {         // handle new connections 
+          if(HTTP_PORT)O("listener activated on HTTP_PORT\n");
           addrlen = sizeof remoteaddr; 
           newfd = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
           if (newfd == -1) perror("accept"); 
