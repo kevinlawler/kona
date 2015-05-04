@@ -10,6 +10,7 @@ K cd(K a);
 I wipe_tape(I i);
 void *get_in_addr(struct sockaddr *sa);
 extern pthread_mutex_t execute_mutex;
+extern S HTTP_PORT;
 
 #ifndef WIN32
 K read_tape(I i,I type);

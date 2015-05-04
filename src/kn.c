@@ -38,6 +38,7 @@ K read_tape(I i, I type) // type in {0,1} -> {select loop, 4: resp reader}
     else perror("recv");
     GC;
   }
+  if(HTTP_PORT){send(i,b,nbytes,0);  GC;}
   //fill struct data + k data
   CP[i].r += nbytes; //DO(nbytes, O("b%lld : %o\n",i,(UC)b[i])) 
   if(m == CP[i].r) //We've read enough bytes to fill our struct m1 with transmission data (it's also the _db header)

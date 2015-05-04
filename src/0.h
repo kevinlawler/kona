@@ -48,5 +48,4 @@ K _0m(K a);
 K read_tape(I i,I type);
 #else
 K read_tape(I i,I j,I type);
-extern S PORT;
 #endif

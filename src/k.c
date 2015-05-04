@@ -34,7 +34,8 @@ K KTREE;  //dictionary, the main/global variable storage area
 I SEED;   //seed for PRNG
 S __d;    //sym: handle of current K-Tree dictionary / mth: thread-local storage
 
-S PORT;
+S IPC_PORT;
+S HTTP_PORT;
 
 K NIL;    //Useful to avoid actually allocating _n nils (use _n() instead)
 

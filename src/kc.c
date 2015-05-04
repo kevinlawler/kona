@@ -54,8 +54,7 @@ cleanup:
 }
 
 K KONA_ARGS; //saved values from argv[1:]
-S IPC_PORT=0;
-S HTTP_PORT=0;
+
 I args(int n,S*v) {
   K a,k; I c,len; U(KONA_ARGS=newK(0, n))
   DO(n, len=strlen(v[i]); 
@@ -63,8 +62,8 @@ I args(int n,S*v) {
         strncpy(kC(a),v[i],len); 
         kK(KONA_ARGS)[i]=a )
   while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c) {
-    CS('h',  if(IPC_PORT)O("-i accepted, cannot also have -h\n"); else HTTP_PORT=optarg)
-    CS('i',  if(HTTP_PORT)O("-h accepted, cannot also have -i\n"); else IPC_PORT=optarg)
+    CS('h',  if(IPC_PORT)O("-i accepted, cannot also have -h\n"); else HTTP_PORT=optarg;)
+    CS('i',  if(HTTP_PORT)O("-h accepted, cannot also have -i\n"); else IPC_PORT=optarg;)
     CS('e',  cd(X(optarg)); exit(0) )
     CS('x',  k=X(optarg); printAtDepth(0,k,0,0,0,0); O("\n"); cd(k); exit(0) )
     CSR(':', )
@@ -277,18 +276,16 @@ I attend() //K3.2 uses fcntl somewhere
   hints.ai_family = AF_UNSPEC; 
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
-  hints.ai_protocol = 0;             //explicitly state "any protocol"
 
   FD_SET(STDIN, &master);
 
   //TODO: do we need SO_KEEPALIVE or SO_LINGER
 
   if(IPC_PORT || HTTP_PORT) {
-    if(IPC_PORT){
-      if((rv=getaddrinfo(NULL, IPC_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}}
-    if(HTTP_PORT){
-      O("HTTP_PORT recognized\n");
-      if((rv=getaddrinfo(NULL, HTTP_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}}
+    if(IPC_PORT)
+      if((rv=getaddrinfo(NULL, IPC_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}
+    if(HTTP_PORT)
+      if((rv=getaddrinfo(NULL, HTTP_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}
     for(p = ai; p != NULL; p = p->ai_next) {
       listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
       if (listener < 0) continue;
@@ -323,7 +320,6 @@ I attend() //K3.2 uses fcntl somewhere
             if(!IPC_PORT && !HTTP_PORT) exit(0); //Catch CTRL+D 
             else FD_CLR(i,&master);} }
         else if(i == listener) {         // handle new connections 
-          if(HTTP_PORT)O("listener activated on HTTP_PORT\n");
           addrlen = sizeof remoteaddr; 
           newfd = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
           if (newfd == -1) perror("accept"); 
@@ -439,10 +435,8 @@ void *socket_thread(void *arg) {
   hints.ai_flags =    AI_PASSIVE;
 
   // resolve local address and port
-  if(IPC_PORT){
-    if((rv = getaddrinfo(NULL, IPC_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
-  if(HTTP_PORT){
-    if((rv = getaddrinfo(NULL, HTTP_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
+  if(IPC_PORT){if((rv==getaddrinfo(NULL, IPC_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
+  if(HTTP_PORT){if((rv==getaddrinfo(NULL, HTTP_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
 
   // create listener with socket()
   listener = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
