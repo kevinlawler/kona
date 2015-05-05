@@ -121,8 +121,8 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
   P(!ok_0dw(b),TE)
   S m=CSK(a); I s=0,f;
 
-  struct stat sb; if(stat(m,&sb)==-1)R FE;
-  if((sb.st_mode & S_IFMT)==S_IFIFO){                                 //write to FIFO
+  struct stat sb;
+  if(stat(m,&sb)!=-1 && (sb.st_mode & S_IFMT)==S_IFIFO){                                 //write to FIFO
     f=open(m,O_WRONLY); P(f<0,DOE)
     if(3==ABS(t)){S msg=kC(b); if(write(f, msg, strlen(msg)+1)==-1) R WE;}
     else if(0==t){S msg; DO(n, if(ABS(kK(b)[i]->t)!=3) R DOE; msg=kC(kK(b)[i]); if(write(f, msg, strlen(msg)+1)==-1) R WE;)}
