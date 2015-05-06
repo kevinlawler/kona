@@ -540,12 +540,11 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\' && (s[k-1]==' ' || s[k-1]==';')){z=(V)0x7c; break;} //check for trace or scan
-                      if(s[k]==':'){   //check for return
-                        if(lineB && lineB[strlen(lineB)-1]!=']' && lineB[0]!=')' && s[strlen(s)-1]!=':'){
-                          I i=0; I c=0;
-                          for(i=k-1;i>0;i--){if(s[i]!=' '){c=s[i];break;}}
-                          if(c==';')z=(V)0x7d;
-                          if(z==(V)0x7d) break; } }
+                      if(s[k]==':' && s[strlen(s)-1]!=':' && lineB && lineB[strlen(lineB)-1]!=']' && lineB[0]!=')'){
+                        I i=0; I c=0;
+                        for(i=k-1;i>0;i--){if(s[i]!=' '){c=s[i];break;}}
+                        if(c==';')z=(V)0x7d;
+                        if(z==(V)0x7d) break; }
                       if('_'==s[k] && r > 1)
                       {
                         if(k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r]) R (L)PE;
