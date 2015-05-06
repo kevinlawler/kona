@@ -132,6 +132,7 @@ Z I tests02()
   TC((1;"valence"),@[.:;"+[1;2;;;]";:])
   TC(skip, (1;"valence"), .[+[1;2;;;]; 5;:] ) //fill in error trap //this has a problem?  +[1;2;;;;] causing valence when shouldn't?
   TC((1;"type"), .[+;(1;`b);:])
+  TC(0 43, b:.[+;(1;42);:]; b)
 
   TC({x+y}[1;],{x+y}[1;])
   TC({x+y}[;1],{x+y}[;1])
