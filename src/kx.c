@@ -559,7 +559,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
     y=ex_(kV(x)+CONJ,2); //Use 0-type with NULLS if passing to function
     U(y); 
     if(y->t == 0 && y->n==0){cd(y); y=_n();}
-    if(fer && !fCheck) R y;
+    if(fer>0 && !fCheck) R y;
   }
   z=ex0(kW(x),y,r);  //eval wd()
   cd(y);
@@ -590,12 +590,12 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
                 if(encf){cd(encf); encf=0;} 
                 if(grnt){cd(grnt); grnt=0;}} 
               U(x) z=bk(x)?_n():x; 
-              if(fer)R z; 
+              if(fer>0)R z; 
               if(grnt && (!prnt || prnt->c==2)){if(prnt)cd(prnt); prnt=ci(grnt);} })
     CS(4, for(i=-1;i<n;i++)
             if(-1==i||bk(v[i])){
               U(x=ex1(v+1+i,0,&i,n,1)) 
-              if(fer)R x; x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); 
+              if(fer>0)R x; x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); 
               if(i==n) R x; z=delist(x); 
               if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;} a=*kI(z);cd(z); 
               if(a){x=ex1(v+i+1,0,&i,n,1); R x=bk(x)?_n():x;} 
@@ -604,18 +604,18 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
     CSR(5,)
     CSR(6,)
     CS(7, do{I i=0; U(x=ex1(v,0,&i,0,1)) 
-            if(fer)R x; x=bk(x)?_n():x; z=delist(x); 
+            if(fer>0)R x; x=bk(x)?_n():x; z=delist(x); 
             if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;} a=*kI(z);cd(z); i=0;
             if(b){while(++i<n&&!bk(v[i])); if(i>=n)break;}
             SW(r){CSR(5,)
-                  CS(6,if(a&&b){x=ex0(v+i+1,0,0); if(fer)R x; cd(x);})
-                  CS(7,DO2(a, x=ex0(v+i+1,0,0); if(fer)R x; cd(x);))}}
+                  CS(6,if(a&&b){x=ex0(v+i+1,0,0); if(fer>0)R x; cd(x);})
+                  CS(7,DO2(a, x=ex0(v+i+1,0,0); if(fer>0)R x; cd(x);))}}
           while(6==r && a); 
           R _n())
     CD: z=newK(0,n?e:0); 
         if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){         
           if(offsetColon==(v+1+i)[0] && (UI)(v+1+i)[1]>DT_SIZE)fer=1; x=ex1(v+1+i,0,&i,n,0); 
-          if(fer && !fCheck){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}  // (c:9;a+b;c:1) oom
+          if(fer>0 && !fCheck){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}  // (c:9;a+b;c:1) oom
   }
 
   //Note on brackets: [] is _n, not (). Expression [1;1] (0-type with two atoms) is different from [1 1] (integer vector)
@@ -855,7 +855,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(1!=sva(v[1])){d=ex1(v+(offsetColon==v[1]?2:3),k,0,0,1); }   // oom -- except it's ok for d to be 0 elsewhere
     d=bk(d)?0:d;
 
-    if(fer) { cd(c); cd(d); cd(b); R _n(); }
+    if(fer>0) { cd(c); cd(d); cd(b); R _n(); }
 
     if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5 || ABS(d->t)!=d->t)) ){
       K x = d;
@@ -876,7 +876,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   while(v[1] && adverbClass(v[2+i])) i++;
   //TODO: Catch 0-returned-errors here and below
   if(!sva(v[0]) && (i || 2==sva(v[1]))) {  //na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
-    t2=ex2(v+2+i,k); if(fer && strcmp(errmsg,"undescribed")) R t2;
+    t2=ex2(v+2+i,k); if(fer>0 && strcmp(errmsg,"undescribed")) R t2;
        //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
     if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3) {
@@ -893,7 +893,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;.  
             //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3;
-    t0=ex_(*v,1); if(fer && strcmp(errmsg,"undescribed")){cd(t2); R(t0);}
+    t0=ex_(*v,1); if(fer>0 && strcmp(errmsg,"undescribed")){cd(t2); R(t0);}
     if(!prnt && t0->t==7 && t0->n==3){if(prnt)cd(prnt); prnt=ci(t0);}
     e= dv_ex(t0,v+1+i,t2); v[1]=u; cd(t0); cd(t2); if(!VA(t3)) cd(t3);
     R e; }

@@ -254,6 +254,7 @@ K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
       strcpy(kC(e),errmsg);
       kK(d)[1]=e;
     }
+    fer=-1;
     R demote(d);
   }
 

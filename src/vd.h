@@ -35,3 +35,4 @@ K at_verb(K a,K b);
 extern S fnc;
 extern V fncp[128];
 extern I fnci;
+extern I fer;
