@@ -146,6 +146,7 @@ S recur(S s){
     {f=1; break;} } //find begin :{ which is i
   if(!f) R NULL;
   for(j=i-1;j>=0;j--){ if(!isalnum(s[j])) break; } //find begin-name, which is j+1
+  if(isdigit(s[j+1])) R NULL;
   for(k=i+2;k<sl;k++){ if(s[k]=='{')c++; if(s[k]=='}')c--; if(!c)break; } //find end-} which is k
   I n=1+(i-1)-(j+1); char nm[n+1]; strncpy(nm, s+i-n, n); nm[n]='\0'; //n is strlen(nm)
   I m=k-i-2; char st[m+1]; strncpy(st, s+i+2, m); st[m]='\0'; //m is strlen(st)
