@@ -958,12 +958,13 @@ K popen_charvec(S cmd) {
 #endif
 
 K _4d_(K x,K y){
-  I sockfd=*kI(_3m(x)); I n=strlen(kC(y));   C msg[n+4]; I i=0;
+  I n=strlen(kC(y)); C msg[n+4]; I i=0;
   for(i=0;i<n;i++){msg[i]=kC(y)[i];}
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n';
-  if(write(sockfd, &msg, strlen(msg)+4)==-1) R WE;
+  I sockfd=*kI(_3m(x));
+  if(write(sockfd, &msg, strlen(msg)+4)==-1){close(sockfd); R WE;}
   C buf[20000]; I r=read(sockfd,&buf,20000); close(sockfd); buf[r]='\0';
-  K z=newK(-3,r+2); memcpy(kC(z),&buf,r+2);
+  K z=newK(-3,r+1); memcpy(kC(z),&buf,r+1);
   R z;
 }
 
