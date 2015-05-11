@@ -957,26 +957,35 @@ K popen_charvec(S cmd) {
 }
 #endif
 
-K _4d(K x,K y) //see _3d
-{
-  if (4==xt && !**kS(x) && -3==y->t) { // `4:"ls" -> lines from popen("ls", "r"), blocking
-    return popen_charvec(kC(y));
-  }
+K _4d(K x,K y) {      //see _3d
+  if (4==xt && !**kS(x) && -3==y->t) { R popen_charvec(kC(y)); } // `4:"ls" -> lines from popen("ls", "r"), blocking
+
+  I sockfd=-1;
+  if(0==xt && 4==kK(x)[0]->t && 1==kK(x)[1]->t && 80==*kI(kK(x)[1]) && isdigit(**kS(kK(x)[0]))) {  // (`"173.194.43.80",80) 4: "msg"
+    sockfd=*kI(_3m(x)); I n=strlen(kC(y));   C msg[n+4]; I i=0;
+    for(i=0;i<n;i++){msg[i]=kC(y)[i];}
+    msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n';
+    if(write(sockfd, &msg, strlen(msg)+4)==-1) R WE;
+    C buf[20000]; I r=read(sockfd,&buf,20000); close(sockfd); buf[r]='\0';
+    K z=newK(-3,r+2); memcpy(kC(z),&buf,r+2);
+    R z; }
 
   P(1!=xt, TE)
-  I sockfd = *kI(x);
+  sockfd = *kI(x);
   P(-1==ksender(sockfd,y,1),DOE)
   K z=0;
-#ifndef WIN32
+
+  #ifndef WIN32
   while(!(z=read_tape(sockfd,1))){}
-#else
+  #else
   while(!(z=read_tape(0,sockfd,1))){}
-#endif
+  #endif
+
   P(!z || z==(K)-1,DOE)
   R z;
 }
-K _4m(K x){R Ki(x->t);}
 
+K _4m(K x){R Ki(x->t);}
 
 K _5m(K x)
 {
