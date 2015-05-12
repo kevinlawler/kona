@@ -957,7 +957,9 @@ K popen_charvec(S cmd) {
 }
 #endif
 
-K getaddr(K x){ R NYI; }
+K getAddr(S x){ R Ks(sp("173.194.43.80")); }
+
+K getPort(S x){ R Ki(80); }
 
 K _4d_(K x,K y){
   I n=strlen(kC(y)); C msg[n+4]; I i=0;
@@ -983,12 +985,12 @@ K _4d(K x,K y) {      //see _3d
     P(!z || z==(K)-1,DOE)    R z;}
 
   if(-4==xt && 2==xn && !strcmp(kS(x)[1],"http")) {
-    if(isalpha(*kS(x)[0])) R getaddr(x);
-    if(isdigit(*kS(x)[0])) R _4d_(join(drop_cut(Ki(-1),x),Ki(80)),y); }
+    if(isalpha(*kS(x)[0])) R _4d_(join(getAddr(kS(x)[0]),getPort(kS(x)[1])),y);     //(`"www.google.com";`http)
+    if(isdigit(*kS(x)[0])) R _4d_(join(drop_cut(Ki(-1),x),getPort(kS(x)[1])),y); }  //(`"173.194.43.80";`http)
 
-  if(0==xt && 4==kK(x)[0]->t && 1==kK(x)[1]->t && (80==*kI(kK(x)[1]) || 8080==*kI(kK(x)[1]))) {
-    if(isalpha(**kS(kK(x)[0]))) R getaddr(x);
-    if(isdigit(**kS(kK(x)[0]))) R _4d_(x,y); }
+  if(0==xt && 4==kK(x)[0]->t && 1==kK(x)[1]->t && 0<=*kI(kK(x)[1])) {             
+    if(isalpha(**kS(kK(x)[0]))) R _4d_(join(getAddr(kS(x)[0]),kK(x)[1]),y);         //(`"www.google.com";80)
+    if(isdigit(**kS(kK(x)[0]))) R _4d_(x,y); }                                      //(`"173.194.43.80";80)
 
   R TE;
 }
