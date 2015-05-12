@@ -957,6 +957,8 @@ K popen_charvec(S cmd) {
 }
 #endif
 
+K getaddr(K x){ R NYI; }
+
 K _4d_(K x,K y){
   I n=strlen(kC(y)); C msg[n+4]; I i=0;
   for(i=0;i<n;i++){msg[i]=kC(y)[i];}
@@ -980,10 +982,13 @@ K _4d(K x,K y) {      //see _3d
     #endif
     P(!z || z==(K)-1,DOE)    R z;}
 
-  if(-4==xt && 2==xn && isdigit(*kS(x)[0]) && !strcmp(kS(x)[1],"http")) R _4d_(join(drop_cut(Ki(-1),x),Ki(80)),y);
+  if(-4==xt && 2==xn && !strcmp(kS(x)[1],"http")) {
+    if(isalpha(*kS(x)[0])) R getaddr(x);
+    if(isdigit(*kS(x)[0])) R _4d_(join(drop_cut(Ki(-1),x),Ki(80)),y); }
 
-  if(0==xt && 4==kK(x)[0]->t && 1==kK(x)[1]->t && isdigit(**kS(kK(x)[0])) && (80==*kI(kK(x)[1]) || 8080==*kI(kK(x)[1])))
-    R _4d_(x,y);
+  if(0==xt && 4==kK(x)[0]->t && 1==kK(x)[1]->t && (80==*kI(kK(x)[1]) || 8080==*kI(kK(x)[1]))) {
+    if(isalpha(**kS(kK(x)[0]))) R getaddr(x);
+    if(isdigit(**kS(kK(x)[0]))) R _4d_(x,y); }
 
   R TE;
 }
