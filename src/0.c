@@ -957,24 +957,26 @@ K popen_charvec(S cmd) {
 }
 #endif
 
-K getAddr(S x){ R Ks(sp("173.194.43.80")); }
-
-K getPort(S x){ R Ki(80); }
-
-K _4d_(K x,K y){
-  I n=strlen(kC(y)); C msg[n+4]; I i=0;
-  for(i=0;i<n;i++){msg[i]=kC(y)[i];}
+K _4d_(S srvr,S port,K y){
+  struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr;
+  memset(&hints,0,sizeof hints); hints.ai_family=AF_UNSPEC; hints.ai_socktype=SOCK_STREAM;
+  if(rv=getaddrinfo(srvr,port,&hints,&servinfo)!=0){fprintf(stderr,"conn: %s\n",gai_strerror(rv)); R DOE;}
+  for(p=servinfo; p!=NULL; p=p->ai_next)
+    if((sockfd=socket(p->ai_family,p->ai_socktype,p->ai_protocol))==-1)continue;
+    else if(connect(sockfd,p->ai_addr,p->ai_addrlen)==-1){errstr=strerror(errno); close(sockfd); continue;}
+    else break;
+  if(p==NULL){fprintf(stderr, "conn: failed to connect (%s)\n",errstr); freeaddrinfo(servinfo); R DOE;}
+  I n=strlen(kC(y)); C msg[n+4]; I i=0; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n';
-  I sockfd=*kI(_3m(x));
   if(write(sockfd, &msg, strlen(msg)+4)==-1){close(sockfd); R WE;}
-  C buf[20000]; I r=read(sockfd,&buf,20000); close(sockfd); buf[r]='\0';
-  K z=newK(-3,r+1); memcpy(kC(z),&buf,r+1);
+  C buf[20000]; n=read(sockfd,&buf,20000); close(sockfd); buf[n]='\0';
+  K z=newK(-3,n+1); memcpy(kC(z),&buf,n+1);
+  freeaddrinfo(servinfo);
   R z;
 }
 
 K _4d(K x,K y) {      //see _3d
   if (4==xt && !**kS(x) && -3==y->t) { R popen_charvec(kC(y)); } // `4:"ls" -> lines from popen("ls", "r"), blocking
-
   if(1==xt){
     I sockfd=*kI(x); P(-1==ksender(sockfd,y,1),DOE)   K z=0;
     #ifndef WIN32
@@ -983,15 +985,10 @@ K _4d(K x,K y) {      //see _3d
     while(!(z=read_tape(0,sockfd,1))){}
     #endif
     P(!z || z==(K)-1,DOE)    R z;}
-
-  if(-4==xt && 2==xn && !strcmp(kS(x)[1],"http")) {
-    if(isalpha(*kS(x)[0])) R _4d_(join(getAddr(kS(x)[0]),getPort(kS(x)[1])),y);     //(`"www.google.com";`http)
-    if(isdigit(*kS(x)[0])) R _4d_(join(drop_cut(Ki(-1),x),getPort(kS(x)[1])),y); }  //(`"173.194.43.80";`http)
-
-  if(0==xt && 4==kK(x)[0]->t && 1==kK(x)[1]->t && 0<=*kI(kK(x)[1])) {             
-    if(isalpha(**kS(kK(x)[0]))) R _4d_(join(getAddr(kS(x)[0]),kK(x)[1]),y);         //(`"www.google.com";80)
-    if(isdigit(**kS(kK(x)[0]))) R _4d_(x,y); }                                      //(`"173.194.43.80";80)
-
+  if(-4==xt && 2==xn) R _4d_(kS(x)[0],kS(x)[1],y);      //(`"www.google.com";`http) or (`"173.194.43.80";`http)
+  if(0==xt && 4==kK(x)[0]->t && 1==kK(x)[1]->t && 0<=*kI(kK(x)[1])){  //`"www.google.com";80) or (`"173.194.43.80";80)
+    C port[6]; int n=snprintf(port,6,"%lld",*kI(kK(x)[1])); if(n>=6) R WE;
+    R _4d_(*kS(kK(x)[0]),port,y); }
   R TE;
 }
 
