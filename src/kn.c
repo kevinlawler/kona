@@ -28,10 +28,14 @@ Z I close_tape(I i) { wipe_tape(i); close(i); FD_CLR(i, &master); R 0;}
 
 K read_tape(I i, I type) // type in {0,1} -> {select loop, 4: resp reader}
 {
+  I nbytes=0;
+  if(HTTP_PORT){C buf[128]; nbytes=recv(i,buf,128,0);
+    if(nbytes <= 0) {if (nbytes == 0); else perror("recv"); GC; }
+    send(i,buf,nbytes,0); GC; }
   I c=CP[i].r, m=sizeof(M1),g; K z=0;
   S b = c<m?c+(S)&CP[i].m1:c+kC(CP[i].k); 
   g = c<m?m-c:CP[i].m1.n; 
-  I nbytes = recv(i,b,g,0); 
+  nbytes = recv(i,b,g,0); 
   if(nbytes <= 0)
   {
   if (nbytes == 0);//printf("server: socket %lld hung up\n", i);
