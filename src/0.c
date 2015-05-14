@@ -966,11 +966,11 @@ K _4d_(S srvr,S port,K y){
     else if(connect(sockfd,p->ai_addr,p->ai_addrlen)==-1){errstr=strerror(errno); close(sockfd); continue;}
     else break;
   if(p==NULL){fprintf(stderr, "conn: failed to connect (%s)\n",errstr); freeaddrinfo(servinfo); R DOE;}
-  I n=strlen(kC(y)); C msg[n+4]; I i=0; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
-  msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n';
-  if(write(sockfd, &msg, strlen(msg)+4)==-1){close(sockfd); R WE;}
-  C buf[20000]; n=read(sockfd,&buf,20000); close(sockfd); buf[n]='\0';
-  K z=newK(-3,n+1); memcpy(kC(z),&buf,n+1);
+  I n=strlen(kC(y)); C msg[n+5]; I i=0; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
+  msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
+  if(write(sockfd, &msg, strlen(msg))==-1){close(sockfd); R WE;}
+  C buf[20000]; n=read(sockfd,&buf,20000); close(sockfd);
+  K z=newK(-3,n); memcpy(kC(z),&buf,n);
   freeaddrinfo(servinfo);
   R z;
 }
