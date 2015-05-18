@@ -9,13 +9,7 @@
 
 /* misc verbs */
 
-Z I updateIndex(K *p,I x,K r);
-Z K lookupEntryOrCreate(K *p,S k);
-Z S notsp(S a);
-Z I isDotDyadic(K x);
-
-K itemAtIndex(K a, I i)// Return i-th item from any type as K - TODO: oom wherever this is used
-{
+K itemAtIndex(K a, I i) {   // Return i-th item from any type as K - TODO: oom wherever this is used
   I at=a->t;
   if( 0< at)R ci(a);
   if(-4==at)R Ks(kS(a)[i]);  //could refactor all this
@@ -52,7 +46,18 @@ K   EV(K e){R *EVP(e);}             //dictionary entry's stored value
 
 //Weird: Found some bug in K3.2 were running .` would add a copy of the entries in the root of the K tree every time. 
 //Not sure how to reproduce
-//K* denameBig(K dir_sym,K name_sym){R denameS(*kS(dir_sym),*kS(name_sym));} //[unnecessary?] wrapper for K-object inputs
+
+Z K lookupEntryOrCreate(K *p, S k) {    //****only *dict or *_n are passed to here
+  K a=*p, x;
+  if(5==a->t) if((x=DE(a,k))) R x;
+  P(!strlen(k),TE) //TODO verify this noting `. is not `
+  P(strchr(k,'.'),DOE)
+  x=newEntry(k);
+  if(6==a->t){cd(*p); *p=newK(5,0);} //mm/o is this done right?
+  kap(p,&x); //oom
+  cd(x);
+  R x;
+}
 
 Z K* denameRecurse(K*p,S t,I create) {
   if(!*t)R p;
@@ -86,21 +91,13 @@ K* denameS(S dir_string, S t, I create) {
   //duplicates '.' functionality in denameD to avoid dictionary initialization
 }
 
-Z K lookupEntryOrCreate(K *p, S k) {    //****only *dict or *_n are passed to here
-  K a=*p, x;
-  if(5==a->t) if((x=DE(a,k))) R x;
-  P(!strlen(k),TE) //TODO verify this noting `. is not `
-  P(strchr(k,'.'),DOE)
-  x=newEntry(k);
-  if(6==a->t){cd(*p); *p=newK(5,0);} //mm/o is this done right?
-  kap(p,&x); //oom
-  cd(x);
-  R x;
-}
+//K* denameBig(K dir_sym,K name_sym){R denameS(*kS(dir_sym),*kS(name_sym));} //[unnecessary?] wrapper for K-object inputs
 
 K* lookupEVOrCreate(K *p, S k){K x=lookupEntryOrCreate(p,k); R x?EVP(x):0; } //mm/o
-
 K lookup(K a, S b){K x=DE(a,b); R x?EV(x):_n();} 
+Z I isVerbDyadic(K x,V v){R xt==7 && kW(x)[0]==v && !kW(x)[1];}
+I isColonDyadic(K x){R isVerbDyadic(x,offsetColon);}
+Z I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
 
 //TODO: oom at_verb everywhere
 K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/directory & b is executable string like "1+1+c"
@@ -203,15 +200,14 @@ Z I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
   R 0;
 }
 
-Z I isVerbDyadic(K x,V v){R xt==7 && kW(x)[0]==v && !kW(x)[1];}
-I isColonDyadic(K x){R isVerbDyadic(x,offsetColon);}
-Z I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
-
 K specialAmendDot(K c, K args) //If c is like colon_dyadic return args@1, else dot
 {
   if(isColonDyadic(c) && !kV(c)[CONJ]) R 2==args->n?ci(kK(args)[1]):_n();
   R vf_ex(&c,args);
 }
+
+I atomI(K a){R a->t>0?1:0;}//_n is atom
+K atom(K a){R Ki(atomI(a));}//_n is atom
 
 //TODO: Is this a stable thing if my function mucks with the tree above me? No, but find 'reference error'
 //TODO: Does this do the right thing for functions/nouns with valence > 2 ?
@@ -335,9 +331,6 @@ K rotate_mod(K a, K b)
   P(!(1==a->t || b->t > 0), IE)
   R (b->t < 1)?rotate(a,b):mod(a,b);
 }
-
-I atomI(K a){R a->t>0?1:0;}//_n is atom
-K atom(K a){R Ki(atomI(a));}//_n is atom
 
 static K enumerate_charvec(C *pth)
 {
