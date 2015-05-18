@@ -1,4 +1,5 @@
 K ci(K a);
+K* denameS(S dir_string, S t, I create);
 K vf_ex(V q,K g);
 S CSK(K x);
 K X(S s);

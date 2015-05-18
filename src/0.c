@@ -972,7 +972,8 @@ K _4d_(S srvr,S port,K y){
   C buf[20000]; n=read(sockfd,&buf,20000); close(sockfd);
   K z=newK(-3,n); memcpy(kC(z),&buf,n);
   freeaddrinfo(servinfo);
-  R z;
+  if(n==0)R _n();
+  else R z;
 }
 
 K _4d(K x,K y) {      //see _3d
