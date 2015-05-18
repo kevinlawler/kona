@@ -32,7 +32,6 @@ K kerr(cS s);
 S strdupn(S s,I k);
 I simpleString(S a);
 extern K KTREE;
-K *denameD(K *d,S t,I create);
 K EV(K e);
 K *EVP(K e);
 K DE(K d,S b);

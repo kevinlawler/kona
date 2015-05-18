@@ -26,13 +26,13 @@ K itemAtIndex(K a, I i)// Return i-th item from any type as K - TODO: oom wherev
 }
 
 //Glue will be useful when it comes time to implement \d ?
-S glueSS(S c, S d)
-{
+S glueSS(S c, S d) {
   I x=strlen(c),y=strlen(d);
   S m = malloc(x+y+2); //oom
   sprintf(m,"%s.%s",c,d);
   R m;
 }
+
 K glue(K a, K b) { R Ks(sp(glueSS(*kS(a),*kS(b)))); } //oom
 
 //Dictionary and Dictionary Entry utility functions and accessors
@@ -50,23 +50,12 @@ K   EV(K e){R *EVP(e);}             //dictionary entry's stored value
 //dict entries are deleted (what method) from K TREE what happens the next time
 //you run the function?  does function context affect this?
 
-//Weird: Found some bug in K3.2 were running .` would add a copy of the entries in the root of the K tree every time. Not sure how to reproduce
+//Weird: Found some bug in K3.2 were running .` would add a copy of the entries in the root of the K tree every time. 
+//Not sure how to reproduce
 //K* denameBig(K dir_sym,K name_sym){R denameS(*kS(dir_sym),*kS(name_sym));} //[unnecessary?] wrapper for K-object inputs
-K* denameS(S dir_string, S t, I create)
-{
-  R denameD('.'==*t||!*t?&KTREE:denameD(&KTREE,dir_string,create),t,create);//duplicates '.' functionality in denameD to avoid dictionary initialization
-}
 
-Z K* denameRecurse(K*p,S t,I create);
-
-K* denameD(K*d, S t, I create)
-{
-  if(!simpleString(t)) R 0; //some kind of error
-  R denameRecurse('.'==*t||!*t?&KTREE:d,t,create);
-}
-Z K* denameRecurse(K*p,S t,I create) 
-{
-  if(!*t)R p; 
+Z K* denameRecurse(K*p,S t,I create) {
+  if(!*t)R p;
   if('.'==*t)t++;
   I c=0,a=(*p)->t;
   while(t[c] && '.'!=t[c])c++;
@@ -74,57 +63,44 @@ Z K* denameRecurse(K*p,S t,I create)
   S k=sp(u); //oom
   free(u);
   t+=c;
-
   P('_'==*k,(K*)kerr("reserved"))// ... not positive this goes here. does it fit in LOC? or parser maybe?
 
   //Probably the below error check (and any others in front of LOC) should be moved into LOC
   //and LOC should have the potential to return 0 (indicating other errors as well, e.g. out of memory)
   P(!(6==a || 5==a),(K*)TE)
-
   K e=0;
-  
-  if(create)
-  {
-    e=lookupEntryOrCreate(p,k);  
-    P(!e,(K*)ME)
-  }
-  else
-  {
-    K a=*p;
-    if(5==a->t) e=DE(a,k);
-    P(!e,&NIL)
-  }
-
-  if('.'==*t && (!t[1] || '.'==t[1])) 
-  {
-    t++;
-    p=EAP(e);    //attribute dict
-  }
+  if(create) { e=lookupEntryOrCreate(p,k); P(!e,(K*)ME) }
+  else { K a=*p; if(5==a->t)e=DE(a,k); P(!e,&NIL) }
+  if('.'==*t && (!t[1] || '.'==t[1])) { t++; p=EAP(e); }    //attribute dict
   else p=EVP(e); //value
-
   R denameRecurse(p,t,create);
 }
 
-Z K lookupEntryOrCreate(K *p, S k) //****only *dict or *_n are passed to here
-{
+K* denameD(K*d, S t, I create) {
+  if(!simpleString(t)) R 0; //some kind of error
+  R denameRecurse('.'==*t||!*t?&KTREE:d,t,create);
+}
+
+K* denameS(S dir_string, S t, I create) {
+  R denameD('.'==*t||!*t?&KTREE:denameD(&KTREE,dir_string,create),t,create);
+  //duplicates '.' functionality in denameD to avoid dictionary initialization
+}
+
+Z K lookupEntryOrCreate(K *p, S k) {    //****only *dict or *_n are passed to here
   K a=*p, x;
-
   if(5==a->t) if((x=DE(a,k))) R x;
-
   P(!strlen(k),TE) //TODO verify this noting `. is not `
   P(strchr(k,'.'),DOE)
-
   x=newEntry(k);
   if(6==a->t){cd(*p); *p=newK(5,0);} //mm/o is this done right?
   kap(p,&x); //oom
   cd(x);
-
   R x;
 }
 
 K* lookupEVOrCreate(K *p, S k){K x=lookupEntryOrCreate(p,k); R x?EVP(x):0; } //mm/o
-K lookup(K a, S b){K x=DE(a,b); R x?EV(x):_n();} 
 
+K lookup(K a, S b){K x=DE(a,b); R x?EV(x):_n();} 
 
 //TODO: oom at_verb everywhere
 K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/directory & b is executable string like "1+1+c"
