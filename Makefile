@@ -179,7 +179,7 @@ src/va.c: src/scalar.h src/r.h src/vc.h
 src/vc.c: src/scalar.h src/km.h src/ko.h src/vc.h
 src/vd.c: src/km.h src/p.h src/r.h src/v.h src/vd.h
 src/vf.c: src/km.h src/vf.h
-src/vg.c: src/kg.h src/km.h src/v.h src/vc.h
+src/vg.c: src/kg.h src/km.h src/vg.h src/vc.h
 src/vq.c: src/r.h src/v.h src/vq.h
 src/kapi.c: src/kona.h
 

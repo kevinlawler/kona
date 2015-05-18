@@ -3,6 +3,7 @@ I bk(V p);
 K join(K a,K b);
 K count(K a);
 I countI(K a);
+K demote(K x);
 K reverse(K a);
 K where(K x);
 K drop_cut(K a,K b);

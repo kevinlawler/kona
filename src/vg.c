@@ -2,8 +2,8 @@
 #include "k.h"
 #include "kg.h"
 #include "km.h"
-#include "v.h"
 #include "vc.h"
+#include "vg.h"
 
 /* grade / grouping / sorting / shape verbs */
 
