@@ -36,25 +36,19 @@ K read_tape(I i, I type) // type in {0,1} -> {select loop, 4: resp reader}
   S b = c<m?c+(S)&CP[i].m1:c+kC(CP[i].k); 
   g = c<m?m-c:CP[i].m1.n; 
   nbytes = recv(i,b,g,0); 
-  if(nbytes <= 0)
-  {
-  if (nbytes == 0);//printf("server: socket %lld hung up\n", i);
+  if(nbytes <= 0) {
+    if (nbytes == 0);//printf("server: socket %lld hung up\n", i);
     else perror("recv");
-    GC;
-  }
-  if(HTTP_PORT){send(i,b,nbytes,0);  GC;}
+    GC; }
   //fill struct data + k data
   CP[i].r += nbytes; //DO(nbytes, O("b%lld : %o\n",i,(UC)b[i])) 
-  if(m == CP[i].r) //We've read enough bytes to fill our struct m1 with transmission data (it's also the _db header)
-  {
+  if(m == CP[i].r) { //We've read enough bytes to fill our struct m1 with transmission data (it's also the _db header)
     //TODO: so that we get the right sizes, etc, in the M1, rearrange bytes based on little-endianness indicator CP[i].m1.a
     //if(sizeof(M1)+CP[i].m1.n > 987654321) GC; //protect against too big?
     K k = newK(-3, m+CP[i].m1.n);
     if(!(CP[i].k=k))GC;
-    memcpy(kC(k),&CP[i].m1,m); //cpy data from our struct to the corresponding spot on the '_bd' object
-  }
-  if(CP[i].r == m + CP[i].m1.n) //the k for the _db is completed. perform modified execution, potentially respond
-  {
+    memcpy(kC(k),&CP[i].m1,m); } //cpy data from our struct to the corresponding spot on the '_bd' object
+  if(CP[i].r == m + CP[i].m1.n) {  //the k for the _db is completed. perform modified execution, potentially respond
     //TODO: (here or in _db?) rearrange bytes based on little-endianness indicator CP[i].m1.a
     M1*p=(V)kC(CP[i].k);
     I msg_type = p->d; //p->d dissappears after wipe_tape
@@ -70,8 +64,7 @@ K read_tape(I i, I type) // type in {0,1} -> {select loop, 4: resp reader}
     cd(h);
     //indicates received communication from 4: synchronous method which expects response
     if(z) if(1==msg_type && 0==type) ksender(i,z,2);
-    cd(z); z=0;
-  }
+    cd(z); z=0; }
   R z;
 cleanup:
   close_tape(i);
