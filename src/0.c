@@ -970,7 +970,7 @@ K _4d_(S srvr,S port,K y){
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
   if(write(sockfd, &msg, strlen(msg))==-1){close(sockfd); R WE;}
   C buf[20000]; n=read(sockfd,&buf,20000); close(sockfd);
-  K z=newK(-3,n); memcpy(kC(z),&buf,n);
+  K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
   freeaddrinfo(servinfo);
   if(n==0)R _n();
   else R z;

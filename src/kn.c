@@ -19,19 +19,39 @@ M0 CP[10];
 Z I close_tape(I i);
 Z K modified_execute(K x);
 
-void *get_in_addr(struct sockaddr *sa) { if (sa->sa_family == AF_INET) R &(((struct sockaddr_in*)sa)->sin_addr);R  &(((struct sockaddr_in6*)sa)->sin6_addr); } // get sockaddr, IPv4 or IPv6
+void *get_in_addr(struct sockaddr *sa) {   //get sockaddr, IPv4 or IPv6
+  if (sa->sa_family == AF_INET) R &(((struct sockaddr_in*)sa)->sin_addr);
+  R  &(((struct sockaddr_in6*)sa)->sin6_addr); }
 
 I wipe_tape(I i) { if(CP[i].k)cd(CP[i].k); memset(&CP[i],0,sizeof(CP[0])); R 0;} //safe to call >1 time
 Z I close_tape(I i) { wipe_tape(i); close(i); FD_CLR(i, &master); R 0;}
 
 #ifndef WIN32
 
-K read_tape(I i, I type) // type in {0,1} -> {select loop, 4: resp reader}
-{
+K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
   I nbytes=0;
   if(HTTP_PORT){C buf[128]; nbytes=recv(i,buf,128,0);
-    if(nbytes <= 0) {if (nbytes == 0); else perror("recv"); GC; }
-    if(6==(*denameS(".",".m.h",0))->t)send(i,buf,nbytes,0);   //echo back only if .m.h does not exist
+    if(nbytes <= 0) {if (nbytes == 0)printf("server: socket %lld hung up\n", i); else perror("recv"); GC; }
+    K h=*denameS(".",".m.h",0); 
+    if(6==h->t)send(i,buf,nbytes,0);   //echo back only if .m.h does not exist
+    else {
+      if(7!=h->t && 3!=h->n){
+        I n=snprintf(buf,128,"%s",".m.h is not type 7-3"); if(n>=128)R WE;
+        send(i,buf,strlen(buf),0);}
+      else {
+        I n; for(n=0;n<128;n++){if(buf[n]=='\r')break;} buf[n]='\0';
+        S x=kC(kK(h)[CODE]); I sb=strlen(buf),sx=strlen(x);
+        C c[7+sb+sx]; c[0]='{'; c[1+sx]='}'; c[2+sx]='['; c[5+sx+sb]=']';
+        c[3+sx]='"'; c[4+sx+sb]='"'; c[6+sx+sb]='\0';
+        DO(strlen(x),c[1+i]=x[i])  DO(strlen(buf),c[4+strlen(x)+i]=buf[i])
+        K r=X(c); I w=128; C bck[w];
+        switch(r->t){
+          CS(1, {n=snprintf(bck,w,"%lld",*kI(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
+          CS(2, {n=snprintf(bck,w,"%f",*kF(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
+          CS(3, {n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
+          CS(-3,{n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
+          default:{n=snprintf(bck,w,"%s","NYI: .m.h result of that type and count"); if(n>=w)R WE;} }
+        send(i,bck,strlen(bck),0); } }
     close_tape(i); R (K)0; }
   I c=CP[i].r, m=sizeof(M1),g; K z=0;
   S b = c<m?c+(S)&CP[i].m1:c+kC(CP[i].k); 
