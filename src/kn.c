@@ -43,7 +43,7 @@ K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
         S x=kC(kK(h)[CODE]); I sb=strlen(buf),sx=strlen(x);
         C c[7+sb+sx]; c[0]='{'; c[1+sx]='}'; c[2+sx]='['; c[5+sx+sb]=']';
         c[3+sx]='"'; c[4+sx+sb]='"'; c[6+sx+sb]='\0';
-        DO(strlen(x),c[1+i]=x[i])  DO(strlen(buf),c[4+strlen(x)+i]=buf[i])
+        DO(sx,c[1+i]=x[i])  DO(sb,c[4+sx+i]=buf[i])
         K r=X(c); I w=128; C bck[w];
         switch(r->t){
           CS(1, {n=snprintf(bck,w,"%lld",*kI(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
