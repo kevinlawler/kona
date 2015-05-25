@@ -28,22 +28,44 @@ Z I close_tape(I i) { wipe_tape(i); close(i); FD_CLR(i, &master); R 0;}
 
 #ifndef WIN32
 
+C bx[128]={0};
 K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
-  I nbytes=0;
-  if(HTTP_PORT){C buf[128]; nbytes=recv(i,buf,128,0);
-    if(nbytes <= 0) {if (nbytes == 0)printf("server: socket %lld hung up\n", i); else perror("recv"); GC; }
+  I nbytes=0,n=0; C by[128]={0};
+  if(HTTP_PORT) {
+    if(bx[0]=='\0')nbytes=recv(i,bx,128,0); else nbytes=recv(i,by,128,0);
+    if(nbytes<=0){if (nbytes==0)printf("server: socket %lld hung up\n", i); else perror("recv"); GC;}
     K h=*denameS(".",".m.h",0); 
-    if(6==h->t)send(i,buf,nbytes,0);   //echo back only if .m.h does not exist
+    if(6==h->t){send(i,bx,nbytes,0); bx[0]='\0'; close_tape(i); R (K)0;}  //echo back only if .m.h does not exist
     else {
-      if(7!=h->t && 3!=h->n){
-        I n=snprintf(buf,128,"%s",".m.h is not type 7-3"); if(n>=128)R WE;
-        send(i,buf,strlen(buf),0);}
-      else {
-        I n; for(n=0;n<128;n++){if(buf[n]=='\r')break;} buf[n]='\0';
-        S x=kC(kK(h)[CODE]); I sb=strlen(buf),sx=strlen(x);
-        C c[7+sb+sx]; c[0]='{'; c[1+sx]='}'; c[2+sx]='['; c[5+sx+sb]=']';
-        c[3+sx]='"'; c[4+sx+sb]='"'; c[6+sx+sb]='\0';
-        DO(sx,c[1+i]=x[i])  DO(sb,c[4+sx+i]=buf[i])
+      if(7!=h->t && 3!=h->n) {
+        I n=snprintf(bx,128,"%s",".m.h is not type 7-3"); if(n>=128)R WE;
+        send(i,bx,strlen(bx),0); }
+      else {   //have .m.h of type 7-3
+        S f=kC(kK(h)[CODE]); I ax=0,ay=0,sf=strlen(f);
+        DO(sf, if(f[i]=='x')ax=1; else if(f[i]=='y')ay=1;) I na=maX(1,ax+ay);
+        if(na==2) {
+          if(by[0]=='\0'){ C bn[1]; bn[0]='\0'; send(i,bn,1,0); close_tape(i); R (K)0; }
+          else {
+            for(n=0;n<128;++n){if(bx[n]=='\r')break;} bx[n]='\0';
+            for(n=0;n<128;++n){if(by[n]=='\r')break;} by[n]='\0';
+            I sbx=strlen(bx); I sby=strlen(by);
+            C c[10+sf+sbx+sby]; c[0]='{'; c[1+sf]='}'; c[2+sf]='['; c[8+sf+sbx+sby]=']';
+            c[3+sf]=c[4+sf+sbx]=c[6+sf+sbx]=c[7+sf+sbx+sby]='"';
+            c[5+sf+sbx]=';'; c[9+sf+sbx+sby]='\0';
+            DO(sf,c[1+i]=f[i])  DO(sbx,c[4+sf+i]=bx[i]) DO(sby,c[7+sf+sbx+i]=by[i])
+            K r=X(c); I w=128; C bck[w];
+            switch(r->t) {
+              CS(1, {n=snprintf(bck,w,"%lld",*kI(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
+              CS(2, {n=snprintf(bck,w,"%f",*kF(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
+              CS(3, {n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
+              CS(-3,{n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
+              default:{n=snprintf(bck,w,"%s","NYI: .m.h result of that type and count"); if(n>=w)R WE;} }
+            send(i,bck,strlen(bck),0); bx[0]='\0'; close_tape(i); R (K)0; } }
+        for(n=0;n<128;n++){if(bx[n]=='\r' || bx[n]=='\0')break;}
+        bx[n]='\0'; I sbx=strlen(bx);
+        C c[7+sf+sbx]; c[0]='{'; c[1+sf]='}'; c[2+sf]='['; c[5+sf+sbx]=']';
+        c[3+sf]=c[4+sf+sbx]='"'; c[6+sf+sbx]='\0';
+        DO(sf,c[1+i]=f[i])  DO(sbx,c[4+sf+i]=bx[i])
         K r=X(c); I w=128; C bck[w];
         switch(r->t){
           CS(1, {n=snprintf(bck,w,"%lld",*kI(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
@@ -51,8 +73,7 @@ K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
           CS(3, {n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
           CS(-3,{n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
           default:{n=snprintf(bck,w,"%s","NYI: .m.h result of that type and count"); if(n>=w)R WE;} }
-        send(i,bck,strlen(bck),0); } }
-    close_tape(i); R (K)0; }
+        send(i,bck,strlen(bck),0); bx[0]='\0'; close_tape(i); R (K)0; } } }
   I c=CP[i].r, m=sizeof(M1),g; K z=0;
   S b = c<m?c+(S)&CP[i].m1:c+kC(CP[i].k); 
   g = c<m?m-c:CP[i].m1.n; 
