@@ -44,7 +44,7 @@ K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
         S f=kC(kK(h)[CODE]); I ax=0,ay=0,sf=strlen(f);
         DO(sf, if(f[i]=='x')ax=1; else if(f[i]=='y')ay=1;) I na=maX(1,ax+ay);
         if(na==2) {
-          if(by[0]=='\0'){ C bn[1]; bn[0]='\0'; send(i,bn,1,0); close_tape(i); R (K)0; }
+          if(by[0]=='\0'){ C bn[1]; bn[0]='\0'; send(i,bn,1,0); R (K)0; }
           else {
             for(n=0;n<128;++n){if(bx[n]=='\r')break;} bx[n]='\0';
             for(n=0;n<128;++n){if(by[n]=='\r')break;} by[n]='\0';
