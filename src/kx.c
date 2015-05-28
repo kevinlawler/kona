@@ -374,11 +374,13 @@ K vf_ex(V q, K g)
   if(ee && !kV(g)[0] && kV(g)[1])fom=1;
 
   if( ((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>n && !(!n && 1>=gn)))
-      || (ee && kV(g)[0] && kV(g)[1]) ){
-    if(g->t==0 && gn==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { //issue #277 
-      V w[2]; w[0]=(V)kS(kK(*(K*)q)[CODE])[0]; w[1]=(V)offsetOver;
-      z=overMonad(kK(g)[0], &w[1], kK(g)[1]); GC; }
-    else {VE; GC;} }
+      || (ee && kV(g)[0] && kV(g)[1]) ) {
+    if(3!=kK(g)[0]->t || 1==(*(K*)q)->n || kK(g)[1]==NULL) {
+      if(g->t==0 && gn==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { //issue #277 
+        V w[2]; w[0]=(V)kS(kK(*(K*)q)[CODE])[0]; w[1]=(V)offsetOver;
+        z=overMonad(kK(g)[0], &w[1], kK(g)[1]); GC; }
+      else {VE; GC;} }
+    else {g=enlist(collapse(g)); gn=g->n; cd(kK(g)[0]);} }
 
   I argc=0; DO(gn,if(kK(g)[i])argc++)
 
@@ -427,7 +429,7 @@ K vf_ex(V q, K g)
     if(2==n && 1==adverbClass(*u) ) n=gn; //   / \ '  but maybe should exclude '
   }
 
-  if(n && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
+  if(n && -3!=g->t && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
   {
     z=kclone(f); //Is this an opportunity to capture an under-referenced function? Consider if it could be in use as part of assignment, etc.
     if(!z)GC;
