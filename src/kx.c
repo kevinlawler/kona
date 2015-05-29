@@ -429,7 +429,7 @@ K vf_ex(V q, K g)
     if(2==n && 1==adverbClass(*u) ) n=gn; //   / \ '  but maybe should exclude '
   }
 
-  if(n && -3!=g->t && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
+  if(n && (argc < gn || (gn < n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
   {
     z=kclone(f); //Is this an opportunity to capture an under-referenced function? Consider if it could be in use as part of assignment, etc.
     if(!z)GC;
