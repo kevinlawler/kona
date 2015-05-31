@@ -390,7 +390,7 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
 
   if(o)show(k); cd(k);
 cleanup:
-  if(fer!=-1 && strcmp(errmsg,"undescribed")) { O("in if\n"); oerr(); I ctl=0;
+  if(fer!=-1 && strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
     if(fError) {
       if(lineA) {
         if(fnc) { I cnt=0,i; 
