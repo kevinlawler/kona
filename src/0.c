@@ -1201,7 +1201,7 @@ K _3m(K x)
   if(err != 0) O("WSAStartup failed with error: %d\n",err);
   if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
     { O("Could not find useable version of Winsock.dll\n"); exit(1); }
-  PORT=port;  //need this for finally() to cleanup WinSock
+  IPC_PORT=port;  //need this for finally() to cleanup WinSock
 
   struct addrinfo *servinfo = NULL, *p = NULL, hints;
   ZeroMemory( &hints, sizeof(hints));

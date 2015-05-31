@@ -538,7 +538,7 @@ V krec[1000000];
 void finally()
 {
 #ifdef WIN32
-if(PORT) {closesocket(listener); WSACleanup();}
+if(IPC_PORT) {closesocket(listener); WSACleanup();}
 #endif
 #ifdef DEBUG   
 tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
