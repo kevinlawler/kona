@@ -438,8 +438,8 @@ void *socket_thread(void *arg) {
   hints.ai_flags =    AI_PASSIVE;
 
   // resolve local address and port
-  if(IPC_PORT){if((rv==getaddrinfo(NULL, IPC_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
-  if(HTTP_PORT){if((rv==getaddrinfo(NULL, HTTP_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
+  if(IPC_PORT){if((rv=getaddrinfo(NULL, IPC_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
+  if(HTTP_PORT){if((rv=getaddrinfo(NULL, HTTP_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
 
   // create listener with socket()
   listener = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
