@@ -433,12 +433,17 @@ K vf_ex(V q, K g)
   {
     z=kclone(f); //Is this an opportunity to capture an under-referenced function? Consider if it could be in use as part of assignment, etc.
     if(!z)GC;
-    K*m=(K*)kV(z)+CONJ;
+    I ae=0; K*m=(K*)kV(z)+CONJ;
     if(special)n=2; // .'"98" cases. allows a:.[+] then a 2 3  (. is forced 2-adic & not .[;;;]) is this a kluge?
+    if(3<kK(z)[CODE]->n  && (V*)kK(kK(z)[CODE])[1]==(V)0x2e && (V*)kK(kK(z)[CODE])[2]==(V)0x9){ n=1; ae=1; }
     if(!*m) *m=newK(0,n);
     if(!*m){cd(z);GC;}
     K *q=kK(*m);
-    DO((*m)->n, if(!q[i] && j<gn) q[i]=ci(kK(g)[j++]))   
+    DO((*m)->n, if(!q[i] && j<gn) q[i]=ci(kK(g)[j++]))
+    if(ae) {
+      V w[5]; w[0]=(V)kS(kK(z)[CODE])[0]; w[1]=(V)offsetAt; w[2]=(V)offsetEach; w[3]=(V)kK(kK(z)[CONJ]); w[4]=0;
+      K zz= ex2(&w[0],0); cd(g); cd(z);
+      R zz; }
     GC;
   }//K3.2 Projection {[a;b;c]}[;1][1;] returns self. Indicates different (7-0 style?) method
   

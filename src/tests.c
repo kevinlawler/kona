@@ -1017,6 +1017,8 @@ Z I testsBook()
   TC_("25.0", "|/,//(1;(2.3 25.0;(6 7 -9;10)))" )
   TC_("-9.0", "&/,//(1;(2.3 25;(6 7 -9;10)))" )
   TC(1 4 9 16, +\\ 1 3 5 7)
+  TC_("\"aeh\"", "m:3 3#\"abcdefghi\"; f:m@\'; f 0 1 1")
+  TC_("(\"aeh\";\"aei\")", "m:3 3#\"abcdefghi\"; f:m@\'; f\'(0 1 1;0 1 2)")
   //End Adverbs
   //Amend, Index, Apply & Assign
   TC(6 7 8, a:1 2 3;a+:5; a)
