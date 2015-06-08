@@ -84,7 +84,8 @@ K _0m(K a) {
     #else
       char ss[300]; fgets(ss,sizeof(ss),stdin);
       I i,j; for(i=0;i<300;++i){if(ss[i]=='\012')break;}
-      z=newK(-3,i); for(j=0;j<i;++j){kC(z)[j]=ss[j];}
+      I k=0; for(j=0;j<=i;j++){if(ss[j]!='\004')ss[k++]=ss[j];}
+      z=newK(-3,k-1); for(j=0;j<k-1;++j){kC(z)[j]=ss[j];}
       GC;
     #endif
   }
