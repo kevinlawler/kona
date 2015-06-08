@@ -77,9 +77,17 @@ K _0m(K a) {
       memcpy(kC(y),&buf,n); kap(&z,&y); cd(y); }
     GC; }
   else if( (4==t && !**kS(a)) || (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) ){
-    b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);     //read from stdin
-    P(freopen_stdin() == NULL, FE)
-    if(b==-1){z=newK(0,0); GC;} }
+    #ifndef WIN32
+      b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);     //read from stdin
+      P(freopen_stdin() == NULL, FE)
+      if(b==-1){z=newK(0,0); GC;}
+    #else
+      char ss[300]; fgets(ss,sizeof(ss),stdin);
+      I i,j; for(i=0;i<300;++i){if(ss[i]=='\012')break;}
+      z=newK(-3,i); for(j=0;j<i;++j){kC(z)[j]=ss[j];}
+      GC;
+    #endif
+  }
   else {                                                     //read from mapped file
     I f=open(CSK(a),0);
     P(f<0,DOE)
