@@ -48,14 +48,6 @@ Z I rrep_4(S *z,S a,S t);
 Z K readVector(K x,I t);
 Z I sendall(I s,S b,I k);
 
-Z V freopen_stdin() {
-#if defined(__OpenBSD__)
-  return freopen("/dev/stdin","r",stdin);
-#else
-  return freopen(0,"r",stdin);
-#endif
-}
-
 K _0m(K a) {
   I t=a->t; P(4!=t && 3!=ABS(t), TE)
   I b=0,s=0; S v=0; K z=0; S m; if(3==ABS(t))m=CSK(a);
@@ -77,18 +69,11 @@ K _0m(K a) {
       memcpy(kC(y),&buf,n); kap(&z,&y); cd(y); }
     GC; }
   else if( (4==t && !**kS(a)) || (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) ){
-    #ifndef WIN32
-      b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);     //read from stdin
-      P(freopen_stdin() == NULL, FE)
-      if(b==-1){z=newK(0,0); GC;}
-    #else
-      char ss[300]; fgets(ss,sizeof(ss),stdin);
+      char ss[300]; S adr=fgets(ss,sizeof(ss),stdin); if(adr==NULL)R FE;      //read from stdin
       I i,j; for(i=0;i<300;++i){if(ss[i]=='\012')break;}
       I k=0; for(j=0;j<=i;j++){if(ss[j]!='\004')ss[k++]=ss[j];}
       z=newK(-3,k-1); for(j=0;j<k-1;++j){kC(z)[j]=ss[j];}
-      GC;
-    #endif
-  }
+      GC; }
   else {                                                     //read from mapped file
     I f=open(CSK(a),0);
     P(f<0,DOE)
