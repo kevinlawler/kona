@@ -597,17 +597,18 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
                 if(encf){cd(encf); encf=0;} 
                 if(grnt){cd(grnt); grnt=0;}} 
               U(x) z=bk(x)?_n():x; 
-              if(fer>0)R z; 
+              if(fer>0 && !fCheck)R z; 
               if(grnt && (!prnt || prnt->c==2)){if(prnt)cd(prnt); prnt=ci(grnt);} })
     CS(4, for(i=-1;i<n;i++)
             if(-1==i||bk(v[i])){
               U(x=ex1(v+1+i,0,&i,n,1)) 
-              if(fer>0)R x; x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); 
-              if(i==n) R x; z=delist(x); 
-              if(ABS(z->t)!=1 || z->n!=1){cd(z);R TE;} a=*kI(z);cd(z); 
+              if(fer>0 && !fCheck)R x; 
+              x=bk(x)?_n():x; while(++i<n&&!bk(v[i])); if(i==n) R x;
+              z=delist(x); if(ABS(z->t)!=1 || z->n!=1){cd(z); R TE;}
+              a=*kI(z); cd(z);
               if(a){x=ex1(v+i+1,0,&i,n,1); R x=bk(x)?_n():x;} 
               else while(i<n&&!bk(v[i]))i++; } 
-              R _n())
+            R _n() )
     CSR(5,)
     CSR(6,)
     CS(7, do{I i=0; U(x=ex1(v,0,&i,0,1)) 
