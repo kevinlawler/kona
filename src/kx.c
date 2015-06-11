@@ -376,7 +376,9 @@ K vf_ex(V q, K g)
   if( ((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>n && !(!n && 1>=gn)))
       || (ee && kV(g)[0] && kV(g)[1]) ) {
     if(3!=kK(g)[0]->t || 1==(*(K*)q)->n || kK(g)[1]==NULL) {
-      if(g->t==0 && gn==2 && kK(*(K*)q)[CODE]->t==-4 && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { //issue #277 
+      if(g->t==0 && gn==2 && kK(*(K*)q)[CODE]->t==-4
+         && (V)kS(kK(*(K*)q)[CODE])[0]>(V)DT_SIZE 
+         && (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 ) { //issue #277 
         V w[2]; w[0]=(V)kS(kK(*(K*)q)[CODE])[0]; w[1]=(V)offsetOver;
         z=overMonad(kK(g)[0], &w[1], kK(g)[1]); GC; }
       else {VE; GC;} }
