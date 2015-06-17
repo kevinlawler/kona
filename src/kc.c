@@ -477,10 +477,9 @@ void *socket_thread(void *arg) {
       for(i=0; i<nca; i++) {
         if(FD_ISSET(SockSet[i], &read_fds)) {
           z=read_tape(i,SockSet[i],0);
-          if(z) {
-            FD_CLR(SockSet[i], &master); FD_ZERO(&read_fds);
-            closesocket(SockSet[i]); SockSet[i]=INVALID_SOCKET;
-            wipe_tape(i); nfd--; } } } }
+          FD_CLR(SockSet[i], &master); FD_ZERO(&read_fds);
+          closesocket(SockSet[i]); SockSet[i]=INVALID_SOCKET;
+          wipe_tape(i); nfd--; } } }
     free=0;
     for(i=0; i<nca; i++) {if(SockSet[i]==INVALID_SOCKET) {free=1; nxt=i; break;} } }   
   R 0;     
