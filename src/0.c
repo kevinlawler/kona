@@ -936,35 +936,14 @@ K _3d(K x,K y) //'async' TCP
 }
 
 #ifndef WIN32
-K popen_charvec(S cmd)
-{
-  FILE *f; K z,l; S s=0; I n=0;
-  f=popen(cmd,"r");
-  P(!f,_n())
-  z=newK(0,0); //oom
-  while (getline_(&s, (size_t * __restrict__)&n, f) >= 0)
-  { l=newK(-3,n-1);
-    strncpy(kC(l),s,n-1);
-    kap(&z,&l);
-  }
-  if(s)free(s);
-  pclose(f);
-  R z;
-}
-#else
 K popen_charvec(S cmd) {
-  FILE *f; K z,l; C s[128]; S p;
-  f=_popen(cmd,"r"); P(!f,_n())
-  z=newK(0,0);
-  while(fgets(s, 128, f))
-  { p=strchr(s,*"\n");
-    l=newK(-3,p-s);
-    strncpy(kC(l),s,p-s);
-    kap(&z,&l);
-  }
-  _pclose(f); R z;
-}
-#endif
+  FILE *f; K z,l; S s=0; I n=0;
+  f=popen(cmd,"r"); P(!f,_n())
+  z=newK(0,0); //oom
+  while (getline_(&s, (size_t * __restrict__)&n, f) >= 0) {
+    l=newK(-3,n-1); strncpy(kC(l),s,n-1); kap(&z,&l); }
+  if(s)free(s); pclose(f);
+  R z; }
 
 K _4d_(S srvr,S port,K y){
   struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr;
@@ -982,8 +961,45 @@ K _4d_(S srvr,S port,K y){
   K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
   freeaddrinfo(servinfo);
   if(n==0)R _n();
-  else R z;
-}
+  else R z; }
+
+#else
+K popen_charvec(S cmd) {
+  FILE *f; K z,l; C s[128]; S p;
+  f=_popen(cmd,"r"); P(!f,_n())
+  z=newK(0,0);
+  while(fgets(s, 128, f)) {
+    p=strchr(s,*"\n"); l=newK(-3,p-s); strncpy(kC(l),s,p-s); kap(&z,&l); }
+  _pclose(f);
+  R z; }
+
+K _4d_(S srvr,S port,K y) {
+  WSADATA wsaData; int iResult, iRetval; DWORD dwRetval; I i=1; S errstr;
+  struct addrinfo *result = NULL; struct addrinfo *ptr = NULL; struct addrinfo hints;
+  struct sockaddr_in  *sockaddr_ipv4; LPSOCKADDR sockaddr_ip;  //struct sockaddr_in6 *sockaddr_ipv6;
+  C ipstringbuffer[46]; DWORD ipbufferlength=46;
+  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+  if (iResult != 0) { O("WSAStartup failed: %d\n", iResult); R FE; }
+  ZeroMemory( &hints, sizeof(hints) );
+  hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
+  dwRetval = getaddrinfo(srvr, port, &hints, &result);
+  if(dwRetval != 0) { O("getaddrinfo failed with error: %d\n", dwRetval); WSACleanup(); R DOE; }
+  I sockfd;  
+  for(ptr=result; ptr != NULL ;ptr=ptr->ai_next)
+    if((sockfd=socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol))==-1)continue;
+    else if(connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)==-1){errstr=strerror(errno); close(sockfd); continue;}
+    else break;
+  if(ptr==NULL){fprintf(stderr, "conn: failed to connect (%s)\n",errstr); freeaddrinfo(result); R DOE;}
+  I n=strlen(kC(y)); C msg[n+5]; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
+  msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
+  if(send(sockfd, &msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); close(sockfd); freeaddrinfo(result); WSACleanup(); R WE;}
+  C buf[20000]; n=recv(sockfd,&buf,20000,0); close(sockfd);
+  K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
+  freeaddrinfo(result);  WSACleanup();
+  if(n==0)R _n();
+  else R z; }
+
+#endif
 
 K _4d(K x,K y) {      //see _3d
   if (4==xt && !**kS(x) && -3==y->t) { R popen_charvec(kC(y)); } // `4:"ls" -> lines from popen("ls", "r"), blocking
