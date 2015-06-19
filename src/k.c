@@ -248,9 +248,23 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
       else O_("\\%.3o",c) ) O_("\""); }
   if(4==ABS(t)){ 
     if(!a->n) O_("0#`");  
-    else { I ss=0,sl;S str;
-           DO(a->n, CPMAX str=kS(a)[i]; if(str<(S)DT_SIZE)continue; sl=strlen(str);ss=simpleString(str);
-                    O_("`"); if(!ss) O_("\""); DO2(sl, O_("%c", str[j] )) if(!ss) O_("\""); O_(i<_i-1?" ":""); ) } }
+    else { 
+      I ss=0,sl;S str;
+      DO(a->n, CPMAX 
+               str=kS(a)[i]; 
+               if((L)str<-2e9 || DT_SIZE<(L)str) {   // the (L)str<-2e9 reqd by Cygwin
+                 sl=strlen(str); ss=simpleString(str); O_("`"); if(!ss) O_("\""); DO2(sl,O_("%c", str[j] )) 
+                 if(!ss) O_("\"");
+                 O_(i<_i-1?" ":""); }
+               else if(-4==t) {
+                 if((L)str<0)O("\n%p ",str);
+                 else { 
+                   O("%p ",str); 
+                   if(!str)O(" ");
+                   else if(i<a->n && kS(a)[i+1]<(S)DT_SIZE)O("\n"); }
+                 if((L)str<0) {
+                   O(" %p ",*(V*)str);
+                   if(!(0<(L)*(V*)str && (L)*(V*)str<DT_SIZE)) O("%p\n",*(K*)str); } } ) } }
   if(7==t)
   {
     if(1==a->n)
