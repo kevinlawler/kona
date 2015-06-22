@@ -375,6 +375,7 @@ K vf_ex(V q, K g)
 
   if( ((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>n && !(!n && 1>=gn)))
       || (ee && kV(g)[0] && kV(g)[1]) ) {
+    if(kK(g)[0]==NULL){VE; GC;}
     if(3!=kK(g)[0]->t || 1==(*(K*)q)->n || kK(g)[1]==NULL) {
       if(g->t==0 && gn==2 && kK(*(K*)q)[CODE]->t==-4
          && (V)kS(kK(*(K*)q)[CODE])[0]>(V)DT_SIZE 
