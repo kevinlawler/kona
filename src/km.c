@@ -25,7 +25,7 @@
 //Simple tests on Kona confirmed 6 is an improvement over 5
 #define KP_MIN 6  //2^x, must be at least ceil(lg(sizeof(V)))
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
-V KP[sizeof(V)*8+1]; //KPOOL
+V KP[26]; //KPOOL
 I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
 F mUsed=0.0, mMax=0.0;
 
@@ -88,7 +88,7 @@ K cd(K x)
   //in 32-bit Linux: sizeof(V)==4 but file-maps have o==8
   //in 64-bit Linux: sizeof(V)==8 and file-maps have o==8
   if(o==8 || r>KP_MAX){    //(file-mapped or really big) do not go back into pool.
-    munmap(((V)x)-o,k+o);    //if(r>KP_MAX) mUsed -= (k+o);
+    munmap(((V)x)-o,k+o);    if(r>KP_MAX) mUsed -= (k+o);
   }
   else repool(x,r);
   R 0;
@@ -141,7 +141,7 @@ Z V kalloc(I k) //bytes. assumes k>0
 Z V amem(I k) {
   K z;
   if(MAP_FAILED==(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME;
-  //I r=lsz(k); if(r>KP_MAX){ mUsed += k;  if(mUsed>mMax)mMax=mUsed; }
+  I r=lsz(k); if(r>KP_MAX){ mUsed += k;  if(mUsed>mMax)mMax=mUsed; }
   R z;
 }
 
@@ -161,7 +161,7 @@ Z V unpool(I r)
     *L=z;
   }
   z=*L;*L=*z;*z=0;
-  //mUsed += pow(2.0,(F)r);  if(mUsed>mMax)mMax=mUsed;
+  mUsed += ((I)1)<<r;  if(mUsed>mMax)mMax=mUsed;
   R z;
 }
 
@@ -200,7 +200,7 @@ I repool(V v,I r)//assert r < KP_MAX
   memset(v,0,((I)1)<<r);
   *(V*)v=KP[r];
   KP[r]=v;
-  //mUsed -= pow(2.0,(F)r);
+  mUsed -= ((I)1)<<r;
   R 0;
 }
 Z I kexpander(K*p,I n) //expand only. 

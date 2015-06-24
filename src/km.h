@@ -34,5 +34,4 @@ extern I kreci;
 K show(K a);
 extern I tests;
 K cd(K a);
-extern V KP[sizeof(V)*8+1];
 I OOM_CD(I g, ...);
