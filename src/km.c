@@ -34,7 +34,7 @@ F mUsed=0.0, mMax=0.0;
 #else 
 #define MAX_OBJECT_LENGTH (II - 1) //for catching obviously incorrect allocations
 #endif
-Z int cl2(unsigned long long v);
+Z I cl2(I v);
 Z I kexpander(K *p,I n);
 Z K kapn_(K *a,V v,I n);
 Z V amem(I k);
@@ -165,37 +165,23 @@ Z V unpool(I r)
   R z;
 }
 
-#ifndef __has_builtin
-#define __has_builtin(x) 0
-#endif
-
-Z int floor_log_2(unsigned long long v) {
-  #if __has_builtin(__builtin_clzll)
-  R ((sizeof(unsigned long long) * 8 - 1) - __builtin_clzll(v));
-  #else    //fall back to dgobbi method
-  static const unsigned long long t[6] = {
-    0xFFFFFFFF00000000ull,
-    0x00000000FFFF0000ull,
-    0x000000000000FF00ull,
-    0x00000000000000F0ull,
-    0x000000000000000Cull,
-    0x0000000000000002ull  };
-  char y=0, j=32, i;
-  for (i = 0; i < 6; i++) {
-    char k = (((v & t[i]) == 0) ? 0 : j);
-    y+=k; v>>=k; j>>=1; }
-  R y;
-  #endif
+Z I cl2(I v) //optimized 64-bit ceil(log_2(I)) 
+{
+    if(!v)R -1;// no bits set
+    I e = 0;
+    if(v & (v - 1ULL))e=1; //round up if not a power of two
+    #if UINTPTR_MAX >= 0xffffffffffffffff
+      if(v & 0xFFFFFFFF00000000ULL){e+=32;v>>=32;} //64-bit or more only
+    #endif
+    if(v & 0x00000000FFFF0000ULL){e+=16;v>>=16;}
+    //short CL2_LUT[1<<16]; DO(1<<16,if(i) CL2_LUT[i]=log2(i));
+    //to use lookup table: e+=CL2_LUT[v] and comment out below. 
+    if(v & 0x000000000000FF00ULL){e+=8; v>>=8; }
+    if(v & 0x00000000000000F0ULL){e+=4; v>>=4; }
+    if(v & 0x000000000000000CULL){e+=2; v>>=2; }
+    if(v & 0x0000000000000002ULL){e+=1; v>>=1; }
+    R e;
 }
-
-Z int cl2(unsigned long long v) {       //ceiling_log_2
-  #if __has_builtin(__builtin_clzll)
-  R ((sizeof(unsigned long long) * 8 - 1) - __builtin_clzll(v)) + (!!(v & (v - 1)));
-  #else
-  R floor_log_2(v) + (!!(v & (v - 1)));
-  #endif
-}
-
 
 I lsz(I k){R k<=((I)1)<<KP_MIN?KP_MIN:cl2(k);} //pool lane from size. Ignore everywhere lanes < KP_MIN. MAX() was eliminated as an optimization
 I repool(V v,I r)//assert r < KP_MAX 
