@@ -165,32 +165,35 @@ Z V unpool(I r)
   R z;
 }
 
-Z int cl2(unsigned long long v)
-{
-  //dgobbi method
-  if(!v)R -1;// no bits set
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
 
+Z int floor_log_2(unsigned long long v) {
+  #if __has_builtin(__builtin_clzll)
+  R ((sizeof(unsigned long long) * 8 - 1) - __builtin_clzll(v));
+  #else    //fall back to dgobbi method
   static const unsigned long long t[6] = {
     0xFFFFFFFF00000000ull,
     0x00000000FFFF0000ull,
     0x000000000000FF00ull,
     0x00000000000000F0ull,
     0x000000000000000Cull,
-    0x0000000000000002ull
-  };
-
-  int y = (((v & (v - 1)) == 0) ? 0 : 1);
-  int j = 32;
-  int i;
-
+    0x0000000000000002ull  };
+  char y=0, j=32, i;
   for (i = 0; i < 6; i++) {
-    int k = (((v & t[i]) == 0) ? 0 : j);
-    y += k;
-    v >>= k;
-    j >>= 1;
-  }
+    char k = (((v & t[i]) == 0) ? 0 : j);
+    y+=k; v>>=k; j>>=1; }
+  R y;
+  #endif
+}
 
-  return y;
+Z int cl2(unsigned long long v) {       //ceiling_log_2
+  #if __has_builtin(__builtin_clzll)
+  R ((sizeof(unsigned long long) * 8 - 1) - __builtin_clzll(v)) + (!!(v & (v - 1)));
+  #else
+  R floor_log_2(v) + (!!(v & (v - 1)));
+  #endif
 }
 
 
