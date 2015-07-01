@@ -134,6 +134,7 @@ void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
 
 Z I nodeCount_(N n) {
   I l=0, r=0;
+  if(n->k){ if(strlen((S)n->k)) O("%s ",(S)n->k); else O("(nil) "); }
   if(n->c[0]) l += nodeCount_(n->c[0]);
   if(n->c[1]) r += nodeCount_(n->c[1]);
   R 1+l+r;
@@ -241,7 +242,9 @@ cleanup:
   if(*a)free(*a);*a=0;*n=0;
   if(s)free(s);s=0;
 done:
-  if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax); O("symbols  : %lld\n",nodeCount(SYMBOLS)); fWksp=0; }
+  if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax);
+              O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
+              O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
   kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
   R c;
@@ -410,7 +413,9 @@ cleanup:
       if(!lineA && !lineB) O("%s\n",*a); }}
   if(*p)pdafree(*p);*p=0; *a=0; *n=0; s=0;
 done:
-  if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax); O("symbols  : %lld\n",nodeCount(SYMBOLS)); fWksp=0; }
+  if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax);
+              O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
+              O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
   kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
   R c;
