@@ -202,6 +202,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(v==3) { show(kerr("nest")); GC; } 
   if(v==2) { show(kerr("unmatched")); b=0; GC; }
   if(v==1) { fCmplt=1; goto done; }         //generally incomplete
+  if(v==0) fCmplt=0;  
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
 
   //trim(*a); //avoids segfaults in corner cases when manipulating input line with recur
