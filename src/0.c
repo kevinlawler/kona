@@ -908,7 +908,7 @@ Z K run(K x) {
   parseLine(line,argvL);
   i=0; while(argvL[i]!=NULL) {
     parsePhrase(argvL[i],argvP);
-    if(argvL[1]==NULL && (strcmp(argvP[0],"sleep")==0))fWait=0;
+    if(argvL[1]==NULL && (strcmp(argvP[0],"echo")!=0))fWait=0;
     execute(argvP,fWait); i++; }
   R _n(); }
 
