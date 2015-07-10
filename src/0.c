@@ -881,13 +881,40 @@ I ksender(I sockfd,K y,I t)
   R r;
 }
 
+Z void parseLine(S line, S *argvL) {
+  while(*line != '\0') {
+    while(*line == ';' || *line == '\t' || *line == '\n') *line++ = '\0';
+    *argvL++ = line;
+    while(*line != '\0' &&  *line != ';' && *line != '\t' && *line != '\n') line++; }
+  *argvL = '\0'; }
 
-K _3d(K x,K y) //'async' TCP
-{
-  S s=(V)kS(y);
-  if(4==xt && !**kS(x)) R system(s)?DOE:_n();
+Z void parsePhrase(S line, S *argvP) {
+  while(*line != '\0') {
+    while(*line == ' ' || *line == '\t' || *line == '\n') *line++ = '\0';
+    *argvP++ = line;
+    while(*line != '\0' &&  *line != ' ' && *line != '\t' && *line != '\n') line++; }
+  *argvP = '\0'; }
+
+Z void execute(S *argvP, I fWait) {
+  pid_t  pid; I status;
+  if((pid = fork()) < 0) { O("*** ERROR: forking child process failed\n"); exit(1); }
+  else if(pid == 0) {
+    if(execvp(*argvP,argvP) < 0) { O("*** ERROR: exec failed\n"); exit(1); } }
+  else {
+    if(fWait) { while (wait(&status) != pid)  ; } } }
+
+Z K run(K x) {
+  S line=kC(x), argvL[64], argvP[64]; I i,fWait=1;
+  parseLine(line,argvL);
+  i=0; while(argvL[i]!=NULL) {
+    parsePhrase(argvL[i],argvP);
+    if(argvL[1]==NULL && (strcmp(argvP[0],"sleep")==0))fWait=0;
+    execute(argvP,fWait); i++; }
+  R _n(); }
+
+K _3d(K x,K y) {      //'async' TCP
+  if(4==xt && !**kS(x)) R run(y);
   P(1!=xt, TE)
- 
   I res=-1;
   if(y->t==-3)res=ksender(*kI(x),y,0);
   else if(y->t==0 && y->n==4 && kK(y)[3]->t==7 && kK(y)[3]->n==3 && kK(y)[1]->t==0 && kK(y)[1]->n==0
@@ -927,7 +954,6 @@ K _3d(K x,K y) //'async' TCP
     str[lenS]=':'; str[(2*lenS)+lenC+1]='\0';
     K q=Ks(str); res=ksender(*kI(x),q,0); cd(q); }
   else R NYI;
-
   P(-1==res,DOE)
   R _n();
   //Communicate with 32-bit K3.2, but see _3m where handshake is purposefully broken
