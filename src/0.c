@@ -881,19 +881,12 @@ I ksender(I sockfd,K y,I t)
   R r;
 }
 
-Z void parseLine(S line, S *argvL) {
-  while(*line != '\0') {
-    while(*line == ';' || *line == '\t' || *line == '\n') *line++ = '\0';
-    *argvL++ = line;
-    while(*line != '\0' &&  *line != ';' && *line != '\t' && *line != '\n') line++; }
-  *argvL = '\0'; }
-
-Z void parsePhrase(S line, S *argvP) {
-  while(*line != '\0') {
-    while(*line == ' ' || *line == '\t' || *line == '\n') *line++ = '\0';
-    *argvP++ = line;
-    while(*line != '\0' &&  *line != ' ' && *line != '\t' && *line != '\n') line++; }
-  *argvP = '\0'; }
+Z void parse(S s, S *argv, C c) {
+  while(*s != '\0') {
+    while(*s == c || *s == '\t' || *s == '\n') *s++ = '\0';
+    *argv++ = s;
+    while(*s != '\0' &&  *s != c && *s != '\t' && *s != '\n') s++; }
+  *argv = '\0'; }
 
 Z void execute(S *argvP, I fWait) {
   pid_t  pid; I status;
@@ -905,9 +898,9 @@ Z void execute(S *argvP, I fWait) {
 
 Z K run(K x) {
   S line=kC(x), argvL[64], argvP[64]; I i,fWait=1;
-  parseLine(line,argvL);
+  parse(line,argvL,';');
   i=0; while(argvL[i]!=NULL) {
-    parsePhrase(argvL[i],argvP);
+    parse(argvL[i],argvP,' ');
     if(argvL[1]==NULL && (strcmp(argvP[0],"echo")!=0))fWait=0;
     execute(argvP,fWait); i++; }
   R _n(); }
