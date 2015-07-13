@@ -881,33 +881,7 @@ I ksender(I sockfd,K y,I t)
   R r;
 }
 
-Z void parse(S s, S *argv, C c) {
-  while(*s != '\0') {
-    while(*s == c || *s == '\t' || *s == '\n') *s++ = '\0';
-    *argv++ = s;
-    while(*s != '\0' &&  *s != c && *s != '\t' && *s != '\n') s++; }
-  *argv = '\0'; }
-
-Z void execute(S *argvP, I fWait) {
-  pid_t  pid; I status;
-  if((pid = fork()) < 0) { O("*** ERROR: forking child process failed\n"); exit(1); }
-  else if(pid == 0) {
-    if(execvp(*argvP,argvP) < 0) { O("*** ERROR: exec failed\n"); exit(1); } }
-  else {
-    if(fWait) { while (wait(&status) != pid)  ; } } }
-
-Z K run(K x) {
-  S line=kC(x), argvL[64], argvP[64]; I i,fWait=1;
-  parse(line,argvL,';');
-  i=0; while(argvL[i]!=NULL) {
-    parse(argvL[i],argvP,' ');
-    if(argvL[1]==NULL && (strcmp(argvP[0],"echo")!=0))fWait=0;
-    execute(argvP,fWait); i++; }
-  R _n(); }
-
-K _3d(K x,K y) {      //'async' TCP
-  if(4==xt && !**kS(x)) R run(y);
-  P(1!=xt, TE)
+Z K _3d_(K x,K y) {
   I res=-1;
   if(y->t==-3)res=ksender(*kI(x),y,0);
   else if(y->t==0 && y->n==4 && kK(y)[3]->t==7 && kK(y)[3]->n==3 && kK(y)[1]->t==0 && kK(y)[1]->n==0
@@ -955,6 +929,31 @@ K _3d(K x,K y) {      //'async' TCP
 }
 
 #ifndef WIN32
+
+Z void parse(S s, S *argv, C c) {
+  while(*s != '\0') {
+    while(*s == c || *s == '\t' || *s == '\n') *s++ = '\0';
+    *argv++ = s;
+    while(*s != '\0' &&  *s != c && *s != '\t' && *s != '\n') s++; }
+  *argv = '\0'; }
+
+Z void execute(S *argvP, I fWait) {
+  pid_t  pid; I status;
+  if((pid = fork()) < 0) { O("*** ERROR: forking child process failed\n"); exit(1); }
+  else if(pid == 0) {
+    if(execvp(*argvP,argvP) < 0) { O("*** ERROR: exec failed\n"); exit(1); } }
+  else {
+    if(fWait) { while (wait(&status) != pid)  ; } } }
+
+Z K run(K x) {
+  S line=kC(x), argvL[64], argvP[64]; I i,fWait=1;
+  parse(line,argvL,';');
+  i=0; while(argvL[i]!=NULL) {
+    parse(argvL[i],argvP,' ');
+    if(argvL[1]==NULL && (strcmp(argvP[0],"echo")!=0))fWait=0;
+    execute(argvP,fWait); i++; }
+  R _n(); }
+
 K popen_charvec(S cmd) {
   FILE *f; K z,l; S s=0; I n=0;
   f=popen(cmd,"r"); P(!f,_n())
@@ -963,6 +962,11 @@ K popen_charvec(S cmd) {
     l=newK(-3,n-1); strncpy(kC(l),s,n-1); kap(&z,&l); }
   if(s)free(s); pclose(f);
   R z; }
+
+K _3d(K x,K y) {      //'async' TCP
+  if(4==xt && !**kS(x)) R run(y);
+  P(1!=xt, TE)
+  R _3d_(x,y); }
 
 K _4d_(S srvr,S port,K y){
   struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr;
@@ -983,6 +987,12 @@ K _4d_(S srvr,S port,K y){
   else R z; }
 
 #else
+
+K _3d(K x,K y) {   //'async' TCP
+  S s=(V)kS(y);
+  if(4==xt && !**kS(x)) R system(s)?DOE:_n();
+  P(1!=xt, TE) }
+
 K popen_charvec(S cmd) {
   FILE *f; K z,l; C s[128]; S p;
   f=_popen(cmd,"r"); P(!f,_n())
