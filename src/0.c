@@ -65,7 +65,7 @@ K _0m(K a) {
     if(stat(m,&sb)==-1)R FE;
     if((sb.st_mode & S_IFMT)==S_IFIFO)ff=1;}
 
-  if(ff){                                                                 //read from FIFO
+  if(ff){                                                                      //read FIFO
     I fn,i,j; C buf[256]; z=newK(0,0);
     fn= open(m, O_RDONLY);
     while (read(fn,&buf,256)>0) {
@@ -77,17 +77,18 @@ K _0m(K a) {
       memcpy(kC(y),&buf,n); kap(&z,&y); cd(y); }
     GC; }
   else if( 4==t && !**kS(a) ){
-      char ss[300]; S adr=fgets(ss,sizeof(ss),stdin); if(adr==NULL)R FE;  //read from stdin 0:`
-      I i,j; for(i=0;i<300;++i){if(ss[i]=='\012')break;}
-      I k=0; for(j=0;j<=i;j++){if(ss[j]!='\004')ss[k++]=ss[j];}
-      z=newK(-3,k-1); for(j=0;j<k-1;++j){kC(z)[j]=ss[j];}
-      GC; }
-  else if( (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin")))
+    char ss[300]; S adr=fgets(ss,sizeof(ss),stdin); if(adr==NULL)R FE;    //read stdin 0:`
+    I i,j; for(i=0;i<300;++i){if(ss[i]=='\012')break;}
+    I k=0; for(j=0;j<=i;j++){if(ss[j]!='\004')ss[k++]=ss[j];}
+    z=newK(-3,k-1); for(j=0;j<k-1;++j){kC(z)[j]=ss[j];}
+    GC; }
+  else if( (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) //read stdin
            || 4==t && (!strcmp(*kS(a),"/dev/fd/0") || !strcmp(*kS(a),"/dev/stdin")) ){
-      b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);                //read from stdin
-      P(freopen_stdin() == NULL, FE)
-      if(b==-1){z=newK(0,0); GC;} }
-  else {                                                                  //read from mapped file
+    fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK); sleep(1);
+    b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);
+    P(freopen_stdin() == NULL, FE)
+    if(b==-1) R _(n); }
+  else {                                                                //read mapped file
     I f=open(CSK(a),0);
     P(f<0,DOE)
     P(stat_sz(CSK(a),&s),SE)
