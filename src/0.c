@@ -84,10 +84,9 @@ K _0m(K a) {
     GC; }
   else if( (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) //read stdin
            || 4==t && (!strcmp(*kS(a),"/dev/fd/0") || !strcmp(*kS(a),"/dev/stdin")) ){
-    fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK); sleep(1);
     b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);
     P(freopen_stdin() == NULL, FE)
-    if(b==-1) R _(n); }
+    if(b==-1){z=newK(0,0); GC;} }
   else {                                                                //read mapped file
     I f=open(CSK(a),0);
     P(f<0,DOE)
