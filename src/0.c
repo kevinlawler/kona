@@ -147,7 +147,7 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
     if(3==ABS(t)) {r=write(f,kC(b),s); if(!r)show(kerr("write"));}
       //This is duplicated but I don't see how to factor it right now (choose write/memcpy funcs?)
     else DO(n, k=kK(b)[i];
-      if(3==ABS(k->t)) {r=write(f,kC(k),k->n); if(!r)show(kerr("write"));}
+      if(3==ABS(k->t)) r=write(f,kC(k),k->n);
       r=write(f,"\n",1); if(!r)show(kerr("write"));) }
   else {                                                              //write to mmap'd file
     if(m[0])f=open(m,O_RDWR|O_CREAT|O_TRUNC,07777);
