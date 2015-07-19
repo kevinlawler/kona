@@ -4,6 +4,7 @@
 #ifndef WIN32
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 #include <dlfcn.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #include "win/dlfcn.h"
@@ -930,6 +931,15 @@ Z K _3d_(K x,K y) {
 
 #ifndef WIN32
 
+K popen_charvec(S cmd) {
+  FILE *f; K z,l; S s=0; I n=0;
+  f=popen(cmd,"r"); P(!f,_n())
+  z=newK(0,0); //oom
+  while (getline_(&s, (size_t * __restrict__)&n, f) >= 0) {
+    l=newK(-3,n-1); strncpy(kC(l),s,n-1); kap(&z,&l); }
+  if(s)free(s); pclose(f);
+  R z; }
+
 Z void parse(S s, S *argv, C c) {
   while(*s != '\0') {
     while(*s == c || *s == '\t' || *s == '\n') *s++ = '\0';
@@ -953,15 +963,6 @@ Z K run(K x) {
     if(argvL[1]==NULL && (strcmp(argvP[0],"echo")!=0))fWait=0;
     execute(argvP,fWait); i++; }
   R _n(); }
-
-K popen_charvec(S cmd) {
-  FILE *f; K z,l; S s=0; I n=0;
-  f=popen(cmd,"r"); P(!f,_n())
-  z=newK(0,0); //oom
-  while (getline_(&s, (size_t * __restrict__)&n, f) >= 0) {
-    l=newK(-3,n-1); strncpy(kC(l),s,n-1); kap(&z,&l); }
-  if(s)free(s); pclose(f);
-  R z; }
 
 K _3d(K x,K y) {      //'async' TCP
   if(4==xt && !**kS(x)) R run(y);
@@ -988,10 +989,40 @@ K _4d_(S srvr,S port,K y){
 
 #else
 
-K _3d(K x,K y) {   //'async' TCP
-  S s=(V)kS(y);
-  if(4==xt && !**kS(x)) R system(s)?DOE:_n();
-  P(1!=xt, TE) }
+Z void parse(S s, S *argv, C c) {
+  while(*s != '\0') {
+    while(*s == c || *s == '\t' || *s == '\n') *s++ = '\0';
+    *argv++ = s;
+    while(*s != '\0' &&  *s != c && *s != '\t' && *s != '\n') s++; }
+  *argv = '\0'; }
+
+Z void execute(LPSTR argv, I fWait) {
+  I i=0,j=0;
+  if(argv[0]==' '){
+    while(argv[i]==' ')++i;
+    while(i<(strlen(argv)+1)){argv[j]=argv[i]; ++i; ++j;} }
+  STARTUPINFO si;
+  PROCESS_INFORMATION pi;
+  ZeroMemory( &si, sizeof(si) );
+  si.cb = sizeof(si);
+  ZeroMemory( &pi, sizeof(pi) );
+  if( !CreateProcess(NULL,argv,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi) ) {
+    O( "CreateProcess failed (%d).\n", GetLastError() ); R; }
+  if(fWait) WaitForSingleObject( pi.hProcess, INFINITE );
+  CloseHandle( pi.hProcess );
+  CloseHandle( pi.hThread ); }
+
+Z K run(K x) {
+  S line=kC(x), argvL[64], argvP[64];
+  parse(line,argvL,';');
+  I i=0, fWait=1;
+  while(argvL[i]!=NULL) { if(argvL[1]==NULL)fWait=0; execute(argvL[i],fWait); ++i; }
+  R _n(); }
+
+K _3d(K x,K y) {      //'async' TCP
+  if(4==xt && !**kS(x)) R run(y);
+  P(1!=xt, TE)
+  R _3d_(x,y); }
 
 K popen_charvec(S cmd) {
   FILE *f; K z,l; C s[128]; S p;
