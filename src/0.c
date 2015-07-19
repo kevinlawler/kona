@@ -4,7 +4,6 @@
 #ifndef WIN32
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 #include <dlfcn.h>
-#include <windows.h>
 #else
 #include <unistd.h>
 #include "win/dlfcn.h"
