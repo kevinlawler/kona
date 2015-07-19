@@ -609,6 +609,7 @@ Z I tests02()
   TC( 5<4 5 6, 0 0 1)                     //issue #339
   TC( 5>4 5 6, 1 0 0)                     //issue #339
   TC( b:.[+;(1;"b");:]; b[1], "type")     //issue #343
+  TC_("'\"abc\"", "\"abc\"")              //issue #367
 
   R 0; 
 }
