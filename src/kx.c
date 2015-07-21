@@ -766,8 +766,8 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
   if( DT_ADVERB_OFFSET <= (L)*w && (L)*w < DT_VERB_OFFSET ) {
     if(offsetScan==(L)*w) {
       if(0==strcmp(fBreak,"n")) R ex2(w+1,k);
-      if(0==strcmp(fBreak,"t")) {K xx=ex2(w+1,k); show(xx); R xx;}
-      if(0==strcmp(fBreak,"s")) {K xx=ex2(w+1,k); fer=1; R xx;} }
+      if(0==strcmp(fBreak,"t")) R ex2(w+1,k);
+      if(0==strcmp(fBreak,"s")) { fer=1; R ex2(w+1,k); } }
     else if((V)offsetEach==*w) { if(3==ABS((*(K*)(w)[1])->t)) R ci(*(K*)(w)[1]); else R _n(); }
     else  R NYI; }
 
