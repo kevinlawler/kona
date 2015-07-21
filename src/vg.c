@@ -338,30 +338,23 @@ K reverse(K a)
 I countI(K a){R a->t>0?1:a->n;}
 K count(K a){R Ki(countI(a));}//[sic] Should always be 1 for an atom (t of 5,7 may have different n)
 
-K join(K a, K b)//TODO: 5,6?
-{
-  I at=a->t, ak=countI(a), bt=b->t, bk=countI(b);
-
-  I zt=0;
-  if(ABS(at)==ABS(bt))zt=-ABS(at);//K-Improvement?: ABS(at)=1or2 && ABS(bt)==1or2 should yield zt==-2
-  if(!ak)zt=-ABS(bt); 
-  else if(!bk)zt=-ABS(at);//'else' is sic. In "K3.21 2006-02-01" right empty list takes precedence
-  if(zt < -4)zt=0;
-  I zn=ak+bk;
+K join(K x, K y) {      //TODO: 5,6?
+  I xk=countI(x), yk=countI(y), zt=0;
+  if(ABS(xt)==ABS(yt)) zt=-ABS(xt);  //K-Improvement?: ABS(at)=1or2 && ABS(bt)==1or2 should yield zt==-2
+  if(!xk) zt=-ABS(yt); 
+  else if(!yk) zt=-ABS(xt);  //'else' is sic. In "K3.21 2006-02-01" right empty list takes precedence
+  if(zt < -4) zt=0;
+  I zn=xk+yk;
   K z=newK(zt,zn);U(z)
 
   //TODO: all this should be replaced with memcpy calls
-  if     (-4==zt){DO(ak,kS(z)[i]=kS(a)[i]) DO(bk,kS(z)[ak+i]=kS(b)[i])}
-  else if(-3==zt){DO(ak,kC(z)[i]=kC(a)[i]) DO(bk,kC(z)[ak+i]=kC(b)[i])}
-  else if(-2==zt){DO(ak,kF(z)[i]=kF(a)[i]) DO(bk,kF(z)[ak+i]=kF(b)[i])}
-  else if(-1==zt){DO(ak,kI(z)[i]=kI(a)[i]) DO(bk,kI(z)[ak+i]=kI(b)[i])}
-  else if( 0==zt)
-  {
-    //oom all here
-    K c=promote(a);
-    K d=promote(b);
-    DO(ak,kK(z)[i]=ci(kK(c)[i])) DO(bk,kK(z)[ak+i]=ci(kK(d)[i]))
-    cd(c);cd(d);
-  }
-  R z;
-}
+  if     (-4==zt){DO(xk,kS(z)[i]=kS(x)[i]) DO(yk,kS(z)[xk+i]=kS(y)[i])}
+  else if(-3==zt){DO(xk,kC(z)[i]=kC(x)[i]) DO(yk,kC(z)[xk+i]=kC(y)[i])}
+  else if(-2==zt){DO(xk,kF(z)[i]=kF(x)[i]) DO(yk,kF(z)[xk+i]=kF(y)[i])}
+  else if(-1==zt){DO(xk,kI(z)[i]=kI(x)[i]) DO(yk,kI(z)[xk+i]=kI(y)[i])}
+  else if( 0==zt) {    //oom all here
+    K c=promote(x); K d=promote(y);
+    DO(xk,kK(z)[i]=ci(kK(c)[i]))
+    DO(yk,kK(z)[xk+i]=ci(kK(d)[i]))
+    cd(c); cd(d);  }
+  R z; }
