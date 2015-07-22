@@ -405,6 +405,14 @@ K min_and_over(K x,K y)
   R z;
 }
 
+K join_over(K x,K y) {
+  I i,j=0,k;
+  for(i=0;i<yn;++i){ j+=kK(y)[i]->n; }  K z=newK(0,j); U(z)
+  i=0;
+  for(j=0;j<yn;++j) {
+    for(k=0;k<kK(y)[j]->n;++k) { kK(z)[i]=ci(kK(kK(y)[j])[k]); ++i; } }
+  R z; }
+
 TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backward compatibility with IO & inet
 {
   {0, 0, 0,0,{0}}, //So no row index is confused with null pointer
@@ -459,7 +467,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 1, floor_verb,"_",{0}},
   {0, 2, drop_cut,"_",{0}},
   {0, 1, enlist,",",{0}},
-  {0, 2, join,",",{0}},
+  {0, 2, join,",",{join_over}},
   {0, 1, count,"#",{0}},
   {0, 2, take_reshape,"#",{0}},
   {0, 1, format,"$",{0}},

@@ -35,13 +35,13 @@ __thread I frg=0;    // Flag reset globals
          I fom=0;    // Flag overMonad (curried)
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
-Z K overDyad(K a, V *p, K b)
-{
+Z K overDyad(K a, V *p, K b) {
+  V *o=p-1; K(*f)(K,K);
 
-  V *o=p-1; K(*f)(K,K); 
-
-  K k=0;
-  if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_over))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
+  K k=0; I i=0;
+  if(b->t==0) while(i<b->n && !kK(b)[i]->t){++i;}
+  if( *o!=(V)0x34 || (*o==(V)0x34 && i==b->n) ) {    //only a partial fix for join-over (where all elts of b are lists)
+    if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_over))k=f(a,b); } //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)
 
   K u=0,v=0;
@@ -51,13 +51,18 @@ Z K overDyad(K a, V *p, K b)
   if(yn == 0){if(VA(*o))z=LE; GC; } //Some verbs will handle this in alt_funcs
   K c=first(y),d;//mm/o
   //TODO: this reuse of g should be implemented in other adverbs
-  if(0 >yt) DO(yn-1, d=c; if(!g)g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); if(2==g->c){cd(g);g=0;} cd(d); if(!c) GC;) //TODO: oom err/mmo unwind above - oom-g
-  if(0==yt) DO(yn-1, d=c; c=dv_ex(d,p-1,kK(y)[i+1]); cd(d); if(!c) GC;) //TODO: err/mmo unwind above
+  if(0 >yt) DO(yn-1, d=c;
+                     if(!g)g=newK(ABS(yt),1);
+                     memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt));
+                     c=dv_ex(d,p-1,g);
+                     if(2==g->c){cd(g);g=0;} cd(d);
+                     if(!c) GC;) //TODO: oom err/mmo unwind above - oom-g
+  if(0==yt) DO(yn-1, d=c;
+                     c=dv_ex(d,p-1,kK(y)[i+1]); cd(d);
+                     if(!c) GC;) //TODO: err/mmo unwind above
   z=c;
 cleanup:
-  if(g)cd(g);
-  if(u)cd(u);
-  if(v)cd(v);
+  if(g)cd(g);  if(u)cd(u); if(v)cd(v);
   R z;
 }
 

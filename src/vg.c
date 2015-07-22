@@ -335,8 +335,8 @@ K reverse(K a)
   R z;
 }
 
-I countI(K a){R a->t>0?1:a->n;}
-K count(K a){R Ki(countI(a));}//[sic] Should always be 1 for an atom (t of 5,7 may have different n)
+I countI(K x){R xt>0?1:xn;}
+K count(K x){R Ki(countI(x));}   //[sic] Should always be 1 for an atom (t of 5,7 may have different n)
 
 K join(K x, K y) {      //TODO: 5,6?
   I xk=countI(x), yk=countI(y), zt=0;
