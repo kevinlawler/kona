@@ -195,7 +195,9 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   I o = isatty(STDIN); //display results to stdout?
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
-  if(fCheck==1) { if(s[0]==92 && s[1]==10) { fCheck=0; R 0; }}   //escape suspended exection with single backslash
+  if(s[0]=='\\' && s[1]=='\n') {
+    if(fCheck) { fCheck=0; R 0; }   //escape suspended execution with single backslash
+    else GC; }                      //escape continue with single backslash
   appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
   b=parsedepth(*p);
