@@ -154,7 +154,7 @@ Z I mark_number(S s,I n,I i,I*m)
 
 Z I mark_adverb(S s,I n,I i,I*m){
   C c=s[i];
-  R m[i]?0:s[i-1]!=' '&&(c=='/'||c=='\\'||c=='\'')?i<n-1&&s[i+1]==':'?2:1:0; }
+  R m[i]?0:s[i-1]!=' '&&s[1]!=')'&&(c=='/'||c=='\\'||c=='\'')?i<n-1&&s[i+1]==':'?2:1:0; }
 
 Z I mark_verb(S s,I n,I i,I*m)
 {
@@ -170,7 +170,7 @@ Z I mark_verb(S s,I n,I i,I*m)
   if('_'==s[i]) while(i+c<n && isalpha(s[i+1+c]))c++;
   if(c>1)R 1+c;
 
-  if(s[i]=='\\' && s[i-1]==' ') R 1;
+  if( s[i]=='\\' && (s[i-1]==' ' || s[i+1]==')' )) R 1;
 
   c=0; //primitive verbs + - includes verb ":"
   if(isCharVerb(s[i])){c++;if(0)EAT_SPACES}
@@ -539,7 +539,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                       else z=denameD(dict,u,1);
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
-                      if(s[k]=='\\' && (s[k-1]==' ' || s[k-1]==';')){z=(V)0x7c; break;} //check for trace or scan
+                      if(s[k]=='\\'){z=(V)0x7c; break;}   //trace or scan
                       if(s[k]==':' && s[strlen(s)-1]!=':' && lineB && lineB[strlen(lineB)-1]!=']' && lineB[0]!=')'){
                         I i=0; I c=0;
                         for(i=k-1;i>0;i--){if(s[i]!=' '){c=s[i];break;}}
