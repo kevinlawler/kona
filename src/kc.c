@@ -350,7 +350,7 @@ I check() {
   for(;;) {
     fgets(s, sizeof(s), stdin);
     if(s[0]==4)exit(0);             // ^D
-    if(s[0]==92 && s[1]==10)break;  // '\' and NL
+    if(s[0]=='\\' && s[1]=='\n')break;
     line(s, &a, &n, &q); }
   fCheck=0; R 0;
 }
@@ -371,6 +371,7 @@ pthread_mutex_t execute_mutex = PTHREAD_MUTEX_INITIALIZER;
 I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   I b=0,c=0;  int status;  K k;  F d;
   I o = isatty(STDIN); //display results to stdout?
+  if(s[0]=='\\' && s[1]=='\n') GC;
   appender(a,n,s,c=strlen(s));//"strcat"(a,s)
   I v=complete(*a,*n,p,0); //will allocate if p is null
   b=parsedepth(*p);
