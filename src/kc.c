@@ -197,7 +197,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   if(s[0]=='\\' && s[1]=='\n') {
     if(fCheck) { fCheck=0; R 0; }   //escape suspended execution with single backslash
-    else GC; }                      //escape continue with single backslash
+    if(*a) GC; }                    //escape continue with single backslash
   appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
   b=parsedepth(*p);
@@ -371,7 +371,7 @@ pthread_mutex_t execute_mutex = PTHREAD_MUTEX_INITIALIZER;
 I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   I b=0,c=0;  int status;  K k;  F d;
   I o = isatty(STDIN); //display results to stdout?
-  if(s[0]=='\\' && s[1]=='\n') GC;
+  if(s[0]=='\\' && s[1]=='\n' && *a) GC;     //escape continue with single backslash
   appender(a,n,s,c=strlen(s));//"strcat"(a,s)
   I v=complete(*a,*n,p,0); //will allocate if p is null
   b=parsedepth(*p);
