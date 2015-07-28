@@ -229,7 +229,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ;
                                 //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
 {
   if(!s) R 0;
-  if(strstr(s,":\\t")) { show(kerr("\\t  syntax")); R 0; }
+  if(strstr(s,":\\t ")) { show(kerr("\\t  syntax")); R 0; }
   if('\\'==s[0] && fbs){fbs=0; R backslash(s,n,dict);}  
 
   PDA p=0;
