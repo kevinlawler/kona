@@ -168,16 +168,15 @@ Z void trim(S s){    //remove leading blanks
   if(i){ for(j=0;j<1+strlen(s);++j) {s[j]=s[j+i];} } }
 
 /*
-Z I trim(S s) {
-  // initial version of trim: also removed duplicate blanks (which caused problems somewhere)
+Z void trim(S s) {
+  // initial version of trim: also removed duplicate blanks (caused problems with quoted strings)
   // it was an attempt to avoid segfaults in corner cases when manipulating input line with recur()
   I b=0,c=0,d=0,f=0;
   for(f=0;f<1+strlen(s);f++){if(s[f]!=' ') break;}
   for(d=f;d<1+strlen(s);d++){
     if(s[d]!=' '){s[c]=s[d]; c++; b=0;}
     else if(!b) {s[c]=s[d]; c++; b=1;}
-    if(c>2 && (s[c-1]==':' || s[c-1]=='{') && s[c-2]==' ' && s[c-3]!='/'){s[c-2]=s[c-1]; c--;} }
-  R 0; }
+    if(c>2 && (s[c-1]==':' || s[c-1]=='{') && s[c-2]==' ' && s[c-3]!='/'){s[c-2]=s[c-1]; c--;} } }
 */
 
 #ifndef WIN32
