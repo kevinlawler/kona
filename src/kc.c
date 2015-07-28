@@ -162,8 +162,15 @@ S recur(S s){
   else R NULL;
 }
 
+Z void trim(S s){    //remove leading blanks
+  I i,j;
+  for(i=0;i<strlen(s);++i) { if(s[i]!=' ') break; }
+  if(i){ for(j=0;j<1+strlen(s);++j) {s[j]=s[j+i];} } }
+
 /*
-Z I trim(S s){
+Z I trim(S s) {
+  // initial version of trim: also removed duplicate blanks (which caused problems somewhere)
+  // it was an attempt to avoid segfaults in corner cases when manipulating input line with recur()
   I b=0,c=0,d=0,f=0;
   for(f=0;f<1+strlen(s);f++){if(s[f]!=' ') break;}
   for(d=f;d<1+strlen(s);d++){
@@ -207,7 +214,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(v==0) fCmplt=0;  
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
 
-  //trim(*a); //avoids segfaults in corner cases when manipulating input line with recur
+  trim(*a); //remove leading blanks
   S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if((*a)[0]=='\\')fbs=1; else fbs=0;
