@@ -41,7 +41,7 @@ void boilerplate()
 //Q. What if K is sending a large message to a client or server. Does it block?
 //A. ?
 
-I filexist(S s){FILE *f=fopen(s,"r"); if(f){fclose(f); R 1;}else R 0;}
+I filexist(S s){FILE *f=fopen(s,"r"); if(f){fclose(f); R 1;}else {show(kerr("file")); R 0;}}
 
 K filename(S s)
 {
@@ -57,7 +57,7 @@ Z FILE *loadf(S s)
 {
   FILE *f;
   K p=filename(s);
-  f=fopen(kC(p),"r");
+  f=fopen(kC(p),"r"); if(!f)show(kerr("file"));
   cd(p);
   R f;
 }
@@ -68,7 +68,7 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   if(scrLim>124){O("limit\n");  R kerr("stack");} scrLim++;  
   FILE*f=loadf(s);
   if(!f){O("%s.k: file not found\n",s); R FE;}
-  lines(f); fclose(f); scrLim--;
+  lines(f); I r=fclose(f); if(r)R FE; scrLim--;
   if(fCmplt==1) { kerr("open-in-next-line"); oerr(); }
   kerr("undescribed"); fer=fCmplt=fLoad=0;
   R _n();
@@ -454,7 +454,7 @@ Z K backslash_e(S s,I n) {
 
 Z K backslash_s(S s)
 {
-  S t,u=0,w; I c=0,d,n,m=0,l=0;
+  S t,u=0,w; I c=0,d,n,m=0,l=0,r;
   FILE*f=loadf(s);
   K k=0,y=0,z=0;
   P(!f,_n());
@@ -481,7 +481,7 @@ Z K backslash_s(S s)
     }while(d==0||d==3);
   }
 cleanup:
-  fclose(f);
+  r=fclose(f); if(r)R FE;
   free(u);
   if(k)cd(k);
   if(y)cd(y);
