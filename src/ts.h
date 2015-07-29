@@ -81,6 +81,7 @@ typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; /
 #define RE kerr("rank")
 #define NE kerr("nonce")
 #define FE kerr("file")
+#define UE kerr("munmap")
 #define WE kerr("write")
 #define DOE kerr("domain") 
 #define SYE kerr("syntax")

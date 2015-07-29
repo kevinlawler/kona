@@ -103,7 +103,7 @@ K _0m(K a) {
   DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n;) //3rd run: populate
 
 cleanup:
-  if(v){if(b)free(v);else munmap(v,s);}
+  if(v){if(b)free(v);else {I r=munmap(v,s); if(r)R UE;} }
   R z;
 }
 
@@ -162,7 +162,7 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
     else DO(n, k=kK(b)[i]; if(3==ABS(k->t)){memcpy(v+c,kC(k),k->n); c+=k->n;} v[c++]='\n'; )
 
     //msync(v,s,MS_SYNC|MS_INVALIDATE); //slow
-    munmap(v,s);
+    I r=munmap(v,s); if(r)R UE;
   }
 
   R _n();
@@ -170,7 +170,7 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
 
 Z K _0d_read(K a,K b) {     //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 is a bad length for `f
   //may assume !a->t
-  K z=0;
+  K z=0; I res;
   I an=a->n, bt=b->t, bn=b->n;
   P(an!=2,DOE)
   K c=kK(a)[0],d=kK(a)[1];
@@ -248,12 +248,12 @@ Z K _0d_read(K a,K b) {     //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 
       p++; } }
 
 cleanup:
-  munmap(v,s);
+  res=munmap(v,s); if(res)R UE;
   R z;
 }
 
 Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;",")0:f
-  K z=0;
+  K z=0; I res;
   I an=a->n, bt=b->t;
   P(an!=2,DOE)
   K c=kK(a)[0],d=kK(a)[1];
@@ -311,12 +311,12 @@ Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;
     p++; }
 
 cleanup:
-  munmap(v,s);
+  res=munmap(v,s); if(res)R UE;
   R z;
 }
 
 Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings    (s;,",")0:f
-  K z=0;
+  K z=0; I res;
   I an=a->n, bt=b->t;
   P(an!=2,DOE)
   K c=kK(a)[0],d=kK(a)[1];
@@ -387,7 +387,7 @@ Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings  
       free(m); p++; } }
 
 cleanup:
-  munmap(v,s);
+  res=munmap(v,s); if(res)R UE;
   R z;
 }
 
@@ -431,7 +431,7 @@ K _1m(K x) {    //Keeps binary files mapped
   I b=0;
   K z = _1m_r(f,v,v,v+s,&b);
   close(f);
-  munmap(v,s);
+  I r=munmap(v,s); if(r)R UE;
   R z;
 }
 
@@ -512,7 +512,7 @@ Z K _1d_write(K x,K y) {
   wrep(y,v,1);
 
   //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
-  munmap(v,n);
+  I r=munmap(v,n); if(r)R UE;
 
   R _n();
 }
@@ -732,7 +732,7 @@ Z K _1d_read(K a,K b) {
         CS('Z', )
         CS('M', )  }
       p+=x; } }
-  munmap(v,map_length);
+  I res=munmap(v,map_length); if(res)R UE;
   R z;
 }
 
@@ -769,7 +769,7 @@ K _2m(K a) { //again, minor copy/paste here
   I b=0;
   K z=_2m_r(v,v+s,&b);
   //if(!z); //continue to unmap
-  munmap(v,s);
+  I r=munmap(v,s); if(r)R UE;
   R z;
 }
 
@@ -1086,7 +1086,7 @@ K _5d(K x,K y) {
   else if(-1==yt)  memcpy(d,ke(y),y->n*sizeof(I));
 
   //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
-  munmap(v,n);
+  I res=munmap(v,n); if(res)R UE;
 
   R Ki(fn+yn); //mm/o
 }
@@ -1107,7 +1107,7 @@ Z K readVector(K x,I t) { //This is largely copy/pasted from 0:. Written only fo
 
   K z=newK(t,ceil(s/(F)bp(t)));//TODO: oom (unmap, etc.)
   memcpy(ke(z),v,s); //K3.2 on -1 and 2 leave garbage here for files not a multiple of sizeof(I) or sizeof(F)
-  munmap(v,s);
+  I r=munmap(v,s); if(r)R UE;
   R z;
 }
 
@@ -1148,7 +1148,7 @@ K _6d(K a,K b) {  //A lot of this is copy/paste from 0: dyadic write
     close(f);
     memcpy(v+e,kC(b),n);
     msync(v+e,n,MS_SYNC|MS_INVALIDATE); //keep msync for _6d ??? see issue 163
-    munmap(v,e+n); }
+    I r=munmap(v,e+n); if(r)R UE; }
 
   R _n();
 }

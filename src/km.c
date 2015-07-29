@@ -88,7 +88,7 @@ K cd(K x)
   //in 32-bit Linux: sizeof(V)==4 but file-maps have o==8
   //in 64-bit Linux: sizeof(V)==8 and file-maps have o==8
   if(o==8 || r>KP_MAX){    //(file-mapped or really big) do not go back into pool.
-    munmap(((V)x)-o,k+o);    if(r>KP_MAX) mUsed -= (k+o);
+    I res=munmap(((V)x)-o,k+o); if(res)R UE; if(r>KP_MAX) mUsed -= (k+o);
   }
   else repool(x,r);
   R 0;
@@ -209,7 +209,9 @@ Z I kexpander(K*p,I n) //expand only.
           else {g=0; break;})
     if(g) if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1; //Add pages to end
 #endif
-    U(v=amem(d))   memcpy(v,a,c); *p=v; munmap(a,c); R 1; //Couldn't add pages, copy to new space
+    U(v=amem(d))   memcpy(v,a,c); *p=v;
+    I res=munmap(a,c); if(res) { show(kerr("munmap")); R 0; }
+    R 1; //Couldn't add pages, copy to new space
   }
   //Standard pool object
   I s=lsz(d);

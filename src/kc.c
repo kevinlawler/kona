@@ -284,7 +284,7 @@ I attend() //K3.2 uses fcntl somewhere
   sa.sa_handler = handle_SIGINT;
   sa.sa_flags = SA_RESTART;
   sigemptyset(&sa.sa_mask);
-  sigaction(SIGINT, &sa, NULL);
+  I res=sigaction(SIGINT, &sa, NULL); if(res){show(kerr("sigaction")); R -1;}
 
   // get us a socket and bind it 
   memset(&hints, 0, sizeof hints);
