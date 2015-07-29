@@ -93,7 +93,7 @@ Z I tests02()
   TC(2, {1+1} 0)
   TC(2, {a:1;a+a} _n )
   TC(_n, {a:1;a+a}0;a)
-  TC(99#1, {1}/:!99)
+  TC_("99#1", "{1}'!99")
   TC(1 2, 2#(1;2;3.0))
   TC(1 2, -1_(1;2;3.0))
   TC({x^2}, f:{x^2};.`f)
@@ -104,8 +104,8 @@ Z I tests02()
   TC(1+2+3, {b:1;c:2;d:3;b+c+d} 0)
   TC(_n, {1;;;} 0 )
   TC({_f}, {_f} 0)
-  TC(2 6 24, {:[x<2;1;_f[x-1]*x]}/: 2 3 4)  //paired with below
-  TC(2 6 24, {:[x<2;1;x* _f[x-1]]}/: 2 3 4) //regression
+  TC_("2 6 24", "{:[x<2;1;_f[x-1]*x]}' 2 3 4")  //paired with below
+  TC_("2 6 24", "{:[x<2;1;x* _f[x-1]]}' 2 3 4") //regression
   TC(60.0,   {:[(x<2)&(y<2);2;(x^2)+(y^2)+_f[x-1;y-1]]}[4;4]) //tests _f cache handled correctly
   TC(skip, (1;"stack") , .[{_f _f};0;:] ) //this test works but it takes 3x the other 600 tests
   TC(_n , _f) //nice not necessary
@@ -144,7 +144,7 @@ Z I tests02()
   TC(2 1, f:![1;]; f 1 2)
   TC(3, f:+[;]; g:f 1; g 2)
   TC(8.0, f:^[;]; g:f[;3]; g 2)
-  TC(4 5, +[3;]/:1 2)
+  TC_("4 5", "+[3;]'1 2")
   TC_("7 8", "+[3;]\'[4 5]")
 
   //Global Assignment
@@ -190,9 +190,9 @@ Z I tests02()
          // 4 stacks: depth-5, depth-2, depth-3, and implicit
   TC(1 3 10 3 10, g:1; do[2;{a:10; g::g,{x,a}x}3]; g) // do[2;] loop with subfunction (implicit arg) 
   TC( 7, f:{x+y+z}; g:f[1;;3]; {b:3; h:{b}; b:4; g[h[ ] ] }0) // projection and subfunction
-  TC( 3, {:[x<2;1;_f[x-1]*x]}/: 2 3 4; {b:3; g:{b}; b:4; g[]}0) // muti-statement combo test
+  TC_( "3", "{:[x<2;1;_f[x-1]*x]}'2 3 4; {b:3; g:{b}; b:4; g[]}0") // muti-statement combo test
   TC(120, {b:3; g:{b}; a::{:[x<2; 1; _f[x-1]*x]}5; g[ ]}0; a) // embedded _f with atom-arg
-  TC(2 6 24, {b:3; g:{b}; a::{:[x<2; 1; _f[x-1]*x]}/:2 3 4; g[ ]}0; a) // embedded _f with list-arg
+  TC_("2 6 24", "{b:3; g:{b}; a::{:[x<2; 1; _f[x-1]*x]}'2 3 4; g[ ]}0; a") // embedded _f with list-arg
   TC( 5, {x + {[a] a+a} y}[1;2])        // Leon Baum test
   TC( 5, {[a;b] a + {x+x} b}[1;2])      // Leon Baum test-2
   TC_("(7 0;7 1;7 2)", "f:{(7;x)};{[n]a:n;f'[!a]}[3]") // Variable scope
@@ -316,11 +316,11 @@ Z I tests02()
   TC( (((0 1 2;0 1 3);(0 1 4; 0 1 5));((0 1 6; 0 1 7);(0 1 8; 0 1 9))) , 0 1 ,/:/:/: ((2 3;4 5);(6 7;8 9)))
 
   //_bd _db
-  TC(1,a:(1;1.0;"c";`d;1 2;3.0 4.0;"ef";`g`h;();(1;`z)); &/{x~_db _bd x}/:a,,a)
-  TC(1,a:(!11)#\\:`a`b; &/{x~_db _bd x}/:a)
-  TC(1,a:(!11)#\\:"cd"; &/{x~_db _bd x}/:a)
-  TC(1,a:(!11)#\\:(`a;"c";1); &/{x~_db _bd x}/:a)
-  TC(1,a:(!11)#\\:,(`a;"c";1); &/{x~_db _bd x}/:a)
+  TC_("1" , "a:(1;1.0;\"c\";`d;1 2;3.0 4.0;\"ef\";`g`h;();(1;`z)); &/{x~_db _bd x}'a,,a")
+  TC_("1" , "a:(!11)#\\:`a`b; &/{x~_db _bd x}'a")
+  TC_("1" , "a:(!11)#\\:\"cd\"; &/{x~_db _bd x}'a")
+  TC_("1" , "a:(!11)#\\:(`a;\"c\";1); &/{x~_db _bd x}'a")
+  TC_("1" , "a:(!11)#\\:,(`a;\"c\";1); &/{x~_db _bd x}'a")
   //TC((1;"parse"), .[.:;,"_db_bd 1";:] ) //we handle this case now instead of error
   TC(2,  _db_bd_db_bd 2) //should be able to handle this case
   
@@ -464,9 +464,9 @@ Z I tests02()
   TC_("(1;\"type\")", "@[.:;\"(2=\\\"2\\\") 2\";:]")
 
 
-  TC_("(0;6 7 8)", "a:{x+y};@[.:;\"a/:[5;1 2 3]\";:]")
+  TC_("(0;6 7 8)", "a:{x+y};@[.:;\"a'[5;1 2 3]\";:]")
   TC_("(0;6 7 8)", "a:{x+y};@[.:;\"a\\\\:[5 6 7;1]\";:]")
-  TC_("(\"ab\"\n \"ac\")", "{x,y}/:[\"a\";\"bc\"]")
+  TC_("(\"ab\"\n \"ac\")", "{x,y}'[\"a\";\"bc\"]")
   TC(-1 0 1, flip:{[f;x;y]f[y;x]};flip[-\\:][2;1 2 3])
 
   TC_("10#2", "{x+1}'10#1")
