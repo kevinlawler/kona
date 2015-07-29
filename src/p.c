@@ -504,7 +504,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
       )
     CS(MARK_NAME   ,  e=strdupn(s+k,r);
                       u=sp(e); //converting to sp() probably unnecessary
-                      if(e)free(e);
+                      free(e);
                       P(!u,(L)ME) //you can return 0 but catch above?
 
                       //k3.2 knows whether NAME is set for assignment or not.  "b.c" value/parse error but "b.c:3" ok

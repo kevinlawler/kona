@@ -45,8 +45,8 @@ I wds_(K*a,FILE*f,I l) {
   z=newK(-3,m-1);
   strncpy(kC(z),t,m-1);
 cleanup:
-  if(s)free(s);
-  if(t)free(t);
+  free(s);
+  free(t);
   if(p)pdafree(p);
   if((v||c==-1)&&z){cd(z); *a=0;}
   else *a=z;
@@ -214,7 +214,7 @@ I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
 
   trim(*a); //remove leading blanks
-  S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
+  S newA=recur(*a); if(newA){ free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if((*a)[0]=='\\')fbs=1; else fbs=0;
 
@@ -248,8 +248,8 @@ cleanup:
       if(lineA || lineB)  check();          //enter suspended execution mode for checking
       if(!lineA && !lineB) O("%s\n",*a); }}
   if(*p)pdafree(*p);*p=0;
-  if(*a)free(*a);*a=0;*n=0;
-  if(s)free(s);s=0;
+  free(*a);*a=0;*n=0;
+  free(s);s=0;
 done:
   if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax);
               O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
@@ -388,7 +388,7 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
   if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
 
   //trim(*a); //avoids segfaults in corner cases when manipulating input line with recur
-  S newA=recur(*a); if(newA){ if(*a)free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
+  S newA=recur(*a); if(newA){ free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if((*a)[0]=='\\')fbs=1; else fbs=0;
 

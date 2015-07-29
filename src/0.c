@@ -624,7 +624,7 @@ Z I rrep_4(S*z,S a,S t) {   //type4 reader for 2: monadic
   I c=a-d;
   S e=strdupn(d,c); //oom
   *z=sp(e); //TODO: oom
-  if(e)free(e);
+  free(e);
   R c + (a!=t); }
 
 
