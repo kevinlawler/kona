@@ -13,7 +13,7 @@ K _s();
 K _f();
 K _i();
 K _v();
-extern S d__;
+extern S d_;
 K _d();
 K _h();
 extern K NIL;

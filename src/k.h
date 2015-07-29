@@ -121,7 +121,7 @@ extern S LS;
 extern K NIL;
 extern S IPC_PORT;
 extern S HTTP_PORT;
-extern S d__;
+extern S d_;
 extern I SEED;
 extern K KTREE;
 extern N SYMBOLS;

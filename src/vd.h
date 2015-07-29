@@ -3,7 +3,7 @@ K dot_monadic(K x);
 K Ks(S x);
 K make(K a);
 K kclone(K a);
-extern S d__;
+extern S d_;
 extern I fbs;
 K *denameS(S dir_string,S t,I create);
 extern C errmsg[256];

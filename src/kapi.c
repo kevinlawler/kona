@@ -16,7 +16,7 @@ extern K KTREE;
 extern K kap(K*, V);
 extern K* denameD(K*,S,I);
 extern K* denameS(S,S,I);
-extern S d__;
+extern S d_;
 #define NYI kerr("nyi")
 
 K gi(I x) {K z=newK(1,1); Ki(z)=x; R z;}

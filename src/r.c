@@ -937,7 +937,7 @@ K _h()
   P(gethostname(c,256),SE)
   R Ks(sp(c));  //oom
 }
-K _d(){R Ks(d__);}
+K _d(){R Ks(d_);}
 K _v(){R NYI;}
 K _i(){R NYI;}
 K _f(){R 0;} //Dummy function. Actual value computed inside of the parse function

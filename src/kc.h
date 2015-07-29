@@ -22,7 +22,7 @@ extern V fncp[128];
 extern I fnci;
 extern I fom;
 S sp(S k);
-extern S d__;
+extern S d_;
 K Kn();
 extern K NIL;
 void seedPRNG(I s);

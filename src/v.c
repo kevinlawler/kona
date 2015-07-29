@@ -156,7 +156,7 @@ K at(K x, K y)
 
   if(xt==4) {
     if(1==ABS(yt)){
-      C s[256]; strcpy(s,d__); strcat(s,"."); strcat(s,*kS(x));
+      C s[256]; strcpy(s,d_); strcat(s,"."); strcat(s,*kS(x));
       K *xx=denameD(&KTREE,(S)sp(s),1);
       if(6==(*xx)->t) R ci(y);
       else R of(*xx,y);}
