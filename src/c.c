@@ -482,7 +482,7 @@ Z K backslash_s(S s)
   }
 cleanup:
   fclose(f);
-  if(u)free(u);
+  free(u);
   if(k)cd(k);
   if(y)cd(y);
   if(z)cd(z);

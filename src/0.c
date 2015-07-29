@@ -870,7 +870,7 @@ K popen_charvec(S cmd) {
   z=newK(0,0); //oom
   while (getline_(&s, (size_t * __restrict__)&n, f) >= 0) {
     l=newK(-3,n-1); strncpy(kC(l),s,n-1); kap(&z,&l); }
-  if(s)free(s); pclose(f);
+  free(s); pclose(f);
   R z; }
 
 Z void parse(S s, S *argv, C c) {
