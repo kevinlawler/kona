@@ -224,7 +224,7 @@ I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 //      this rule doesn't apply to function argument lists, eg: f:{  [a] 1} is ok. however f: {\n\n  [a;b;d]  1+1} not ok
 //      so the check probably has to do with whether some useful symbol occurred on the line already
 //other errors: syntax error
-K wd(S s, I n){lineA=s; R wd_(s,n,denameD(&KTREE,__d,1),0);}
+K wd(S s, I n){lineA=s; R wd_(s,n,denameD(&KTREE,d__,1),0);}
 K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; 
                                 //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
 {
@@ -432,7 +432,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                       ((K)z)->n=3;
                       memcpy(kC(g),s+k+1,r-2);
 
-                      kV(z)[CONTeXT] = func?kV(func)[CONTeXT]:__d;
+                      kV(z)[CONTeXT] = func?kV(func)[CONTeXT]:d__;
 
                       K* zdict = (K*)kV(z)+PARAMS;
                       K* ydict = (K*)kV(z)+LOCALS;

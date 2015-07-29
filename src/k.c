@@ -32,7 +32,7 @@ Z K XN(S s,I n);
 N SYMBOLS;//immutable symbol interning
 K KTREE;  //dictionary, the main/global variable storage area
 I SEED;   //seed for PRNG
-S __d;    //sym: handle of current K-Tree dictionary / mth: thread-local storage
+S d__;    //sym: handle of current K-Tree dictionary / mth: thread-local storage
 
 S IPC_PORT;
 S HTTP_PORT;

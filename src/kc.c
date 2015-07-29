@@ -109,7 +109,7 @@ I kinit() {       //oom (return bad)
   seedPRNG(randomBits()); 
   NIL=Kn();
   KFIXED=newK(0,0); kap(&KFIXED,&NIL);cd(NIL);
-  __d = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
+  d__ = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
 
   #ifdef DEBUG
   test();

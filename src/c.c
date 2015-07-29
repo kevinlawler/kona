@@ -420,27 +420,27 @@ Z K backslash_b(S s,I n) {
 
 Z K backslash_d(S s,I n,K*dict) {
   C z[256];
-  //I len=strlen(__d); if(n==2){K r=newK(-3,len); strncpy(kC(r),__d,len); R r;}  // yields contents of __d enclosed in quotes
-  if(n==2) {O("%s\n",__d); R _n();}  // yields contents of __d without quotes (same as k3.2)
-  if(n==4 && s[3]==*".") { __d=""; R _n();}
+  //I len=strlen(d__); if(n==2){K r=newK(-3,len); strncpy(kC(r),d__,len); R r;}  // yields contents of d__ enclosed in quotes
+  if(n==2) {O("%s\n",d__); R _n();}  // yields contents of d__ without quotes (same as k3.2)
+  if(n==4 && s[3]==*".") { d__=""; R _n();}
   if(n==4 && s[3]==*"^") {
-    if(strlen(__d)==0) R _n();
-    if(strlen(__d)==2) {__d=""; R _n();}
-    if(strlen(__d)>3) {
+    if(strlen(d__)==0) R _n();
+    if(strlen(d__)==2) {d__=""; R _n();}
+    if(strlen(d__)>3) {
       I c=0,i=0;
-      for(i=0;i<strlen(__d);i++) if(__d[i]==*".")c=i;
-      strcpy(z,__d); z[c]=*"\0"; __d=(S)sp(z);
+      for(i=0;i<strlen(d__);i++) if(d__[i]==*".")c=i;
+      strcpy(z,d__); z[c]=*"\0"; d__=(S)sp(z);
       R _n();
     }
   }
-  if(n==5 && s[3]==*"." && s[4]==*"k") { __d=".k"; R _n();}
+  if(n==5 && s[3]==*"." && s[4]==*"k") { d__=".k"; R _n();}
   if(n==5 && s[3]==*"." && s[4]!=*"k") {O("absolute backslash-d should begin with .k\n"); R _n();} 
   if(isalpha(s[3])) { 
     denameD(dict,s+3,1);
-    strcpy(z,__d); strcat(z,"."); strcat(z,s+3); __d=(S)sp(z);
+    strcpy(z,d__); strcat(z,"."); strcat(z,s+3); d__=(S)sp(z);
     R _n();
   }
-  if(n>=6 && s[3]==*"." && s[4]==*"k" && s[5]==*".") {denameD(&KTREE,s+3,1); __d=(S)sp(s+3); R _n();}
+  if(n>=6 && s[3]==*"." && s[4]==*"k" && s[5]==*".") {denameD(&KTREE,s+3,1); d__=(S)sp(s+3); R _n();}
   if(n>=6 && s[3]==*"." && (s[4]!=*"k" || s[5]!=*".")) {O("absolute backslash-d should begin with .k.\n"); R _n();}
   R NYI;
 }

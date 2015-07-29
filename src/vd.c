@@ -62,14 +62,14 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
 
   K z=0;
   if(at==4 && bt==0) {
-    C s[256]; strcpy(s,__d); strcat(s,"."); strcat(s,*kS(a));
+    C s[256]; strcpy(s,d__); strcat(s,"."); strcat(s,*kS(a));
     K *aa=denameD(&KTREE,(S)sp(s),1);
     K *f=&kK(b)[0];
     R of2(*aa,f,bn>0?1+f:0,bn-1);
   }
 
   if(at==4 && bt==1){
-    C s[256]; strcpy(s,__d); strcat(s,"."); strcat(s,*kS(a));
+    C s[256]; strcpy(s,d__); strcat(s,"."); strcat(s,*kS(a));
     K *aa=denameD(&KTREE,(S)sp(s),1);
     R of(*aa,b);
   }
@@ -271,7 +271,7 @@ K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
 
     //triadic & tetradic create dict path if not existing (even on errors). dyadic/monadic create nothing
 
-    p = denameS(__d,*kS(a),1);
+    p = denameS(d__,*kS(a),1);
     U(p) //oom
   }
   else q = kclone(a); 
@@ -318,7 +318,7 @@ K dot_monadic(K x) {
     S s=kC(x); if(s[0]=='\\')fbs=1; else fbs=0;
     R KX(x); }
   if(4==xt)  { 
-    K *p = denameS(__d,*kS(x),0);
+    K *p = denameS(d__,*kS(x),0);
     if(!p) R DOE;
     R ci(*p); }
   if(5==xt)R unmake(x);
