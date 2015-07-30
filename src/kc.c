@@ -22,7 +22,7 @@
 Z I randomBits();
 I oerr(){R O("%s %s\n",errmsg,"error");}
 
-I interrupted=0;
+sig_atomic_t interrupted=0;
 I scrLim=0;           //script load limit
 I fCheck=0;
 I fCmplt=0;
@@ -362,9 +362,12 @@ I check() {
 }
 
 PHANDLER_ROUTINE handle_SIGINT(int sig) {
-  //no point in setting "interrupted=1", as exit happens anyway. 
-  //calling exit(0) explicitly cleans up with finally().
-  exit(0);
+  if(IPC_PORT) {closesocket(listener); WSACleanup();}
+  #ifdef DEBUG   
+  tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
+  #endif
+  //no point in setting "interrupted=1", as exit happens anyway.
+  _Exit(0);
 }
 
 I lines(FILE*f) {

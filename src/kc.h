@@ -64,7 +64,6 @@ I wds_(K *a,FILE *f,I l);
 I prompt(I n);
 extern I adverb_ct;
 extern I vn_ct,vm_ct,vd_ct,vt_ct;
-extern I interrupted;
 
 #ifdef __FreeBSD__
 extern ssize_t getline(S *lineptr, size_t *n, FILE *f);
