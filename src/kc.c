@@ -351,6 +351,8 @@ I attend() //K3.2 uses fcntl somewhere
 
 #else
 
+int listener=0;
+
 I check() {
   fCheck=1; kerr("undescribed"); prompt(1); C s[300]; S a=0; I n=0; PDA q=0;
   for(;;) {
@@ -435,7 +437,7 @@ done:
   R c;
 }
 
-fd_set master;  int listener=0;  int fds[10],nfds;  
+fd_set master; int fds[10],nfds;
 void *socket_thread(void *arg) {
   fd_set read_fds;
   FD_ZERO(&master); FD_ZERO(&read_fds);
