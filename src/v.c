@@ -22,7 +22,7 @@ K itemAtIndex(K a, I i) {   // Return i-th item from any type as K - TODO: oom w
 //Glue will be useful when it comes time to implement \d ?
 S glueSS(S c, S d) {
   I x=strlen(c),y=strlen(d);
-  S m = malloc(x+y+2); //oom
+  S m = alloc(x+y+2); //oom
   sprintf(m,"%s.%s",c,d);
   R m;
 }
@@ -296,7 +296,7 @@ K colon_dyadic(K a, K b){R ci(b);}
 Z S notsp(S a)
 {//In terms of interned S:  Output `x. for input `x
   I b=strlen(a);
-  S c=strcpy(malloc(b+2),a);
+  S c=strcpy(alloc(b+2),a);
   U(c)
   c[b]='.'; c[b+1]='\0';
   S d=sp(c);

@@ -379,12 +379,12 @@ K _lsq(K a,K b)
 
   I n=bn,m=MAX(r,n);
 
-  F **u=malloc(m*  sizeof(F*)); //oom
-  u[0] =malloc(n*m*sizeof(F )); //oom
-  F  *w=malloc(n*  sizeof(F )); //oom
-  F **v=malloc(n*  sizeof(F*)); //oom
-  v[0] =malloc(n*n*sizeof(F )); //oom
-  F  *t=malloc(n * sizeof(F )); //oom  (t for temp)
+  F **u=alloc(m*  sizeof(F*)); //oom
+  u[0] =alloc(n*m*sizeof(F )); //oom
+  F  *w=alloc(n*  sizeof(F )); //oom
+  F **v=alloc(n*  sizeof(F*)); //oom
+  v[0] =alloc(n*n*sizeof(F )); //oom
+  F  *t=alloc(n * sizeof(F )); //oom  (t for temp)
   DO(m,u[i]=u[0]+n*i)
   DO(n,v[i]=v[0]+n*i)
   DO(n*m,u[0][i]=0)//zero out any tacked on rows
@@ -752,7 +752,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
 
   I lp=strlen(p); 
   if(!lp)R LE;
-  I *r=malloc(lp*sizeof(I)); //oom
+  I *r=alloc(lp*sizeof(I)); //oom
 
   I n=3==ABS(a->t)?a->n:strlen(t);
   I m=0;
@@ -782,8 +782,8 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
   }
 
   K z=newK(-1,0);//oom
-  I *f=malloc((m+1)*sizeof(I));//oom
-  I *s=malloc((m+1)*sizeof(I));//oom
+  I *f=alloc((m+1)*sizeof(I));//oom
+  I *s=alloc((m+1)*sizeof(I));//oom
   DO(m+1,f[i]=s[i]=0)
 
   I i=m,j=m+1;

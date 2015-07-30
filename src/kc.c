@@ -153,7 +153,7 @@ S recur(S s){
   I m=k-i-2; char st[m+1]; strncpy(st, s+i+2, m); st[m]='\0'; //m is strlen(st)
   S rem=strstr(st,nm); S res;
   if(rem && ':'!=*(rem+strlen(nm)) && !isalnum(*(rem+strlen(nm))) && '_'!=*(rem-1) && !isalnum(*(rem-1))) {
-    res=malloc(1+sl+(2-n)); I ii,beg=k-strlen(rem);
+    res=alloc(1+sl+(2-n)); I ii,beg=k-strlen(rem);
     for(ii=0;ii<beg;ii++){res[ii]=s[ii];}
     res[beg]='_'; res[beg+1]='f';
     for(ii=n;ii<strlen(rem);ii++){res[beg+ii+2-n]=rem[ii];}

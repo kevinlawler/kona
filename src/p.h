@@ -1,6 +1,7 @@
 L charsAdverb(C c);
 extern V adverbs[];
 extern I fbs;
+V alloc(size_t sz);
 L charsVerb(C c);
 I SC(S a,S b);
 K *denameS(S dir_string,S t,I create);

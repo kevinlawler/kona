@@ -1,3 +1,4 @@
+V alloc(size_t sz);
 K _kona_exit(K x);
 K _dot_t();
 double genrand64_real2(void);

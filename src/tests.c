@@ -1502,7 +1502,7 @@ Z I testsBook()
 //show(what_triadic(ex(sw("3+")),ex(sw("0,1")),newK(0,0)));
 //show(what_triadic(ex(sw("3+")),ex(sw("0,1")),newK(-1,0)));
 
-  //I wn = 3; V* words = malloc(1+wn*sizeof(V*)); words[wn]=0; free(words);
+  //I wn = 3; V* words = alloc(1+wn*sizeof(V*)); words[wn]=0; free(words);
 
   //V words[] = {sp("a"),,i,'\0'};
   //preventing us from making words a K: variables (a:5+a:2), verbs.

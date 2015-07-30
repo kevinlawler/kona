@@ -41,6 +41,9 @@ Z V amem(I k);
 Z V kalloc(I k);
 Z V unpool(I r);
 
+V alloc(size_t sz) {
+  V r=malloc(sz);if(!r){fputs("out of memory\n",stderr);exit(1);}
+  R r; }
 
 I OOM_CD(I g, ...) //out-of-memory count-decrement 
 { va_list a; V v,o=(V)-1;
@@ -264,7 +267,7 @@ extern K kapn(K *a,V v,I n){R kapn_(a,v,n);}
 extern K kap(K*a,V v){R kapn_(a,v,1);}
 
 N newN(){R unpool(lsz(sizeof(Node)));}
-PDA newPDA(){PDA p=unpool(lsz(sizeof(Pda)));U(p) p->c=malloc(1); if(!p->c){ME;R 0;} R p;}
+PDA newPDA(){PDA p=unpool(lsz(sizeof(Pda)));U(p) p->c=alloc(1); if(!p->c){ME;R 0;} R p;}
 I push(PDA p, C c){R appender(&p->c,&p->n,&c,1);} 
 C    peek(PDA p){I n=p->n; R n?p->c[n-1]:0;}
 C     pop(PDA p){R p->n>0?p->c[--(p->n)]:0;}

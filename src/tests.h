@@ -7,6 +7,7 @@ K _db(K x);
 K _jd(K a);
 K _f();
 K _n();
+V alloc(size_t sz);
 I test();
 K cd(K a);
 K show(K a);

@@ -494,7 +494,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                       z=newK(1==y?4:-4,y); //oom
                       DO(r, if(m[k+i]>=0)continue;
                             for(a=0;m[k+i+1+a]>0;a++);
-                            u=malloc(1+a); //oom  you can return 0 but catch above?
+                            u=alloc(1+a); //oom  you can return 0 but catch above?
                             c='"'==s[k+i+1]?2:0;
                             u[unescaped_fill(u,s+k+i+1+c/2,a-c)]=0;
                             kS(z)[b++]=sp(u); //mm/o  you can return 0 but catch above?
