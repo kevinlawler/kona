@@ -1,6 +1,7 @@
 /* execution */
 
 #include "incs.h"
+#include <signal.h>
 
 #include "k.h"
 #include "kc.h"
@@ -8,6 +9,8 @@
 #include "kx.h"
 #include "km.h"
 #include "v.h"
+
+extern volatile sig_atomic_t interrupted;
 
 Z K bv_ex(V *p,K k);
 Z K dv_ex(K a,V *p,K b);

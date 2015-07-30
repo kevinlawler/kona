@@ -22,7 +22,7 @@
 Z I randomBits();
 I oerr(){R O("%s %s\n",errmsg,"error");}
 
-sig_atomic_t interrupted=0;
+volatile sig_atomic_t interrupted=0;
 I scrLim=0;           //script load limit
 I fCheck=0;
 I fCmplt=0;
