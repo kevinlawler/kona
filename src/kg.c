@@ -57,7 +57,7 @@ K distributionGrade(K a, I r, I u, I v)//u,v: precomputed min,max
   if(!s)GC;
   DO(n,c[kI(a)[i]-u]++)
   if(!r) DO(b-1,c[i+1]+=c[i])      //0==r: grade up
-  else   DO(b-1,c[_i-i-2]+=c[_i-i-1])//1==r: grade down
+  else   DO(b-1,c[_i-i-1]+=c[_i-i-0])//1==r: grade down
   DO(n, kI(s)[-1+c[kI(a)[n-i-1]-u]--]=n-i-1)
 cleanup:
   cd(d);
