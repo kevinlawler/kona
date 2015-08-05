@@ -69,10 +69,10 @@ I args(int n,S*v) {
     CSR(':', )
     CS('?',  O("%c\nabort",optopt); exit(0)) }
   while(optind < n) load(v[optind++]);
-  R 0;
-}
+  R 0; }
 
 K KFIXED;
+
 I kinit() {       //oom (return bad)
   atexit(finally);
 
@@ -127,8 +127,7 @@ I kinit() {       //oom (return bad)
 Z I randomBits(){
   I s;I f=open("/dev/urandom",0);
   I r=read(f,&s,sizeof(s)); if(!r)show(kerr("read"));
-  close(f);R s;
-}
+  close(f);R s; }
 
 void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
 
@@ -137,11 +136,10 @@ Z I nodeCount_(N n) {
   if(n->k){ if(strlen((S)n->k)) O("%s ",(S)n->k); else O("(nil) "); }
   if(n->c[0]) l += nodeCount_(n->c[0]);
   if(n->c[1]) r += nodeCount_(n->c[1]);
-  R 1+l+r;
-}
-Z I nodeCount(N n) {R nodeCount_(n)-1;}
+  R 1+l+r; }
+Z I nodeCount(N n) { R nodeCount_(n)-1; }
 
-S recur(S s){
+S recur(S s) {
   I sl=strlen(s); I f=0,i,j,k,c=1;
   for(i=1;i<sl-1;i++){if(s[i]==':' && s[i+1]=='{' && (isalnum(s[i-1]) || s[i-1]==' '))
     {f=1; break;} } //find begin :{ which is i
@@ -150,17 +148,19 @@ S recur(S s){
   if(isdigit(s[j+1])) R NULL;
   for(k=i+2;k<sl;k++){ if(s[k]=='{')c++; if(s[k]=='}')c--; if(!c)break; } //find end-} which is k
   I n=1+(i-1)-(j+1); char nm[n+1]; strncpy(nm, s+i-n, n); nm[n]='\0'; //n is strlen(nm)
-  I m=k-i-2; char st[m+1]; strncpy(st, s+i+2, m); st[m]='\0'; //m is strlen(st)
-  S rem=strstr(st,nm); S res;
-  if(rem && ':'!=*(rem+strlen(nm)) && !isalnum(*(rem+strlen(nm))) && '_'!=*(rem-1) && !isalnum(*(rem-1))) {
-    res=alloc(1+sl+(2-n)); I ii,beg=k-strlen(rem);
-    for(ii=0;ii<beg;ii++){res[ii]=s[ii];}
-    res[beg]='_'; res[beg+1]='f';
-    for(ii=n;ii<strlen(rem);ii++){res[beg+ii+2-n]=rem[ii];}
-    for(ii=k;ii<sl+1;ii++){res[ii+2-n]=s[ii];}
-    R res;}
-  else R NULL;
-}
+  I m=k-i-2; char st[m+1]; strncpy(st, s+i+2, m); st[m]='\0'; //m:strlen(st), st:string within outer braces
+  S rem=strstr(st,nm);  //remainder of st beginning with nm (if it exists)
+  if(rem) {
+    I offset=rem-st; C prior=*(s+i+2+offset-1); S res;  //prior is character before rem in s
+    if(':'!=*(rem+strlen(nm)) && !isalnum(*(rem+strlen(nm))) && '_'!=prior && !isalnum(prior)) {
+      res=alloc(1+sl+(2-n)); I ii,beg=k-strlen(rem);
+      for(ii=0;ii<beg;ii++){res[ii]=s[ii];}
+      res[beg]='_'; res[beg+1]='f';
+      for(ii=n;ii<strlen(rem);ii++){res[beg+ii+2-n]=rem[ii];}
+      for(ii=k;ii<sl+1;ii++){res[ii+2-n]=s[ii];}
+      R res;}
+    else R NULL; }
+  else R NULL; }
 
 Z void trim(S s){    //remove leading blanks
   I i,j;
@@ -185,15 +185,14 @@ I check() {      //in suspended execution mode: allows checking of state at time
   fCheck=1; kerr("undescribed"); prompt(1); S a=0;  I n=0;  PDA q=0;
   for(;;) { line(stdin, &a, &n, &q); if(fCheck==0)R 0; }
   O("\n"); fCheck=0;
-  R 0;
-}
+  R 0; }
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p)){} R 0;}
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
-I line(FILE*f, S*a, I*n, PDA*p) // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
-{
+
+I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   S s=0; I b=0,c=0,m=0;
   K k; F d;
 
@@ -260,8 +259,7 @@ done:
 }
 
 fd_set master; //select framework after beej's public domain c
-I attend() //K3.2 uses fcntl somewhere
-{
+I attend() {  //K3.2 uses fcntl somewhere
   S a=0;I n=0; PDA q=0; //command-line processing variables
 
   fd_set read_fds;
