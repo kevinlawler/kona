@@ -150,9 +150,9 @@ S recur(S s) {
   I n=1+(i-1)-(j+1); char nm[n+1]; strncpy(nm, s+i-n, n); nm[n]='\0'; //n is strlen(nm)
   I m=k-i-2; char st[m+1]; strncpy(st, s+i+2, m); st[m]='\0'; //m:strlen(st), st:string within outer braces
   S rem=strstr(st,nm);  //remainder of st beginning with nm (if it exists)
-  if(rem) {
+  if(rem && '['==*(rem+strlen(nm))) {
     I offset=rem-st; C prior=*(s+i+2+offset-1); S res;  //prior is character before rem in s
-    if(':'!=*(rem+strlen(nm)) && !isalnum(*(rem+strlen(nm))) && '_'!=prior && !isalnum(prior)) {
+    if('_'!=prior && !isalnum(prior)) {
       res=alloc(1+sl+(2-n)); I ii,beg=k-strlen(rem);
       for(ii=0;ii<beg;ii++){res[ii]=s[ii];}
       res[beg]='_'; res[beg+1]='f';
