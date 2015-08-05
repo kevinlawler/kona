@@ -611,6 +611,8 @@ Z I tests02()
   TC( 5>4 5 6, 1 0 0)                     //issue #339
   TC( b:.[+;(1;"b");:]; b[1], "type")     //issue #343
   TC_("'\"abc\"", "\"abc\"")              //issue #367
+  TC(6, fac:{:[x>1;x*fac[x-1];1]}; fac 3) //issue #373 (valgrind leaks)
+  TC(6, fac:{:[x>1;x*fac x-1;1]}; fac 3)  //issue #373 (valgrind leaks)
 
   R 0; 
 }
