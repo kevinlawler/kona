@@ -49,7 +49,7 @@ I miN(I a,I b){R a<b?a:b;}
 K X(S s){kerr("undescribed"); fnci=0; R XN(s,strlen(s));}  
 Z K XN(S s,I n){  //asserts ex(x) has first-line U(x)
   S newS=recur(s);
-  if(newS) R ex(wd(newS,strlen(newS)));
+  if(newS) {K r=ex(wd(newS,strlen(newS))); free(newS); R r;} 
   else  R ex(wd(s,n));
 }
 K KX(K x){R XN(CSK(x),xn);}  //assumes 3==ABS(xt)

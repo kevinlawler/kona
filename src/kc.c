@@ -44,14 +44,13 @@ I wds_(K*a,FILE*f,I l) {
   SW(v){CS(2,show(kerr("unmatched"));GC) CS(3,show(kerr("nest")); GC)}
   z=newK(-3,m-1);
   strncpy(kC(z),t,m-1);
-cleanup:
+ cleanup:
   free(s);
   free(t);
   if(p)pdafree(p);
   if((v||c==-1)&&z){cd(z); *a=0;}
   else *a=z;
-  R v?-v:c; // -1 EOF, -2 unmatched, -3 nest
-}
+  R v?-v:c; }    // -1 EOF, -2 unmatched, -3 nest
 
 K KONA_ARGS; //saved values from argv[1:]
 
@@ -120,9 +119,7 @@ I kinit() {       //oom (return bad)
   kap(&KTREE,&x); cd(x);
   x=newE(sp("t"),_dot_t());
   kap(&KTREE,&x); cd(x);
-  
-  R 0;
-}
+  R 0; }
 
 Z I randomBits(){
   I s;I f=open("/dev/urandom",0);
@@ -224,7 +221,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   #endif
 
   if(o)show(k); cd(k);
-cleanup:
+ cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
   if(strcmp(errmsg,"undescribed") && fer!=-1) { oerr(); I ctl=0;
@@ -249,14 +246,13 @@ cleanup:
   if(*p)pdafree(*p);*p=0;
   free(*a);*a=0;*n=0;
   free(s);s=0;
-done:
+ done:
   if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax);
               O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
               O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
   kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
-  R c;
-}
+  R c; }
 
 fd_set master; //select framework after beej's public domain c
 I attend() {  //K3.2 uses fcntl somewhere
@@ -344,8 +340,7 @@ I attend() {  //K3.2 uses fcntl somewhere
             //printf("server: new connection from %s on socket %d\n", inet_ntop(remoteaddr.ss_family, 
             //        get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN), newfd);
         else if(a) continue; //K3.2 blocks if in the middle of processing the command-line (should we sleep here?)
-        else read_tape(i,0); } }
-}
+        else read_tape(i,0); } } }
 
 #else
 
@@ -358,8 +353,7 @@ I check() {
     if(s[0]==4)exit(0);             // ^D
     if(s[0]=='\\' && s[1]=='\n')break;
     line(s, &a, &n, &q); }
-  fCheck=0; R 0;
-}
+  fCheck=0; R 0; }
 
 PHANDLER_ROUTINE handle_SIGINT(int sig) {
   if(IPC_PORT) {closesocket(listener); WSACleanup();}
@@ -367,14 +361,12 @@ PHANDLER_ROUTINE handle_SIGINT(int sig) {
   tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
   #endif
   //no point in setting "interrupted=1", as exit happens anyway.
-  _Exit(0);
-}
+  _Exit(0); }
 
 I lines(FILE*f) {
   S a=0;  I n=0;  PDA p=0;  char s[300];
   while(NULL != fgets(s,sizeof(s),f)) line(s,&a,&n,&p);
-  R 0;
-}
+  R 0; }
 
 pthread_mutex_t execute_mutex = PTHREAD_MUTEX_INITIALIZER;
 I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
@@ -406,7 +398,7 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
   #endif
 
   if(o)show(k); cd(k);
-cleanup:
+ cleanup:
   if(fer!=-1 && strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
     if(fError) {
       if(lineA) {
@@ -426,14 +418,13 @@ cleanup:
       if(lineA || lineB)  check();          //enter suspended execution mode for checking
       if(!lineA && !lineB) O("%s\n",*a); }}
   if(*p)pdafree(*p);*p=0; *a=0; *n=0; s=0;
-done:
+ done:
   if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax);
               O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
               O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
   kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
-  R c;
-}
+  R c; }
 
 fd_set master; int fds[10],nfds;
 void *socket_thread(void *arg) {
@@ -501,8 +492,7 @@ void *socket_thread(void *arg) {
           wipe_tape(i); nfd--; } } }
     free=0;
     for(i=0; i<nca; i++) {if(SockSet[i]==INVALID_SOCKET) {free=1; nxt=i; break;} } }   
-  R 0;     
-}
+  R 0; }
 
 I attend() {
   S a=0;I n=0; PDA q=0; //command-line processing variables
@@ -522,7 +512,6 @@ I attend() {
       fgets(s, sizeof(s), stdin);
       if(s[0]==4) exit(0);
       line(s, &a, &n, &q); } }
-  R 0;
-}     
+  R 0; }     
 
 #endif
