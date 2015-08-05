@@ -92,7 +92,7 @@ K _0m(K a) {
     P(f<0,DOE)
     P(stat_sz(CSK(a),&s),SE)
     if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
-    close(f); }
+    I r=close(f); if(r)R FE;}
 
   I c=s?1:0,d=0,e;
   DO(s, if('\n'==v[i] && i < s-1)c++) //1st run: count \n
@@ -130,8 +130,8 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
     f=open(m,O_WRONLY); P(f<0,DOE)
     if(3==ABS(t)){S msg=kC(b); if(write(f, msg, strlen(msg)+1)==-1) R WE;}
     else if(0==t){S msg; DO(n, if(ABS(kK(b)[i]->t)!=3) R DOE; msg=kC(kK(b)[i]); if(write(f, msg, strlen(msg)+1)==-1) R WE;)}
-    else {close(f); R DOE;} 
-    close(f); R _n(); }
+    else {I r=close(f); if(r)R FE; R DOE;} 
+    I r=close(f); if(r)R FE; R _n(); }
 
   if(3==ABS(t))s=n;
   else DO(n,s+=1+kK(b)[i]->n) //0-list adds newlines
@@ -155,14 +155,14 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
     S v;
     if(MAP_FAILED==(v=mmap(0,s,PROT_WRITE,MAP_SHARED,f,0)))R SE; //Should this be MAP_PRIVATE|MAP_NORESERVE?
 
-    close(f);
+    I r=close(f); if(r)R FE;
 
     I c=0;
     if(3==ABS(t)) memcpy(v,kC(b),s);
     else DO(n, k=kK(b)[i]; if(3==ABS(k->t)){memcpy(v+c,kC(k),k->n); c+=k->n;} v[c++]='\n'; )
 
     //msync(v,s,MS_SYNC|MS_INVALIDATE); //slow
-    I r=munmap(v,s); if(r)R UE;
+    r=munmap(v,s); if(r)R UE;
   }
 
   R _n();
@@ -215,9 +215,9 @@ Z K _0d_read(K a,K b) {     //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 
 
   S v;
   if(MAP_FAILED==(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb)))R SE;
-  close(f);
+  I r=close(f); if(r)R FE;
 
-  I r=0,t=0;
+  r=0; I t=0;
   DO(fn, if(v[fb+i]=='\n')if(t==w-1){r++;t=0;}else t=0;else t++)//count valid rows
 
   //if(t || r != fn/w )R 0; //Omitted: K3.2 length error + mm/o
@@ -268,10 +268,10 @@ Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;
   P(f<0,DOE)
   S v; // fn: file length,  f: fd,  fb: offset
   if(MAP_FAILED==(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb))){O("mmap failed\n"); R SE;}
-  close(f);
+  I r=close(f); if(r)R FE;
 
   I fc=0; DO(cn,if(' '==kC(c)[i])continue; if(stringHasChar("IFCS",kC(c)[i])) fc++; else R TE) //field count
-  I r=0; DO(fn, if(v[fb+i]=='\n')r++) // row count
+  r=0; DO(fn, if(v[fb+i]=='\n')r++) // row count
   if(v[fn-1]!='\n')r++; // no final line feed
 
   z=newK(0,fc);
@@ -331,10 +331,10 @@ Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings  
   P(f<0,DOE)
   S v; // fn: file length,  f: fd,  fb: offset
   if(MAP_FAILED==(v=mmap(0,fn,PROT_READ,MAP_SHARED,f,fb))){O("mmap failed\n"); R SE;}
-  close(f);
+  I r=close(f); if(r)R FE;
 
   I fc=0; DO(cn,if(' '==kC(c)[i])continue; if(stringHasChar("IFCS",kC(c)[i])) fc++; else R TE) //field count
-  I r=0; DO(fn, if(v[fb+i]=='\n')r++) // row count
+  r=0; DO(fn, if(v[fb+i]=='\n')r++) // row count
   if(v[fn-1]!='\n')r++; // no final line feed
 
   z=newK(0,2); if(!z) GC;
@@ -416,8 +416,8 @@ K _1m(K x) {    //Keeps binary files mapped
 
   P(f<0,DOE)
 
-  I s = c.st_size;
-  if(s < 4*sizeof(I)){close(f); R NE;} //malformed file
+  I s=c.st_size, r;
+  if(s < 4*sizeof(I)){r=close(f); if(r)R NE; R NE;} //malformed file
 
   S v;
   //These mmap arguments are present in Arthur's code. WRITE+PRIVATE lets reference count be modified without affecting file
@@ -430,8 +430,8 @@ K _1m(K x) {    //Keeps binary files mapped
   //TODO: verify that the file is valid K data. For -1,-2,-3 types (at least) you can avoid scanning the whole thing and check size
   I b=0;
   K z = _1m_r(f,v,v,v+s,&b);
-  close(f);
-  I r=munmap(v,s); if(r)R UE;
+  r=close(f); if(r)R FE;
+  r=munmap(v,s); if(r)R UE;
   R z;
 }
 
@@ -507,12 +507,12 @@ Z K _1d_write(K x,K y) {
   //lfop: see 0: write for possible way to do ftruncate etc. on Windows
   S v;
   if(MAP_FAILED==(v=mmap(0,n,PROT_WRITE,MAP_SHARED,f,0)))R SE; // should this be MAP_PRIVATE|MAP_NORESERVE ?
-  close(f);
+  I r=close(f); if(r)R FE;
 
   wrep(y,v,1);
 
   //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
-  I r=munmap(v,n); if(r)R UE;
+  r=munmap(v,n); if(r)R UE;
 
   R _n();
 }
@@ -692,11 +692,11 @@ Z K _1d_read(K a,K b) {
   I map_offset = fb - fb_off_by;
 
   if(MAP_FAILED==(v=mmap(0,map_length,PROT_READ,MAP_SHARED,f,map_offset)))R SE;
-  close(f);
+  I r=close(f); if(r)R FE;
 
   //End of copy/paste
 
-  I r=fn/w;//valid rows (if no error checking implemented for fn%w this code still works)
+  r=fn/w;//valid rows (if no error checking implemented for fn%w this code still works)
 
   z=newK(0,fc);
   if(!z) R 0;//TODO oom unmap
@@ -762,14 +762,14 @@ K _2m(K a) { //again, minor copy/paste here
 
   S v;
   if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE;
-  close(f);
+  I r=close(f); if(r)R FE;
 
   //K3.2 Bug: does not check boundary and will segfault on bad binary data (e.g., char vec with lying size of >> pagesize)
   //reading past boundary will segfault. pass boundary?
   I b=0;
   K z=_2m_r(v,v+s,&b);
   //if(!z); //continue to unmap
-  I r=munmap(v,s); if(r)R UE;
+  r=munmap(v,s); if(r)R UE;
   R z;
 }
 
@@ -903,18 +903,18 @@ K _3d(K x,K y) {      //'async' TCP
   R _3d_(x,y); }
 
 K _4d_(S srvr,S port,K y){
-  struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr;
+  struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr; I r;
   memset(&hints,0,sizeof hints); hints.ai_family=AF_UNSPEC; hints.ai_socktype=SOCK_STREAM;
   if(rv=getaddrinfo(srvr,port,&hints,&servinfo)!=0){fprintf(stderr,"conn: %s\n",gai_strerror(rv)); R DOE;}
   for(p=servinfo; p!=NULL; p=p->ai_next)
     if((sockfd=socket(p->ai_family,p->ai_socktype,p->ai_protocol))==-1)continue;
-    else if(connect(sockfd,p->ai_addr,p->ai_addrlen)==-1){errstr=strerror(errno); close(sockfd); continue;}
+    else if(connect(sockfd,p->ai_addr,p->ai_addrlen)==-1){errstr=strerror(errno); r=close(sockfd); if(r)R FE; continue;}
     else break;
   if(p==NULL){fprintf(stderr, "conn: failed to connect (%s)\n",errstr); freeaddrinfo(servinfo); R DOE;}
   I n=strlen(kC(y)); C msg[n+5]; I i=0; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
-  if(write(sockfd, &msg, strlen(msg))==-1){close(sockfd); R WE;}
-  C buf[20000]; n=read(sockfd,&buf,20000); close(sockfd);
+  if(write(sockfd, &msg, strlen(msg))==-1){r=close(sockfd); if(r)R FE; R WE;}
+  C buf[20000]; n=read(sockfd,&buf,20000); r=close(sockfd); if(r)R FE;
   K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
   freeaddrinfo(servinfo);
   if(n==0)R _n();
@@ -967,7 +967,7 @@ K popen_charvec(S cmd) {
   R z; }
 
 K _4d_(S srvr,S port,K y) {
-  WSADATA wsaData; int iResult, iRetval; DWORD dwRetval; I i=1; S errstr;
+  WSADATA wsaData; int iResult, iRetval; DWORD dwRetval; I i=1,r; S errstr;
   struct addrinfo *result = NULL; struct addrinfo *ptr = NULL; struct addrinfo hints;
   struct sockaddr_in  *sockaddr_ipv4; LPSOCKADDR sockaddr_ip;  //struct sockaddr_in6 *sockaddr_ipv6;
   C ipstringbuffer[46]; DWORD ipbufferlength=46;
@@ -980,13 +980,13 @@ K _4d_(S srvr,S port,K y) {
   I sockfd;  
   for(ptr=result; ptr != NULL ;ptr=ptr->ai_next)
     if((sockfd=socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol))==-1)continue;
-    else if(connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)==-1){errstr=strerror(errno); close(sockfd); continue;}
+    else if(connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)==-1){errstr=strerror(errno); r=close(sockfd); if(r)R FE; continue;}
     else break;
   if(ptr==NULL){fprintf(stderr, "conn: failed to connect (%s)\n",errstr); freeaddrinfo(result); R DOE;}
   I n=strlen(kC(y)); C msg[n+5]; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
-  if(send(sockfd, &msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); close(sockfd); freeaddrinfo(result); WSACleanup(); R WE;}
-  C buf[20000]; n=recv(sockfd,&buf,20000,0); close(sockfd);
+  if(send(sockfd, &msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); r=close(sockfd); if(r)R FE; freeaddrinfo(result); WSACleanup(); R WE;}
+  C buf[20000]; n=recv(sockfd,&buf,20000,0); r=close(sockfd); if(r)R FE;
   K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
   freeaddrinfo(result);  WSACleanup();
   if(n==0)R _n();
@@ -1071,7 +1071,7 @@ K _5d(K x,K y) {
   //lfop: see 0: write for possible way to do ftruncate etc. on Windows
   S v;
   if(MAP_FAILED==(v=mmap(0,n,PROT_WRITE,MAP_SHARED,f,0)))R SE;
-  close(f);
+  I res=close(f); if(res)R FE;
 
   I*w=(I*)v;
   w[3]=fn+yn;
@@ -1086,7 +1086,7 @@ K _5d(K x,K y) {
   else if(-1==yt)  memcpy(d,ke(y),y->n*sizeof(I));
 
   //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
-  I res=munmap(v,n); if(res)R UE;
+  res=munmap(v,n); if(res)R UE;
 
   R Ki(fn+yn); //mm/o
 }
@@ -1103,11 +1103,11 @@ Z K readVector(K x,I t) { //This is largely copy/pasted from 0:. Written only fo
   S v;
 
   if(MAP_FAILED==(v=mmap(0,s,PROT_READ,MAP_SHARED,f,0)))R SE; //Should this be PRIVATE+NO_RESERVE ?
-  close(f);
+  I r=close(f); if(r)R FE;
 
   K z=newK(t,ceil(s/(F)bp(t)));//TODO: oom (unmap, etc.)
   memcpy(ke(z),v,s); //K3.2 on -1 and 2 leave garbage here for files not a multiple of sizeof(I) or sizeof(F)
-  I r=munmap(v,s); if(r)R UE;
+  r=munmap(v,s); if(r)R UE;
   R z;
 }
 
@@ -1138,17 +1138,17 @@ K _6d(K a,K b) {  //A lot of this is copy/paste from 0: dyadic write
     P(stat_sz(m,&e),SE)
 
   P(f<0,SE)
-
-  if(1==f) {I r=write(f,kC(b),n); if(!r)show(kerr("write"));}       //write to stdout on empties
+  I r;
+  if(1==f) {r=write(f,kC(b),n); if(!r)show(kerr("write"));}       //write to stdout on empties
   else {                       //write to mmap'd file
     P(ftruncate(f,e+n),SE)
     //lfop: see 0: write for possible way to do ftruncate etc. on Windows
     S v;
     if(MAP_FAILED==(v=mmap(0,e+n,PROT_WRITE,MAP_SHARED,f,0)))R SE; //should this be MAP_PRIVATE|MAP_NORESERVE ?
-    close(f);
+    r=close(f); if(r)R FE;
     memcpy(v+e,kC(b),n);
     msync(v+e,n,MS_SYNC|MS_INVALIDATE); //keep msync for _6d ??? see issue 163
-    I r=munmap(v,e+n); if(r)R UE; }
+    r=munmap(v,e+n); if(r)R UE; }
 
   R _n();
 }
@@ -1164,9 +1164,7 @@ K _3m(K x) {
   char port[256];
   snprintf(port,256,"%lld",*kI(kK(x)[1]));
 
-  int sockfd;
-  struct addrinfo hints, *servinfo, *p;
-  int rv;
+  int sockfd, rv;  struct addrinfo hints, *servinfo, *p; I r;
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
@@ -1175,7 +1173,7 @@ K _3m(K x) {
   // loop through all the results and connect to the first we can
   for(p = servinfo; p != NULL; p = p->ai_next)
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {  continue; } //perror("client: socket");
-    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) { errstr=strerror(errno); close(sockfd); continue; }
+    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) { errstr=strerror(errno); r=close(sockfd); if(r)R FE; continue; }
       //perror("client: connect");
     else break;
 
@@ -1234,7 +1232,7 @@ K _3m(K x) {
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
       { perror("client: socket()"); O("client socket(): %ld\n", WSAGetLastError()); continue; }
     else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)
-      { O("client connect(): %d\n", WSAGetLastError()); close(sockfd); continue; }
+      { O("client connect(): %d\n", WSAGetLastError()); rv=close(sockfd); if(rv)R FE; continue; }
     else break;
 
   if (p == NULL) { fprintf(stderr, "conn: failed to connect (%d)\n", WSAGetLastError());freeaddrinfo(servinfo); R DOE; }

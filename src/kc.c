@@ -124,7 +124,7 @@ I kinit() {       //oom (return bad)
 Z I randomBits(){
   I s;I f=open("/dev/urandom",0);
   I r=read(f,&s,sizeof(s)); if(!r)show(kerr("read"));
-  close(f);R s; }
+  r=close(f); if(r)show(kerr("file")); R s; }
 
 void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
 
@@ -304,7 +304,7 @@ I attend() {  //K3.2 uses fcntl somewhere
       setsockopt(listener, SOL_SOCKET, SO_REUSEADDR | SO_NOSIGPIPE , &yes, sizeof(I)); 
       #endif
 
-      if (bind(listener, p->ai_addr, p->ai_addrlen) < 0) { close(listener); continue; }
+      if (bind(listener, p->ai_addr, p->ai_addrlen) < 0) { I r=close(listener); if(r)show(kerr("file")); continue; }
       break; }
     //K3.2 k aborts/exits if port is in use. k -i 1234. OK.  k -i 1234 ->  "i\nabort\n" exit;
     if (p == NULL) { fprintf(stderr, "server: failed to bind\n"); exit(2); } 

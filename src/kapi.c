@@ -31,13 +31,9 @@ Z K gpn_(S s, I i) {K z=gtn(-3,i); memcpy(KC(z),s,i); R z; }
 K gpn(S s, I i) {I n=strlen(s); if(i<n) R gpn_(s, i); else R 0;}
 K gp(S s) {R gpn_(s,strlen(s));}
 
-I sfn(S s, K(*f)(), I i)
-{
-	R 0;
-}
-
+I sfn(S s, K(*f)(), I i) { R 0; }
 I sdf(I i, I(*f)()) { R NYI; } // XXX
-I scd(I i) { R close(i);} // XXX
+I scd(I i) { I rclose(i); if(r)R FE; R r;} // XXX
 
 K gsk(S s, K k) { return gnk(3, gs(sp(s)), k, 0); }
 
