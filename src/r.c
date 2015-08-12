@@ -19,7 +19,7 @@
 
 //Reserved verbs/functions (_verb)
 
-K _vs(K x,K y);
+K _vsx(K x,K y);
 Z I CIX(K a,I i,K x);
 Z I binr(K a,I b,I c,K x);
 Z I date_from_jdn(I j);
@@ -35,7 +35,7 @@ Z S rangematch(S p,C t,S r);
 #define S_TRIAD_(f,v,t) K v; K f(K x,K y,K w){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,&v);cd(v);} K k=newK(0,3); U(k) kK(k)[0]=x; kK(k)[1]=y; kK(k)[2]=w; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
 #define S_TRIAD(f,x) S_TRIAD_(_##f,f##_KVAR,x)
 
-S_MONAD(gtime, "{(_dj _ x % 86400; 100 _sv 24 60 60 _vs x ! 86400)}") //will error until _sv works
+S_MONAD(gtime, "{(_dj _ x % 86400; 100 _sv 24 60 60 _vsx x ! 86400)}") //will error until _sv works
 S_MONAD(inv,   "{((2##*x)#1,&#*x)_lsq x}")
 
 S_DYAD(binl, "{x _bin/: y}")
@@ -55,7 +55,7 @@ S_TRIAD(ssr, "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\
 #define _SYSTEMN  W(T) W(a) W(d) W(f) W(h) W(i) W(k) W(m) W(n) W(p) W(s) W(t) W(u) W(v) W(w)
 #define _MATH     W(acos) W(asin) W(atan) W(ceil) W(cos) W(cosh) W(exp) W(floor) W(log) W(sin) W(sinh) W(sqr) W(sqrt) W(tan) W(tanh)
 //#define _SYSTEM1  _MATH W(abs) W(bd) W(ceiling) W(ci) W(db) W(dj) W(exit) W(getenv) W(gtime) W(host) W(ic) W(inv) W(jd) W(lt) W(ltime) W(size) 
-//#define _SYSTEM2  W(bin) W(binl) W(di) W(dot) W(draw) W(dv) W(dvl) W(hat) W(in) W(lin) W(lsq) W(mul) W(setenv) W(sm) W(ss) W(sv) W(vs)
+//#define _SYSTEM2  W(bin) W(binl) W(di) W(dot) W(draw) W(dv) W(dvl) W(hat) W(in) W(lin) W(lsq) W(mul) W(setenv) W(sm) W(ss) W(sv) W(vsx)
 //#define _SYSTEM3  W(ssr)
 
 
@@ -867,19 +867,19 @@ Z S rangematch(S p, C t, S r) //BSD.  p pattern t testchar r represented. R 0 on
 
 void Ireverse(K x){DO(x->n/2, I t=kI(x)[x->n-i-1]; kI(x)[x->n-i-1]=kI(x)[i]; kI(x)[i]=t)}
 
-K _vs(K x,K y) //vector from scalar, radix & clock arithmetic (unbounded & bounded)
+K _vsx(K x,K y) //vector from scalar (improved version), radix & clock arithmetic (unbounded & bounded)
 {
   P(1 < ABS(y->t) || 1!=ABS(xt), TE)
 
   K z=0;
 
-  if(0==y->t){U(z=newK(0,y->n)) DO(y->n, M(z,kK(z)[i]=_vs(x,kK(y)[i])))} //eachright
+  if(0==y->t){U(z=newK(0,y->n)) DO(y->n, M(z,kK(z)[i]=_vsx(x,kK(y)[i])))} //eachright
   else if(-1==y->t)//eachright  (we deviate. K3.2 has a k implementation with values "flipped" with front zero-fill)
   {
     z = newK(0,y->n);
     K k = Ki(0);
     M(k,z)
-    DO(y->n, *kI(k)=kI(y)[i]; M(z,k,kK(z)[i]=_vs(x,k)))
+    DO(y->n, *kI(k)=kI(y)[i]; M(z,k,kK(z)[i]=_vsx(x,k)))
     cd(k);
     z=demote(z);
   }
@@ -915,6 +915,42 @@ K _vs(K x,K y) //vector from scalar, radix & clock arithmetic (unbounded & bound
 
   R z;
 }
+
+K _vs(K x,K y) {   //vector from scalar (k3 version), radix & clock arithmetic (unbounded & bounded)
+  P(1 < ABS(y->t) || 1!=ABS(xt), TE)
+  K z=0;
+  if(0==y->t){U(z=newK(0,y->n)) DO(y->n, M(z,kK(z)[i]=_vs(x,kK(y)[i])))} //eachright
+  else if(-1==y->t) {
+    z = newK(0,y->n);
+    K k = Ki(0);
+    M(k,z)
+    DO(y->n, *kI(k)=kI(y)[i]; M(z,k,kK(z)[i]=_vs(x,k)))
+    cd(k);
+    z=demote(z); }
+  else if(1==xt) {
+    P(*kI(x)<2, DOE)
+    P(*kI(y)==0, X("!0"))
+    U(z=newK(-1,0))
+    I a = *kI(x), b = *kI(y), c=b/a;
+    while(!z->n || b!=c) {  //need 1, but lookahead to dodge any fixed points
+      kap(&z,&b);
+      b = c;
+      c = b/a; }
+    DO(z->n, kI(z)[i] %= a)
+    Ireverse(z); }
+  else if(-1==xt) {   // && 1==y->t /clock
+    DO(xn, if(kI(x)[i]<1) R DOE)
+    U(z=newK(-1,xn))
+    I a = *kI(y), n =z->n;
+    if(a<0){I s=1;DO(xn,s*=kI(x)[i]) a = s - (-a % s);} //a nice property. maybe not crucial
+    DO(n, kI(z)[i] = kI(x)[x->n-1-i])  // z:|x
+    if(n) *kI(z) = *kI(z)? a / *kI(z):0; 
+    DO(n-1, I d=kI(z)[i+1]; kI(z)[i+1] = d?kI(z)[i]/d:0) // divide scan
+    DO(n-1, kI(z)[n-1-i] = kI(z)[n-2-i] - kI(z)[n-1-i] * kI(x)[i] ) 
+    if(n) *kI(z) = a - *kI(z) * kI(x)[xn-1];
+    Ireverse(z);
+    R z; }
+  R z; }
 
 /////////////////////////////////////////
 //Niladic (Reserved Symbols) ////////////

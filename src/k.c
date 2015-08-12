@@ -537,10 +537,11 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 2, _sm,"_sm",{0}},
   {0, 2, _ss,"_ss",{0}},
   {0, 2, _sv,"_sv",{0}},
-  {0, 2, _vs,"_vs",{0}},
+  {0, 2, _vsx,"_vsx",{0}},  //extended version
   {0, 3, _ssr,"_ssr",{0}},
   {0, 1, tr_st," \\",{0}},  //trace_stop
   {0, 1, rtrn,":",{0}},     //return
+  {0, 2, _vs,"_vs",{0}},    //k3 version
   //^^Add new rows here^^
   {-1,-1,TABLE_END,0,{0}}   //sentinel
 };

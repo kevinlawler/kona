@@ -303,6 +303,7 @@ K backslash(S s, I n, K*dict)
               "_ss      positions of substring y in string x\n"
               "_sv      scalar from vector with base change\n"
               "_vs      vector from scalar with base change\n"
+              "_vsx     vector from scalar with base change - extended\n"
               "\n"
               "Triadic Verbs:\n"
               "_ssr     string search & replace\n"

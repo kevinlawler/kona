@@ -104,3 +104,4 @@ K _lin(K x,K y);
 K _mul(K x,K y);
 K _sv(K x,K y);
 K _vs(K x,K y);
+K _vsx(K x,K y);

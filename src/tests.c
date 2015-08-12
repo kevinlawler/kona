@@ -335,7 +335,7 @@ Z I tests02()
   TC((0.1 0 0;0 0.1 0;0 0 0.1), _inv (10 0 0;0 10 0; 0 0 10)  )
   TC(400 400, 10 10 _mul 20 20)
 
-  //_sv _vs
+  //_sv _vsx and _vs
   TC(13, 11(_+)\\2)
   TC(11 13 16, 11(_+)\\2 3)
   TC( 2010,  10 _sv 2 0 1 0)
@@ -352,7 +352,7 @@ Z I tests02()
   //TC(33999997, #5:16999999#1) // Forces r>KP_MAX in kexpander for Cygwin
   TC(5:(+),   (,"+")) 
   TC(5:(|/), "|/") 
-  TC(5:(_acos;_tanh;_abs;_size;_bin;_vs;_ssr), "(_acos;_tanh;_abs;_size;_bin;_vs;_ssr)")
+  TC(5:(_acos;_tanh;_abs;_size;_bin;_vsx;_ssr;_vs), "(_acos;_tanh;_abs;_size;_bin;_vsx;_ssr;_vs)")
   TC_("a:.'(+;-);a@\\:1 2", "3 -1")
 
   TC(3 3#!0, (0 0 0;0 0 0; 0 0 0))
@@ -363,24 +363,37 @@ Z I tests02()
 
   TC({x+y}/1 2 3 4, 10)
  
-  //Radix _vs (unbounded)
-  //TC(!0, 2 _vs 0) //an artifact of writing K in K (K3.2), but sensible if you intend 30000 and 30 to have the same length _vs[2;] (leading zeroes)
-  TC((,0), 2 _vs 0)
+  //Radix _vsx and _vs (unbounded)
+  TC(!0, 2 _vs 0) //an artifact of writing K in K (K3.2),
+                  //but sensible if you intend 30000 and 30 to have the same length _vsx[2;] (leading zeroes)
+  TC((,0), 2 _vsx 0)
   TC((,1), 2 _vs 1)
+  TC((,1), 2 _vsx 1)
   TC(1 0, 2 _vs 2)
+  TC(1 0, 2 _vsx 2)
   TC(1 0 1 1,  2 _vs 11)
+  TC(1 0 1 1,  2 _vsx 11)
   TC(1 1 0 0,  2 _vs 12)
+  TC(1 1 0 0,  2 _vsx 12)
   TC(2 0 1 0, 10 _vs 2010)
+  TC(2 0 1 0, 10 _vsx 2010)
   TC(1 2 3 4 5, 10 _vs 12345)
-  //TC(((2;2 2);(0;0 0);(1; 1 1);(0;1 2)), 10 _vs (2010;2011 2012)) //Unclear to me whether this level of generalization makes sense
-  //TC(skip,  2 _vs (2; 4 8;(16 32;64 128))) //see above
-  //Clock arithmetic _vs (bounded)
+  TC(1 2 3 4 5, 10 _vsx 12345)
+  //TC(((2;2 2);(0;0 0);(1; 1 1);(0;1 2)), 10 _vsx (2010;2011 2012)) //Unclear to me whether this level of generalization makes sense
+  //TC(skip,  2 _vsx (2; 4 8;(16 32;64 128))) //see above
+  //Clock arithmetic _vsx (bounded)
   TC(1 6 40, 24 60 60 _vs 4000)
+  TC(1 6 40, 24 60 60 _vsx 4000)
   TC(0 0 0, 1 2 3 _vs 0)
+  TC(0 0 0, 1 2 3 _vsx 0)
   TC(23 59 0, 24 60 60 _vs -60)
+  TC(23 59 0, 24 60 60 _vsx -60)
   TC(13 20 0, 24 60 60 _vs -6000000)
-  TC((0 0 10;0 16 40;13 46 40) , 24 60 60 _vs/: 10 1000 1000000) // /: is redundant for us
+  TC(13 20 0, 24 60 60 _vsx -6000000)
+  TC((0 0 10;0 16 40;13 46 40) , 24 60 60 _vs/: 10 1000 1000000)
+  TC((0 0 10;0 16 40;13 46 40) , 24 60 60 _vsx/: 10 1000 1000000) // /: is redundant for us
   TC(0 0, 1 1 _vs 0)
+  TC(0 0, 1 1 _vsx 0)
  
   TC(skip, 0, (_+[2;]) 11) //segfault
   TC((1;"parse"),  @[.:;"if[1; `0:“bad unicode quotes”]";:]) 
@@ -1178,6 +1191,7 @@ Z I testsBook()
 
   TC((0 0;0 1;1 0;1 1) ,!2 2)
   TC(a:2 1 3; a _vs/:!*/a, !2 1 3)
+  TC(a:2 1 3; a _vsx/:!*/a, !2 1 3)
   TC(3 2, 1 2 3 4 (2 1))
   TC(2 1, x:!10; x 2 1)
   TC(3 2, y:2 1; 1 2 3 4 y)
