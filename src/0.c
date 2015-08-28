@@ -77,7 +77,7 @@ K _0m(K a) {
       memcpy(kC(y),&buf,n); kap(&z,&y); cd(y); }
     GC; }
   else if( 4==t && !**kS(a) ){
-    char ss[300]; S adr=fgets(ss,sizeof(ss),stdin); if(adr==NULL)R FE;    //read stdin 0:`
+    char ss[300]; S adr=fgets(ss,sizeof(ss),stdin); if(adr==NULL)R newK(6,1);    //read stdin 0:`
     I i,j; for(i=0;i<300;++i){if(ss[i]=='\012')break;}
     I k=0; for(j=0;j<=i;j++){if(ss[j]!='\004')ss[k++]=ss[j];}
     z=newK(-3,k-1); for(j=0;j<k-1;++j){kC(z)[j]=ss[j];}
