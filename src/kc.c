@@ -198,6 +198,8 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   if(s[0]=='\\' && s[1]=='\n') {
+	 // 151012AP
+	 if(fLoad) { c=-1; GC; }			//escape file load
     if(fCheck) { fCheck=0; R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
   appender(a,n,s,c);         //"strcat"(a,s)
@@ -224,7 +226,8 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
-  if(strcmp(errmsg,"undescribed") && fer!=-1) { oerr(); I ctl=0;
+  // 151012AP was -1
+  if(strcmp(errmsg,"undescribed") && fer!=2) { oerr(); I ctl=0;
     if(fError){
       if(lineA){
         if(fnc){ I cnt=0,i;
@@ -368,7 +371,7 @@ I lines(FILE*f) {
   while(NULL != fgets(s,sizeof(s),f)) line(s,&a,&n,&p);
   R 0; }
 
-pthread_mutex_t execute_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t execute_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   I b=0,c=0;  int status;  K k;  F d;
   I o = isatty(STDIN); //display results to stdout?
@@ -399,7 +402,8 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
 
   if(o)show(k); cd(k);
  cleanup:
-  if(fer!=-1 && strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
+  // 151012AP was -1
+  if(fer!=2 && strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
     if(fError) {
       if(lineA) {
         if(fnc) { I cnt=0,i; 
