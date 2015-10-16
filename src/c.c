@@ -68,7 +68,8 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   if(scrLim>124){O("limit\n");  R kerr("stack");} scrLim++;  
   FILE*f=loadf(s);
   if(!f){O("%s.k: file not found\n",s); R FE;}
-  lines(f); I r=fclose(f); if(r)R FE; scrLim--;
+  // 151012AP
+  lines(f); I r=fclose(f); if(r){fLoad=0;fCmplt=0;R FE;} scrLim--;
   if(fCmplt==1) { kerr("open-in-next-line"); oerr(); }
   kerr("undescribed"); fer=fCmplt=fLoad=0;
   R _n();
