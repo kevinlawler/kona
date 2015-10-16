@@ -244,6 +244,8 @@ Z I tests02()
   TC((.[0 10 100 _; ,!9; :]) , (1;"length"))
   //TC(.[=; 0; :] , (1;"valence") ) // ignore: better to return =[0;] than valence error
   TC((.[.:;,"{_foo[x]}";:]),(1;"reserved"))
+  TC((.[.:;,"{_vs.a[x]}";:]),(1;"reserved"))
+  TC((.[.:;,"{_vs_a[x]}";:]),(1;"reserved"))
   TC((@[.:;"{_foo[x]} 0";:]),(1;"reserved"))//.[NULL;...] errors inside bracket should not be interpreted as projections
   TC(a:1+`d, )
 
