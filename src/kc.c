@@ -226,8 +226,8 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
-  // 151012AP was -1
-  if(strcmp(errmsg,"undescribed") && fer!=2) { oerr(); I ctl=0;
+  // 151012AP was -1 orginially, Derwish changed to fer!=2. Reverting to -1 probably breaks Derwish commit. Need follow up.
+  if(strcmp(errmsg,"undescribed") && fer!=-1) { oerr(); I ctl=0;
     if(fError){
       if(lineA){
         if(fnc){ I cnt=0,i;
