@@ -200,8 +200,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   if(s[0]=='\\' && s[1]=='\n') {
-	 // 151012AP
-	 if(fLoad) { c=-1; GC; }			//escape file load
+    if(fLoad) { c=-1; GC; }         //escape file load  (151012AP)
     if(fCheck) { fCheck=0; R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
   appender(a,n,s,c);         //"strcat"(a,s)
@@ -228,7 +227,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
-  // 151012AP was -1 orginially, Derwish changed to fer!=2. Reverting to -1 probably breaks Derwish commit. Need follow up.
+  //151012AP was -1, Changed to fer!=2 for fclose. Reverted to -1 (regression issue #312). fclose problem?? (issue #384).
   if(strcmp(errmsg,"undescribed") && fer!=-1) { oerr(); I ctl=0;
     if(fError){
       if(lineA){
@@ -404,11 +403,11 @@ I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  
 
   if(o)show(k); cd(k);
  cleanup:
-  // 151012AP was -1
-  if(fer!=2 && strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
+  //151012AP was -1, Changed to fer!=2 for fclose. Reverted to -1 (regression issue #312). fclose problem?? (issue #384).
+  if(fer!=-1 && strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
     if(fError) {
       if(lineA) {
-        if(fnc) { I cnt=0,i; 
+        if(fnc) { I cnt=0,i;
           for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
           if(cnt==1) { ctl=1; O("%s\n",lineA); S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
           if(cnt>1 && fnci && fnci<127) { I num=0; 
