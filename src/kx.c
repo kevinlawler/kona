@@ -122,15 +122,23 @@ Z K overMonad(K a, V *p, K b)
     }while(1);
     c=c?c:ci(b);
   }
-  else while(1) // f/x
-  {
-    if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
-    if(u!=b) cd(u);
-    if(flag)break;
-    u=c?c:u;
-    U(c=dv_ex(0,p-1,u))
-    if(1==ABS(b->t) && 3==ABS(c->t)) flag=1;
-  }
+  else{   // f/x
+    if(*(p-1)<(V)DT_SIZE){  //f is a function
+      while(1){
+        if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
+        if(flag)break;
+        if(u!=b) cd(u);
+        u=c?c:u;
+        U(c=dv_ex(0,p-1,u))
+        if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; } cd(c); R u;}
+    else{  //f is data
+      while(1){   // f/x
+        if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
+        if(u!=b) cd(u);
+        if(flag)break;
+        u=c?c:u;
+        U(c=dv_ex(0,p-1,u))
+        if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; } } }
   R c;
 }
 
