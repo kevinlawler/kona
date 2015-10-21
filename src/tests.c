@@ -1185,6 +1185,7 @@ Z I testsBook()
   TC(0.0, (%[;2.0])/9999.0)
   TC("AAA", {:[3=#x;x;(1+#x)#x]}/"A")    //issue #303
   TC(-:/1, -1)                           //issue #380
+  TC(f:{(x+1)!3}; f/2, 1)                //issue #380
 
   //stack counter
   TC(skip, 500, {:[x>0;1+_f[x-1];0]}500)                    // works but is slow

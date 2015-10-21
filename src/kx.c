@@ -123,7 +123,7 @@ Z K overMonad(K a, V *p, K b)
     c=c?c:ci(b);
   }
   else{   // f/x
-    if(*(p-1)<(V)DT_SIZE){  //f is a function
+    if(*(p-1)<(V)DT_SIZE || 7==(*(K*)*(p-1))->t){  //f is a function
       while(1){
         if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
         if(flag)break;
