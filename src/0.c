@@ -403,7 +403,11 @@ K _1m(K x) {    //Keeps binary files mapped
 
   S m=CSK(x); //looks for .K or .L extensions first
   I sm = strlen(m);
+#ifndef WIN32
   S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");
+#else
+  S e= sm > 1 && '.'==m[sm-2] && 'l'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"l");
+#endif
      //lfop (lower-case l on Windows -- differs from 'L' in manual)
   U(e)
 
@@ -750,7 +754,11 @@ K _2m(K a) { //again, minor copy/paste here
 
   S m=CSK(a); //looks for .K or .L extensions first
   I sm = strlen(m);
+#ifndef WIN32
   S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");
+#else
+  S e= sm > 1 && '.'==m[sm-2] && 'l'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"l");
+#endif
     //lfop (lower-case l on Windows -- differs from 'L' in manual)
   U(e)
 
@@ -1034,7 +1042,11 @@ K _5d(K x,K y) {
 
   S m=CSK(x); //looks for .K or .L extensions first
   I sm = strlen(m);
+#ifndef WIN32
   S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");
+#else
+  S e= sm > 1 && '.'==m[sm-2] && 'l'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"l");
+#endif
     //TODO: lfop (lower-case l on Windows -- differs from 'L' in manual)
   if(!e)R 0; //TODO: oom
 
