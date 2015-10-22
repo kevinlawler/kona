@@ -12,6 +12,8 @@ I wipe_tape(I i);
 void *get_in_addr(struct sockaddr *sa);
 extern pthread_mutex_t execute_mutex;
 extern S HTTP_PORT;
+K _n();
+extern C errmsg[256];
 
 #ifndef WIN32
 K read_tape(I i,I type);
