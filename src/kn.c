@@ -2,6 +2,7 @@
 
 #include "incs.h"
 #include "k.h"
+#include "km.h"
 #include "kn.h"
 
 #if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__ANDROID__)
@@ -129,21 +130,40 @@ K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
     wipe_tape(i);
 
     //blocking read inside 4: receives response //response sent by server to client after a 4: request is not executed by client
-    if(2==msg_type && 1==type) R h; 
+    if(2==msg_type && 1==type){
+      // (0;x) or (1;"errmsg")
+		if(h->t||2!=h->n)R NE;
+		K i=kK(h)[0],r=kK(h)[1];
+		if(1!=i->t)R NE;
+		if(*kI(i)){
+        if(3!=ABS(r->t))R NE;
+		  r=kerr(kC(r));
+		}else ci(r);
+		cd(h);
+      R r; 
+    }
 
     //Modified execution of received K value. First received transmission in a 3: or 4: 
-    K mh=_n();
-    if(2>msg_type)mh=*denameS(".",msg_type?".m.g":".m.s",0);
-    if(6==mh->t) z=modified_execute(h);
-    else z=at(mh,h);
-    if(!z){
-      if(msg_type){
-        I n=snprintf(bz,128,"%s error",errmsg);if(n>=128)R WE;
-        z=newK(-3,strlen(bz)); strcpy(kC(z),bz);
-      }else O("%s error\n",errmsg);
+    K m=_n();
+    if(2>msg_type)m=*denameS(".",msg_type?".m.g":".m.s",0);
+	 z=(6==m->t)?modified_execute(h):at(m,h);
+	 if(msg_type){
+		K u=newK(0,2),i=Ki(0);
+		M(u,i)
+		if(!z){
+        *kI(i)=1;
+		  z=newK(-3,strlen(errmsg));
+		  M(u,z);
+		  strcpy(kC(z),errmsg);
+		  kerr("undescribed");
+		}
+		kK(u)[0]=i;kK(u)[1]=z;
+		z=u;
+	 }else if(!z){
+      O("%s error\n",errmsg);
 		kerr("undescribed");
     }
-    cd(mh); cd(h);
+    cd(m); cd(h);
     //indicates received communication from 4: synchronous method which expects response
     if(z) if(1==msg_type && 0==type) ksender(i,z,2);
     cd(z); z=0; }

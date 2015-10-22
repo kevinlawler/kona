@@ -42,7 +42,7 @@ Z K _0d_rdDsvWc(K a,K b);
 Z K _1m_r(I f,V fixed, V v,V aft,I*b);
 Z K _1d_char(K x,K y);
 Z K _1d_read(K a,K b);
-Z K _1d_write(K x,K y);
+Z K _1d_write(K x,K y,I dosync);
 Z I disk(K x);
 Z I rrep_4(S *z,S a,S t);
 Z K readVector(K x,I t);
@@ -480,13 +480,13 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
 
 K _1d(K x,K y) {
   I t=x->t;
-  if(4==t || -3==t)R _1d_write(x,y); //char-vector but not char-atom
+  if(4==t || -3==t)R _1d_write(x,y,0); //char-vector but not char-atom
   if(!t)R _1d_read(x,y);
   if(3==t)R _1d_char(x,y);
   R TE; }
 
 //TODO: for testing this, use 1:write and 2:read (or 1:read) to confim items are the same before write & after read
-Z K _1d_write(K x,K y) {
+Z K _1d_write(K x,K y,I dosync) {
   //Note: all file objects must be at least 4*sizeof(I) bytes...fixes bugs in K3.2, too
   //K3.2 Bug - "a"1:`a;2:"a" or 1:"a" - wsfull, tries to read sym but didn't write enough bytes?
   I n=disk(y);
@@ -511,7 +511,7 @@ Z K _1d_write(K x,K y) {
 
   wrep(y,v,1);
 
-  //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
+  if(dosync) msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
   r=munmap(v,n); if(r)R UE;
 
   R _n();
@@ -999,13 +999,14 @@ K _4d(K x,K y) {      //see _3d
   if(1==xt){
     I sockfd=*kI(x); P(-1==ksender(sockfd,y,1),DOE)   K z=0;
     #ifndef WIN32
-    while(!(z=read_tape(sockfd,1))){}
+    while((2!=fer)&&!(z=read_tape(sockfd,1))){}
     #else
-    while(!(z=read_tape(0,sockfd,1))){}
+    while((2!=fer)&&!(z=read_tape(0,sockfd,1))){}
     #endif
-    P(!z || z==(K)-1,DOE)    R z;}
+    P(z==(K)-1,DOE)
+    P(!z,0) R z;}
   if(-4==xt && 2==xn) R _4d_(kS(x)[0],kS(x)[1],y);      //(`"www.google.com";`http) or (`"173.194.43.80";`http)
-  if(0==xt && 4==kK(x)[0]->t && 1==kK(x)[1]->t && 0<=*kI(kK(x)[1])){  //`"www.google.com";80) or (`"173.194.43.80";80)
+  if(0==xt && 2==xn && 4==kK(x)[0]->t && 1==kK(x)[1]->t && 0<=*kI(kK(x)[1])){  //`"www.google.com";80) or (`"173.194.43.80";80)
     C port[6]; int n=snprintf(port,6,"%lld",*kI(kK(x)[1])); if(n>=6) R WE;
     R _4d_(*kS(kK(x)[0]),port,y); }
   R TE; }
@@ -1046,7 +1047,7 @@ K _5d(K x,K y) {
   //End copy/paste
 
   //File doesn't exist so fall back to 1:
-  if(f<0) R _1d_write(x,y); //manual says return count but that is incorrect/bug.
+  if(f<0) R _1d_write(x,y,1); //manual says return count but that is incorrect/bug.
 
   I s = c.st_size;
   if(s < 4*sizeof(I)) R 0; //TODO: err, file is malformed
@@ -1085,7 +1086,7 @@ K _5d(K x,K y) {
   else if(-2==yt)  memcpy(d,ke(y),y->n*sizeof(F));
   else if(-1==yt)  memcpy(d,ke(y),y->n*sizeof(I));
 
-  //msync(v,n,MS_SYNC|MS_INVALIDATE); //slow
+  msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
   res=munmap(v,n); if(res)R UE;
 
   R Ki(fn+yn); //mm/o

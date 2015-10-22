@@ -14,6 +14,7 @@ extern pthread_mutex_t execute_mutex;
 extern S HTTP_PORT;
 K _n();
 extern C errmsg[256];
+K Ki(I);
 
 #ifndef WIN32
 K read_tape(I i,I type);
