@@ -19,6 +19,8 @@
 ;    // Need semicolon, probably missing from <pthread.h>.
 #endif
 
+K KONA_GSET=0,KONA_IDX=0;
+
 Z I randomBits();
 I oerr(){R O("%s %s\n",errmsg,"error");}
 
@@ -62,7 +64,7 @@ I args(int n,S*v) {
         kK(KONA_ARGS)[i]=a )
   while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c) {
     CS('h',  if(IPC_PORT)O("-i accepted, cannot also have -h\n"); else HTTP_PORT=optarg;)
-    CS('i',  if(HTTP_PORT)O("-h accepted, cannot also have -i\n"); else IPC_PORT=optarg;)
+    CS('i',  if(HTTP_PORT)O("-h accepted, cannot also have -i\n"); else {IPC_PORT=optarg;*kI(KONA_PORT)=atol(IPC_PORT);})
     CS('e',  cd(X(optarg)); exit(0) )
     CS('x',  k=X(optarg); printAtDepth(0,k,0,0,0,0); O("\n"); cd(k); exit(0) )
     CSR(':', )
@@ -105,7 +107,7 @@ I kinit() {       //oom (return bad)
 
   kerr("undescribed");
   SYMBOLS=newN(); //Initialize intern pool 
-  seedPRNG(randomBits()); 
+  seedPRNG(-271828/*randomBits()*/); 
   NIL=Kn();
   KFIXED=newK(0,0); kap(&KFIXED,&NIL);cd(NIL);
   d_ = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
@@ -119,6 +121,10 @@ I kinit() {       //oom (return bad)
   kap(&KTREE,&x); cd(x);
   x=newE(sp("t"),_dot_t());
   kap(&KTREE,&x); cd(x);
+  KONA_WHO=newK(1,1);*kI(KONA_WHO)=0;
+  KONA_PORT=newK(1,1);*kI(KONA_PORT)=0;
+  KONA_GSET=_n();
+  KONA_IDX=_n();
   R 0; }
 
 Z I randomBits(){
@@ -181,9 +187,12 @@ Z void trim(S s) {
 #ifndef WIN32
 
 I check() {      //in suspended execution mode: allows checking of state at time of error
+  I ofCheck=fCheck;
   fCheck=1; kerr("undescribed"); prompt(1); S a=0;  I n=0;  PDA q=0;
-  for(;;) { line(stdin, &a, &n, &q); if(fCheck==0)R 0; }
-  O("\n"); fCheck=0;
+  for(;;) { line(stdin, &a, &n, &q); if(fCheck==0)GC; }
+  O("\n");
+cleanup:
+  fCheck=ofCheck;
   R 0; }
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
@@ -200,7 +209,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   if(s[0]=='\\' && s[1]=='\n') {
-    if(fLoad) { c=-1; GC; }         //escape file load  (151012AP)
+	 if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
     if(fCheck) { fCheck=0; R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
   appender(a,n,s,c);         //"strcat"(a,s)
@@ -501,7 +510,7 @@ void *socket_thread(void *arg) {
 
 I attend() {
   S a=0;I n=0; PDA q=0; //command-line processing variables
-  
+
   //set up SIGINT handler, so C-c can break infinite loops cleanly
   SetConsoleCtrlHandler((PHANDLER_ROUTINE)handle_SIGINT, TRUE);
 

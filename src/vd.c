@@ -258,6 +258,8 @@ K dot_tetradic(K a, K b, K c, K y)//Handles triadic and tetradic case
     R demote(d);
   }
 
+  if(KONA_GSET&&(a!=KONA_GSET)) {ci(a);cd(KONA_GSET);KONA_GSET=a;}
+  if(KONA_IDX&&(b!=KONA_IDX)) {ci(b);cd(KONA_IDX);KONA_IDX=b;}
 
   K q=0, *p=0;
 
