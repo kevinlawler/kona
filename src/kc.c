@@ -188,8 +188,8 @@ Z void trim(S s) {
 
 I check() {      //in suspended execution mode: allows checking of state at time of error
   I ofCheck=fCheck;
-  fCheck=1; kerr("undescribed"); prompt(1); S a=0;  I n=0;  PDA q=0;
-  for(;;) { line(stdin, &a, &n, &q); if(fCheck==0)GC; }
+  kerr("undescribed"); prompt(++fCheck); S a=0;  I n=0;  PDA q=0;
+  for(;;) { line(stdin, &a, &n, &q); if(fCheck==ofCheck)GC; }
   O("\n");
 cleanup:
   fCheck=ofCheck;
@@ -210,7 +210,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   if(s[0]=='\\' && s[1]=='\n') {
 	 if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
-    if(fCheck) { fCheck=0; R 0; }   //escape suspended execution with single backslash
+    if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
   appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
