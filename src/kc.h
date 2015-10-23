@@ -75,10 +75,5 @@ extern I vn_ct,vm_ct,vd_ct,vt_ct;
 extern ssize_t getline(S *lineptr, size_t *n, FILE *f);
 #endif
 
-#ifndef WIN32
-K read_tape(I i,I type);
-I line(FILE *f,S *a,I *n,PDA *p);
-#else
 K read_tape(I i,I j,I type);
-I line(S f, S *a, I *n, PDA *p);
-#endif
+I line(FILE *f,S *a,I *n,PDA *p);

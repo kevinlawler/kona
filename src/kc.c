@@ -80,6 +80,7 @@ I kinit() {       //oom (return bad)
   #ifndef WIN32
   PG = sysconf(_SC_PAGE_SIZE);
   #else
+  _fmode = O_BINARY;
   SYSTEM_INFO si; GetSystemInfo(&si); PG = si.dwPageSize;
   #endif
 
@@ -184,21 +185,24 @@ Z void trim(S s) {
     if(c>2 && (s[c-1]==':' || s[c-1]=='{') && s[c-2]==' ' && s[c-3]!='/'){s[c-2]=s[c-1]; c--;} } }
 */
 
-#ifndef WIN32
-
 I check() {      //in suspended execution mode: allows checking of state at time of error
   I ofCheck=fCheck;
   kerr("undescribed"); prompt(++fCheck); S a=0;  I n=0;  PDA q=0;
-  for(;;) { line(stdin, &a, &n, &q); if(fCheck==ofCheck)GC; }
+  for(;;) {
+    line(stdin, &a, &n, &q);
+    if(fCheck==ofCheck)GC; }
   O("\n");
 cleanup:
   fCheck=ofCheck;
   R 0; }
 
-Z void handle_SIGINT(int sig) { interrupted = 1; }
-
-I lines(FILE*f) {S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p)){} R 0;}
+I lines(FILE*f) {
+  S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p)){} R 0;}
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
+
+#ifdef WIN32
+pthread_mutex_t execute_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+#endif
 
 I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   S s=0; I b=0,c=0,m=0;
@@ -209,7 +213,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
 
   if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
   if(s[0]=='\\' && s[1]=='\n') {
-	 if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
+    if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
   appender(a,n,s,c);         //"strcat"(a,s)
@@ -226,8 +230,16 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if((*a)[0]=='\\')fbs=1; else fbs=0;
 
+#ifdef WIN32
+  I status = pthread_mutex_lock(&execute_mutex); 
+  if(status != 0) {perror("Lock mutex in line()"); abort();}
+#endif
   RTIME(d,k=ex(wd(*a,*n)))
-
+#ifdef WIN32
+  status = pthread_mutex_unlock(&execute_mutex); 
+  if(status != 0) {perror("Unlock mutex in line()"); abort();}
+#endif
+  
   #ifdef DEBUG
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
@@ -266,6 +278,10 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   if(o && !fLoad)prompt(b+fCheck);
   kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
   R c; }
+
+#ifndef WIN32
+
+Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 fd_set master; //select framework after beej's public domain c
 I attend() {  //K3.2 uses fcntl somewhere
@@ -353,92 +369,16 @@ I attend() {  //K3.2 uses fcntl somewhere
             //printf("server: new connection from %s on socket %d\n", inet_ntop(remoteaddr.ss_family, 
             //        get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN), newfd);
         else if(a) continue; //K3.2 blocks if in the middle of processing the command-line (should we sleep here?)
-        else read_tape(i,0); } } }
+        else read_tape(i,i,0); } } }
 
 #else
 
 int listener=0;
 
-I check() {
-  fCheck=1; kerr("undescribed"); prompt(1); C s[300]; S a=0; I n=0; PDA q=0;
-  for(;;) {
-    fgets(s, sizeof(s), stdin);
-    if(s[0]==4)exit(0);             // ^D
-    if(s[0]=='\\' && s[1]=='\n')break;
-    line(s, &a, &n, &q); }
-  fCheck=0; R 0; }
-
 PHANDLER_ROUTINE handle_SIGINT(int sig) {
-  if(IPC_PORT) {closesocket(listener); WSACleanup();}
-  #ifdef DEBUG   
-  tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
-  #endif
+  finally();
   //no point in setting "interrupted=1", as exit happens anyway.
   _Exit(0); }
-
-I lines(FILE*f) {
-  S a=0;  I n=0;  PDA p=0;  char s[300];
-  while(NULL != fgets(s,sizeof(s),f)) line(s,&a,&n,&p);
-  R 0; }
-
-pthread_mutex_t execute_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
-I line(S s, S*a, I*n, PDA*p) {  // just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
-  I b=0,c=0;  int status;  K k;  F d;
-  I o = isatty(STDIN); //display results to stdout?
-  if(s[0]=='\\' && s[1]=='\n' && *a) GC;     //escape continue with single backslash
-  appender(a,n,s,c=strlen(s));//"strcat"(a,s)
-  I v=complete(*a,*n,p,0); //will allocate if p is null
-  b=parsedepth(*p);
-  if(v==3){show(kerr("nest")); GC;} 
-  if(v==2){show(kerr("unmatched")); b=0; GC;}
-  if(v==1){fCmplt=1; goto done;}         //generally incomplete
-  if(v==0) fCmplt=0;
-  if(n && '\n'==(*a)[*n-1])(*a)[--*n]=0; //chop for getline
-
-  trim(*a); //remove leading blanks
-  S newA=recur(*a); if(newA){ free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
-  *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
-  if((*a)[0]=='\\')fbs=1; else fbs=0;
-
-  status = pthread_mutex_lock(&execute_mutex); 
-  if(status != 0) {perror("Lock mutex in line()"); abort();}
-  RTIME(d,k=ex(wd(*a,*n)))
-  status = pthread_mutex_unlock(&execute_mutex); 
-  if(status != 0) {perror("Unlock mutex in line()"); abort();}
-
-  #ifdef DEBUG
-  if(o&&k)O("Elapsed: %.7f\n",d);
-  #endif
-
-  if(o)show(k); cd(k);
- cleanup:
-  //151012AP was -1, Changed to fer!=2 for fclose. Reverted to -1 (regression issue #312). fclose problem?? (issue #384).
-  if(fer!=-1 && strcmp(errmsg,"undescribed")) { oerr(); I ctl=0;
-    if(fError) {
-      if(lineA) {
-        if(fnc) { I cnt=0,i;
-          for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
-          if(cnt==1) { ctl=1; O("%s\n",lineA); S ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
-          if(cnt>1 && fnci && fnci<127) { I num=0; 
-            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; } 
-            O("at execution instance %lld of %s\n",num,fnc); }}}
-      if(lineB && !ctl && strcmp(lineA,lineB)) {
-        if(fnc) { I cnt=0,i; O("%s\n",lineB);
-          for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
-          if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }
-          if(cnt>1 && fnci && fnci<127) { I num=0; 
-            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; } 
-            O("at execution instance %lld of %s\n",num,fnc); }}}
-      if(lineA || lineB)  check();          //enter suspended execution mode for checking
-      if(!lineA && !lineB) O("%s\n",*a); }}
-  if(*p)pdafree(*p);*p=0; *a=0; *n=0; s=0;
- done:
-  if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax);
-              O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
-              O("count    : %lld\n",cnt); fWksp=0; }
-  if(o && !fLoad)prompt(b+fCheck);
-  kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
-  R c; }
 
 fd_set master; int fds[10],nfds;
 void *socket_thread(void *arg) {
@@ -447,11 +387,7 @@ void *socket_thread(void *arg) {
   int rv, i;
 
   // initialize WinSock
-  WSADATA wsaData;
-  int err = WSAStartup(MAKEWORD(2,2), &wsaData);
-  if(err != 0) O("WSAStartup failed with error: %d\n",err);
-  if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2){  //verify
-    O("Could not find useable version of Winsock.dll\n"); exit(1); }
+  ninit();
 
   // create socket for server
   struct addrinfo *result=NULL, *ptr=NULL, hints; 
@@ -521,11 +457,9 @@ I attend() {
      if (status != 0) {perror("Create socket thread"); abort();} }
   for(;;) {   // main loop for Windows stdin
     scrLim = 0;  
-    char s[300]; 
     for(;;) {
-      fgets(s, sizeof(s), stdin);
-      if(s[0]==4) exit(0);
-      line(s, &a, &n, &q); } }
+      if (-1==line(stdin, &a, &n, &q)) exit(0);
+      } }
   R 0; }     
 
 #endif

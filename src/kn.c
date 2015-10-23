@@ -21,6 +21,35 @@ Z I close_tape(I i);
 Z K modified_execute(K x);
 K KONA_WHO,KONA_PORT;
 
+V nfinish()
+{
+#ifdef WIN32
+  extern I listener;
+  if (IPC_PORT || HTTP_PORT)
+    closesocket(listener);
+  WSACleanup();
+#endif
+}
+
+I ninit()
+{
+  static I _done = 0;
+  
+  if (!_done) {
+#ifdef WIN32
+    WSADATA wsaData;
+    int err = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if(err != 0) O("WSAStartup failed with error: %d\n",err);
+    if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
+      { O("Could not find useable version of Winsock.dll\n"); exit(1); }
+    atexit(nfinish);
+#endif    
+    _done = 1;
+  }
+  R _done;
+}
+
+
 void *get_in_addr(struct sockaddr *sa) {   //get sockaddr, IPv4 or IPv6
   if (sa->sa_family == AF_INET) R &(((struct sockaddr_in*)sa)->sin_addr);
   R  &(((struct sockaddr_in6*)sa)->sin6_addr); }
@@ -37,26 +66,50 @@ Z I close_tape(I i) {
   R 0; }
 
 C bx[128]={0},by[128]={0};
-#ifndef WIN32
 
-K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
+Z K modified_execute(K x) //TODO: consider: this should be modified to use error trap. _4d should be modified to expect error trap output. 
+{
+  //K-Lite manual gives {:[4:x; .x; .[.;x]} as processing function
+#ifdef WIN32
+  I status = pthread_mutex_lock(&execute_mutex); 
+  if(status != 0) {perror("Lock mutex in mod_ex()"); abort();}
+#endif
+
+  K a=(K)-1;
+  if(4==xt || 3==ABS(xt)) a=X(CSK(x));
+  if(!xt && xn>0) a=vf_ex(offsetDot,x);
+  
+#ifdef WIN32
+  if((K)-1!=a){
+    status = pthread_mutex_unlock(&execute_mutex); 
+    if(status != 0) {perror("Unlock mutex in mod_ex()"); abort();}
+    R a;
+  }
+#endif
+
+  R ci(x);
+}
+
+#if 1
+
+K read_tape(I i, I j, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
   I nbytes=0,n=0; C bz[128]={0},bn[1]={0};
   if(HTTP_PORT) {
-    if(bx[0]=='\0')nbytes=recv(i,bx,128,0);
-    else if(by[0]=='\0')nbytes=recv(i,by,128,0);
-    else nbytes=recv(i,bz,128,0);
-    if(nbytes<=0){if (nbytes==0)printf("server: socket %lld hung up\n", i); else perror("recv"); GC;}
+    if(bx[0]=='\0')nbytes=recv(j,bx,128,0);
+    else if(by[0]=='\0')nbytes=recv(j,by,128,0);
+    else nbytes=recv(j,bz,128,0);
+    if(nbytes<=0){if (nbytes==0)printf("server: socket %lld hung up\n", j); else perror("recv"); GC;}
     K h=*denameS(".",".m.h",0); 
-    if(6==h->t){send(i,bx,nbytes,0); bx[0]='\0'; close_tape(i); R (K)0;}  //echo back only if .m.h does not exist
+    if(6==h->t){send(j,bx,nbytes,0); bx[0]='\0'; close_tape(j); R (K)0;}  //echo back only if .m.h does not exist
     else {
       if(7!=h->t && 3!=h->n) {
         I n=snprintf(bx,128,"%s",".m.h is not type 7-3"); if(n>=128)R WE;
-        send(i,bx,strlen(bx),0); bx[0]='\0'; close_tape(i); R (K)0;}
+        send(j,bx,strlen(bx),0); bx[0]='\0'; close_tape(j); R (K)0;}
       else {   //have .m.h of type 7-3
         S f=kC(kK(h)[CODE]); I ax=0,ay=0,az=0,sf=strlen(f);
         DO(sf, if(f[i]=='x')ax=1; else if(f[i]=='y')ay=1; else if(f[i]=='z')az=1;) I na=maX(1,ax+ay+az);
         if(na==3) {
-          if(bz[0]=='\0'){ send(i,bn,1,0); close_tape(i); R (K)0; }
+          if(bz[0]=='\0'){ send(j,bn,1,0); close_tape(j); R (K)0; }
           else {
             for(n=0;n<128;++n){if(bx[n]=='\r' || bx[n]=='\0')break;} bx[n]='\0';
             for(n=0;n<128;++n){if(by[n]=='\r' || by[n]=='\0')break;} by[n]='\0';
@@ -73,9 +126,9 @@ K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
               CS(3, {n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
               CS(-3,{n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
               default:{n=snprintf(bck,w,"%s","NYI: .m.h result of that type and count"); if(n>=w)R WE;} }
-            send(i,bck,strlen(bck),0); bx[0]='\0'; by[0]='\0'; close_tape(i); R (K)0; } }
+            send(j,bck,strlen(bck),0); bx[0]='\0'; by[0]='\0'; close_tape(j); R (K)0; } }
         if(na==2) {
-          if(by[0]=='\0'){ send(i,bn,1,0); close_tape(i); R (K)0; }
+          if(by[0]=='\0'){ send(j,bn,1,0); close_tape(j); R (K)0; }
           else {
             for(n=0;n<128;++n){if(bx[n]=='\r')break;} bx[n]='\0';
             for(n=0;n<128;++n){if(by[n]=='\r')break;} by[n]='\0';
@@ -91,7 +144,7 @@ K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
               CS(3, {n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
               CS(-3,{n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
               default:{n=snprintf(bck,w,"%s","NYI: .m.h result of that type and count"); if(n>=w)R WE;} }
-            send(i,bck,strlen(bck),0); bx[0]='\0'; by[0]='\0'; close_tape(i); R (K)0; } }
+            send(j,bck,strlen(bck),0); bx[0]='\0'; by[0]='\0'; close_tape(j); R (K)0; } }
         for(n=0;n<128;n++){if(bx[n]=='\r' || bx[n]=='\0')break;}
         bx[n]='\0'; I sbx=strlen(bx);
         C c[7+sf+sbx]; c[0]='{'; c[1+sf]='}'; c[2+sf]='['; c[5+sf+sbx]=']';
@@ -104,13 +157,13 @@ K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
           CS(3, {n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
           CS(-3,{n=snprintf(bck,w,"%s",kC(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
           default:{n=snprintf(bck,w,"%s","NYI: .m.h result of that type and count"); if(n>=w)R WE;} }
-        send(i,bck,strlen(bck),0); bx[0]='\0'; by[0]='\0'; close_tape(i); R (K)0; } } }
+        send(j,bck,strlen(bck),0); bx[0]='\0'; by[0]='\0'; close_tape(j); R (K)0; } } }
   I c=CP[i].r, m=sizeof(M1),g; K z=0;
   S b = c<m?c+(S)&CP[i].m1:c+kC(CP[i].k); 
   g = c<m?m-c:CP[i].m1.n; 
-  nbytes = recv(i,b,g,0); 
+  nbytes = recv(j,b,g,0); 
   if(nbytes <= 0) {
-    if (nbytes == 0);//printf("server: socket %lld hung up\n", i);
+    if (nbytes == 0)O("server: socket %lld hung up\n", j);
     else perror("recv");
     GC; }
   //fill struct data + k data
@@ -127,62 +180,51 @@ K read_tape(I i, I type) {   // type in {0,1} -> {select loop, 4: resp reader}
     I msg_type = p->d; //p->d dissappears after wipe_tape
     K h = _db(CP[i].k);
     if(!h) GC;
-    wipe_tape(i);
+    wipe_tape(j);
 
     //blocking read inside 4: receives response //response sent by server to client after a 4: request is not executed by client
     if(2==msg_type && 1==type){
       // (0;x) or (1;"errmsg")
-		if(h->t||2!=h->n)R NE;
-		K i=kK(h)[0],r=kK(h)[1];
-		if(1!=i->t)R NE;
-		if(*kI(i)){
+  		if(h->t||2!=h->n)R NE;
+  		K s=kK(h)[0],r=kK(h)[1];
+  		if(1!=s->t)R NE;
+  		if(*kI(s)) {
         if(3!=ABS(r->t))R NE;
-		  r=kerr(kC(r));
-		}else ci(r);
-		cd(h);
-      R r; 
-    }
+  		  r=kerr(kC(r)); }
+  		else ci(r);
+  		cd(h);
+      R r; }
 
     //Modified execution of received K value. First received transmission in a 3: or 4: 
     K m=_n();
     if(2>msg_type)m=*denameS(".",msg_type?".m.g":".m.s",0);
-	 z=(6==m->t)?modified_execute(h):at(m,h);
-	 if(msg_type){
-		K u=newK(0,2),i=Ki(0);
-		M(u,i)
-		if(!z){
-        *kI(i)=1;
-		  z=newK(-3,strlen(errmsg));
-		  M(u,z);
-		  strcpy(kC(z),errmsg);
-		  kerr("undescribed");
-		}
-		kK(u)[0]=i;kK(u)[1]=z;
-		z=u;
-	 }else if(!z){
+	  z=(6==m->t)?modified_execute(h):at(m,h);
+	  if(msg_type){
+  		K u=newK(0,2),s=Ki(0);
+  		M(u,s)
+  		if(!z){
+        *kI(s)=1;
+  		  z=newK(-3,strlen(errmsg));
+  		  M(u,z);
+  		  strcpy(kC(z),errmsg);
+  		  kerr("undescribed"); }
+      kK(u)[0]=s;kK(u)[1]=z;z=u; }
+    else if(!z){
       O("%s error\n",errmsg);
-		kerr("undescribed");
-    }
+      kerr("undescribed"); }
     cd(m); cd(h);
     //indicates received communication from 4: synchronous method which expects response
-    if(z) if(1==msg_type && 0==type) ksender(i,z,2);
+    if(z) if(1==msg_type && 0==type) ksender(j,z,2);
     cd(z); z=0; }
   R z;
 cleanup:
-  close_tape(i);
+  close_tape(j);
   R (K)-1;
-}
-
-Z K modified_execute(K x) //TODO: consider: this should be modified to use error trap. _4d should be modified to expect error trap output. 
-{
-  //K-Lite manual gives {:[4:x; .x; .[.;x]} as processing function
-  if(4==xt || 3==ABS(xt)) R X(CSK(x));
-  if(!xt && xn>0) R vf_ex(offsetDot,x); R ci(x);
 }
 
 #else
 
-K read_tape(I i, I j,I type) { //type in {0,1} -> {select loop, 4: resp reader}
+K Xread_tape(I i, I j,I type) { //type in {0,1} -> {select loop, 4: resp reader}
                                //i:which connection pool item    j:which Socket
   i=1;
   I nbytes=0,n=0; C bz[128]={0},bn[1]={0};
@@ -295,28 +337,6 @@ K read_tape(I i, I j,I type) { //type in {0,1} -> {select loop, 4: resp reader}
   R z;
 cleanup:
   R (K)-1;
-}
-
-Z K modified_execute(K x) //TODO: consider: this should be modified to use error trap. _4d should be modified to expect error trap output. 
-{
-  //K-Lite manual gives {:[4:x; .x; .[.;x]} as processing function
-  int status;
-  K a;
-  status = pthread_mutex_lock(&execute_mutex); 
-  if(status != 0) {perror("Lock mutex in mod_ex()"); abort();}
-  if(4==xt || 3==ABS(xt)) {
-    a = X(CSK(x));
-    status = pthread_mutex_unlock(&execute_mutex); 
-    if(status != 0) {perror("Unlock mutex in mod_ex()"); abort();}
-    R a;
-  }
-  if(!xt && xn>0) {
-    a = vf_ex(offsetDot,x);
-    status = pthread_mutex_unlock(&execute_mutex); 
-    if(status != 0) {perror("Unlock mutex in mod_ex()"); abort();}
-    R a;
-  }
-  R ci(x);
 }
 
 #endif

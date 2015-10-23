@@ -43,9 +43,6 @@ K newK(I t,I n);
 I stat_sz(S u,I *n);
 S CSK(K x);
 K _0m(K a);
+I ninit();
 
-#ifndef WIN32
-K read_tape(I i,I type);
-#else
 K read_tape(I i,I j,I type);
-#endif

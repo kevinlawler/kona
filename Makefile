@@ -11,7 +11,7 @@ ifeq (mingw32_nt-6.2,$(OS))
 CC=gcc
 PRODFLAGS += -D_FILE_OFFSET_BITS=64
 LDFLAGS = -lws2_32 -static -lpthread
-OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
+OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o src/win/pread.o \
       src/0.o src/c.o src/getline.o src/mt.o src/p.o \
       src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
       src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
@@ -21,7 +21,7 @@ endif
 ifeq (mingw32_nt-6.0,$(OS))
 CC=gcc
 LDFLAGS = -lws2_32 -static -lpthread
-OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
+OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o src/win/pread.o \
       src/0.o src/c.o src/getline.o src/mt.o src/p.o \
       src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
       src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
@@ -66,7 +66,7 @@ LDFLAGS = -lm
 OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
       src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
-PRODFLAGS += -fast
+PRODFLAGS = -Ofast
 endif
 
 ifeq (cygwin_nt-6.3,$(OS))

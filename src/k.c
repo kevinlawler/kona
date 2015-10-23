@@ -560,12 +560,10 @@ V krec[1000000];
 
 void finally()
 {
-#ifdef WIN32
-if(IPC_PORT) {closesocket(listener); WSACleanup();}
-#endif
+  nfinish();
 #ifdef DEBUG   
-tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
-//valgrind --leak-check=full --show-reachable=yes /tmp/a.out
+  tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
+  //valgrind --leak-check=full --show-reachable=yes /tmp/a.out
 #endif
 }
 

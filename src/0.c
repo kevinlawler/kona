@@ -34,6 +34,13 @@
 // (type;width)1:f        fixedwidth data(cbsijfd IFCSDTZMm)
 // Blank skips. S strips. f can be (f;index;length).
 
+// MacOS X filesystem is not case-sensitive
+#if !defined(WIN32) && !defined(__APPLE__)
+#define KFX "K"
+#else
+#define KFX "l"
+#endif
+
 /* prototypes */
 Z K _0d_write(K a,K b);
 Z K _0d_read(K a,K b);
@@ -403,11 +410,7 @@ K _1m(K x) {    //Keeps binary files mapped
 
   S m=CSK(x); //looks for .K or .L extensions first
   I sm = strlen(m);
-#ifndef WIN32
-  S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");
-#else
-  S e= sm > 1 && '.'==m[sm-2] && 'l'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"l");
-#endif
+  S e= sm > 1 && '.'==m[sm-2] && *KFX==m[sm-1] ? strdupn(m,sm) : glueSS(m,KFX);
      //lfop (lower-case l on Windows -- differs from 'L' in manual)
   U(e)
 
@@ -425,11 +428,7 @@ K _1m(K x) {    //Keeps binary files mapped
 
   S v;
   //These mmap arguments are present in Arthur's code. WRITE+PRIVATE lets reference count be modified without affecting file
-  #ifndef WIN32
   if(MAP_FAILED==(v=mmap(0,s,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,0)))R SE;
-  #else
-  if(MAP_FAILED==(v=mmap(0,s,PROT_READ|PROT_WRITE,MAP_PRIVATE,f,0)))R SE;
-  #endif
 
   //TODO: verify that the file is valid K data. For -1,-2,-3 types (at least) you can avoid scanning the whole thing and check size
   I b=0;
@@ -465,11 +464,7 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
     length+=mod;
     offset-=mod;
 
-    #ifndef WIN32
     if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,offset))){R SE;}
-    #else
-    if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE,f,offset))){R SE;}
-    #endif
 
     z=(K)(((V)u+mod)-3*sizeof(I)); //3*sizeof(I) for c,t,n
 
@@ -498,7 +493,7 @@ Z K _1d_write(K x,K y,I dosync) {
   //Copy-pasted from 2:
   S m=CSK(x);
   I sm = strlen(m);
-  S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");
+  S e= sm > 1 && '.'==m[sm-2] && *KFX==m[sm-1] ? strdupn(m,sm) : glueSS(m,KFX);
      //lfop (lower-case l on Windows -- differs from 'L' in manual)
   U(e)
 
@@ -754,11 +749,7 @@ K _2m(K a) { //again, minor copy/paste here
 
   S m=CSK(a); //looks for .K or .L extensions first
   I sm = strlen(m);
-#ifndef WIN32
-  S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");
-#else
-  S e= sm > 1 && '.'==m[sm-2] && 'l'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"l");
-#endif
+  S e= sm > 1 && '.'==m[sm-2] && *KFX==m[sm-1] ? strdupn(m,sm) : glueSS(m,KFX);
     //lfop (lower-case l on Windows -- differs from 'L' in manual)
   U(e)
 
@@ -870,7 +861,10 @@ Z K _3d_(K x,K y) {
   //I n; //DO(10, if ((n = send(sockfd, buf, -1 + sizeof buf, 0)) == -1) { perror("send error"); R DOE; } else hi(OK))
 }
 
-#ifndef WIN32
+#ifdef WIN32
+#define  popen    _popen
+#define  pclose   _pclose
+#endif
 
 K popen_charvec(S cmd) {
   FILE *f; K z,l; S s=0; I n=0;
@@ -888,6 +882,8 @@ Z void parse(S s, S *argv, C c) {
     while(*s != '\0' &&  *s != c && *s != '\t' && *s != '\n') s++; }
   *argv = '\0'; }
 
+#ifndef WIN32
+
 Z void execute(S *argvP, I fWait) {
   pid_t  pid; I status;
   if((pid = fork()) < 0) { O("*** ERROR: forking child process failed\n"); exit(1); }
@@ -895,20 +891,6 @@ Z void execute(S *argvP, I fWait) {
     if(execvp(*argvP,argvP) < 0) { O("*** ERROR: exec failed\n"); exit(1); } }
   else {
     if(fWait) { while (wait(&status) != pid)  ; } } }
-
-Z K run(K x) {
-  S line=kC(x), argvL[64], argvP[64]; I i,fWait=1;
-  parse(line,argvL,';');
-  i=0; while(argvL[i]!=NULL) {
-    parse(argvL[i],argvP,' ');
-    if(argvL[1]==NULL && (strcmp(argvP[0],"echo")!=0))fWait=0;
-    execute(argvP,fWait); i++; }
-  R _n(); }
-
-K _3d(K x,K y) {      //'async' TCP
-  if(4==xt && !**kS(x)) R run(y);
-  P(1!=xt, TE)
-  R _3d_(x,y); }
 
 K _4d_(S srvr,S port,K y){
   struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr; I r;
@@ -930,13 +912,6 @@ K _4d_(S srvr,S port,K y){
 
 #else
 
-Z void parse(S s, S *argv, C c) {
-  while(*s != '\0') {
-    while(*s == c || *s == '\t' || *s == '\n') *s++ = '\0';
-    *argv++ = s;
-    while(*s != '\0' &&  *s != c && *s != '\t' && *s != '\n') s++; }
-  *argv = '\0'; }
-
 Z void execute(LPSTR argv, I fWait) {
   I i=0,j=0;
   if(argv[0]==' '){
@@ -953,11 +928,41 @@ Z void execute(LPSTR argv, I fWait) {
   CloseHandle( pi.hProcess );
   CloseHandle( pi.hThread ); }
 
+K _4d_(S srvr,S port,K y) {
+  int iRetval; DWORD dwRetval; I i=1,r; S errstr;
+  struct addrinfo *result = NULL; struct addrinfo *ptr = NULL; struct addrinfo hints;
+  struct sockaddr_in  *sockaddr_ipv4; LPSOCKADDR sockaddr_ip;  //struct sockaddr_in6 *sockaddr_ipv6;
+  C ipstringbuffer[46]; DWORD ipbufferlength=46;
+  // initialize WinSock
+  ninit();
+  ZeroMemory( &hints, sizeof(hints) );
+  hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
+  dwRetval = getaddrinfo(srvr, port, &hints, &result);
+  if(dwRetval != 0) { O("getaddrinfo failed with error: %d\n", dwRetval); R DOE; }
+  I sockfd;  
+  for(ptr=result; ptr != NULL ;ptr=ptr->ai_next)
+    if((sockfd=socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol))==-1)continue;
+    else if(connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)==-1){errstr=strerror(errno); r=closesocket(sockfd); if(r)R FE; continue;}
+    else break;
+  if(ptr==NULL){fprintf(stderr, "conn: failed to connect (%s)\n",errstr); freeaddrinfo(result); R DOE;}
+  I n=strlen(kC(y)); C msg[n+5]; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
+  msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
+  if(send(sockfd, &msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); r=closesocket(sockfd); if(r)R FE; freeaddrinfo(result); R WE;}
+  C buf[20000]; n=recv(sockfd,&buf,20000,0); r=closesocket(sockfd); if(r)R FE;
+  K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
+  freeaddrinfo(result);
+  if(n==0)R _n();
+  else R z; }
+
+#endif
+
 Z K run(K x) {
-  S line=kC(x), argvL[64], argvP[64];
+  S line=kC(x), argvL[64], argvP[64]; I i,fWait=1;
   parse(line,argvL,';');
-  I i=0, fWait=1;
-  while(argvL[i]!=NULL) { if(argvL[1]==NULL)fWait=0; execute(argvL[i],fWait); ++i; }
+  i=0; while(argvL[i]!=NULL) {
+    parse(argvL[i],argvP,' ');
+    if(argvL[1]==NULL && (strcmp(argvP[0],"echo")!=0))fWait=0;
+    execute(argvP,fWait); i++; }
   R _n(); }
 
 K _3d(K x,K y) {      //'async' TCP
@@ -965,49 +970,12 @@ K _3d(K x,K y) {      //'async' TCP
   P(1!=xt, TE)
   R _3d_(x,y); }
 
-K popen_charvec(S cmd) {
-  FILE *f; K z,l; C s[128]; S p;
-  f=_popen(cmd,"r"); P(!f,_n())
-  z=newK(0,0);
-  while(fgets(s, 128, f)) {
-    p=strchr(s,*"\n"); l=newK(-3,p-s); strncpy(kC(l),s,p-s); kap(&z,&l); }
-  _pclose(f);
-  R z; }
-
-K _4d_(S srvr,S port,K y) {
-  WSADATA wsaData; int iResult, iRetval; DWORD dwRetval; I i=1,r; S errstr;
-  struct addrinfo *result = NULL; struct addrinfo *ptr = NULL; struct addrinfo hints;
-  struct sockaddr_in  *sockaddr_ipv4; LPSOCKADDR sockaddr_ip;  //struct sockaddr_in6 *sockaddr_ipv6;
-  C ipstringbuffer[46]; DWORD ipbufferlength=46;
-  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-  if (iResult != 0) { O("WSAStartup failed: %d\n", iResult); R FE; }
-  ZeroMemory( &hints, sizeof(hints) );
-  hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
-  dwRetval = getaddrinfo(srvr, port, &hints, &result);
-  if(dwRetval != 0) { O("getaddrinfo failed with error: %d\n", dwRetval); WSACleanup(); R DOE; }
-  I sockfd;  
-  for(ptr=result; ptr != NULL ;ptr=ptr->ai_next)
-    if((sockfd=socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol))==-1)continue;
-    else if(connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)==-1){errstr=strerror(errno); r=close(sockfd); if(r)R FE; continue;}
-    else break;
-  if(ptr==NULL){fprintf(stderr, "conn: failed to connect (%s)\n",errstr); freeaddrinfo(result); R DOE;}
-  I n=strlen(kC(y)); C msg[n+5]; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
-  msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
-  if(send(sockfd, &msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); r=close(sockfd); if(r)R FE; freeaddrinfo(result); WSACleanup(); R WE;}
-  C buf[20000]; n=recv(sockfd,&buf,20000,0); r=close(sockfd); if(r)R FE;
-  K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
-  freeaddrinfo(result);  WSACleanup();
-  if(n==0)R _n();
-  else R z; }
-
-#endif
-
 K _4d(K x,K y) {      //see _3d
   if (4==xt && !**kS(x) && -3==y->t) { R popen_charvec(kC(y)); } // `4:"ls" -> lines from popen("ls", "r"), blocking
   if(1==xt){
     I sockfd=*kI(x); P(-1==ksender(sockfd,y,1),DOE)   K z=0;
     #ifndef WIN32
-    while((2!=fer)&&!(z=read_tape(sockfd,1))){}
+    while((2!=fer)&&!(z=read_tape(sockfd,sockfd,1))){}
     #else
     while((2!=fer)&&!(z=read_tape(0,sockfd,1))){}
     #endif
@@ -1042,11 +1010,7 @@ K _5d(K x,K y) {
 
   S m=CSK(x); //looks for .K or .L extensions first
   I sm = strlen(m);
-#ifndef WIN32
-  S e= sm > 1 && '.'==m[sm-2] && 'K'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"K");
-#else
-  S e= sm > 1 && '.'==m[sm-2] && 'l'==m[sm-1] ? strdupn(m,sm) : glueSS(m,"l");
-#endif
+  S e= sm > 1 && '.'==m[sm-2] && *KFX==m[sm-1] ? strdupn(m,sm) : glueSS(m,KFX);
     //TODO: lfop (lower-case l on Windows -- differs from 'L' in manual)
   if(!e)R 0; //TODO: oom
 
@@ -1067,11 +1031,12 @@ K _5d(K x,K y) {
   //TODO: regular file read + rewind?
   I ft,fn;
 
-  #ifndef WIN32
+  #ifdef WIN32
+  size_t pread(int __fd,void* __buf,size_t __nbyte,off_t __off);
+  #endif  
   I g;
   g=pread(f,&ft,sizeof(ft),2*sizeof(I)); if(!g)show(kerr("pread"));
   g=pread(f,&fn,sizeof(ft),2*sizeof(I)+sizeof(ft)); if(!g)show(kerr("pread"));
-  #endif
 
   if( (yt>0&&yt!=5) || ft != yt) R 0; //TODO: type error
 
@@ -1217,16 +1182,11 @@ K _3m(K x) {
   if(1==xt){I i=close(*kI(x)); R i?DOE:_n();} // 3: 1
   else P(xt|| xn!=2 || kK(x)[0]->t!=4 || kK(x)[1]->t!=1, TE)
   //3:`"999.999.999.999",1234   // same host: 3:`,1234
-  S host=CSK(*kK(x)); char port[256]; snprintf(port,256,"%lld",*kI(kK(x)[1]));
-
+  S host=CSK(*kK(x)), errstr;
+  char port[256];
+  snprintf(port,256,"%lld",*kI(kK(x)[1]));
   // initialize WinSock
-  WSADATA wsaData;
-  int err = WSAStartup(MAKEWORD(2,2), &wsaData);
-  if(err != 0) O("WSAStartup failed with error: %d\n",err);
-  if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
-    { O("Could not find useable version of Winsock.dll\n"); exit(1); }
-  IPC_PORT=port;  //need this for finally() to cleanup WinSock
-
+  ninit();
   struct addrinfo *servinfo = NULL, *p = NULL, hints;
   ZeroMemory( &hints, sizeof(hints));
   hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
@@ -1245,14 +1205,14 @@ K _3m(K x) {
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
       { perror("client: socket()"); O("client socket(): %ld\n", WSAGetLastError()); continue; }
     else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)
-      { O("client connect(): %d\n", WSAGetLastError()); rv=close(sockfd); if(rv)R FE; continue; }
+      { O("client connect(): %d\n", WSAGetLastError()); rv=closesocket(sockfd); if(rv)R FE; continue; }
     else break;
 
   if (p == NULL) { fprintf(stderr, "conn: failed to connect (%d)\n", WSAGetLastError());freeaddrinfo(servinfo); R DOE; }
   I yes=1; setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (cS)&yes, sizeof(I));//disable nagle
   freeaddrinfo(servinfo);
 
-  //wipe_tape(sockfd);
+  //wipe_tape(sockfd); ?
   R Ki(sockfd);
 }
 

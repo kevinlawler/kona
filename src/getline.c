@@ -94,6 +94,7 @@ I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
 #ifdef WIN32
 I getline(S *s,I*n, FILE *f){ R getdelim(s,n,'\n',f);}
 I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, file
+#if 0 
   char *q; I w=0;
   if (!s) {errno = EINVAL; goto error;}
   if (f->_cnt <= 0) {
@@ -107,7 +108,16 @@ I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, fi
   q++;  /* snarf the delimiter, too */
   if (appender(s, &w, (S) f->_ptr, q - f->_ptr)) goto error;
   f->_cnt -= q - f->_ptr; f->_ptr = q;
-  done: (*s)[w] = '\0'; R *n=w;
+#endif
+  I w=0;
+  if (!s) {errno = EINVAL; goto error;}
+  for(;;) {
+    C c=fgetc(f);
+    if (EOF == c) R -1;
+    if (appender(s, &w, (S)&c, 1)) goto error;
+    if (d==c) break;
+  }
+  (*s)[w] = '\0'; R *n=w;
   error: R *n=-1;
 }
 #endif
