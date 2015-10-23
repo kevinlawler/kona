@@ -130,4 +130,4 @@ extern L DT_SIZE, DT_END_OFFSET, DT_ADVERB_OFFSET, DT_VERB_OFFSET, DT_SPECIAL_VE
 extern TR DT[];
 extern L offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
 K TABLE_END();
-V nfinish();
+void nfinish();

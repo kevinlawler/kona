@@ -21,7 +21,7 @@ Z I close_tape(I i);
 Z K modified_execute(K x);
 K KONA_WHO,KONA_PORT;
 
-V nfinish()
+void nfinish()
 {
 #ifdef WIN32
   extern I listener;
