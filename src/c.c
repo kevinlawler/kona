@@ -53,7 +53,7 @@ K filename(S s)
   I b=!filexist(s),n=strlen(s);
   U(p=newK(-3,n+2*b))
   strcpy(kC(p),s);
-  if(b)strcat(kC(p)+n,".k");
+  if(b){kerr("undescribed");strcat(kC(p)+n,".k");}
   R p;
 }
 
