@@ -73,13 +73,11 @@ Z K modified_execute(K x) //TODO: consider: this should be modified to use error
 #ifdef WIN32
   I status = pthread_mutex_lock(&execute_mutex); 
   if(status != 0) {perror("Lock mutex in mod_ex()"); abort();}
-#endif
 
   K a=(K)-1;
   if(4==xt || 3==ABS(xt)) a=X(CSK(x));
   if(!xt && xn>0) a=vf_ex(offsetDot,x);
   
-#ifdef WIN32
   if((K)-1!=a){
     status = pthread_mutex_unlock(&execute_mutex); 
     if(status != 0) {perror("Unlock mutex in mod_ex()"); abort();}
