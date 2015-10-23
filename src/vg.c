@@ -347,11 +347,14 @@ K join(K x, K y) {      //TODO: 5,6?
   I zn=xk+yk;
   K z=newK(zt,zn);U(z)
 
-  //TODO: all this should be replaced with memcpy calls
-  if     (-4==zt){DO(xk,kS(z)[i]=kS(x)[i]) DO(yk,kS(z)[xk+i]=kS(y)[i])}
-  else if(-3==zt){DO(xk,kC(z)[i]=kC(x)[i]) DO(yk,kC(z)[xk+i]=kC(y)[i])}
-  else if(-2==zt){DO(xk,kF(z)[i]=kF(x)[i]) DO(yk,kF(z)[xk+i]=kF(y)[i])}
-  else if(-1==zt){DO(xk,kI(z)[i]=kI(x)[i]) DO(yk,kI(z)[xk+i]=kI(y)[i])}
+#define JOIN(ta,t)	\
+  memcpy(ta(z)   ,ta(x),xk*sizeof(t)); \
+  memcpy(ta(z)+xk,ta(y),yk*sizeof(t))
+  if     (-4==zt) {JOIN(kS,S);}
+  else if(-3==zt) {JOIN(kC,C);}
+  else if(-2==zt) {JOIN(kF,F);}
+  else if(-1==zt) {JOIN(kI,I);}
+#undef JOIN
   else if( 0==zt) {    //oom all here
     K c=promote(x); K d=promote(y);
     DO(xk,kK(z)[i]=ci(kK(c)[i]))
