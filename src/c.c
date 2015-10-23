@@ -68,16 +68,20 @@ Z FILE *loadf(S s)
 
 K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
 {
-  if(!filexist(s)){O("%s: file not found\n",s); R _n();}
-  fLoad=1; fCmplt=0;
-  if(scrLim>124){O("limit\n");  R kerr("stack");} scrLim++;  
+  I ofLoad=fLoad,ofCmplt=fCmplt; //global state
+  K r;
+  fLoad=1;fCmplt=0;
+  if(!filexist(s)){O("%s: file not found\n",s);r=_n();GC;}
+  if(scrLim>124){O("limit\n");r=kerr("stack");GC;} scrLim++;  
   FILE*f=loadf(s);
-  if(!f){O("%s.k: file not found\n",s); R FE;}
-  // 151012AP
-  lines(f); I r=fclose(f); if(r){fLoad=0;fCmplt=0;R FE;} scrLim--;
+  if(!f){O("%s.k: file not found\n",s);r=FE;GC;}
+  lines(f); if(fclose(f)){r=FE;GC;} scrLim--;
   if(fCmplt==1) { kerr("open-in-next-line"); oerr(); }
-  kerr("undescribed"); fer=fCmplt=fLoad=0;
-  R _n();
+  kerr("undescribed"); fer=0;
+  r=_n();
+cleanup:
+  fLoad=ofLoad;fCmplt=ofCmplt;
+  R r;
 }
 
 I stepopt(S s,I n)
@@ -249,16 +253,16 @@ K backslash(S s, I n, K*dict)
               "_d       K-Tree path / current working dictionary\n"
               "_f       anonymous reference to current function\n"
               "_h       host name\n"
-              //"_i     index of current amendment\n"
+              "_i       index of current amendment\n"
               //"_k     \n"
               //"_m     \n"
               "_n       nil\n"
-              //"_p     host port\n"
+              "_p       host port\n"
               //"_s     \n"
               "_t       current UTC time (int)\n"
               //"_u     \n"
-              //"_v     current global variable under amendment\n"
-              //"_w     message source handle\n"
+              "_v       current global variable under amendment\n"
+              "_w       message source handle\n"
               "\n"
               "Monadic Verbs:\n"
               "_acos    inverse cosine\n"
@@ -400,7 +404,7 @@ K backslash(S s, I n, K*dict)
       CS('l',R load(t))
       CS('m',R NYI) //shows nonstandard system commands
       CS('p',if(*t){I p; P(!StoI(t,&p),TE); show(precision(p));} else show(precision_()); R _n();)
-      CS('r',if(*t){I r; P(!StoI(t,&r),TE); seedPRNG(r); R _n();} else R Ki(SEED))
+      CS('r',if(*t){I r; P(!StoI(t,&r),TE); seedPRNG(r); R _n();} else {seedPRNG(SEED); R Ki(SEED);})
       CS('s',R backslash_s(t))
       CS('t',R backslash_t(t)) //TODO: also \t [digits]
       CS('v',R NYI)
