@@ -195,8 +195,14 @@ Z K each2(K a, V *p, K b)
   {
     K z = newK(0,bn),d=0; U(z)
     K g;
-    if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(0,p-1,g); cd(g); M(d,z) kK(z)[i]=d)
-    if(0==bt) DO(bn, d=dv_ex(0,p-1,kK(b)[i]); if(grnt && !prnt)prnt=ci(grnt); M(d,z) kK(z)[i]=d)
+    if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt));
+      if(*p==(V)offsetEach && (*(p-1)==(V)offsetOver || *(p-1)==(V)offsetScan) && *(p-2)<(V)DT_SIZE)d=dv_ex(a,p-1,g);
+      else d=dv_ex(0,p-1,g);
+      cd(g); M(d,z) kK(z)[i]=d)
+    if(0==bt) DO(bn,
+      if(*p==(V)offsetEach && (*(p-1)==(V)offsetOver || *(p-1)==(V)offsetScan) && *(p-2)<(V)DT_SIZE)d=dv_ex(a,p-1,kK(b)[i]);
+      else d=dv_ex(0,p-1,kK(b)[i]);
+      if(grnt && !prnt)prnt=ci(grnt); M(d,z) kK(z)[i]=d)
     R demote(z);
   }
 }
