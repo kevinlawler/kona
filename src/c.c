@@ -114,7 +114,9 @@ K backslash(S s, I n, K*dict)
       "\\p [n]  show/set print precision (0=full)\n"
       "\\r [s]  show/set random seed (0=random)\n" 
       "\\s f    step script f or f.k\n" 
-      "\\t [e]  measure runtime of some k expression\n"
+      "\\t [n]  show/set timer interval in msec(0=disable)\n"
+      "        calls niladic .m.ts\n"
+      "\\t e    measure runtime of some k expression\n"
       "\\w      show workspace resources used\n"
       "\\[cmd]  system command (also \\[ cmd]), \\echo hello\n"
       "\\\\      exit (or ctrl+d)\n"
@@ -371,8 +373,11 @@ K backslash(S s, I n, K*dict)
                "Start k listening for IPC on port 1234  ./k -i 1234\n" 
                "3: monadic  open handle    h: 3:(`\"192.168.1.101\";1234) \n"
                "3: monadic  close handle   3: h \n"
+               "            exec .m.c expression\n"
                "3: dyadic   asynchronous send, returns _n      h 3: \"a:2\"\n"
+               "            calls monadic .m.s msg handler\n"
                "4: dyadic   synchronous send, returns result   h 4: \"1+1\"\n"
+               "            calls monadic .m.g msg handler\n"
 
                "\nOther\n"
                "0: dyadic   write to console `0: \"hello\\n\" \n"
@@ -502,10 +507,18 @@ cleanup:
 }
 
 Z K backslash_t(S s) {
-  I d=clock(); 
-  cd(X(s));
-  d=(clock()-d)/((F)CLOCKS_PER_SEC/1000);
-  R Ki(d);
+  I r;
+  if(*s){
+    if(StoI(s,&r)){
+      tmr_ival = r;
+      R _n();
+    }
+    I d=clock(); 
+    cd(X(s));
+    d=(clock()-d)/((F)CLOCKS_PER_SEC/1000);
+    R Ki(d);
+  }
+  R Ki(tmr_ival);
 }
 
 Z K backslash_w(S s) { fWksp=1;  R _n(); }

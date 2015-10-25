@@ -139,7 +139,8 @@ K _db(K x) //see _2m_r (maybe others?) I/O structure similar but not the same
   P(m->n + sizeof(M1) != xn, LE)
   V p= sizeof(M1)+(V)m;
   I b=0;
-  R rrep(p,p + m->n,&b,0);
+  I u=1;C a=*(S)&u;
+  R rrep(p,p + m->n,&b,0,m->a!=a);
 }
 
 K _dj(K a)

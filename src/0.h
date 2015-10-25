@@ -18,7 +18,7 @@ K _2d(K a,K b);
 K _2m(K a);
 S spn(S s,I n);
 K Kv();
-K rrep(V v,V aft,I *b,I y);
+K rrep(V v,V aft,I *b,I y,I s);
 extern V vd[];
 extern V vm[];
 I sva(V p);
@@ -43,6 +43,8 @@ K newK(I t,I n);
 I stat_sz(S u,I *n);
 S CSK(K x);
 K _0m(K a);
-I ninit();
+I bswapI(I n);
+V membswpI(V d,V s,I n,I x);
+V membswpF(V d,V s,I n,I x);
 
 K read_tape(I i,I j,I type);

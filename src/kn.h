@@ -15,10 +15,8 @@ extern S HTTP_PORT;
 K _n();
 extern C errmsg[256];
 K Ki(I);
+I bswapI(I n);
+void dm1(S msg,M1*m);
 
 K read_tape(I i,I j,I type);
-#ifndef WIN32
-extern M0 CP[FD_SETSIZE];
-#else
-extern M0 CP[10];
-#endif
+extern M0 CP[FD_SETSIZE+1];

@@ -49,7 +49,7 @@ Z K _0d_rdDsvWc(K a,K b);
 Z K _1m_r(I f,V fixed, V v,V aft,I*b);
 Z K _1d_char(K x,K y);
 Z K _1d_read(K a,K b);
-Z K _1d_write(K x,K y,I dosync); 
+Z K _1d_write(K x,K y,I dosync);
 Z I disk(K x);
 Z I rrep_4(S *z,S a,S t);
 Z K readVector(K x,I t);
@@ -479,13 +479,13 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
 
 K _1d(K x,K y) {
   I t=x->t;
-  if(4==t || -3==t)R _1d_write(x,y,0); //char-vector but not char-atom 
+  if(4==t || -3==t)R _1d_write(x,y,0); //char-vector but not char-atom
   if(!t)R _1d_read(x,y);
   if(3==t)R _1d_char(x,y);
   R TE; }
 
 //TODO: for testing this, use 1:write and 2:read (or 1:read) to confim items are the same before write & after read
-Z K _1d_write(K x,K y,I dosync) { 
+Z K _1d_write(K x,K y,I dosync) {
   //Note: all file objects must be at least 4*sizeof(I) bytes...fixes bugs in K3.2, too
   //K3.2 Bug - "a"1:`a;2:"a" or 1:"a" - wsfull, tries to read sym but didn't write enough bytes?
   I n=disk(y);
@@ -510,7 +510,7 @@ Z K _1d_write(K x,K y,I dosync) {
 
   wrep(y,v,1);
 
-  if(dosync) msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary 
+  if(dosync) msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
   r=munmap(v,n); if(r)R UE;
 
   R _n();
@@ -535,7 +535,7 @@ I wrep(K x,V v,I y) {   //write representation. see rep(). y in {0,1}->{net, dis
   else if( '\007'==t || '\010'==t) {   //TODO: write seven_types to disk
                                        //TODO: calculate return length r optimally for seven_type since seven_type can nest
     if(1==xn && 1==kVC(x)->n-1 && offsetColon==(V)kS(kK(x)[CODE])[0]){
-      K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon; }
+      K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon;}
       //TODO: work for more than just unreserved monadic, dyadic verbs
     else R (L)SYE; }
   else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x)); } memcpy(d,s,b);}
@@ -563,8 +563,9 @@ I rep(K x,I y) {   //#bytes in certain net/disk representations
   R MAX(r,m);
 }
 
-K rrep(V v, V aft,I*b, I y) { //why aft? maybe not the best? but invariant. size count changes. haven't closely compared elegance
+K rrep(V v, V aft,I*b, I y, I x) { //why aft? maybe not the best? but invariant. size count changes. haven't closely compared elegance
   //y: kind of a crutch to prevent fork. {0,1}-> {_db type, _2m_r type}
+  //x: bswap
   I m = y?2:0;  //addend to offset
 
   I s=aft-v;;//subtle error here but not really...filesize already assumed to fit in float in parent
@@ -578,9 +579,9 @@ K rrep(V v, V aft,I*b, I y) { //why aft? maybe not the best? but invariant. size
 
   //if(y)w[1]; //mmap reference count
   I t;
-  memcpy(&t,w+m,sizeof(I)); //type
+  membswpI(&t,w+m,sizeof(I),x); //type
   I n;
-  if(t<=0 || 5==t)memcpy(&n,w+1+m,sizeof(I));
+  if(t<=0 || 5==t)membswpI(&n,w+1+m,sizeof(I),x);
   else if('\012'==t); //TODO: some verb/function types increase r or n size
   else n=1;
 
@@ -595,14 +596,14 @@ K rrep(V v, V aft,I*b, I y) { //why aft? maybe not the best? but invariant. size
   I c=0; // k->n counter
   switch(t) {   //most of this can be refactored into changing parameters to a single memcpy call
     CSR( 0,)//fall through
-    CS ( 5,while(v+r < aft && c < n) { K k=rrep(v+r,aft,&r,y); M(z,k) memcpy(&(kK(z)[c++]),&k,sizeof(K)); } if(c!=n){cd(z);R NE;} )
+    CS ( 5,while(v+r < aft && c < n) { K k=rrep(v+r,aft,&r,y,x); M(z,k) memcpy(&(kK(z)[c++]),&k,sizeof(K)); } if(c!=n){cd(z);R NE;} )
 
     CS(-4,while(v+r < aft && c < n) r+=rrep_4(kS(z)+c++,v+r,aft); P(c!=n,NE) ) //TODO: oom
     CS(-3,memcpy(kC(z),w+2+m,n*sizeof(C)))//K3.2 does not verify final '\0' (does not read any extra bytes at all)
-    CS(-2,memcpy(kC(z),w+2+m,n*sizeof(F)))//maybe could factor above and below (but sizeof C != sizeof I/F)
-    CS(-1,memcpy(kC(z),w+2+m,n*sizeof(I)))
-    CS( 1,memcpy(kI(z),w+1+m,1*sizeof(I)))
-    CS( 2,memcpy(kF(z),w+1+m,1*sizeof(F)))
+    CS(-2,membswpF(kF(z),w+2+m,n*sizeof(F),x))//maybe could factor above and below (but sizeof C != sizeof I/F)
+    CS(-1,membswpI(kI(z),w+2+m,n*sizeof(I),x))
+    CS( 1,membswpI(kI(z),w+1+m,1*sizeof(I),x))
+    CS( 2,membswpF(kF(z),w+1+m,1*sizeof(F),x))
     CS( 3,memcpy(kC(z),w+1+m,1*sizeof(C))) //K3.2 take first C but do not check remaining C values of full I at w[3]
     CS( 4,r+=rrep_4(kS(z),(S)(w+1+m),aft)-sizeof(I))
         //TODO: oom. K3.2 reads to the end of the file no problem even if null is missing. K3.2 has bug on `x or `xx (<3)
@@ -610,7 +611,7 @@ K rrep(V v, V aft,I*b, I y) { //why aft? maybe not the best? but invariant. size
         //TODO: verb cases:  +, {x}, 2:("f",2)  (third case probably not supported but see).
         // Do projections get written? Note: _bd (-); _bd (+); _bd (:); etc are revealing
         //using old K3 IO format, using outdated Kona internal verb representation:
-    CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; *kK(f)=(V)(L)w[1+m]; r+=000000000000000;)
+    CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; if(x)w[1+m]=bswapI(w[1+m]);*kK(f)=(V)(L)w[1+m]; r+=000000000000000;)
     CD: R NE; }  //unsupported type. was:  if(t<-4 || t>7 || n<0) R NE; //verbs actually have some weird types though. 8==\010, etc
 
   *b+= MAX(r,(2+m)*sizeof(I));
@@ -772,7 +773,7 @@ K _2m(K a) { //again, minor copy/paste here
   R z;
 }
 
-K _2m_r(V v, V aft,I*b) {R rrep(v,aft,b,1);}
+K _2m_r(V v, V aft,I*b) {R rrep(v,aft,b,1,0);}
 
 K _2d(K a,K b) {
   //K3.2 dlopen,dlsym,dlerr but not dlclose
@@ -803,6 +804,14 @@ K _2d(K a,K b) {
   R z;
 }
 
+void dm1(S msg,M1*m)
+{
+  O("=== %s ===\n",msg);
+  O("a: %d\n",m->a);
+  O("n: %lld\n",m->n);
+  O("d: %d\n",m->d);
+}
+
 Z I sendall(I s,S b,I k) {I t=0,r=k,n=0;while(t<k){n=send(s,b+t,r,0);if(-1==n)break;t+=n;r-=n;}R -1==n?n:0;} //from beej
 
 I ksender(I sockfd,K y,I t) {
@@ -810,6 +819,7 @@ I ksender(I sockfd,K y,I t) {
   K k; U(k=_bd(y))
   M1*m=(V)kC(k);
   m->d=t; //{0,1,2} -> {3:,4:,4: resp}
+  //dm1("ksender",m);
   if(-1==(r=sendall(sockfd,kC(k),k->n)))perror("conn: send error");
   cd(k);
   R r; }
@@ -895,7 +905,7 @@ Z void execute(S *argvP, I fWait) {
 K _4d_(S srvr,S port,K y){
   struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr; I r;
   memset(&hints,0,sizeof hints); hints.ai_family=AF_UNSPEC; hints.ai_socktype=SOCK_STREAM;
-  if(rv=getaddrinfo(srvr,port,&hints,&servinfo)!=0){fprintf(stderr,"conn: %s\n",gai_strerror(rv)); R DOE;}
+  if((rv=getaddrinfo(srvr,port,&hints,&servinfo))){fprintf(stderr,"conn: %s\n",gai_strerror(rv)); R DOE;}
   for(p=servinfo; p!=NULL; p=p->ai_next)
     if((sockfd=socket(p->ai_family,p->ai_socktype,p->ai_protocol))==-1)continue;
     else if(connect(sockfd,p->ai_addr,p->ai_addrlen)==-1){errstr=strerror(errno); r=close(sockfd); if(r)R FE; continue;}
@@ -929,30 +939,25 @@ Z void execute(LPSTR argv, I fWait) {
   CloseHandle( pi.hThread ); }
 
 K _4d_(S srvr,S port,K y) {
-  int iRetval; DWORD dwRetval; I i=1,r; S errstr;
-  struct addrinfo *result = NULL; struct addrinfo *ptr = NULL; struct addrinfo hints;
-  struct sockaddr_in  *sockaddr_ipv4; LPSOCKADDR sockaddr_ip;  //struct sockaddr_in6 *sockaddr_ipv6;
-  C ipstringbuffer[46]; DWORD ipbufferlength=46;
-  // initialize WinSock
-  ninit();
+  int rv; I i=1,r,neterrno; //S errstr;
+  struct addrinfo *result = NULL,*ptr = NULL,hints;
   ZeroMemory( &hints, sizeof(hints) );
-  hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
-  dwRetval = getaddrinfo(srvr, port, &hints, &result);
-  if(dwRetval != 0) { O("getaddrinfo failed with error: %d\n", dwRetval); R DOE; }
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+  if((rv=getaddrinfo(srvr, port, &hints, &result))){O("getaddrinfo failed with error: %d\n", rv); R DOE; }
   I sockfd;  
   for(ptr=result; ptr != NULL ;ptr=ptr->ai_next)
-    if((sockfd=socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol))==-1)continue;
-    else if(connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)==-1){errstr=strerror(errno); r=closesocket(sockfd); if(r)R FE; continue;}
+    if(INVALID_SOCKET==(sockfd=socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol)))continue;
+    else if(-1==connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)){neterrno=WSAGetLastError(); r=closesocket(sockfd); if(r)R FE; continue;}
     else break;
-  if(ptr==NULL){fprintf(stderr, "conn: failed to connect (%s)\n",errstr); freeaddrinfo(result); R DOE;}
+  if(!ptr){fprintf(stderr, "conn: failed to connect (lld%s)\n",neterrno); freeaddrinfo(result); R DOE;}
   I n=strlen(kC(y)); C msg[n+5]; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
-  if(send(sockfd, &msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); r=closesocket(sockfd); if(r)R FE; freeaddrinfo(result); R WE;}
-  C buf[20000]; n=recv(sockfd,&buf,20000,0); r=closesocket(sockfd); if(r)R FE;
-  K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
+  if(send(sockfd, msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); r=closesocket(sockfd); if(r)R FE; freeaddrinfo(result); R WE;}
+  C buf[20000]; n=recv(sockfd,buf,20000,0); r=closesocket(sockfd); if(r)R FE;
+  K z=newK(n==1?3:-3,n); memcpy(kC(z),buf,n);
   freeaddrinfo(result);
-  if(n==0)R _n();
-  else R z; }
+  R(n)?z:_n(); }
 
 #endif
 
@@ -977,7 +982,7 @@ K _4d(K x,K y) {      //see _3d
     #ifndef WIN32
     while((2!=fer)&&!(z=read_tape(sockfd,sockfd,1))){}
     #else
-    while((2!=fer)&&!(z=read_tape(0,sockfd,1))){}
+    while((2!=fer)&&!(z=read_tape(FD_SETSIZE,sockfd,1))){}
     #endif
     P(z==(K)-1,DOE)
     P(!z,0) R z;}
@@ -1023,7 +1028,7 @@ K _5d(K x,K y) {
   //End copy/paste
 
   //File doesn't exist so fall back to 1:
-  if(f<0) R _1d_write(x,y,1); //manual says return count but that is incorrect/bug. 
+  if(f<0) R _1d_write(x,y,1); //manual says return count but that is incorrect/bug.
 
   I s = c.st_size;
   if(s < 4*sizeof(I)) R 0; //TODO: err, file is malformed
@@ -1063,7 +1068,7 @@ K _5d(K x,K y) {
   else if(-2==yt)  memcpy(d,ke(y),y->n*sizeof(F));
   else if(-1==yt)  memcpy(d,ke(y),y->n*sizeof(I));
 
-  msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary 
+  msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
   res=munmap(v,n); if(res)R UE;
 
   R Ki(fn+yn); //mm/o
@@ -1147,7 +1152,7 @@ K _3m(K x) {
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
-  if ((rv = getaddrinfo(host, port, &hints, &servinfo)) != 0) { fprintf(stderr, "conn: %s\n", gai_strerror(rv)); R DOE; }
+  if ((rv=getaddrinfo(host, port, &hints, &servinfo))) { fprintf(stderr, "conn: %s\n", gai_strerror(rv)); R DOE; }
   // loop through all the results and connect to the first we can
   for(p = servinfo; p != NULL; p = p->ai_next)
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {  continue; } //perror("client: socket");
@@ -1155,7 +1160,7 @@ K _3m(K x) {
       //perror("client: connect");
     else break;
 
-  if (p == NULL) { fprintf(stderr, "conn: failed to connect (%s)\n", errstr);freeaddrinfo(servinfo); R DOE; }
+  if (!p) { fprintf(stderr, "conn: failed to connect (%s)\n", errstr);freeaddrinfo(servinfo); R DOE; }
 
   //char s[INET6_ADDRSTRLEN];
   //inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
@@ -1179,40 +1184,35 @@ K _3m(K x) {
 
 //TODO: Manual's section on interprocess communication. {-h, .m.u, .m.c, .m.g, .m.s, .m.h}
 K _3m(K x) {
-  if(1==xt){I i=close(*kI(x)); R i?DOE:_n();} // 3: 1
+  if(1==xt){I i=closesocket(*kI(x)); R i?DOE:_n();} // 3: 1
   else P(xt|| xn!=2 || kK(x)[0]->t!=4 || kK(x)[1]->t!=1, TE)
   //3:`"999.999.999.999",1234   // same host: 3:`,1234
-  S host=CSK(*kK(x)), errstr;
+  S host=CSK(*kK(x));
   char port[256];
   snprintf(port,256,"%lld",*kI(kK(x)[1]));
-  // initialize WinSock
-  ninit();
-  struct addrinfo *servinfo = NULL, *p = NULL, hints;
+  int rv; struct addrinfo *servinfo = NULL, *p = NULL, hints;
   ZeroMemory( &hints, sizeof(hints));
-  hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
+  hints.ai_family = AF_UNSPEC; hints.ai_socktype = SOCK_STREAM;
 
-  int rv = getaddrinfo(host, port, &hints, &servinfo);
-  if(rv != 0) { O("getaddrinfo failed:%d\n", rv); exit(4); }
+  if((rv=getaddrinfo(host, port, &hints, &servinfo))){O("getaddrinfo failed:%d\n", rv); exit(4);}
   //else O("getaddressinfo OK\n");
 
   SOCKET sockfd = INVALID_SOCKET;
-  p=servinfo; sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-  if(sockfd == INVALID_SOCKET) { O("Error at socket():%ld]n", WSAGetLastError()); freeaddrinfo(servinfo); exit(4); }
-  //else O("socket() OK\n");
 
   // loop through all the results and connect to the first we can
   for(p = servinfo; p != NULL; p = p->ai_next)
-    if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
-      { perror("client: socket()"); O("client socket(): %ld\n", WSAGetLastError()); continue; }
-    else if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)
-      { O("client connect(): %d\n", WSAGetLastError()); rv=closesocket(sockfd); if(rv)R FE; continue; }
+    if(INVALID_SOCKET==(sockfd=socket(p->ai_family,p->ai_socktype,p->ai_protocol))){
+      O("client socket(): %ld\n", WSAGetLastError()); continue; }
+    else if(-1==connect(sockfd, p->ai_addr, p->ai_addrlen)){
+      O("client connect(): %d\n", WSAGetLastError());
+      rv=closesocket(sockfd); if(rv)R FE; continue; }
     else break;
 
-  if (p == NULL) { fprintf(stderr, "conn: failed to connect (%d)\n", WSAGetLastError());freeaddrinfo(servinfo); R DOE; }
+  if (!p) { fprintf(stderr, "conn: failed to connect (%d)\n", WSAGetLastError());freeaddrinfo(servinfo); R DOE; }
   I yes=1; setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (cS)&yes, sizeof(I));//disable nagle
   freeaddrinfo(servinfo);
 
-  //wipe_tape(sockfd); ?
+  wipe_tape(FD_SETSIZE);
   R Ki(sockfd);
 }
 

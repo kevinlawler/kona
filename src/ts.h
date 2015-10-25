@@ -1,6 +1,11 @@
 #ifndef TS_H
 #define TS_H
 
+#ifdef  IN
+#define OLD_IN IN
+#undef  IN
+#endif
+
 typedef void* V;
 typedef long L;
 typedef long long I; //there are cases where casting pointer arithmetic to signed int will fail

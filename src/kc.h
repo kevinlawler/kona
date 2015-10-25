@@ -77,3 +77,5 @@ extern ssize_t getline(S *lineptr, size_t *n, FILE *f);
 
 K read_tape(I i,I j,I type);
 I line(FILE *f,S *a,I *n,PDA *p);
+K* denameS(S dir_string, S t, I create);
+I ninit();

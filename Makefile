@@ -8,28 +8,30 @@ OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
 # Win-64
 ifeq (mingw32_nt-6.2,$(OS))
-CC=gcc
+CC=gcc -DWIN32=1
 PRODFLAGS += -D_FILE_OFFSET_BITS=64
 LDFLAGS = -lws2_32 -static -lpthread
-OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o src/win/pread.o \
-      src/0.o src/c.o src/getline.o src/mt.o src/p.o \
+OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
+			src/win/pread.o src/win/usleep.o \
+      src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o \
       src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
       src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 endif
 
 # Win-32
 ifeq (mingw32_nt-6.0,$(OS))
-CC=gcc
+CC=gcc -DWIN32=1
 LDFLAGS = -lws2_32 -static -lpthread
-OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o src/win/pread.o \
-      src/0.o src/c.o src/getline.o src/mt.o src/p.o \
+OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
+			src/win/pread.o src/win/usleep.o \
+      src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o \
       src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o \
       src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 endif
 
 ifeq (android,$(OS))
 CC=arm-linux-androideabi-gcc
-OBJS= src/0.o src/c.o src/getline.o src/getline_android.o src/mt.o src/p.o  \
+OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/getline_android.o src/mt.o src/p.o  \
       src/r.o src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o  \
       src/ks.o src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 LDFLAGS = -Wl,--gc-sections -Wl,-z,nocopyreloc -lgcc -no-canonical-prefixes \
@@ -41,36 +43,39 @@ CFLAGS += -fPIE -fpic -ffunction-sections -funwind-tables -fstack-protector \
 endif
 
 ifeq (linux,$(OS))
-OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+CFLAGS += -pthread
+OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
       src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 LDFLAGS = -lm -ldl
 endif
 
 ifeq (freebsd,$(OS))
+CFLAGS += -pthread
 LDFLAGS = -lm
-OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
       src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 endif
 
 ifeq (openbsd,$(OS))
+CFLAGS += -pthread
 LDFLAGS = -lm
-OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
       src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 endif
 
 ifeq (darwin,$(OS))
 LDFLAGS = -lm
-OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
       src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
-PRODFLAGS = -Ofast 
+PRODFLAGS = -Ofast
 endif
 
 ifeq (cygwin_nt-6.3,$(OS))
-OBJS= src/0.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
       src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
       src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
 LDFLAGS = -lm

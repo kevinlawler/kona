@@ -13,7 +13,9 @@
 
 #ifndef WIN32
 #include <netinet/tcp.h>
+#include <pthread.h>
 #else
+extern void win_usleep(unsigned int); //buggy TDMGCC64 usleep()
 #include <sys/types.h>
 #include <pthread.h>
 ;    // Need semicolon, probably missing from <pthread.h>.
@@ -74,6 +76,8 @@ I args(int n,S*v) {
 
 K KFIXED;
 
+pthread_mutex_t execute_mutex;
+
 I kinit() {       //oom (return bad)
   atexit(finally);
 
@@ -85,6 +89,14 @@ I kinit() {       //oom (return bad)
   #endif
 
   if(PG&(PG-1)){er(Pagesize not power of 2); exit(1);}
+
+  ninit();
+
+  pthread_mutexattr_t mta;
+  pthread_mutexattr_init(&mta);
+  pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init(&execute_mutex, &mta);
+  pthread_mutexattr_destroy(&mta);
 
   DT_SIZE                 = DT_OFFSET(TABLE_END);
   DT_END_OFFSET           = DT_OFFSET(end);
@@ -200,10 +212,6 @@ I lines(FILE*f) {
   S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p)){} R 0;}
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
-#ifdef WIN32
-pthread_mutex_t execute_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
-#endif
-
 I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   S s=0; I b=0,c=0,m=0;
   K k; F d;
@@ -230,16 +238,14 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if((*a)[0]=='\\')fbs=1; else fbs=0;
 
-#ifdef WIN32
-  I status = pthread_mutex_lock(&execute_mutex); 
-  if(status != 0) {perror("Lock mutex in line()"); abort();}
-#endif
+  if(pthread_mutex_lock(&execute_mutex)){
+    perror("Lock mutex in line()"); abort();}
+
   RTIME(d,k=ex(wd(*a,*n)))
-#ifdef WIN32
-  status = pthread_mutex_unlock(&execute_mutex); 
-  if(status != 0) {perror("Unlock mutex in line()"); abort();}
-#endif
-  
+
+  if(pthread_mutex_unlock(&execute_mutex)){
+    perror("Unlock mutex in line()"); abort();}
+
   #ifdef DEBUG
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
@@ -279,6 +285,30 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0;
   R c; }
 
+I tmr_ival=0;
+V timer_thread(V arg)
+{
+  for(;;){
+    if(tmr_ival){
+      K a=_n(),h=*denameS(".",".m.ts",0),z=0;
+      if(6!=h->t){
+        if(pthread_mutex_lock(&execute_mutex)){
+          perror("Lock mutex in timer_thread())"); abort();}
+        z=at(h,a);
+        if(pthread_mutex_unlock(&execute_mutex)){
+          perror("Unlock mutex in timer_thread())"); abort();}
+      }
+      if(z)cd(z); cd(a);
+    }
+#ifdef WIN32
+    win_usleep(tmr_ival?1000*tmr_ival:10000);
+#else
+    usleep(tmr_ival?1000*tmr_ival:10000);
+#endif
+  }
+  R 0;
+}
+
 #ifndef WIN32
 
 Z void handle_SIGINT(int sig) { interrupted = 1; }
@@ -296,10 +326,10 @@ I attend() {  //K3.2 uses fcntl somewhere
 
   int nbytes;
   //char remoteIP[INET6_ADDRSTRLEN];
-  I yes=1;	// for setsockopt() SO_REUSEADDR, below 
+  I yes=1;  // for setsockopt() SO_REUSEADDR, below 
   int i, rv;
   struct addrinfo hints, *ai, *p;
-  FD_ZERO(&master);	// clear the master and temp sets
+  FD_ZERO(&master); // clear the master and temp sets
   FD_ZERO(&read_fds);
 
   // set up SIGINT handler, so C-c can break infinite loops cleanly
@@ -320,10 +350,7 @@ I attend() {  //K3.2 uses fcntl somewhere
   //TODO: do we need SO_KEEPALIVE or SO_LINGER
 
   if(IPC_PORT || HTTP_PORT) {
-    if(IPC_PORT)
-      if((rv=getaddrinfo(NULL, IPC_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}
-    if(HTTP_PORT)
-      if((rv=getaddrinfo(NULL, HTTP_PORT, &hints, &ai)) != 0) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}
+    if((rv=getaddrinfo(NULL, IPC_PORT?IPC_PORT:HTTP_PORT, &hints, &ai))) {fprintf(stderr, "server: %s\n", gai_strerror(rv)); exit(1);}
     for(p = ai; p != NULL; p = p->ai_next) {
       listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
       if (listener < 0) continue;
@@ -333,14 +360,19 @@ I attend() {  //K3.2 uses fcntl somewhere
       setsockopt(listener, SOL_SOCKET, SO_REUSEADDR | SO_NOSIGPIPE , &yes, sizeof(I)); 
       #endif
 
-      if (bind(listener, p->ai_addr, p->ai_addrlen) < 0) { I r=close(listener); if(r)show(kerr("file")); continue; }
+      if (bind(listener, p->ai_addr, p->ai_addrlen) < 0){
+        if(close(listener))show(kerr("file")); continue; }
       break; }
     //K3.2 k aborts/exits if port is in use. k -i 1234. OK.  k -i 1234 ->  "i\nabort\n" exit;
-    if (p == NULL) { fprintf(stderr, "server: failed to bind\n"); exit(2); } 
+    if (!p) { fprintf(stderr, "server: failed to bind\n"); exit(2); } 
     freeaddrinfo(ai); 
-    if (listen(listener, 10) == -1) { perror("listen"); exit(3); }
+    if (-1==listen(listener, 10)) { perror("listen"); exit(3); }
     FD_SET(listener, &master);
     fdmax = listener; }
+
+  pthread_t thread;
+  if(pthread_create(&thread, NULL, timer_thread, NULL)){
+    perror("Create timer thread"); abort(); }
 
   for(;;) { // main loop  
     scrLim = 0;
@@ -380,43 +412,39 @@ PHANDLER_ROUTINE handle_SIGINT(int sig) {
   //no point in setting "interrupted=1", as exit happens anyway.
   _Exit(0); }
 
-fd_set master; int fds[10],nfds;
+fd_set master; int nfds;
 void *socket_thread(void *arg) {
   fd_set read_fds;
   FD_ZERO(&master); FD_ZERO(&read_fds);
   int rv, i;
 
-  // initialize WinSock
-  ninit();
-
   // create socket for server
-  struct addrinfo *result=NULL, *ptr=NULL, hints; 
+  I yes=1;struct addrinfo *result=NULL, *p=NULL, hints; 
   memset(&hints, 0, sizeof hints);
-  hints.ai_family =   AF_INET;           //AF_UNSPEC;
+  hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
-  hints.ai_protocol = IPPROTO_TCP;
-  hints.ai_flags =    AI_PASSIVE;
+  hints.ai_flags = AI_PASSIVE;
 
   // resolve local address and port
-  if(IPC_PORT){if((rv=getaddrinfo(NULL, IPC_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
-  if(HTTP_PORT){if((rv=getaddrinfo(NULL, HTTP_PORT, &hints, &result)) != 0){O("server: %s\n", gai_strerror(rv)); exit(1);}}
+  if((rv=getaddrinfo(NULL, IPC_PORT?IPC_PORT:HTTP_PORT, &hints, &result))){O("server: %s\n", gai_strerror(rv)); exit(1);}
 
-  // create listener with socket()
-  listener = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-  if(listener == 0) {O("Error at socket(): %ld\n", WSAGetLastError()); exit(1);}
+  for(p = result; p != NULL; p = p->ai_next) {
+    if(INVALID_SOCKET==(listener=socket(p->ai_family, p->ai_socktype, p->ai_protocol))) continue;
+    setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(I)); 
 
-  // bind listener socket
-  int bRes = bind(listener, result->ai_addr, (int)result->ai_addrlen);
-  if(bRes == SOCKET_ERROR) {
-     O("bind failed with error: %d\n", WSAGetLastError());
-     freeaddrinfo(result); exit(1); }
-  if (ptr == NULL)  ;  //eliminates unused variable warning
+    // bind listener socket
+    if(SOCKET_ERROR==bind(listener, p->ai_addr, (int)p->ai_addrlen)){
+      if(closesocket(listener))show(kerr("file"));
+      continue;}
+    break; }
+
+  if (!p) { fprintf(stderr, "server: failed to bind\n"); exit(2); } 
   freeaddrinfo(result);
     
-  if(listen(listener, 10)==SOCKET_ERROR){O("listen() failed with error: %ld\n", WSAGetLastError()); exit(3);} 
+  if(SOCKET_ERROR==listen(listener, 10)){O("listen() failed with error: %ld\n", WSAGetLastError()); exit(3);} 
   else FD_SET(listener, &master);
 
-  SOCKET SockSet[10]; 
+  SOCKET SockSet[FD_SETSIZE]; 
   for(i=0;i<10;i++) SockSet[i]=INVALID_SOCKET;
   I nfd=1;   //Count of FDs including listener & clients
   I nca=0;   //Count of most clients ever activated
@@ -429,19 +457,18 @@ void *socket_thread(void *arg) {
     i=select(nfd,&read_fds,0,0,0); if(-1==i) O("select error\n");
     if(FD_ISSET(listener, &read_fds)) {
       SockSet[nxt] = accept(listener, NULL, NULL);
-      if(SockSet[nxt]==INVALID_SOCKET) exit(4); 
+      if(INVALID_SOCKET==SockSet[nxt]){O("accept() failed with %ld\n",WSAGetLastError()); exit(4);}
       else {
+        wipe_tape(nxt);
         FD_SET(SockSet[nxt], &master); nfd++; 
         if(!free) {nca++; nxt=nca;} } } 
     else {
       for(i=0; i<nca; i++) {
         if(FD_ISSET(SockSet[i], &read_fds)) {
-          z=read_tape(i,SockSet[i],0);
-          FD_CLR(SockSet[i], &master); FD_ZERO(&read_fds);
-          closesocket(SockSet[i]); SockSet[i]=INVALID_SOCKET;
-          wipe_tape(i); nfd--; } } }
+          if ((K)-1==read_tape(i,SockSet[i],0)) {
+            SockSet[i]=INVALID_SOCKET; nfd--; } } } }
     free=0;
-    for(i=0; i<nca; i++) {if(SockSet[i]==INVALID_SOCKET) {free=1; nxt=i; break;} } }   
+    for(i=0; i<nca; i++) {if(INVALID_SOCKET==SockSet[i]) {free=1; nxt=i; break;} } }   
   R 0; }
 
 I attend() {
@@ -450,11 +477,14 @@ I attend() {
   //set up SIGINT handler, so C-c can break infinite loops cleanly
   SetConsoleCtrlHandler((PHANDLER_ROUTINE)handle_SIGINT, TRUE);
 
+  pthread_t thread;
+  if(pthread_create(&thread, NULL, timer_thread, NULL)){
+    perror("Create timer thread"); abort(); }
+
   if(IPC_PORT || HTTP_PORT) {
-     int status;
-     pthread_t thread;
-     status = pthread_create(&thread, NULL, socket_thread, NULL);
-     if (status != 0) {perror("Create socket thread"); abort();} }
+    if(pthread_create(&thread, NULL, socket_thread, NULL)){
+      perror("Create socket thread"); abort();} }
+
   for(;;) {   // main loop for Windows stdin
     scrLim = 0;  
     for(;;) {

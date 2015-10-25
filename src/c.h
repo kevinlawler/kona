@@ -24,3 +24,4 @@ K filename(S s);
 I prompt(I n);
 I oerr();
 void boilerplate();
+extern I tmr_ival;

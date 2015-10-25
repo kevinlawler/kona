@@ -49,7 +49,7 @@ K _n();
 S CSK(K x);
 K _getenv(K a);
 K _dj(K a);
-K rrep(V v,V aft,I *b,I y);
+K rrep(V v,V aft,I *b,I y,I s);
 K _db(K x);
 K _ci(K a);
 K floor_ceil(K a,F(*g)(F));
