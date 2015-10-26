@@ -12,13 +12,13 @@ I FC(F a, F b)//Floating-Point Compare
 {
   F E=0.00000000000000000001; //This value seems to work, might should be a different one though
 
-  if(isinf(a) || a==LONG_MAX) {
-    if (isinf(b) || b==LONG_MAX) {
+  if(isinf(a) || a==LLONG_MAX) {
+    if (isinf(b) || b==LLONG_MAX) {
       R (a<0 && b<0)?0:(a>0 && b>0)?0:(a<0 && b>0)?-1:1;
     }
     R a<0?-1:1;
   }
-  else if (isinf(b) || b==LONG_MAX) {
+  else if (isinf(b) || b==LLONG_MAX) {
     R b>0?-1:1;
   }
 
