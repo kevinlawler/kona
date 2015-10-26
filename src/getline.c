@@ -26,6 +26,7 @@ I appender(S *s, I *n, S t, I k) //concatenate t to s
   if(expander(s,*n+k+1))R -1; //mm/o - failed
   memcpy(*s+*n,t,k);
   *n += k;
+  (*s)[*n] = '\0';
   R 0;
 }
 
@@ -114,6 +115,7 @@ I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, fi
   for(;;) {
     C c=fgetc(f);
     if (EOF == c) R -1;
+    if ('\r' == c) continue;
     if (appender(s, &w, (S)&c, 1)) goto error;
     if (d==c) break;
   }
