@@ -13,6 +13,7 @@ Z K backslash_d(S s,I n,K*dict);
 Z K backslash_e(S s,I n);
 Z K backslash_s(S s);
 Z K backslash_t(S s);
+Z K backslash_v(S s,I n,K*dict);
 Z K backslash_w(S s);
 Z K precision_(void);
 extern I scrLim;
@@ -117,6 +118,7 @@ K backslash(S s, I n, K*dict)
       "\\t [n]    show/set timer interval in msec (0=disable)\n"
       "          calls niladic .m.ts\n"
       "\\t e      measure runtime of some k expression\n"
+		"\\v [d|^]  show k directory (^=previous)\n"
       "\\w        show workspace resources used\n"
       "\\[cmd]    system command (also \\[ cmd]), \\echo hello\n"
       "\\\\        exit (or ctrl+d)\n"
@@ -412,7 +414,7 @@ K backslash(S s, I n, K*dict)
       CS('r',if(*t){I r; P(!StoI(t,&r),TE); seedPRNG(r); R _n();} else {seedPRNG(SEED); R Ki(SEED);})
       CS('s',R backslash_s(t))
       CS('t',R backslash_t(t)) //TODO: also \t [digits]
-      CS('v',R NYI)
+      CS('v',R backslash_v(s,n,dict))
       CS('w',R backslash_w(s)) //used,allocated,mapped. lfop: Linux & 'ps' use /proc/self/stat or /proc/<MY_PID>/stat
     }
     R _n();
@@ -450,6 +452,7 @@ Z K backslash_d(S s,I n,K*dict) {
       R _n();
     }
   }
+  // \d .k
   if(n==5 && s[3]==*"." && s[4]==*"k") { d_=".k"; R _n();}
   if(n==5 && s[3]==*"." && s[4]!=*"k") {O("absolute backslash-d should begin with .k\n"); R _n();} 
   if(isalpha(s[3])) { 
@@ -459,6 +462,24 @@ Z K backslash_d(S s,I n,K*dict) {
   }
   if(n>=6 && s[3]==*"." && s[4]==*"k" && s[5]==*".") {denameD(&KTREE,s+3,1); d_=(S)sp(s+3); R _n();}
   if(n>=6 && s[3]==*"." && (s[4]!=*"k" || s[5]!=*".")) {O("absolute backslash-d should begin with .k.\n"); R _n();}
+  R NYI;
+}
+
+Z K backslash_v(S s,I n,K*dict) {
+  C z[256]; z[0]='\0';
+  if(2==n) strcpy(z,d_);
+  if(4==n && s[3]==*"^") {
+    if(strlen(d_)>3) {
+      I c=0,i=0;
+      for(i=0;i<strlen(d_);i++) if(d_[i]==*".")c=i;
+      strcpy(z,d_); z[c]=*"\0"; }
+    else R _n(); }
+  if(isalpha(s[3])) {
+    strcpy(z,d_); strcat(z,"."); strcat(z,s+3); }
+  if(*z) {
+    K d=*denameD(&KTREE,z,0);
+    if(6==d->t)R _n();
+    DO(d->n,K x=DI(d,i);O("%d ",ES(x)));O("\n");R _n(); }
   R NYI;
 }
 
