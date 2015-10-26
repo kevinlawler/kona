@@ -5,8 +5,12 @@
 
 #include "bswap.h"
 
-#if defined(__GNUC__) && !defined(__clang__) && !defined(__MINGW32__)
-#include <bits/byteswap.h>
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+#include <sys/endian.h>
+#endif
+
+#if defined(__linux__) && defined(__GNUC__)
+#include <byteswap.h>
 #define bswap32 __bswap_32
 #define bswap64 __bswap_64
 #endif
