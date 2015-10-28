@@ -115,7 +115,7 @@ Z I mark_name(S s,I n,I i,I*m)
     while(i+c<n&&isalnum_(s[i+c]))c++;if(i+c>=n)break;
     if('.'==s[i+c])c++;               
   }
-  if('.'==s[i-1] && m[i-2]==0)c=0;
+  if(1<i&&'.'==s[i-1]&&0==m[i-2])c=0;
   R c;
 }
 
