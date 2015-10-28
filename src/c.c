@@ -70,8 +70,9 @@ Z FILE *loadf(S s)
 K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
 {
   I ofLoad=fLoad,ofCmplt=fCmplt; //global state
+  C old_[256];
   K r;
-  fLoad=1;fCmplt=0;
+  fLoad=1;fCmplt=0; strcpy(old_,d_);
   if(!filexist(s)){O("%s: file not found\n",s);r=_n();GC;}
   if(scrLim>124){O("limit\n");r=kerr("stack");GC;} scrLim++;  
   FILE*f=loadf(s);
@@ -82,6 +83,7 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   r=_n();
 cleanup:
   fLoad=ofLoad;fCmplt=ofCmplt;
+  strcpy(d_,old_);
   R r;
 }
 
