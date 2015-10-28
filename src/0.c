@@ -538,7 +538,7 @@ I wrep(K x,V v,I y) {   //write representation. see rep(). y in {0,1}->{net, dis
       K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon;}
       //TODO: work for more than just unreserved monadic, dyadic verbs
     else R (L)SYE; }
-  else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x)); } memcpy(d,s,b);}
+  else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x));} memcpy(d,s,b);}
   R e+r;
 }
 
