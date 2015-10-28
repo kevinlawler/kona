@@ -37,6 +37,8 @@ I getdelim_(S *s,size_t * __restrict__ n,I d,FILE *f)
   I m; S z;
   if(getdelim(s,n,d,f)==-1){*n=0; R -1;}
   m=strlenn(*s,*n);
+  if(1<m && '\n'==(*s)[m-1] && '\r'==(*s)[m-2]) {
+    (*s)[--m]='\0'; (*s)[m-1]='\n'; }
   z=strdupn(*s,m);
   free(*s);
   *s=z;
@@ -96,6 +98,7 @@ I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
 I getline(S *s,I*n, FILE *f){ R getdelim(s,n,'\n',f);}
 I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, file
 #if 0 
+  // this code is MSVC runtime version specific
   char *q; I w=0;
   if (!s) {errno = EINVAL; goto error;}
   if (f->_cnt <= 0) {
@@ -115,7 +118,6 @@ I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, fi
   for(;;) {
     C c=fgetc(f);
     if (EOF == c) R -1;
-    if ('\r' == c) continue;
     if (appender(s, &w, (S)&c, 1)) goto error;
     if (d==c) break;
   }

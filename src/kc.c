@@ -219,7 +219,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   //I o = isatty(STDIN) && f==stdin; //display results to stdout?
   I o = isatty(STDIN); //display results to stdout?
 
-  if(-1==(c=getline(&s,(size_t * __restrict__)&m,f))) GC;
+  if(-1==(c=getline_(&s,(size_t * __restrict__)&m,f))) GC;
   if(s[0]=='\\' && s[1]=='\n') {
     if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
