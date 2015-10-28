@@ -446,7 +446,7 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
   I t=w[2], n=w[3];
   if(t<-4||t>7||n<0) R NE; //malformed
 
-  if(4==ABS(t) || 7==t || (1<=t && t<=3) ) R _2m_r(v,aft,b); //These are read and not mapped
+  if(4==ABS(t) || 7==t || (1<=t && t<=3) || 6==t ) R _2m_r(v,aft,b); //These are read and not mapped
 
   I r=4*sizeof(I); if(0!=t&&5!=t) r+=bp(t)*n+(-3==t)-(t>0)*sizeof(I);
 
@@ -538,7 +538,12 @@ I wrep(K x,V v,I y) {   //write representation. see rep(). y in {0,1}->{net, dis
       K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon;}
       //TODO: work for more than just unreserved monadic, dyadic verbs
     else R (L)SYE; }
-  else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x)); } memcpy(d,s,b);}
+  else {
+    V s=ke(x);
+    I b=n*bp(t)+(3==ABS(t));
+    if(t>0)d-=sizeof(I);
+    if(4==t){s=*kS(x); b=1+strlen(*kS(x)); }
+    memcpy(d,s,b);}
   R e+r;
 }
 
