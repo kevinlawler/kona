@@ -70,9 +70,9 @@ Z FILE *loadf(S s)
 K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
 {
   I ofLoad=fLoad,ofCmplt=fCmplt; //global state
-  C old_[256];
+  S old_;
   K r;
-  fLoad=1;fCmplt=0; strcpy(old_,d_);
+  fLoad=1;fCmplt=0; old_=d_;
   if(!filexist(s)){O("%s: file not found\n",s);r=_n();GC;}
   if(scrLim>124){O("limit\n");r=kerr("stack");GC;} scrLim++;  
   FILE*f=loadf(s);
@@ -83,7 +83,7 @@ K load(S s) //TODO: working dir is stable ... store then reset after reading scr
   r=_n();
 cleanup:
   fLoad=ofLoad;fCmplt=ofCmplt;
-  strcpy(d_,old_);
+  d_=old_;
   R r;
 }
 
@@ -443,10 +443,10 @@ Z K backslash_d(S s,I n,K*dict) {
   C z[256];
   //I len=strlen(d_); if(n==2){K r=newK(-3,len); strncpy(kC(r),d_,len); R r;}  // yields contents of d_ enclosed in quotes
   if(n==2) {O("%s\n",d_); R _n();}  // yields contents of d_ without quotes (same as k3.2)
-  if(n==4 && s[3]==*".") { d_=""; R _n();}
+  if(n==4 && s[3]==*".") { d_=(S)sp(""); R _n();}
   if(n==4 && s[3]==*"^") {
     if(strlen(d_)==0) R _n();
-    if(strlen(d_)==2) {d_=""; R _n();}
+    if(strlen(d_)==2) {d_=(S)sp(""); R _n();}
     if(strlen(d_)>3) {
       I c=0,i=0;
       for(i=0;i<strlen(d_);i++) if(d_[i]==*".")c=i;
@@ -455,7 +455,7 @@ Z K backslash_d(S s,I n,K*dict) {
     }
   }
   // \d .k
-  if(n==5 && s[3]==*"." && s[4]==*"k") { d_=".k"; R _n();}
+  if(n==5 && s[3]==*"." && s[4]==*"k") { d_=(S)sp(".k"); R _n();}
   if(n==5 && s[3]==*"." && s[4]!=*"k") {O("absolute backslash-d should begin with .k\n"); R _n();} 
   if(isalpha(s[3])) { 
     denameD(dict,s+3,1);
@@ -481,7 +481,7 @@ Z K backslash_v(S s,I n,K*dict) {
   if(*z) {
     K d=*denameD(&KTREE,z,0);
     if(6==d->t)R _n();
-    DO(d->n,K x=DI(d,i);O("%d ",ES(x)));O("\n");R _n(); }
+    DO(d->n,K x=DI(d,i);O("%s ",ES(x)));O("\n");R _n(); }
   R NYI;
 }
 
