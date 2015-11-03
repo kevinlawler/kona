@@ -637,6 +637,7 @@ Z I tests02()
   TC_("'\"abc\"", "\"abc\"")              //issue #367
   TC(6, fac:{:[x>1;x*fac[x-1];1]}; fac 3) //issue #373 (valgrind leaks)
   TC(6, fac:{:[x>1;x*fac x-1;1]}; fac 3)  //issue #373 (valgrind leaks)
+  TC(2, 1 2 3 . (,1))
 
   R 0; 
 }

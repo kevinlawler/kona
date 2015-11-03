@@ -102,7 +102,9 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
   }
   else if(0 >at)
   {
-    if(1==ABS(bt))z=at_verb(a,b);
+    if(-1==bt&&1==bn){
+      K f=newK(1,1); *kI(f)=*kI(b); z=at_verb(a,f); cd(f); }
+    else if(1==ABS(bt)) z=at_verb(a,b);
     else if(0==bt){K k; P(bn!=1,RE) z=newK(0,bn);DO(bn,k=at_verb(a,kK(b)[i]); M(k,z) kK(z)[i]=k) z=collapse(z);} 
     else R TE;
   }
