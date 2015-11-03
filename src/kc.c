@@ -14,6 +14,9 @@
 #ifndef WIN32
 #include <netinet/tcp.h>
 #include <pthread.h>
+#ifndef PTHREAD_MUTEX_RECURSIVE
+#define PTHREAD_MUTEX_RECURSIVE PTHREAD_MUTEX_RECURSIVE_NP
+#endif
 #else
 extern void win_usleep(unsigned int); //buggy TDMGCC64 usleep()
 #include <sys/types.h>
@@ -38,12 +41,12 @@ I wds(K* a,FILE*f){R wds_(a,f,0);}
 I wds_(K*a,FILE*f,I l) {
   S s=0,t=0;  I b=0,c=0,m=0,n=0,v=0;  K z=0; PDA p=0;
   I o=isatty(STDIN)&&f==stdin;
-  if(-1==(c=getline_(&s,(size_t * __restrict__)&n,f)))GC;
+  if(-1==(c=getline_(&s,&n,f)))GC;
   appender(&t,&m,s,n);
   while(1==(v=complete(t,m,&p,0))) {
     b=parsedepth(p);
     if(o)prompt(b+l);
-    if(-1==(c=getline_(&s,(size_t * __restrict__)&n,f)))GC;
+    if(-1==(c=getline_(&s,&n,f)))GC;
     appender(&t,&m,s,n); }
   SW(v){CS(2,show(kerr("unmatched"));GC) CS(3,show(kerr("nest")); GC)}
   z=newK(-3,m-1);
@@ -219,7 +222,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   //I o = isatty(STDIN) && f==stdin; //display results to stdout?
   I o = isatty(STDIN); //display results to stdout?
 
-  if(-1==(c=getline_(&s,(size_t * __restrict__)&m,f))) GC;
+  if(-1==(c=getline_(&s,&m,f))) GC;
   if(s[0]=='\\' && s[1]=='\n') {
     if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash

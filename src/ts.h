@@ -6,6 +6,12 @@
 #undef  IN
 #endif
 
+#ifndef LLONG_MIN
+#include <stdint.h>
+#define LLONG_MIN	INT64_MIN
+#define LLONG_MAX	INT64_MAX
+#endif
+
 typedef void* V;
 typedef long L;
 typedef long long I; //there are cases where casting pointer arithmetic to signed int will fail

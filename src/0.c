@@ -91,7 +91,7 @@ K _0m(K a) {
     GC; }
   else if( (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) //read stdin
            || 4==t && (!strcmp(*kS(a),"/dev/fd/0") || !strcmp(*kS(a),"/dev/stdin")) ){
-    b=getdelim_(&v,(size_t * __restrict__)&s,EOF,stdin);
+    b=getdelim_(&v,&s,EOF,stdin);
     P(freopen_stdin() == NULL, FE)
     if(b==-1){z=newK(0,0); GC;} }
   else {                                                                //read mapped file
@@ -880,7 +880,7 @@ K popen_charvec(S cmd) {
   FILE *f; K z,l; S s=0; I n=0;
   f=popen(cmd,"r"); P(!f,_n())
   z=newK(0,0); //oom
-  while (getline_(&s, (size_t * __restrict__)&n, f) >= 0) {
+  while (getline_(&s, &n, f) >= 0) {
     l=newK(-3,n-1); strncpy(kC(l),s,n-1); kap(&z,&l); }
   free(s); pclose(f);
   R z; }

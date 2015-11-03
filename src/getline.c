@@ -30,12 +30,13 @@ I appender(S *s, I *n, S t, I k) //concatenate t to s
   R 0;
 }
 
-I getline_(S *s,size_t * __restrict__ n,FILE *f){R getdelim_(s,n,'\n',f);}
+I getline_(S *s,I *n,FILE *f){R getdelim_(s,n,'\n',f);}
 
-I getdelim_(S *s,size_t * __restrict__ n,I d,FILE *f)
+I getdelim_(S *s,I *n,I d,FILE *f)
 {
-  I m; S z;
-  if(getdelim(s,n,d,f)==-1){*n=0; R -1;}
+  I m; S z;size_t o=*n;
+  if(getdelim(s,&o,d,f)==-1){*n=0; R -1;}
+  *n=o;
   m=strlenn(*s,*n);
   if(1<m && '\n'==(*s)[m-1] && '\r'==(*s)[m-2]) {
     (*s)[--m]='\0'; (*s)[m-1]='\n'; }
@@ -47,8 +48,8 @@ I getdelim_(S *s,size_t * __restrict__ n,I d,FILE *f)
 
 #if defined(__OpenBSD__) || defined(__NetBSD__) ||  \
    (defined(__MACH__) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1070)
-I getline(S *s,I*n, FILE *f){ R getdelim(s,n,'\n',f);}
-I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
+I getline(S *s,size_t*n, FILE *f){ R getdelim(s,n,'\n',f);}
+I getdelim(S *s,size_t*n, I d, FILE *f)//target, current capacity, delimiter, file
 {
   unsigned char *q;
   I w=0;
@@ -95,8 +96,8 @@ I getdelim(S *s,I*n, I d, FILE *f)//target, current capacity, delimiter, file
 #endif
 
 #ifdef WIN32
-I getline(S *s,I*n, FILE *f){ R getdelim(s,n,'\n',f);}
-I getdelim(S *s,I*n, I d, FILE *f) {   //target, current capacity, delimiter, file
+I getline(S *s,size_t *n, FILE *f){ R getdelim(s,n,'\n',f);}
+I getdelim(S *s,size_t *n, I d, FILE *f) {   //target, current capacity, delimiter, file
 #if 0 
   // this code is MSVC runtime version specific
   char *q; I w=0;
