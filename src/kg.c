@@ -8,6 +8,12 @@
 
 Z I mergerComparer(K a, I r, I i, I j);
 
+#define BITS_EM   0x7fffffffffffffffULL
+#define BITS_0i   0x7ff0000000000000ULL
+#define BITS_SUBN 0x0010000000000000ULL
+#define Inan(x)   (BITS_0i<(BITS_EM&(x)))
+#define Isubn(x)  (BITS_SUBN>(BITS_EM&(x)))
+
 I FC(F a, F b)//Floating-Point Compare
 {
 #if 0
@@ -26,23 +32,23 @@ I FC(F a, F b)//Floating-Point Compare
   }
 
   if(ABS(a-b) <= E*MAX(ABS(a),ABS(b)))R 0;
+  R a<b?-1:1;
 #else
   {
     // adaptive ULP
     union {I i;F f;} x,y;I xu;
-    if(isnan(a))R isnan(b)?0:-1;
-    if(isnan(b))R isnan(a)?0: 1;
     x.f=a;y.f=b;
+    if(Inan(x.i))R Inan(y.i)?0:-1;
+    if(Inan(y.i))R Inan(x.i)?0: 1;
     if(x.i<0)x.i=LLONG_MIN-x.i;
     if(y.i<0)y.i=LLONG_MIN-y.i;
+    xu=x.i|y.i;if(Isubn(xu))R(x.i==y.i)?0:x.i<y.i?-1:1;
     // sxxx xxxx xxxx uuuu uuuu ....
-    xu=0x03FFFF&((x.i|y.i)>>44);
-    if(xu<256)R(x.i==y.i)?0:x.i<y.i?-1:1;
-    xu=513+((255&xu)<<1);
+    xu=513+((255&(xu>>44))<<1);
     if(llabs(x.i-y.i)<xu)R 0;
+    R x.i<y.i?-1:1;
   }
 #endif
-  R a<b?-1:1;
 }
 
 I KC(K a, K b)//List Compare (K Compare)
