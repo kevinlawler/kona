@@ -183,8 +183,8 @@ K floor_ceil(K a, F(*g)(F))
 
   //TODO: oom
   K z=newK(at?SIGN(at):0,an);//Compress F {-2,2} into I {-1,1}
-  F e,f;
-  if(2==ABS(at)) DO(an, e=kF(a)[i]; f=FF(e); kI(z)[i]=(f>0&&!FC(f,1))||(f<0&&!FC(f,0))?h(e):g(e))
+  F e,f;I r;
+  if(2==ABS(at))DO(an, e=kF(a)[i]; if(isnan(e))r=IN;else if(isinf(e)||e<=-II||e>=II)r=e<0?-II:II;else {f=FF(e); r=(f>0&&!FC(f,1))||(f<0&&!FC(f,0))?h(e):g(e);} kI(z)[i]=r)
   else if(!at) DO(an, kK(z)[i]=floor_ceil(kK(a)[i],g))
   R z;
 }
