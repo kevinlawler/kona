@@ -75,13 +75,13 @@ Z F inverter(K a, K b, K c, I index)//secant method
   }
 
   DO(2, f[i]=num_ex(a,x[i])-y); //oom/err FN ?? how to catch
-  F d, e=y*0.000001;//y*1e-6
+  F d, e=y?y*0.000001:0.000001;//y*1e-6
 
   for(i=0;i<m;i++)
   { d=(x[i+1]-x[i])/(f[i+1]-f[i])*f[i+1];
     x[i+2]=x[i+1]-d;
     f[i+2]= num_ex(a,x[i+2])-y; //oom/err FN ?? how to catch
-    if(ABS(d) < e || 0==f[i+2]) break;
+    if(ABS(d) < e || !FC(f[i+2],0.)) break;
   }
   if(i>=m){ kerr("limit"); R 0;}
   R x[i+2];
