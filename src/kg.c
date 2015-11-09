@@ -13,13 +13,15 @@ I FC(F a, F b)//Floating-Point Compare
 #if 0
   F E=0.00000000000000000001; //This value seems to work, might should be a different one though
 
-  if(isinf(a) || a==II || a==-II) {
-    if (isinf(b) || b==II || b==-II) {
+  if(isnan(a))R isnan(b)?0:-1;
+  if(isnan(b))R isnan(a)?0: 1;
+  if(isinf(a)) {
+    if (isinf(b)) {
       R (a<0 && b<0)?0:(a>0 && b>0)?0:(a<0 && b>0)?-1:1;
     }
     R a<0?-1:1;
   }
-  else if (isinf(b) || b==II || b==-II) {
+  else if (isinf(b)) {
     R b>0?-1:1;
   }
 
@@ -28,7 +30,9 @@ I FC(F a, F b)//Floating-Point Compare
   {
     // adaptive ULP
     union {I i;F f;} x,y;I xu;
-    x.f=isnan(a)?IN:isinf(a)?a<0?-II:II:a;y.f=isnan(b)?IN:isinf(b)?b<0?-II:II:b;
+    if(isnan(a))R isnan(b)?0:-1;
+    if(isnan(b))R isnan(a)?0: 1;
+    x.f=a;y.f=b;
     if(x.i<0)x.i=LLONG_MIN-x.i;
     if(y.i<0)y.i=LLONG_MIN-y.i;
     // sxxx xxxx xxxx uuuu uuuu ....

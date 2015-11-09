@@ -14,8 +14,8 @@ K find(K a, K b)
   if(-4==at && 4==bt)DO(an, if(kS(a)[i]==*kS(b))R Ki(i)) 
   if(-3==at && 3==bt)DO(an, if(kC(a)[i]==*kC(b))R Ki(i))
   if(-2==at && 2==bt)DO(an, if(!FC(kF(a)[i],*kF(b)))R Ki(i))
-  if(-2==at && 1==bt)DO(an, if(!FC(kF(a)[i],*kI(b)))R Ki(i))
-  if(-1==at && 2==bt)DO(an, if(!FC(kI(a)[i],*kF(b)))R Ki(i))
+  if(-2==at && 1==bt){F fb=I2F(*kI(b));DO(an, if(!FC(kF(a)[i],fb))R Ki(i));}
+  if(-1==at && 2==bt)DO(an, if(!FC(I2F(kI(a)[i]),*kF(b)))R Ki(i))
   if(-1==at && 1==bt)DO(an, if(kI(a)[i]==*kI(b))R Ki(i))
   if(!at)DO(an, if(matchI(kK(a)[i],b))R Ki(i))
   R Ki(an);

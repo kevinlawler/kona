@@ -1008,8 +1008,8 @@ Z I CIX(K a,I i,K x) //compare a[i] vs x,  a->t <= 0
 
   //HACK: K3.2 handles x=1|2, a=-1|-2 case but not x=-1|-2. see K3.2 bug at _bin
   //Note: Comparing 64-bit integer to 64-bit double is going to cause problems (int overflows mantissa, double doesn't fit in int)
-  if(1==k->t && 2==t) r=FC(*kI(k),*kF(x));  // 0 2 3 _bin 1.0 -> 1 , unexpected
-  else if (2==k->t && 1==t) r=FC(*kF(k),*kI(x));
+  if(1==k->t && 2==t) r=FC(I2F(*kI(k)),*kF(x));  // 0 2 3 _bin 1.0 -> 1 , unexpected
+  else if (2==k->t && 1==t) r=FC(*kF(k),I2F(*kI(x)));
   else r=KC(k,x);
 
   if(k)cd(k);

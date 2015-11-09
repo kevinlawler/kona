@@ -5,6 +5,10 @@
 #include "ko.h"
 #include "vc.h"
 
+/* FC utility */
+I FC_IF(I a,F b){ R FC(I2F(a),b); }
+I FC_FI(F a,I b){ R FC(a,I2F(b)); }
+
 /* comparison verbs */
 
 Z K lessmore(K a,K b,I x);
@@ -32,8 +36,8 @@ K equals(K a, K b)
 #define EQ(x, y) (x) == (y)
   if     (2==AT && 2==BT) { SCALAR_EXPR_FUN(FC, kI(z), kF(a), kF(b), ?0:1)     
          DO(zn, if(kF(a)[i]!=kF(a)[i] && kF(b)[i]!=kF(b)[i]) kI(z)[i]=1)}
-  else if(2==AT && 1==BT) SCALAR_EXPR_FUN(FC, kI(z), kF(a), kI(b), ?0:1)
-  else if(1==AT && 2==BT) SCALAR_EXPR_FUN(FC, kI(z), kI(a), kF(b), ?0:1)
+  else if(2==AT && 1==BT) SCALAR_EXPR_FUN(FC_FI, kI(z), kF(a), kI(b), ?0:1)
+  else if(1==AT && 2==BT) SCALAR_EXPR_FUN(FC_IF, kI(z), kI(a), kF(b), ?0:1)
   else if(1==AT && 1==BT) SCALAR_OP_CASE(EQ, kI(z), kI(a), kI(b))
   else if(3==AT && 3==BT) SCALAR_OP_CASE(EQ, kI(z), kC(a), kC(b))
   else if(4==AT && 4==BT) SCALAR_OP_CASE(EQ, kI(z), kS(a), kS(b)) //works because of interning
@@ -106,8 +110,8 @@ Z K lessmore(K a, K b, I x)
   {
 #define GT(x, y) (x) > (y)
     if     (2==AT && 2==BT)  SCALAR_EXPR_FUN(FC, h, kF(a), kF(b), >0)
-    else if(2==AT && 1==BT)  SCALAR_EXPR_FUN(FC, h, kF(a), kI(b), >0)
-    else if(1==AT && 2==BT)  SCALAR_EXPR_FUN(FC, h, kI(a), kF(b), >0)
+    else if(2==AT && 1==BT)  SCALAR_EXPR_FUN(FC_FI, h, kF(a), kI(b), >0)
+    else if(1==AT && 2==BT)  SCALAR_EXPR_FUN(FC_IF, h, kI(a), kF(b), >0)
     else if(1==AT && 1==BT)  SCALAR_OP_CASE(GT, kI(z), kI(a), kI(b))
     else if(3==AT && 3==BT)  SCALAR_OP_CASE(GT, kI(z), kC(a), kC(b))
     else if(4==AT && 4==BT) {SCALAR_EXPR_FUN(SC, h, kS(a), kS(b), >0)}
