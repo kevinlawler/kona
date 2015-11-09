@@ -10,19 +10,34 @@ Z I mergerComparer(K a, I r, I i, I j);
 
 I FC(F a, F b)//Floating-Point Compare
 {
+#if 0
   F E=0.00000000000000000001; //This value seems to work, might should be a different one though
 
-  if(isinf(a) || a==LLONG_MAX) {
-    if (isinf(b) || b==LLONG_MAX) {
+  if(isinf(a) || a==II) {
+    if (isinf(b) || b==II) {
       R (a<0 && b<0)?0:(a>0 && b>0)?0:(a<0 && b>0)?-1:1;
     }
     R a<0?-1:1;
   }
-  else if (isinf(b) || b==LLONG_MAX) {
+  else if (isinf(b) || b==II) {
     R b>0?-1:1;
   }
 
   if(ABS(a-b) <= E*MAX(ABS(a),ABS(b)))R 0;
+#else
+  {
+    // adaptive ULP
+    union {I i;F f;} x,y;I xu;
+    x.f=isinf(a)?a<0?-II:II:a;y.f=isinf(b)?b<0?-II:II:b;
+    if(x.i<0)x.i=LLONG_MIN-x.i;
+    if(y.i<0)y.i=LLONG_MIN-y.i;
+    // sxxx xxxx xxxx uuuu uuuu ....
+    xu=0x03FFFF&((x.i|y.i)>>44);
+    if(xu<256)R(x.i==y.i)?0:x.i<y.i?-1:1;
+    xu=513+((255&xu)<<1);
+    if(llabs(x.i-y.i)<xu)R 0;
+  }
+#endif
   R a<b?-1:1;
 }
 
