@@ -36,17 +36,21 @@ I FC(F a, F b)//Floating-Point Compare
 #else
   {
     // adaptive ULP
-    union {I i;F f;} x,y;I xu;
-    x.f=a;y.f=b;
+    union {I i;F f;} x,y;I xu,d,ad;
+    x.f=a;y.f=b;xu=x.i|y.i;
     if(Inan(x.i))R Inan(y.i)?0:-1;
-    if(Inan(y.i))R Inan(x.i)?0: 1;
-    if(x.i<0)x.i=LLONG_MIN-x.i;
-    if(y.i<0)y.i=LLONG_MIN-y.i;
-    xu=x.i|y.i;if(Isubn(xu))R(x.i==y.i)?0:x.i<y.i?-1:1;
-    // sxxx xxxx xxxx uuuu uuuu ....
-    xu=513+((255&(xu>>44))<<1);
-    if(llabs(x.i-y.i)<xu)R 0;
-    R x.i<y.i?-1:1;
+    else if(x.i<0)x.i=LLONG_MIN-x.i;
+    if(Inan(y.i))R 1;
+    else if(y.i<0)y.i=LLONG_MIN-y.i;
+    ad=llabs(d=x.i-y.i);
+    if(ad<1023){
+      if(Isubn(xu))R d<0?-1:d?1:0;
+      if(ad<513)R 0;
+      // sxxx xxxx xxxx uuuu uuuu ....
+      xu=513+((255&(xu>>44))<<1);
+      if(ad<xu)R 0;
+    }
+    R d<0?-1:1;
   }
 #endif
 }
