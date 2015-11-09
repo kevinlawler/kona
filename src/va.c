@@ -6,7 +6,7 @@
 
 /* scalar arithmetic verbs */
 
-#ifdef K3_POWER
+#ifdef K3_ARITH
 
 F kpow(F a,F b)
 {
@@ -19,10 +19,6 @@ F kpow(F a,F b)
   else if(!FC(a,0.))R 0.;
   R pow(a,b);
 }
-
-#define kpowIF(x,y) kpow(I2F(x),y)
-#define kpowFI(x,y) kpow(x,I2F(y))
-#define kpowII(x,y) kpow(I2F(x),I2F(y))
 
 #endif
 
@@ -41,20 +37,21 @@ K power(K a, K b)
   I zn=at>0?bn:an;              
   K z=newK(zt,zn); U(z)             
 
-#ifndef K3_POWER
+#ifndef K3_ARITH
   F x,y;
   //K3.2 silently yields 0n for -3^0.5 , even though some Kx documentation says domain error.
   #define FPOWER kF(z)[i]=(0==y)?1:(0==x)?0:pow(x,y); //x^0==1; 0^y==0 for y!=0; rest should be same as pow
   SCALAR_EXPR(FPOWER,power,x,y)
-
+  #undef FPOWER
 #else
-
+  #define KPOW_FI(x,y) kpow(x,I2F(y))
+  #define KPOW_IF(x,y) kpow(I2F(x),y)
+  #define KPOW_II(x,y) kpow(I2F(x),I2F(y))
   if(2==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(kpow,kF(z),kF(a),kF(b)) }
-  else if(2==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(kpowFI,kF(z),kF(a),kI(b)) }
-  else if(1==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(kpowIF,kF(z),kI(a),kF(b)) }
-  else if(1==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(kpowII,kF(z),kI(a),kI(b)) }
+  else if(2==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(KPOW_FI,kF(z),kF(a),kI(b)) }
+  else if(1==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(KPOW_IF,kF(z),kI(a),kF(b)) }
+  else if(1==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(KPOW_II,kF(z),kI(a),kI(b)) }
   else if(0==at||0==bt){ dp(&z,power,a,b); }
-
 #endif
   R z;
 }
@@ -65,7 +62,19 @@ K plus(K a, K b) //compare plus() to times() or minus()
   K z=newK(zt,zn);U(z)          //Finally, we know what we're going to make
 
   #define PLUS(x, y) ((x) + (y))
+#ifndef K3_ARITH
   SCALAR_OP(PLUS,plus)
+#else
+  #define PLUS_FI(x, y) ((x) + I2F(y))
+  #define PLUS_IF(x, y) (I2F(x) + (y))
+  if(2==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(PLUS,kF(z),kF(a),kF(b)) }
+  else if(2==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(PLUS_FI,kF(z),kF(a),kI(b)) }
+  else if(1==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(PLUS_IF,kF(z),kI(a),kF(b)) }
+  else if(1==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(PLUS,kI(z),kI(a),kI(b)) }
+  else if(0==at||0==bt){ dp(&z,plus,a,b); }
+  #undef PLUS_FI
+  #undef PLUS_IF
+#endif
   #undef PLUS
 
   R z;
@@ -120,7 +129,19 @@ K minus(K a, K b)
   K z=newK(zt,zn);U(z)              
 
   #define MINUS(x, y) ((x) - (y))
+#ifndef K3_ARITH
   SCALAR_OP(MINUS,minus)
+#else
+  #define MINUS_FI(x, y)  ((x) - I2F(y))
+  #define MINUS_IF(x, y)  (I2F(x) - (y))
+  if(2==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(MINUS,kF(z),kF(a),kF(b)) }
+  else if(2==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(MINUS_FI,kF(z),kF(a),kI(b)) }
+  else if(1==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(MINUS_IF,kF(z),kI(a),kF(b)) }
+  else if(1==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(MINUS,kI(z),kI(a),kI(b)) }
+  else if(0==at||0==bt){ dp(&z,minus,a,b); }
+  #undef MINUS_FI
+  #undef MINUS_IF
+#endif
   #undef MINUS
 
   R z;

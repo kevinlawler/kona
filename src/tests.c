@@ -663,7 +663,15 @@ Z I tests02()
   TC( 0I, _ 0i)
   TC(-0I, _ -0i)
   TC(-0I, _ -5+1.0*1+-0I)
-#ifdef K3_POWER
+#ifdef K3_ARITH
+  TC(0i, 0i+0i)                           // plus
+  TC(0i, 0i+0I)
+  TC(0n, 0i+0n)
+  TC(0n, 0i+0N)
+  TC(0n, 0i-0i)                           // minus
+  TC(0n, 0i-0I)
+  TC(0n, 0i-0n)
+  TC(0n, 0i-0N)
   TC(1.0, 0n^0)                           // power
   TC(0.0, 0n^1)
   TC(0.0, 0n^0i)
