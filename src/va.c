@@ -6,7 +6,7 @@
 
 /* scalar arithmetic verbs */
 
-#ifdef KX_POWER
+#ifdef K3_POWER
 
 F kpow(F a,F b)
 {
@@ -41,7 +41,7 @@ K power(K a, K b)
   I zn=at>0?bn:an;              
   K z=newK(zt,zn); U(z)             
 
-#ifndef KX_POWER
+#ifndef K3_POWER
   F x,y;
   //K3.2 silently yields 0n for -3^0.5 , even though some Kx documentation says domain error.
   #define FPOWER kF(z)[i]=(0==y)?1:(0==x)?0:pow(x,y); //x^0==1; 0^y==0 for y!=0; rest should be same as pow
