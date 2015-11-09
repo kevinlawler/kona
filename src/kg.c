@@ -13,13 +13,13 @@ I FC(F a, F b)//Floating-Point Compare
 #if 0
   F E=0.00000000000000000001; //This value seems to work, might should be a different one though
 
-  if(isinf(a) || a==II) {
-    if (isinf(b) || b==II) {
+  if(isinf(a) || a==II || a==-II) {
+    if (isinf(b) || b==II || b==-II) {
       R (a<0 && b<0)?0:(a>0 && b>0)?0:(a<0 && b>0)?-1:1;
     }
     R a<0?-1:1;
   }
-  else if (isinf(b) || b==II) {
+  else if (isinf(b) || b==II || b==-II) {
     R b>0?-1:1;
   }
 
