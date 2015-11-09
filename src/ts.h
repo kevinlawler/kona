@@ -42,9 +42,9 @@ typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; /
 #define kW(x) ((V*)kS(kVC(x)))
 #define II LLONG_MAX //I Infinity (Use -II for I Negative Infinity)
 #define IN LLONG_MIN //I Null (one less than -II)
-#define FI 1/0.      //IEEE should work everywhere 
-#define FN 0/0.      //Alternate takes can be found in Arthur's "k.h"
-#define I2F(x)      (II==(x)?FI:-II==(x)?-FI:IN==(x)?FN:(x))
+#define FI (1/0.)    //IEEE should work everywhere 
+#define FN (0/0.)    //Alternate takes can be found in Arthur's "k.h"
+#define I2F(x)       (II==(x)?FI:-II==(x)?-FI:IN==(x)?FN:(x))
 #define Z static
 #define O printf
 #define R return

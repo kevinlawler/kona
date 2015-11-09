@@ -6,6 +6,26 @@
 
 /* scalar arithmetic verbs */
 
+#ifdef KX_POWER
+
+F kpow(F a,F b)
+{
+  if(isnan(a))a=0.;
+  if(isnan(b)){
+    if(FC(a,0.))R FN;
+    b=0;
+  }else if(isinf(b)&&!FC(a,1.))R FN;
+  if(!FC(b,0.))R isinf(a)?FN:1.;
+  else if(!FC(a,0.))R 0.;
+  R pow(a,b);
+}
+
+#define kpowIF(x,y) kpow(I2F(x),y)
+#define kpowFI(x,y) kpow(x,I2F(y))
+#define kpowII(x,y) kpow(I2F(x),I2F(y))
+
+#endif
+
 K power(K a, K b)
 {
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
@@ -21,11 +41,21 @@ K power(K a, K b)
   I zn=at>0?bn:an;              
   K z=newK(zt,zn); U(z)             
 
+#ifndef KX_POWER
   F x,y;
   //K3.2 silently yields 0n for -3^0.5 , even though some Kx documentation says domain error.
   #define FPOWER kF(z)[i]=(0==y)?1:(0==x)?0:pow(x,y); //x^0==1; 0^y==0 for y!=0; rest should be same as pow
   SCALAR_EXPR(FPOWER,power,x,y)
 
+#else
+
+  if(2==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(kpow,kF(z),kF(a),kF(b)) }
+  else if(2==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(kpowFI,kF(z),kF(a),kI(b)) }
+  else if(1==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(kpowIF,kF(z),kI(a),kF(b)) }
+  else if(1==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(kpowII,kF(z),kI(a),kI(b)) }
+  else if(0==at||0==bt){ dp(&z,power,a,b); }
+
+#endif
   R z;
 }
 
