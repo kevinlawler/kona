@@ -639,6 +639,7 @@ Z I tests02()
   TC(6, fac:{:[x>1;x*fac x-1;1]}; fac 3)  //issue #373 (valgrind leaks)
   TC(2, 1 2 3 . (,1))
   TC(1, (-0i) = -0I)
+  TC(1, 0n = 0N)
 
   R 0; 
 }

@@ -28,7 +28,7 @@ I FC(F a, F b)//Floating-Point Compare
   {
     // adaptive ULP
     union {I i;F f;} x,y;I xu;
-    x.f=isinf(a)?a<0?-II:II:a;y.f=isinf(b)?b<0?-II:II:b;
+    x.f=isnan(a)?IN:isinf(a)?a<0?-II:II:a;y.f=isnan(b)?IN:isinf(b)?b<0?-II:II:b;
     if(x.i<0)x.i=LLONG_MIN-x.i;
     if(y.i<0)y.i=LLONG_MIN-y.i;
     // sxxx xxxx xxxx uuuu uuuu ....
