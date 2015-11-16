@@ -40,3 +40,5 @@ K distributionGrade(K a,I r,uI u,uI v);
 K radixGrade(K a,I r,uI h);
 K charGrade(K a,I r);
 K at(K x,K y);
+void trst();
+void elapsed(S);

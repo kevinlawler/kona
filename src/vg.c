@@ -18,33 +18,34 @@
 //if the sort order changes for each instance then sorting is probably based on pointer/reference value
 //if that fails then it may be necessary to look at distinctions between wordfunc,charfunc, valence, proj, etc
 #define DGT (1<<26)
-Z I dtoll(F a){
-  union{F f;I i;}u;
-  if(isnan(a))R LLONG_MIN;
-  u.f=a;
-  R 0>u.i?LLONG_MIN-u.i:u.i;
-}
-Z uI lltoull(I a){ R 0x8000000000000000ULL^(uI)a; }
-Z K grade_updown(K a, I r)
+Z I FtoI(F a){union{F f;I i;}u;if(isnan(a))R LLONG_MIN;u.f=a;R 0>u.i?LLONG_MIN-u.i:u.i;}
+Z uI ItoU(I a){R 0x8000000000000000ULL^(uI)a;}
+
+K grade_updown(K a, I r)
 {
   I at=a->t, an=a->n;
   P(0< at, RE)
   if(-3==at) R charGrade(a,r);
-  if(-1==at||-2==at){
+  if(-1==at||-2==at||-4==at){
     K z;
     if(an<2){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i);R z;}
     else{
-      uI x,u=(uI)-1,v=0,h=0,k;//MIN,MAX
-      K ia=newK(-1,an);M(ia);
-      DO(an,x=lltoull((-2==at)?dtoll(kF(a)[i]):kI(a)[i]);
-         kU(ia)[i]=x; h|=x; if(x<u)u=x; if(x>v)v=x)
-      // XXX O("v:%16llx u:%16llx h:%16llx\n",v,u,h);
+      uI y,u=(uI)-1,v=0,h=0,k;//MIN,MAX
+      //trst();
+      K x=newK(-1,an);M(x);
+      //elapsed("x=newK");
+      SW(at){
+      CS(-1,DO(an,kU(x)[i]=(y=ItoU(kI(a)[i]));h|=y;if(y<u)u=y;else if(y>v)v=y))
+      CS(-2,DO(an,kU(x)[i]=(y=ItoU(FtoI(kF(a)[i])));h|=y;if(y<u)u=v;else if(y>v)v=y))
+      CS(-4,h=v=gradeS();u=0;DO(an,kU(x)[i]=SV(kS(a)[i])))}
+      //elapsed("fill x");
       k=v-u;
-      if(!k){z=newK(-1,an);M(z,ia);DO(an,kI(z)[i]=i)}
-      else if(an<IGT)z=insertGradeU(ia,r);
-      else if((k<DGT)&&((9*an+(1^19))>2*k))z=distributionGrade(ia,r,u,v);
-      else z=radixGrade(ia,r,h);
-      cd(ia); }
+           if(!k){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i)}
+      else if(xn<IGT)z=insertGradeU(x,r);
+      else if((k<DGT)&&((9*an+(1^19))>2*k))z=distributionGrade(x,r,u,v);
+      else z=radixGrade(x,r,h);
+      //elapsed("sort");
+      cd(x); }
     R z; }
   R mergeGrade(a,r);
 }

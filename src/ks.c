@@ -5,7 +5,9 @@
 #include "k.h"
 #include "ks.h"
 
+Z I ns=0,sd=0;
 Z S sdup(S s){R strdupn(s,strlen(s));} //using this because "strdup" uses [used] dynamically linked malloc which fails with our static free
+Z S sdupI(S s){I k;S d=alloc(sizeof(I)+(k=strlen(s))+1);if(!d)R 0;ns++;sd=1;d+=sizeof(I);d[k]=0;R memcpy(d,s,k);}
 S strdupn (S s,I k) {S d=alloc(k+1);if(!d)R 0;d[k]=0;R memcpy(d,s,k);} // mm/o  (note: this can overallocate)
 //I SC0N(S a,S b,I n) {I x=memcmp(a,b,n); R x<0?-1:x>0?1:a[n]?1:0; }// non-standard way to compare aaa\0 vs aaa
 I strlenn(S s,I k){S t=memchr(s,'\0',k); R t?t-s:k;}
@@ -19,10 +21,10 @@ S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be c
   #define LINK(n,x) (n)->c[((x)+1)/2] // -1 => 0 , 1 => 1
   if(!k)R 0;//used in glue. used in _2m_4. used in parse. Probably a good argument to keep since it's exposed for libraries via 2: dyadic
   N t=SYMBOLS, s=t->c[1],p=s,q=p,r; I a,x;
-  if(!s){s=t->c[1]=newN();P(!s,(S)ME);s->k=sdup(k); if(!s->k){free(s);t->c[1]=0;ME;} R s->k;} // <-- strdup here and below 
+  if(!s){s=t->c[1]=newN();P(!s,(S)ME);s->k=sdupI(k); if(!s->k){free(s);t->c[1]=0;ME;} R s->k;} // <-- strdup here and below 
   while(q)
   { if(!(a=SC(k,p->k))){R p->k;}//In the usual tree put: p->k=k,p->v=v before returning
-    if(!(q=LINK(p,a))){q=newN();P(!q,(S)ME);q->k=sdup(k);if(!q->k){free(q);ME; R 0;} LINK(p,a)=q;break;}//Usual tree would q->v=v. mmo
+    if(!(q=LINK(p,a))){q=newN();P(!q,(S)ME);q->k=sdupI(k);if(!q->k){free(q);ME; R 0;} LINK(p,a)=q;break;}//Usual tree would q->v=v. mmo
     else if(q->b){t=p;s=q;}
     p=q;
   }
@@ -46,3 +48,22 @@ S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be c
 
 //S spkC(K a){S u=strdupn(kC(a),a->n),v=sp(u);free(u);R v;}
 S spn(S s,I n){I k=0;while(k<n && s[k])k++; S u=strdupn(s,k); if(!u)R 0; S v=sp(u); free(u); R v;} //safer/memory-efficient strdupn
+Z void swI(N n){I *p=n->k;if(n->c[0])swI(n->c[0]);if(p)p[-1]=sd++;if(n->c[1])swI(n->c[1]); }
+Z I fx(K x,N y,I z)
+{
+  if(!y)R z;
+  z=fx(x,y->c[0],z);
+  if(y->k)kS(x)[z++]=y->k;
+  R fx(x,y->c[1],z);
+}
+I gradeS(void)
+{
+  I z;K y,x;
+  if(!sd)R ns;
+  // O("sym sort");
+  x=newK(-4,ns);M(x);
+  fx(x,SYMBOLS,0);
+  y=mergeGrade(x,0);M(x,y);
+  DO(yn,z=kI(y)[i];SV(kS(x)[z])=i);
+  sd=0;cd(y);cd(x);R ns;
+}
