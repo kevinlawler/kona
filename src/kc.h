@@ -27,6 +27,7 @@ extern S fnc;
 extern V fncp[128];
 extern I fnci;
 extern I fom;
+extern K clo;
 S sp(S k);
 extern S d_;
 K Kn();

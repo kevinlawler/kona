@@ -29,6 +29,7 @@ __thread I prj2=0;   // 2nd Projection flag
 __thread K prnt=0;   // Parent of Subfunction 
 __thread I fsf=0;    // Flag for Subfunctions
 __thread K grnt=0;   // GrandParent of Subfunction
+__thread K clo=0;    // Closure: level 2 linkage
 __thread K encf=0;   // Enclosing Function
 __thread I encp=0;   // Enclosing Function Param
 __thread I frg=0;    // Flag reset globals
@@ -419,6 +420,7 @@ K vf_ex(V q, K g)
 
   if(2==k && a && b){ fnc=DT[(L)q].text; 
     if(fnci<127){fncp[fnci]=q; fnci++;} 
+    if(clo && a->t==6){cd(a);a=clo;} 
     z=((K(*)(K,K))DT[(L)q].func)(a,b); GC;}
   //? (+).1 -> err ; {[a;b]a+b} 1 -> err
   if(2==k && !a){VE; GC;} //Reachable? Projection?
@@ -937,6 +939,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   t2=ex2(v+1+i,k); //oom. these cannot be placed into single function call b/c order of eval is unspecified
   t3=ex_(*v,1);
   if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3){
+    if(kV(t3)==kV(grnt)){if(clo)cd(clo);clo=ci(kK(kK(kK(prnt)[7])[0])[1]);}
     if(prnt){
       if(kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n){
         if(kK(prnt)[LOCALS]->n){
@@ -945,7 +948,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
             K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(j0,j1);
             if(kV(t3)[CACHE_TREE] && kK(t3)[CACHE_TREE]->n)cd(kK(t3)[CACHE_TREE]);
             kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
-        else if(kK(kK(prnt)[CACHE_WD])[CODE] && kK(kK(prnt)[CACHE_WD])[CODE]->t==-4
+        else if(kK(prnt)[CACHE_WD] && kK(prnt)[CACHE_WD]->t==7
+            && kK(kK(prnt)[CACHE_WD])[CODE] && kK(kK(prnt)[CACHE_WD])[CODE]->t==-4
             && (*(K*)kS(kK(kK(prnt)[CACHE_WD])[CODE])[0])->t==7
             && kK(*(K*)kS(kK(kK(prnt)[CACHE_WD])[CODE])[0])[CACHE_TREE]
             && kK(*(K*)kS(kK(kK(prnt)[CACHE_WD])[CODE])[0])[CACHE_TREE]->n){
@@ -956,7 +960,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
           else{
             K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
             K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
-      else if(kV(prnt)[CACHE_TREE] && (1==kK(prnt)[CACHE_TREE]->n || 5<kK(prnt)[CACHE_TREE]->n) && !kV(prnt)[CACHE_WD]){
+      else if(kV(prnt)[CACHE_TREE] && 1==kK(prnt)[CACHE_TREE]->n && !kV(prnt)[CACHE_WD] && !kV(t3)[CACHE_TREE]) {
         K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
         K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); }
       cd(prnt); }

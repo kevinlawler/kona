@@ -35,8 +35,8 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a); fer=fom=0;
-  K y = X(b); fer=fom=0;
+  K x = X(a); fer=fom=0; if(clo)cd(clo);clo=0;
+  K y = X(b); fer=fom=0; if(clo)cd(clo);clo=0;
   I m=matchI(x,y);
 
   if(!m)
@@ -243,7 +243,7 @@ Z I tests02()
   TC_("{[n]:[1=#n;,n;{x,\',/p[n _dv x]}\'n]}\"ab\"", "(\"ab\";\"ba\")") //issue #377
   TC(.[3 3#0;(1 2;0 1);{x;y};1], 3 3#0 0 0 1 1 0 1 1 0) // issue #378
   TC_( "(2 0;2 1)", "for:{[n;f]f\'!n}; {[i]for[i]{[j]i,j}}2" )                 //issue #388
-  TC_( "(();,0 0;(0 0;0 1))", "for:{[n;f]f\'!n}; for[3]{[i]for[i]{[j]i,j}}" )  //issue #388
+  TC_( "(();,1 0;(2 0;2 1))", "for:{[n;f]f\'!n}; for[3]{[i]for[i]{[j]i,j}}" )  //issue #388
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
