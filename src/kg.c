@@ -17,7 +17,7 @@ Z I mergerComparer(K a, I r, I i, I j);
 
 I FC(F a, F b)//Floating-Point Compare
 {
-#if 0
+#ifdef REFERENCE_FC
   F E=0.00000000000000000001; //This value seems to work, might should be a different one though
 
   if(isnan(a))R isnan(b)?0:-1;
