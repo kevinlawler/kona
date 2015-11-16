@@ -15,6 +15,7 @@
 typedef void* V;
 typedef long L;
 typedef long long I; //there are cases where casting pointer arithmetic to signed int will fail
+typedef unsigned long long uI;
 typedef double F;
 typedef char C; //Store +-3 type '\0' terminated
 typedef C* S;
@@ -34,6 +35,7 @@ typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; /
 #define ke(x) (((K)x)->k)
 #define kK(x) ke(x)
 #define kI(x) ((I*)ke(x))
+#define kU(x) ((uI*)ke(x))
 #define kF(x) ((F*)ke(x))
 #define kC(x) ((C*)ke(x))//Chars/Char-strings (+3/-3) must have a terminal '\0' (uncounted), but may also contain them
 #define kS(x) ((S*)ke(x))//Symbol pointers to interned strings ending at the first '\0'

@@ -17,40 +17,36 @@
 //inputting the same collection of functions each time but in a different order
 //if the sort order changes for each instance then sorting is probably based on pointer/reference value
 //if that fails then it may be necessary to look at distinctions between wordfunc,charfunc, valence, proj, etc
-#define DISTR_GRADE_THRESHOLD 87654321
+#define DGT (1<<26)
 Z I dtoll(F a){
   union{F f;I i;}u;
   if(isnan(a))R LLONG_MIN;
   u.f=a;
   R 0>u.i?LLONG_MIN-u.i:u.i;
 }
+Z uI lltoull(I a){ R 0x8000000000000000ULL^(uI)a; }
 Z K grade_updown(K a, I r)
 {
-  K ia=0,z=0;
   I at=a->t, an=a->n;
   P(0< at, RE)
   if(-3==at) R charGrade(a,r);
-  if(-2==at){
-    ia=newK(-1,an);M(ia);
-    DO(an,kI(ia)[i]=dtoll(kF(a)[i]));
-    a=ia;at=-1; }
-  if(-1==at){
-    I x,u=II,v=-II;//MIN,MAX
-    DO(an, x=kI(a)[i]; if(x<u)u=x; if(x>v)v=x;)  
-    #ifdef __int128
-    if((__int128)v-(__int128)u < DISTR_GRADE_THRESHOLD)
-      z=distributionGrade(a,r,u,v);//Magic Number
-    #else  
-    if(v-u < DISTR_GRADE_THRESHOLD && v-u > 0)
-      z=distributionGrade(a,r,u,v);//Magic Number
-    #endif
-  }
-  if(-1==at || -2==at){
-    //TODO: Attempt [Recursive] [Histogram] Bucket[sort] Grade if OK distribution
-  }
-  if(!z)z=mergeGrade(a,r);
-  if(ia)cd(ia);
-  R z;
+  if(-1==at||-2==at){
+    K z;
+    if(an<2){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i);R z;}
+    else{
+      uI x,u=(uI)-1,v=0,h=0,k;//MIN,MAX
+      K ia=newK(-1,an);M(ia);
+      DO(an,x=lltoull((-2==at)?dtoll(kF(a)[i]):kI(a)[i]);
+         kU(ia)[i]=x; h|=x; if(x<u)u=x; if(x>v)v=x)
+      // XXX O("v:%16llx u:%16llx h:%16llx\n",v,u,h);
+      k=v-u;
+      if(!k){z=newK(-1,an);M(z,ia);DO(an,kI(z)[i]=i)}
+      else if(an<IGT)z=insertGradeU(ia,r);
+      else if((k<DGT)&&((9*an+(1^19))>2*k))z=distributionGrade(ia,r,u,v);
+      else z=radixGrade(ia,r,h);
+      cd(ia); }
+    R z; }
+  R mergeGrade(a,r);
 }
 K grade_up(K a){R grade_updown(a,0);}
 K grade_down(K a){R grade_updown(a,1);}
