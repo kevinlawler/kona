@@ -70,11 +70,11 @@ K range(K a)
   P(t>0,RE)
   K z=0,g=0,k=0;
   
-  I u=n;
-  g=grade_up(a); if(!g) GC;
-  k=grade_up(g); if(!k) GC;
+  I u=n,*h,*m;
+  g=grade_up(a);if(!g)GC;h=kI(g);
+  k=newK(-1,n);if(!k)GC;m=kI(k);
+  DO(n,m[h[i]]=i);
 
-  I *h=kI(g);
   if(-4==t)DO(n-1, if(kS(a)[h[n-i-1]]==kS(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
   if(-3==t)DO(n-1, if(kC(a)[h[n-i-1]]==kC(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
   if(-2==t)DO(n-1, if(!FC(kF(a)[h[n-i-1]],kF(a)[h[n-i-2]])){h[n-i-1]=-1;--u;})
@@ -84,7 +84,7 @@ K range(K a)
   z=newK(t,u); if(!z) GC;
   I x=0;
 
-  I *m=kI(k); //This could be refactored
+  //This could be refactored
   if(-4==t)DO(n, if(h[m[i]]>-1)kS(z)[x++]=kS(a)[h[m[i]]] )
   if(-3==t)DO(n, if(h[m[i]]>-1)kC(z)[x++]=kC(a)[h[m[i]]] )
   if(-2==t)DO(n, if(h[m[i]]>-1)kF(z)[x++]=kF(a)[h[m[i]]] )
@@ -92,8 +92,8 @@ K range(K a)
   if( 0==t)DO(n, if(h[m[i]]>-1)kK(z)[x++]=ci(kK(a)[h[m[i]]]))
 
 cleanup:
-  cd(g);
   cd(k);
+  cd(g);
   R z;
 }
 
@@ -102,17 +102,19 @@ K group(K x)
   I t=xt, n=xn;
   P(t>0,RE)
   
-  I u=n;
-  K z,b,c; //was K z=0,b=0,c=0;
-  M(b=grade_up(x))
-  M(b,c=grade_up(b))//Nastier code would eliminate this second sort.
-  I *g=kI(b);//Step through, on duplicate set uniques-=1, mark by inverting sign of corresponding index
-  I *h=kI(c);
-  if(-4==t)DO(n-1, if(kS(x)[g[n-i-1]]==kS(x)[g[n-i-2]])       {--u;g[n-i-1]*=-1;})
-  if(-3==t)DO(n-1, if(kC(x)[g[n-i-1]]==kC(x)[g[n-i-2]])       {--u;g[n-i-1]*=-1;})
-  if(-2==t)DO(n-1, if(!FC(kF(x)[g[n-i-1]],kF(x)[g[n-i-2]]))   {--u;g[n-i-1]*=-1;})
-  if(-1==t)DO(n-1, if(kI(x)[g[n-i-1]]==kI(x)[g[n-i-2]])       {--u;g[n-i-1]*=-1;})
-  if( 0==t)DO(n-1, if(matchI(kK(x)[g[n-i-1]],kK(x)[g[n-i-2]])){--u;g[n-i-1]*=-1;})
+  I u=n,*g,*h;
+  K z,b,c;
+  M(b=grade_up(x));g=kI(b);
+  //Nastier code would eliminate this second sort.
+  c=newK(-1,n);M(b,c);h=kI(c);
+  DO(n,h[g[i]]=i);
+  //Step through, on duplicate set uniques-=1, mark by inverting sign of corresponding index
+  //I *h=kI(c);
+  if(-4==t)DO(n-1,if(kS(x)[g[n-i-1]]==kS(x)[g[n-i-2]])      {--u;g[n-i-1]*=-1;})
+  if(-3==t)DO(n-1,if(kC(x)[g[n-i-1]]==kC(x)[g[n-i-2]])      {--u;g[n-i-1]*=-1;})
+  if(-2==t)DO(n-1,if(!FC(kF(x)[g[n-i-1]],kF(x)[g[n-i-2]]))  {--u;g[n-i-1]*=-1;})
+  if(-1==t)DO(n-1,if(kI(x)[g[n-i-1]]==kI(x)[g[n-i-2]])      {--u;g[n-i-1]*=-1;})
+  if( 0==t)DO(n-1,if(matchI(kK(x)[g[n-i-1]],kK(x)[g[n-i-2]])){--u;g[n-i-1]*=-1;})
  
   z=newK(0,u);
   M(b,c,z);

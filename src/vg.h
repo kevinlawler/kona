@@ -42,3 +42,4 @@ K charGrade(K a,I r);
 K at(K x,K y);
 void trst();
 void elapsed(S);
+I gradeS();
