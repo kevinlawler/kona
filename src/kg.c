@@ -170,7 +170,7 @@ K mergeGrade(K a, I r)
 K insertGradeU(K a,I r)
 {
   if(gt)O("insertGrade");
-  uI *u=kI(a);
+  uI *u=kU(a);
   I n=a->n,i,*c;
   K x=newK(-1,n);//Indices
   M(x)
@@ -200,7 +200,7 @@ void elapsed(S m){
   I ms=(I)(1000.0*(double)e/CLOCKS_PER_SEC);
   O("%s %lld\n",m,ms);trst();}
 #define N (65535)
-Z void dGU(uI*a,I r,uI*x,uI*y,I n,I*c,I d)
+Z void dGU(uI*a,I r,I*x,I*y,I n,I*c,I d)
 {//Variation on Knuth Algorithm 5.2D Distribution counting
   I sa=16*d;
   DO(n,c[N&(a[i]>>sa)]++)
