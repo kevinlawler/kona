@@ -123,19 +123,36 @@ Z void merger(K a, I r, K x, K y, I s, I t, I m)
 {
   I i,j,k;
   I *c=kI(x),*d=kI(y);
-  for(i=s;i<=t;i++)d[i]=c[i];
+  //for(i=s;i<=t;i++)d[i]=c[i];
+  memcpy(d,c,(t-s+1)*sizeof(I));
   i=s;j=m+1;k=s;
   while(i<=m && j<=t)
    if(mergerComparer(a,r,d[i],d[j]))c[k++]=d[i++];
    else c[k++]=d[j++];
-  while(i<=m)c[k++]=d[i++]; 
+  //while(i<=m)c[k++]=d[i++]; 
+  if(i<=m)
+    memcpy(c+k,d+i,(m-i+1)*sizeof(I));
 }
+Z void insSorter(K a,I r,K x,K y,I s,I t)
+{
+  I i,*c=kI(x);
+  for(i=s+1;i<=t;i++){
+    I x=c[i],j=i;
+    while(s<j&&!mergerComparer(a,r,c[j-1],x)){
+      c[j]=c[j-1]; j--;
+    }
+    c[j]=x;
+  }
+}
+#define INS_SORT_LIMIT 7
 Z void doMergeGrade(K a, I r, K x, K y, I s, I t)
 {
   if(s >= t) R; //Faster: another sort when small |t-s| 
   I m=s+(t-s)/2; //sic
-  doMergeGrade(a,r,x,y,s,m);
-  doMergeGrade(a,r,x,y,m+1,t);
+  if(m-s<INS_SORT_LIMIT)insSorter(a,r,x,y,s,m);
+  else doMergeGrade(a,r,x,y,s,m);
+  if(t-(m+1)<INS_SORT_LIMIT)insSorter(a,r,x,y,m+1,t);
+  else doMergeGrade(a,r,x,y,m+1,t);
   merger(a,r,x,y,s,t,m);
 }
 K mergeGrade(K a, I r)

@@ -17,26 +17,40 @@
 //inputting the same collection of functions each time but in a different order
 //if the sort order changes for each instance then sorting is probably based on pointer/reference value
 //if that fails then it may be necessary to look at distinctions between wordfunc,charfunc, valence, proj, etc
+#define DISTR_GRADE_THRESHOLD (1<<19)
+Z I dtoll(F a){
+  union{F f;I i;}u;
+  if(isnan(a))R LLONG_MIN;
+  u.f=a;
+  R 0>u.i?LLONG_MIN-u.i:u.i;
+}
 Z K grade_updown(K a, I r)
 {
+  K ia=0,z=0;
   I at=a->t, an=a->n;
   P(0< at, RE)
   if(-3==at) R charGrade(a,r);
-  if(-1==at)
-  {
+  if(-2==at){
+    ia=newK(-1,an);M(ia);
+    DO(an,kI(ia)[i]=dtoll(kF(a)[i]));
+    a=ia;at=-1; }
+  if(-1==at){
     I x,u=II,v=-II;//MIN,MAX
     DO(an, x=kI(a)[i]; if(x<u)u=x; if(x>v)v=x;)  
     #ifdef __int128
-    if((__int128)v-(__int128)u < 87654321) R distributionGrade(a,r,u,v);//Magic Number
+    if((__int128)v-(__int128)u < DISTR_GRADE_THRESHOLD)
+      z=distributionGrade(a,r,u,v);//Magic Number
     #else  
-    if(v-u < 87654321 && v-u > 0) R distributionGrade(a,r,u,v);//Magic Number
+    if(v-u < DISTR_GRADE_THRESHOLD && v-u > 0)
+      z=distributionGrade(a,r,u,v);//Magic Number
     #endif
   }
-  if(-1==at || -2==at)
-  {
+  if(-1==at || -2==at){
     //TODO: Attempt [Recursive] [Histogram] Bucket[sort] Grade if OK distribution
   }
-  R mergeGrade(a,r);
+  if(!z)z=mergeGrade(a,r);
+  if(ia)cd(ia);
+  R z;
 }
 K grade_up(K a){R grade_updown(a,0);}
 K grade_down(K a){R grade_updown(a,1);}
