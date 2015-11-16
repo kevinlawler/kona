@@ -17,7 +17,7 @@
 //inputting the same collection of functions each time but in a different order
 //if the sort order changes for each instance then sorting is probably based on pointer/reference value
 //if that fails then it may be necessary to look at distinctions between wordfunc,charfunc, valence, proj, etc
-#define DISTR_GRADE_THRESHOLD (1<<19)
+#define DISTR_GRADE_THRESHOLD 87654321
 Z I dtoll(F a){
   union{F f;I i;}u;
   if(isnan(a))R LLONG_MIN;
