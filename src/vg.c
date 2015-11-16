@@ -35,9 +35,9 @@ K grade_updown(K a, I r)
       K x=newK(-1,an);M(x);
       //elapsed("x=newK");
       SW(at){
-      CS(-1,DO(an,kU(x)[i]=(y=ItoU(kI(a)[i]));h|=y;if(y<u)u=y;else if(y>v)v=y))
-      CS(-2,DO(an,kU(x)[i]=(y=ItoU(FtoI(kF(a)[i])));h|=y;if(y<u)u=v;else if(y>v)v=y))
-      CS(-4,h=v=gradeS();u=0;DO(an,kU(x)[i]=SV(kS(a)[i])))}
+      CS(-1,DO(an,kU(x)[i]=(y=ItoU(kI(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y))
+      CS(-2,DO(an,kU(x)[i]=(y=ItoU(FtoI(kF(a)[i])));h|=y;if(y<u)u=v;if(y>v)v=y))
+      CS(-4,gradeS();DO(an,kU(x)[i]=(y=SV(kS(a)[i])));h|=y;if(y<u)u=v;if(y>v)v=y)}
       //elapsed("fill x");
       k=v-u;
            if(!k){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i)}

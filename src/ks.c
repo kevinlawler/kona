@@ -6,7 +6,7 @@
 #include "ks.h"
 
 Z I ns=0,sd=0;
-Z S sdup(S s){R strdupn(s,strlen(s));} //using this because "strdup" uses [used] dynamically linked malloc which fails with our static free
+// Z S sdup(S s){R strdupn(s,strlen(s));} //using this because "strdup" uses [used] dynamically linked malloc which fails with our static free
 Z S sdupI(S s){I k;S d=alloc(sizeof(I)+(k=strlen(s))+1);if(!d)R 0;ns++;sd=1;d+=sizeof(I);d[k]=0;R memcpy(d,s,k);}
 S strdupn (S s,I k) {S d=alloc(k+1);if(!d)R 0;d[k]=0;R memcpy(d,s,k);} // mm/o  (note: this can overallocate)
 //I SC0N(S a,S b,I n) {I x=memcmp(a,b,n); R x<0?-1:x>0?1:a[n]?1:0; }// non-standard way to compare aaa\0 vs aaa
@@ -48,22 +48,11 @@ S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be c
 
 //S spkC(K a){S u=strdupn(kC(a),a->n),v=sp(u);free(u);R v;}
 S spn(S s,I n){I k=0;while(k<n && s[k])k++; S u=strdupn(s,k); if(!u)R 0; S v=sp(u); free(u); R v;} //safer/memory-efficient strdupn
-Z void swI(N n){I *p=n->k;if(n->c[0])swI(n->c[0]);if(p)p[-1]=sd++;if(n->c[1])swI(n->c[1]); }
-Z I fx(K x,N y,I z)
+Z I sx(N x,I y)
 {
-  if(!y)R z;
-  z=fx(x,y->c[0],z);
-  if(y->k)kS(x)[z++]=y->k;
-  R fx(x,y->c[1],z);
+  if(!x)R y;
+  y=sx(x->c[0],y);
+  if(x->k)SV(x->k)=y++;
+  R sx(x->c[1],y);
 }
-I gradeS(void)
-{
-  I z;K y,x;
-  if(!sd)R ns;
-  // O("sym sort");
-  x=newK(-4,ns);M(x);
-  fx(x,SYMBOLS,0);
-  y=mergeGrade(x,0);M(x,y);
-  DO(yn,z=kI(y)[i];SV(kS(x)[z])=i);
-  sd=0;cd(y);cd(x);R ns;
-}
+I gradeS(void){if(!sd)R ns;/*O("sym sort");*/sx(SYMBOLS,0);sd=0;R ns;}
