@@ -43,7 +43,9 @@ K grade_updown(K a, I r)
       //elapsed("fill x");
       //if(u>(uI)LLONG_MAX){DO(an,kU(x)[i]=ItoU(kI(x)[i]));h=ItoU((I)h);}
       // O("u:%016llx v:%016llx\n",u,v);
-      if((u&(uI)IN)!=(v&(uI)IN)){DO(an,kU(x)[i]=(y=ItoU(kI(x)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)}
+      if((u&(uI)IN)!=(v&(uI)IN)){
+        u=(uI)-1;v=0;h=0;
+        DO(an,kU(x)[i]=(y=ItoU(kI(x)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)}
       k=v-u;
            if(!k){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i)}
       else if(xn<IGT)z=insertGradeU(x,r);
@@ -75,10 +77,13 @@ K distRange(K a,K au,uI u,uI v)//u,v: precomputed min,max
   K d=newK(-1,b);U(d)
   c=kI(d); //assumes # slots are set to 0
   K z=newK(-1,n);M(d,z);
+  //elapsed("alloc");
   DO(n,uI x=kU(au)[i]-u;if(!c[x]){c[x]=-1;kI(z)[j++]=kI(a)[i];})
+  //elapsed("fill");
   if(n==j)GC;
   K y=newK(-1,j);M(d,z,y);
   memcpy(kI(y),kI(z),j*sizeof(I));cd(z);z=y;
+  //elapsed("resize");
 cleanup:
   cd(d);
   R z;
@@ -118,16 +123,23 @@ K range(K a)
   if(-4==t)R symRange(a);
   else if(-3==t)R charRange(a);
   else if(-1==t||-2==t){
-    K x=newK(-1,n);M(x);
+    K x=0;
     uI hh=0,uu=(uI)-1,vv=0,y;
-    if(-1==t)DO(n,kU(x)[i]=(y=kI(a)[i]);hh|=y;if(y<uu)uu=y;if(y>vv)vv=y)
-    else DO(n,kU(x)[i]=(y=FtoI(kF(a)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y);
+    if(-1==t){DO(n,y=kU(a)[i];hh|=y;if(y<uu)uu=y;if(y>vv)vv=y);x=a;}
+    else{
+      x=newK(-1,n);M(x);
+      DO(n,kU(x)[i]=(y=FtoI(kF(a)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y)}
+    //elapsed("fill x");
     if((uu&(uI)IN)!=(vv&(uI)IN)){
       hh=0;uu=(uI)-1;vv=0;
-      DO(n,kU(x)[i]=(y=ItoU(kI(x)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y) }
-    if(vv-uu<DGT){z=distRange(a,x,uu,vv);cd(x);R z;}
+      if(-1==t){
+        x=newK(-1,n);M(x);
+        DO(n,kU(x)[i]=(y=ItoU(kI(a)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y) }
+      else DO(n,kU(x)[i]=(y=ItoU(kI(x)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y) }
+    //elapsed("cvtu");
+    if(vv-uu<DGT){z=distRange(a,x,uu,vv);if(x!=a)cd(x);R z;}
     else g=radixGrade(x,0,hh);
-    cd(x);
+    if(x!=a)cd(x);
     if(!g)R 0;
   }
 
@@ -137,7 +149,14 @@ K range(K a)
   DO(n,m[h[i]]=i);
   //elapsed("reorder");
 
-  if(-2==t)DO(n-1, if(!FC(kF(a)[h[n-i-1]],kF(a)[h[n-i-2]])){h[n-i-1]=-1;--u;})
+  //K3.2
+  //v0:2.;v1:1.9999999999999
+  //v0=v1 returns 1
+  //v:v1,v0
+  //<v    returns 0 1
+  //?v    returns 2 2.0
+  //=v    returns ,0 ,1
+  if(-2==t)DO(n-1, if(kF(a)[h[n-i-1]]==kF(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
   if(-1==t)DO(n-1, if(kI(a)[h[n-i-1]]==kI(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
   if( 0==t)DO(n-1, if(matchI(kK(a)[h[n-i-1]],kK(a)[h[n-i-2]]))   {h[n-i-1]=-1;--u;})
   //elapsed("search same");
@@ -170,10 +189,10 @@ K group(K x)
   DO(n,h[g[i]]=i);
   //Step through, on duplicate set uniques-=1, mark by inverting sign of corresponding index
   //I *h=kI(c);
-  if(-4==t)DO(n-1,if(kS(x)[g[n-i-1]]==kS(x)[g[n-i-2]])      {--u;g[n-i-1]*=-1;})
-  if(-3==t)DO(n-1,if(kC(x)[g[n-i-1]]==kC(x)[g[n-i-2]])      {--u;g[n-i-1]*=-1;})
-  if(-2==t)DO(n-1,if(!FC(kF(x)[g[n-i-1]],kF(x)[g[n-i-2]]))  {--u;g[n-i-1]*=-1;})
-  if(-1==t)DO(n-1,if(kI(x)[g[n-i-1]]==kI(x)[g[n-i-2]])      {--u;g[n-i-1]*=-1;})
+  if(-4==t)DO(n-1,if(kS(x)[g[n-i-1]]==kS(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
+  if(-3==t)DO(n-1,if(kC(x)[g[n-i-1]]==kC(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
+  if(-2==t)DO(n-1,if(kF(x)[g[n-i-1]]==kF(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
+  if(-1==t)DO(n-1,if(kI(x)[g[n-i-1]]==kI(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
   if( 0==t)DO(n-1,if(matchI(kK(x)[g[n-i-1]],kK(x)[g[n-i-2]])){--u;g[n-i-1]*=-1;})
  
   z=newK(0,u);
