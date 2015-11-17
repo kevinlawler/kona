@@ -10,3 +10,4 @@ S strdupn(S s,I k);
 I gradeS();
 K newK(I t,I n);
 K mergeGrade(K a,I r);
+void setS(int y,I z);

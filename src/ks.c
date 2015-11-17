@@ -52,7 +52,9 @@ Z I sx(N x,I y)
 {
   if(!x)R y;
   y=sx(x->c[0],y);
-  if(x->k)SV(x->k)=y++;
+  if(x->k)SV(x->k,1)=y++;
   R sx(x->c[1],y);
 }
 I gradeS(void){if(!sd)R ns;/*O("sym sort");*/sx(SYMBOLS,0);sd=0;R ns;}
+Z void ssI(N x,int y,I z){if(x){DO(2,ssI(x->c[i],y,z));if(x->k)SV(x->k,y)=z;}}
+void setS(int y,I z){ssI(SYMBOLS,y,z);}

@@ -219,25 +219,29 @@ Z void dGU(uI*a,I r,I*x,I*y,I n,I*c,I d)
   I sa=16*d;
   DO(n,c[N&(a[i]>>sa)]++)
   // if(!r)
-  DO(N,c[i+1]+=c[i])      //0==r: grade up
-  // else   DO(N,c[_i-i-1]+=c[_i-i-0])//1==r: grade down
+  DO(N,c[i+1]+=c[i])
   DO(n,I k=x[n-i-1]; y[-1+c[N&(a[n-i-1]>>sa)]--]=k)
 }
 Z void radixGradeI(uI*a,uI*w,I r,I*u,I*v,I*c,I n,uI h)
 {
+  //trst();
   if(r){DO(n,a[i]=~a[i]);r=0;}
-  // memcpy(w,a,n*sizeof(I));
-  // trst();
-  dGU(a,r,u,v,n,c,0);         //elapsed(" grade0"); // a,u => v
-  DO(n,w[i]=a[v[i]]);         //elapsed(" order0"); // w:a@v
-  memset(c,0,(1+N)*sizeof(I));//elapsed("memzero");
-  dGU(w,r,v,u,n,c,1);         //elapsed(" grade1"); // w,v => u
-  DO(n,w[i]=a[u[i]]);         //elapsed(" order1"); // w:a@u
-  memset(c,0,(1+N)*sizeof(I));//elapsed("memzero");
-  dGU(w,r,u,v,n,c,2);         //elapsed(" grade2"); // w,u => v
-  DO(n,w[i]=a[v[i]]);         //elapsed(" order2"); // w:a@v
-  memset(c,0,(1+N)*sizeof(I));//elapsed("memzero");
-  dGU(w,r,v,u,n,c,3);         //elapsed(" grade3"); // w,v => u
+  dGU(a,r,u,v,n,c,0);         //elapsed(" grade0");
+  if(0x10000ULL>h)goto v2u;
+  DO(n,w[i]=a[v[i]]);         //elapsed(" order0");
+  c+=(1+N);
+  dGU(w,r,v,u,n,c,1);         //elapsed(" grade1");
+  if(0x100000000ULL>h)R;
+  DO(n,w[i]=a[u[i]]);         //elapsed(" order1");
+  c+=(1+N);
+  dGU(w,r,u,v,n,c,2);         //elapsed(" grade2");
+  if(0x1000000000000ULL>h)goto v2u;
+  DO(n,w[i]=a[v[i]]);         //elapsed(" order2");
+  c+=(1+N);
+  dGU(w,r,v,u,n,c,3);         //elapsed(" grade3");
+  R;
+v2u:
+  memcpy(u,v,n*sizeof(I));    //elapsed(" v2u");
 }
 K radixGrade(K a,I r,uI h)
 {
@@ -245,7 +249,7 @@ K radixGrade(K a,I r,uI h)
   I n=a->n;
   K x=newK(-1,n);//Indices
   K y=newK(-1,n);//Temporary storage
-  K z=newK(-1,1+N);
+  K z=newK(-1,4*(1+N));
   K w=newK(-1,n);
   M(x,y,z,w)
   DO(n, kI(x)[i]=i)

@@ -43,3 +43,4 @@ K at(K x,K y);
 void trst();
 void elapsed(S);
 I gradeS();
+void setS(int y,I z);

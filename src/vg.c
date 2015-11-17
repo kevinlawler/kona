@@ -35,10 +35,15 @@ K grade_updown(K a, I r)
       K x=newK(-1,an);M(x);
       //elapsed("x=newK");
       SW(at){
-      CS(-1,DO(an,kU(x)[i]=(y=ItoU(kI(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y))
-      CS(-2,DO(an,kU(x)[i]=(y=ItoU(FtoI(kF(a)[i])));h|=y;if(y<u)u=y;if(y>v)v=y))
-      CS(-4,gradeS();DO(an,kU(x)[i]=(y=SV(kS(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y))}
+      //CS(-1,DO(an,kU(x)[i]=(y=ItoU(kI(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y))
+      //CS(-2,DO(an,kU(x)[i]=(y=ItoU(FtoI(kF(a)[i])));h|=y;if(y<u)u=y;if(y>v)v=y))
+      CS(-1,DO(an,kU(x)[i]=(y=kI(a)[i]);h|=y;if(y<u)u=y;if(y>v)v=y))
+      CS(-2,DO(an,kU(x)[i]=(y=FtoI(kF(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y))
+      CS(-4,gradeS();DO(an,kU(x)[i]=(y=SV(kS(a)[i],1));h|=y;if(y<u)u=y;if(y>v)v=y))}
       //elapsed("fill x");
+      //if(u>(uI)LLONG_MAX){DO(an,kU(x)[i]=ItoU(kI(x)[i]));h=ItoU((I)h);}
+      // O("u:%016llx v:%016llx\n",u,v);
+      if((u&(uI)IN)!=(v&(uI)IN)){DO(an,kU(x)[i]=(y=ItoU(kI(x)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)}
       k=v-u;
            if(!k){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i)}
       else if(xn<IGT)z=insertGradeU(x,r);
@@ -64,32 +69,87 @@ K enlist(K x)
   R z;
 }
 
+K distRange(K a,K au,uI u,uI v)//u,v: precomputed min,max
+{//Variation on Knuth Algorithm 5.2D Distribution counting
+  I n=a->n,b=v-u+1,*c,j=0;
+  K d=newK(-1,b);U(d)
+  c=kI(d); //assumes # slots are set to 0
+  K z=newK(-1,n);M(d,z);
+  DO(n,uI x=kU(au)[i]-u;if(!c[x]){c[x]=-1;kI(z)[j++]=kI(a)[i];})
+  if(n==j)GC;
+  K y=newK(-1,j);M(d,z,y);
+  memcpy(kI(y),kI(z),j*sizeof(I));cd(z);z=y;
+cleanup:
+  cd(d);
+  R z;
+}
+
+K charRange(K a)
+{
+  I n=a->n,c[1+UCHAR_MAX],j=0;
+  memset(c,0,(1+UCHAR_MAX)*sizeof(I));
+  K z=newK(-3,n);M(z);
+  DO(n,UC x=(UC)kC(a)[i];if(!c[x]){c[x]=-1;kC(z)[j++]=kC(a)[i];})
+  if(n==j)R z;
+  K y=newK(-3,j);M(z,y);
+  memcpy(kC(y),kC(z),j*sizeof(C));cd(z);
+  R y;
+}
+
+Z K symRange(K x)
+{
+  I j=0;
+  K z=newK(-4,xn);M(z);
+  setS(2,0);DO(xn,S s=kS(x)[i];if(!SV(s,2)){SV(s,2)=-1;kS(z)[j++]=s;})
+  //O("u:%lld xn:%lld\n",u,xn);
+  if(xn==j)R z;
+  K y=newK(-4,j);M(z,y);
+  memcpy(kS(y),kS(z),j*sizeof(S));cd(z);
+  R y;
+}
+
 K range(K a)
 { 
   I t=a->t, n=a->n;
-  P(t>0,RE)
   K z=0,g=0,k=0;
-  
-  I u=n,*h,*m;
-  g=grade_up(a);if(!g)GC;h=kI(g);
+  I u=n,*h=0,*m=0;
+  P(t>0,RE)
+  //trst();
+  if(-4==t)R symRange(a);
+  else if(-3==t)R charRange(a);
+  else if(-1==t||-2==t){
+    K x=newK(-1,n);M(x);
+    uI hh=0,uu=(uI)-1,vv=0,y;
+    if(-1==t)DO(n,kU(x)[i]=(y=kI(a)[i]);hh|=y;if(y<uu)uu=y;if(y>vv)vv=y)
+    else DO(n,kU(x)[i]=(y=FtoI(kF(a)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y);
+    if((uu&(uI)IN)!=(vv&(uI)IN)){
+      hh=0;uu=(uI)-1;vv=0;
+      DO(n,kU(x)[i]=(y=ItoU(kI(x)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y) }
+    if(vv-uu<DGT){z=distRange(a,x,uu,vv);cd(x);R z;}
+    else g=radixGrade(x,0,hh);
+    cd(x);
+    if(!g)R 0;
+  }
+
+  if(!g)g=grade_up(a);if(!g)GC;h=kI(g);
+  //elapsed("grade up");
   k=newK(-1,n);if(!k)GC;m=kI(k);
   DO(n,m[h[i]]=i);
+  //elapsed("reorder");
 
-  if(-4==t)DO(n-1, if(kS(a)[h[n-i-1]]==kS(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
-  if(-3==t)DO(n-1, if(kC(a)[h[n-i-1]]==kC(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
   if(-2==t)DO(n-1, if(!FC(kF(a)[h[n-i-1]],kF(a)[h[n-i-2]])){h[n-i-1]=-1;--u;})
   if(-1==t)DO(n-1, if(kI(a)[h[n-i-1]]==kI(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
   if( 0==t)DO(n-1, if(matchI(kK(a)[h[n-i-1]],kK(a)[h[n-i-2]]))   {h[n-i-1]=-1;--u;})
+  //elapsed("search same");
 
   z=newK(t,u); if(!z) GC;
   I x=0;
 
   //This could be refactored
-  if(-4==t)DO(n, if(h[m[i]]>-1)kS(z)[x++]=kS(a)[h[m[i]]] )
-  if(-3==t)DO(n, if(h[m[i]]>-1)kC(z)[x++]=kC(a)[h[m[i]]] )
   if(-2==t)DO(n, if(h[m[i]]>-1)kF(z)[x++]=kF(a)[h[m[i]]] )
   if(-1==t)DO(n, if(h[m[i]]>-1)kI(z)[x++]=kI(a)[h[m[i]]] )
   if( 0==t)DO(n, if(h[m[i]]>-1)kK(z)[x++]=ci(kK(a)[h[m[i]]]))
+  //elapsed("fill");
 
 cleanup:
   cd(k);
