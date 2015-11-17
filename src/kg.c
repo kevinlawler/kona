@@ -85,7 +85,7 @@ K distributionGrade(K a, I r, uI u, uI v)//u,v: precomputed min,max
 {//Variation on Knuth Algorithm 5.2D Distribution counting
   if(gt)O("distributionGrade");
   I n=a->n, b=v-u+1, *c;
-  K d=newK(-1,b);U(d) 
+  K d=newK(-1,b);U(d)
   c=kI(d); //assumes # slots are set to 0
   K s=newK(-1,n);  
   if(!s)GC;
@@ -171,7 +171,7 @@ K mergeGrade(K a, I r)
   K x=0,y=0;I n=a->n;
   if(gt)O("mergeGrade");
   if(0==a->t){
-    if(x=strGrade(a,r))R x; 
+    if((x=strGrade(a,r)))R x; 
   }
   x=newK(-1,n);//Indices
   y=newK(-1,n);//Temporary storage

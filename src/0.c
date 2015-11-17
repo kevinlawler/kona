@@ -890,7 +890,7 @@ Z void parse(S s, S *argv, C c) {
     while(*s == c || *s == '\t' || *s == '\n') *s++ = '\0';
     *argv++ = s;
     while(*s != '\0' &&  *s != c && *s != '\t' && *s != '\n') s++; }
-  *argv = '\0'; }
+  *argv = NULL; }
 
 #ifndef WIN32
 
