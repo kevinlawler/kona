@@ -11,3 +11,6 @@ I gradeS();
 K newK(I t,I n);
 K mergeGrade(K a,I r);
 void setS(int y,I z);
+I wleft(N x,I y,I z);
+I wright(N x,I y,I z);
+void OS(N x,I y);

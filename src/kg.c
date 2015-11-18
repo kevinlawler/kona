@@ -257,3 +257,14 @@ K radixGrade(K a,I r,uI h)
   cd(w);cd(z);cd(y);
   R x;
 }
+K symGrade(K x,I r)
+{
+  K z=newK(-1,xn);M(x);
+  setS(1,0);DO(xn,S s=kS(x)[i];SV(s,1)=SV(s,1)+1)
+  //O("=== count\n");OS(SYMBOLS,1);
+  if(!r) wleft(SYMBOLS,1,0);
+  else   wright(SYMBOLS,1,0);
+  //O("=== mark\n");OS(SYMBOLS,1);
+  DO(xn,S s=kS(x)[i];I y=SV(s,1);kI(z)[y++]=i;SV(s,1)=y)
+  R z;
+}

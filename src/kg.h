@@ -11,3 +11,7 @@ I FC(F a,F b);
 K radixGrade(K a,I r,uI h);
 K insertGradeU(K a,I r);
 #define IGT 7
+void setS(int y,I z);
+I wleft(N x,I y,I z);
+I wright(N x,I y,I z);
+void OS(N x,I y);

@@ -48,13 +48,26 @@ S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be c
 
 //S spkC(K a){S u=strdupn(kC(a),a->n),v=sp(u);free(u);R v;}
 S spn(S s,I n){I k=0;while(k<n && s[k])k++; S u=strdupn(s,k); if(!u)R 0; S v=sp(u); free(u); R v;} //safer/memory-efficient strdupn
-Z I sx(N x,I y)
+I wleft(N x,I y,I z)
 {
-  if(!x)R y;
-  y=sx(x->c[0],y);
-  if(x->k)SV(x->k,1)=y++;
-  R sx(x->c[1],y);
+  if(!x)R z;
+  z=wleft(x->c[0],y,z);
+  if(x->k&&SV(x->k,y)){I o=SV(x->k,y);SV(x->k,y)=z;z+=o;}
+  R wleft(x->c[1],y,z);
 }
-I gradeS(void){if(!sd)R ns;/*O("sym sort");*/sx(SYMBOLS,0);sd=0;R ns;}
+I wright(N x,I y,I z)
+{
+  if(!x)R z;
+  z=wright(x->c[1],y,z);
+  if(x->k&&SV(x->k,y)){I o=SV(x->k,y);SV(x->k,y)=z;z+=o;}
+  R wright(x->c[0],y,z);
+}
 Z void ssI(N x,int y,I z){if(x){DO(2,ssI(x->c[i],y,z));if(x->k)SV(x->k,y)=z;}}
 void setS(int y,I z){ssI(SYMBOLS,y,z);}
+void OS(N x,I y)
+{
+  if(!x)R;
+  OS(x->c[0],y);
+  if(x->k&&SV(x->k,y))O("%s: %lld\n",x->k,SV(x->k,y));
+  OS(x->c[1],y);
+}

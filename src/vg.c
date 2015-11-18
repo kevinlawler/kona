@@ -26,24 +26,24 @@ K grade_updown(K a, I r)
 {
   I at=a->t, an=a->n;
   P(0< at, RE)
-  if(-3==at) R charGrade(a,r);
-  if(-1==at||-2==at||-4==at){
+  if(-4==at)R symGrade(a,r);
+  if(-3==at)R charGrade(a,r);
+  if(-1==at||-2==at){
     K z;
     if(an<2){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i);R z;}
     else{
       K x=0;uI y,u=(uI)-1,v=0,h=0,k;//MIN,MAX
-      if(-1!=at){x=newK(-1,an);M(x);}
+      if(-2==at){x=newK(-1,an);M(x);}
       //trst();
       //elapsed("x=newK");
-      SW(at){
-      CS(-1,DO(an,y=kI(a)[i];h|=y;if(y<u)u=y;if(y>v)v=y))
-      CS(-2,DO(an,kU(x)[i]=(y=FtoI(kF(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y))
-      CS(-4,gradeS();DO(an,kU(x)[i]=(y=SV(kS(a)[i],1));h|=y;if(y<u)u=y;if(y>v)v=y))}
+      if(-1==at)DO(an,y=kI(a)[i];h|=y;if(y<u)u=y;if(y>v)v=y)
+      else DO(an,kU(x)[i]=(y=FtoI(kF(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)
       //elapsed("fill x");
-      if((u&MSB)!=(v&MSB)){
+      //O("u:%016llx v:%016llx\n",u,v);
+      if((r&&-1==at)||((u&MSB)!=(v&MSB))){
         u=(uI)-1;v=0;h=0;
         if(-1==at){
-          x=newK(-1,an);
+          x=newK(-1,an);M(x);
           DO(an,kU(x)[i]=(y=ItoU(kI(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)}
         else DO(an,kU(x)[i]=(y=ItoU(kI(x)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)}
       k=v-u;

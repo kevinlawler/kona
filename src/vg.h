@@ -42,6 +42,5 @@ K charGrade(K a,I r);
 K at(K x,K y);
 void trst();
 void elapsed(S);
-I gradeS();
-void setS(int y,I z);
 V alloc(size_t);
+K symGrade(K a,I r);
