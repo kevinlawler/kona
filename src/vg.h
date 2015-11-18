@@ -44,3 +44,4 @@ void trst();
 void elapsed(S);
 I gradeS();
 void setS(int y,I z);
+V alloc(size_t);

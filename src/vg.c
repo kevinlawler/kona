@@ -18,6 +18,7 @@
 //if the sort order changes for each instance then sorting is probably based on pointer/reference value
 //if that fails then it may be necessary to look at distinctions between wordfunc,charfunc, valence, proj, etc
 #define DGT (1<<26)
+#define MSB ((uI)IN)
 Z I FtoI(F a){union{F f;I i;}u;if(isnan(a))R LLONG_MIN;u.f=a;R 0>u.i?LLONG_MIN-u.i:u.i;}
 Z uI ItoU(I a){R 0x8000000000000000ULL^(uI)a;}
 
@@ -30,27 +31,26 @@ K grade_updown(K a, I r)
     K z;
     if(an<2){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i);R z;}
     else{
-      uI y,u=(uI)-1,v=0,h=0,k;//MIN,MAX
+      K x=0;uI y,u=(uI)-1,v=0,h=0,k;//MIN,MAX
+      if(-1!=at){x=newK(-1,an);M(x);}
       //trst();
-      K x=newK(-1,an);M(x);
       //elapsed("x=newK");
       SW(at){
-      //CS(-1,DO(an,kU(x)[i]=(y=ItoU(kI(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y))
-      //CS(-2,DO(an,kU(x)[i]=(y=ItoU(FtoI(kF(a)[i])));h|=y;if(y<u)u=y;if(y>v)v=y))
-      CS(-1,DO(an,kU(x)[i]=(y=kI(a)[i]);h|=y;if(y<u)u=y;if(y>v)v=y))
+      CS(-1,DO(an,y=kI(a)[i];h|=y;if(y<u)u=y;if(y>v)v=y))
       CS(-2,DO(an,kU(x)[i]=(y=FtoI(kF(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y))
       CS(-4,gradeS();DO(an,kU(x)[i]=(y=SV(kS(a)[i],1));h|=y;if(y<u)u=y;if(y>v)v=y))}
       //elapsed("fill x");
-      //if(u>(uI)LLONG_MAX){DO(an,kU(x)[i]=ItoU(kI(x)[i]));h=ItoU((I)h);}
-      // O("u:%016llx v:%016llx\n",u,v);
-      if((u&(uI)IN)!=(v&(uI)IN)){
+      if((u&MSB)!=(v&MSB)){
         u=(uI)-1;v=0;h=0;
-        DO(an,kU(x)[i]=(y=ItoU(kI(x)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)}
+        if(-1==at){
+          x=newK(-1,an);
+          DO(an,kU(x)[i]=(y=ItoU(kI(a)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)}
+        else DO(an,kU(x)[i]=(y=ItoU(kI(x)[i]));h|=y;if(y<u)u=y;if(y>v)v=y)}
       k=v-u;
            if(!k){z=newK(-1,an);M(z);DO(an,kI(z)[i]=i)}
-      else if(xn<IGT)z=insertGradeU(x,r);
-      else if((k<DGT)&&((9*an+(1^19))>2*k))z=distributionGrade(x,r,u,v);
-      else z=radixGrade(x,r,h);
+      else if(an<IGT)z=insertGradeU(x?x:a,r);
+      else if((k<DGT)&&((9*an+(1^19))>2*k))z=distributionGrade(x?x:a,r,u,v);
+      else z=radixGrade(x?x:a,r,h);
       //elapsed("sort");
       cd(x); }
     R z; }
@@ -68,24 +68,6 @@ K enlist(K x)
   if(-2==t)*kF(z)=*kF(x);
   if(-1==t)*kI(z)=*kI(x);
   if( 0==t)*kK(z)=ci(x);
-  R z;
-}
-
-K distRange(K a,K au,uI u,uI v)//u,v: precomputed min,max
-{//Variation on Knuth Algorithm 5.2D Distribution counting
-  I n=a->n,b=v-u+1,*c,j=0;
-  K d=newK(-1,b);U(d)
-  c=kI(d); //assumes # slots are set to 0
-  K z=newK(-1,n);M(d,z);
-  //elapsed("alloc");
-  DO(n,uI x=kU(au)[i]-u;if(!c[x]){c[x]=-1;kI(z)[j++]=kI(a)[i];})
-  //elapsed("fill");
-  if(n==j)GC;
-  K y=newK(-1,j);M(d,z,y);
-  memcpy(kI(y),kI(z),j*sizeof(I));cd(z);z=y;
-  //elapsed("resize");
-cleanup:
-  cd(d);
   R z;
 }
 
@@ -113,6 +95,57 @@ Z K symRange(K x)
   R y;
 }
 
+typedef struct _H{K d;I n;K x;I u;}*H;
+Z void freeH(H a){ cd(a->d);cd(a->x);free(a); }
+Z H newH(I n)
+{
+  H a=(H)alloc(sizeof(struct _H));if(!a)R 0;
+  a->d=a->x=0;
+  a->d=newK(-1,3*(n+1));if(!a->d)GC;
+  a->x=newK(-1,3*(n+1));if(!a->x)GC;
+  a->n=n;a->u=3;
+  R a;
+cleanup:
+  freeH(a);
+  R 0;
+}
+
+Z uI hg(H a,uI hk,uI k)
+{
+  uI u=3+3*(hk%a->n);uI*h=kU(a->d),*x=kU(a->x);
+  while(h[u+0]){
+    if(k==h[u+0])R h[u+1];
+    u=h[u+2];if(h!=x)h=x;
+  }
+  R 0;
+}
+
+Z void hs(H a,uI hk,uI k,I v)
+{
+  uI u=3+3*(hk%a->n);uI*h=kU(a->d),*x=kU(a->x);
+  if(0==h[u+0]){h[u+0]=k;h[u+1]=v;R;}
+  while(h[u+2]){u=h[u+2];if(h!=x)h=x;}
+  u=(h[u+2]=a->u);a->u+=3;
+  if(h!=x)h=x;
+  h[u+0]=k;h[u+1]=v;
+}
+
+Z K hashRange(K x)
+{
+  I j=0;
+  H h=newH(xn);if(!h)R 0;
+  K z=newK(xt,xn);if(!z)GC;
+  DO(xn,uI u=kU(x)[i];if(!u)u=IN;if(!hg(h,u,u)){hs(h,u,u,-1);kI(z)[j++]=kI(x)[i];})
+  //O("u:%lld xn:%lld\n",u,xn);
+  if(xn==j)GC;
+  K y=newK(xt,j);if(!y)GC;
+  memcpy(kI(y),kI(z),j*sizeof(I));
+  cd(z);z=y;
+cleanup:
+  freeH(h);
+  R z;
+}
+
 K range(K a)
 { 
   I t=a->t, n=a->n;
@@ -120,30 +153,13 @@ K range(K a)
   I u=n,*h=0,*m=0;
   P(t>0,RE)
   //trst();
-  if(-4==t)R symRange(a);
-  else if(-3==t)R charRange(a);
-  else if(-1==t||-2==t){
-    K x=0;
-    uI hh=0,uu=(uI)-1,vv=0,y;
-    if(-1==t){DO(n,y=kU(a)[i];hh|=y;if(y<uu)uu=y;if(y>vv)vv=y);x=a;}
-    else{
-      x=newK(-1,n);M(x);
-      DO(n,kU(x)[i]=(y=FtoI(kF(a)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y)}
-    //elapsed("fill x");
-    if((uu&(uI)IN)!=(vv&(uI)IN)){
-      hh=0;uu=(uI)-1;vv=0;
-      if(-1==t){
-        x=newK(-1,n);M(x);
-        DO(n,kU(x)[i]=(y=ItoU(kI(a)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y) }
-      else DO(n,kU(x)[i]=(y=ItoU(kI(x)[i]));hh|=y;if(y<uu)uu=y;if(y>vv)vv=y) }
-    //elapsed("cvtu");
-    if(vv-uu<DGT){z=distRange(a,x,uu,vv);if(x!=a)cd(x);R z;}
-    else g=radixGrade(x,0,hh);
-    if(x!=a)cd(x);
-    if(!g)R 0;
-  }
+  SW(-t){
+  CSR(1,)
+  CSR(2,R hashRange(a))
+  CSR(3,R charRange(a))
+  CSR(4,R symRange(a)) }
 
-  if(!g)g=grade_up(a);if(!g)GC;h=kI(g);
+  g=grade_up(a);if(!g)GC;h=kI(g);
   //elapsed("grade up");
   k=newK(-1,n);if(!k)GC;m=kI(k);
   DO(n,m[h[i]]=i);
@@ -156,18 +172,13 @@ K range(K a)
   //<v    returns 0 1
   //?v    returns 2 2.0
   //=v    returns ,0 ,1
-  if(-2==t)DO(n-1, if(kF(a)[h[n-i-1]]==kF(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
-  if(-1==t)DO(n-1, if(kI(a)[h[n-i-1]]==kI(a)[h[n-i-2]])    {h[n-i-1]=-1;--u;})
-  if( 0==t)DO(n-1, if(matchI(kK(a)[h[n-i-1]],kK(a)[h[n-i-2]]))   {h[n-i-1]=-1;--u;})
+  DO(n-1, if(matchI(kK(a)[h[n-i-1]],kK(a)[h[n-i-2]])){h[n-i-1]=-1;--u;})
   //elapsed("search same");
 
   z=newK(t,u); if(!z) GC;
   I x=0;
 
-  //This could be refactored
-  if(-2==t)DO(n, if(h[m[i]]>-1)kF(z)[x++]=kF(a)[h[m[i]]] )
-  if(-1==t)DO(n, if(h[m[i]]>-1)kI(z)[x++]=kI(a)[h[m[i]]] )
-  if( 0==t)DO(n, if(h[m[i]]>-1)kK(z)[x++]=ci(kK(a)[h[m[i]]]))
+  DO(n, if(h[m[i]]>-1)kK(z)[x++]=ci(kK(a)[h[m[i]]]))
   //elapsed("fill");
 
 cleanup:
