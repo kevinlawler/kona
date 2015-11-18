@@ -35,8 +35,8 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a); fer=fom=0; if(clo)cd(clo);clo=0;
-  K y = X(b); fer=fom=0; if(clo)cd(clo);clo=0;
+  K x = X(a); fer=fom=0; if(cls){cd(cls);cls=0;}
+  K y = X(b); fer=fom=0; if(cls){cd(cls);cls=0;}
   I m=matchI(x,y);
 
   if(!m)
