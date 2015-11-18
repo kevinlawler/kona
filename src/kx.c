@@ -420,7 +420,7 @@ K vf_ex(V q, K g)
 
   if(2==k && a && b){ fnc=DT[(L)q].text; 
     if(fnci<127){fncp[fnci]=q; fnci++;} 
-    if(cls && a->t==6){cd(a);a=cls;} 
+    if(cls && a->t==6)a=cls; 
     z=((K(*)(K,K))DT[(L)q].func)(a,b); GC;}
   //? (+).1 -> err ; {[a;b]a+b} 1 -> err
   if(2==k && !a){VE; GC;} //Reachable? Projection?
