@@ -44,3 +44,4 @@ void trst();
 void elapsed(S);
 V alloc(size_t);
 K symGrade(K a,I r);
+I cl2(I v);

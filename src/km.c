@@ -34,7 +34,6 @@ F mUsed=0.0, mMax=0.0;
 #else 
 #define MAX_OBJECT_LENGTH (II - 1) //for catching obviously incorrect allocations
 #endif
-Z I cl2(I v);
 Z I kexpander(K *p,I n);
 Z K kapn_(K *a,V v,I n);
 Z V amem(I k);
@@ -168,7 +167,7 @@ Z V unpool(I r)
   R z;
 }
 
-Z I cl2(I v) //optimized 64-bit ceil(log_2(I)) 
+I cl2(I v) //optimized 64-bit ceil(log_2(I)) 
 {
     if(!v)R -1;// no bits set
     I e = 0;

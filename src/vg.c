@@ -95,54 +95,33 @@ Z K symRange(K x)
   R y;
 }
 
-typedef struct _H{K d;I n;K x;I u;}*H;
-Z void freeH(H a){ cd(a->d);cd(a->x);free(a); }
-Z H newH(I n)
+Z K newH(I n){ I m=1<<(2+cl2(n));K h=newK(-1,m);M(h);R h; }
+Z I hg(K h,uI hk,I k,uI*p)
 {
-  H a=(H)alloc(sizeof(struct _H));if(!a)R 0;
-  a->d=a->x=0;
-  a->d=newK(-1,3*(n+1));if(!a->d)GC;
-  a->x=newK(-1,3*(n+1));if(!a->x)GC;
-  a->n=n;a->u=3;
-  R a;
-cleanup:
-  freeH(a);
-  R 0;
+  I n=h->n,*d=kI(h);uI u=hk&(n-1);
+  while(d[u]){
+    if(k==d[u])R k;
+    if(++u==n)u=0;
+  } *p=u;R 0;
 }
-
-Z uI hg(H a,uI hk,uI k)
-{
-  uI u=3+3*(hk%a->n);uI*h=kU(a->d),*x=kU(a->x);
-  while(h[u+0]){
-    if(k==h[u+0])R h[u+1];
-    u=h[u+2];if(h!=x)h=x;
-  }
-  R 0;
-}
-
-Z void hs(H a,uI hk,uI k,I v)
-{
-  uI u=3+3*(hk%a->n);uI*h=kU(a->d),*x=kU(a->x);
-  if(0==h[u+0]){h[u+0]=k;h[u+1]=v;R;}
-  while(h[u+2]){u=h[u+2];if(h!=x)h=x;}
-  u=(h[u+2]=a->u);a->u+=3;
-  if(h!=x)h=x;
-  h[u+0]=k;h[u+1]=v;
-}
+#define hs(h,p,k) kI(h)[p]=(k)
 
 Z K hashRange(K x)
 {
-  I j=0;
-  H h=newH(xn);if(!h)R 0;
-  K z=newK(xt,xn);if(!z)GC;
-  DO(xn,uI u=kU(x)[i];if(!u)u=IN;if(!hg(h,u,u)){hs(h,u,u,-1);kI(z)[j++]=kI(x)[i];})
+  I j=0,sa=0,h0=0;uI m=0;
+  K h=newH(xn);M(h);
+  K z=newK(xt,xn);M(h,z);
+  DO(xn,m|=kU(x)[i]);while(!(1&m)){m>>=1;sa++;}
+  DO(xn,uI p;uI v=kU(x)[i];uI u=v>>sa;
+      if(!v){if(!h0){h0=1;kI(z)[j++]=0;}}
+      else if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;})
   //O("u:%lld xn:%lld\n",u,xn);
   if(xn==j)GC;
   K y=newK(xt,j);if(!y)GC;
   memcpy(kI(y),kI(z),j*sizeof(I));
   cd(z);z=y;
 cleanup:
-  freeH(h);
+  cd(h);
   R z;
 }
 
