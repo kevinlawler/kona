@@ -127,16 +127,17 @@ cleanup:
   R z;
 }
 
+Z I SEQ(K x,K y){if(xn!=yn)R 1;R memcmp(kC(x),kC(y),xn);}
 Z K newSH(I n){ I m=1<<(HFR+cl2(n));K sh=newK(-1,m);M(sh);R sh; }
-Z S shg(K sh,uI hk,S k,uI*p)
+Z K shg(K sh,uI hk,K k,uI*p)
 {
-  I n=sh->n;S*d=kS(sh);uI u=hk&(n-1);
+  I n=sh->n;K*d=kK(sh);uI u=hk&(n-1);
   while(d[u]){
-    if(!SC(k,d[u])){*p=u;R k;}
+    if(!SEQ(k,d[u])){*p=u;R k;}
     if(++u==n)u=0;
   }*p=u;R 0;
 }
-#define shs(sh,p,k) kS(sh)[p]=(k)
+#define shs(sh,p,k) kK(sh)[p]=(k)
 
 uint32_t fnv1a(UC *x,I n)//Fowler-Noll-Vo FNV-1a hash
 {
@@ -151,7 +152,7 @@ Z K strRange(K x)
   K sh=newSH(xn);M(sh);
   K z=newK(xt,xn);M(sh,z);
   DO(xn,uI p;K kv=kK(x)[i];S v=kC(kv);
-     if(!shg(sh,fnv1a((UC*)v,kv->n),v,&p)){shs(sh,p,v);kK(z)[j++]=ci(kv);})
+     if(!shg(sh,fnv1a((UC*)v,kv->n),kv,&p)){shs(sh,p,kv);kK(z)[j++]=ci(kv);})
   if(xn==j)GC;
   K y=newK(xt,j);if(!y)GC;
   DO(j,kK(y)[i]=ci(kK(z)[i]));cd(z);z=y;
