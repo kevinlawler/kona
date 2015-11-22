@@ -71,7 +71,7 @@ K enlist(K x)
   R z;
 }
 
-K charRange(K a)
+Z K charRange(K a)
 {
   I n=a->n,c[1+UCHAR_MAX],j=0;
   memset(c,0,(1+UCHAR_MAX)*sizeof(I));
@@ -95,14 +95,15 @@ Z K symRange(K x)
   R y;
 }
 
-Z K newH(I n){ I m=1<<(2+cl2(n));K h=newK(-1,m);M(h);R h; }
+#define HFR 2
+Z K newH(I n){ I m=1<<(HFR+cl2(n));K h=newK(-1,m);M(h);R h; }
 Z I hg(K h,uI hk,I k,uI*p)
 {
   I n=h->n,*d=kI(h);uI u=hk&(n-1);
   while(d[u]){
-    if(k==d[u])R k;
+    if(k==d[u]){*p=u;R k;}
     if(++u==n)u=0;
-  } *p=u;R 0;
+  }*p=u;R 0;
 }
 #define hs(h,p,k) kI(h)[p]=(k)
 
@@ -111,7 +112,7 @@ Z K hashRange(K x)
   I j=0,sa=0,h0=0;uI m=0;
   K h=newH(xn);M(h);
   K z=newK(xt,xn);M(h,z);
-  DO(xn,m|=kU(x)[i]);while(!(1&m)){m>>=1;sa++;}
+  DO(xn,m|=kU(x)[i]);if(m)while(!(1&m)){m>>=1;sa++;}
   DO(xn,uI p;uI u;uI v=kU(x)[i];
       if(!v){if(!h0){h0=1;kI(z)[j++]=0;}}
       else{u=v>>sa;u^=(u>>32);
@@ -126,14 +127,14 @@ cleanup:
   R z;
 }
 
-Z K newSH(I n){ I m=1<<(2+cl2(n));K sh=newK(-1,m);M(sh);R sh; }
+Z K newSH(I n){ I m=1<<(HFR+cl2(n));K sh=newK(-1,m);M(sh);R sh; }
 Z S shg(K sh,uI hk,S k,uI*p)
 {
   I n=sh->n;S*d=kS(sh);uI u=hk&(n-1);
   while(d[u]){
-    if(!SC(k,d[u]))R k;
+    if(!SC(k,d[u])){*p=u;R k;}
     if(++u==n)u=0;
-  } *p=u;R 0;
+  }*p=u;R 0;
 }
 #define shs(sh,p,k) kS(sh)[p]=(k)
 
@@ -165,7 +166,6 @@ K range(K a)
   K z=0,g=0,k=0;
   I u=n,*h=0,*m=0;
   P(t>0,RE)
-  //trst();
   SW(-t){
   CSR(1,)
   CSR(2,R hashRange(a))
@@ -173,11 +173,9 @@ K range(K a)
   CSR(4,R symRange(a)) }
 
   if((z=strRange(a)))R z;
-  //elapsed("grade up");
   g=grade_up(a);if(!g)GC;h=kI(g);
   k=newK(-1,n);if(!k)GC;m=kI(k);
   DO(n,m[h[i]]=i);
-  //elapsed("reorder");
 
   //K3.2
   //v0:2.;v1:1.9999999999999
@@ -187,13 +185,11 @@ K range(K a)
   //?v    returns 2 2.0
   //=v    returns ,0 ,1
   DO(n-1, if(matchI(kK(a)[h[n-i-1]],kK(a)[h[n-i-2]])){h[n-i-1]=-1;--u;})
-  //elapsed("search same");
 
   z=newK(t,u); if(!z) GC;
   I x=0;
 
   DO(n, if(h[m[i]]>-1)kK(z)[x++]=ci(kK(a)[h[m[i]]]))
-  //elapsed("fill");
 
 cleanup:
   cd(k);
@@ -201,21 +197,47 @@ cleanup:
   R z;
 }
 
+Z K charGroup(K x)
+{
+  I h[1+UCHAR_MAX],c[1+UCHAR_MAX],j=0;
+  memset(h,0,(1+UCHAR_MAX)*sizeof(I));
+  memset(c,0,(1+UCHAR_MAX)*sizeof(I));
+  DO(xn,UC u=(UC)kC(x)[i];if(!h[u])h[u]=++j;I w=h[u]-1;c[w]++;)
+  K y=newK(0,j);M(y);
+  DO(j,K z=newK(-1,c[i]);M(z,y);kK(y)[i]=z;z->n=0)
+  DO(xn,UC u=(UC)kC(x)[i];I w=h[u]-1;K z=kK(y)[w];kI(z)[z->n++]=i)
+  R y;
+}
+
+Z K symGroup(K x)
+{
+  I j=0;
+  K uk=newK(-1,xn);M(uk);I*u=kI(uk);
+  setS(1,0);setS(2,0);
+  DO(xn,S s=kS(x)[i];if(!SV(s,2)){u[j]=(I)s;SV(s,2)=++j;}SV(s,1)++)
+  K y=newK(0,j);M(y,uk);
+  DO(j,K z=newK(-1,SV((S)u[i],1));M(z,y,uk);z->n=0;kK(y)[i]=z)
+  DO(xn,S s=kS(x)[i];I w=SV(s,2)-1;K z=kK(y)[w];kI(z)[z->n++]=i)
+  cd(uk);
+  R y;
+}
+
 K group(K x)
 {
   I t=xt, n=xn;
   P(t>0,RE)
-  
   I u=n,*g,*h;
-  K z,b,c;
+  K z=0,b=0,c=0;
+
+  if(-4==t)R symGroup(x);
+  if(-3==t)R charGroup(x);
+  
   M(b=grade_up(x));g=kI(b);
   //Nastier code would eliminate this second sort.
   c=newK(-1,n);M(b,c);h=kI(c);
   DO(n,h[g[i]]=i);
   //Step through, on duplicate set uniques-=1, mark by inverting sign of corresponding index
   //I *h=kI(c);
-  if(-4==t)DO(n-1,if(kS(x)[g[n-i-1]]==kS(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
-  if(-3==t)DO(n-1,if(kC(x)[g[n-i-1]]==kC(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
   if(-2==t)DO(n-1,if(kF(x)[g[n-i-1]]==kF(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
   if(-1==t)DO(n-1,if(kI(x)[g[n-i-1]]==kI(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
   if( 0==t)DO(n-1,if(matchI(kK(x)[g[n-i-1]],kK(x)[g[n-i-2]])){--u;g[n-i-1]*=-1;})
