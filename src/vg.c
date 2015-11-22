@@ -126,6 +126,39 @@ cleanup:
   R z;
 }
 
+Z K newSH(I n){ I m=1<<(2+cl2(n));K sh=newK(-1,m);M(sh);R sh; }
+Z S shg(K sh,uI hk,S k,uI*p)
+{
+  I n=sh->n;S*d=kS(sh);uI u=hk&(n-1);
+  while(d[u]){
+    if(!SC(k,d[u]))R k;
+    if(++u==n)u=0;
+  } *p=u;R 0;
+}
+#define shs(sh,p,k) kS(sh)[p]=(k)
+
+uint32_t fnv1a(UC *x,I n)//Fowler-Noll-Vo FNV-1a hash
+{
+  uint32_t h=2166136261UL;
+  DO(n,h^=x[i];h*=16777619UL)R h;
+}
+
+Z K strRange(K x)
+{
+  I j=0;
+  DO(xn,if(-3!=kK(x)[i]->t)R 0)
+  K sh=newSH(xn);M(sh);
+  K z=newK(xt,xn);M(sh,z);
+  DO(xn,uI p;K kv=kK(x)[i];S v=kC(kv);
+     if(!shg(sh,fnv1a((UC*)v,kv->n),v,&p)){shs(sh,p,v);kK(z)[j++]=ci(kv);})
+  if(xn==j)GC;
+  K y=newK(xt,j);if(!y)GC;
+  DO(j,kK(y)[i]=ci(kK(z)[i]));cd(z);z=y;
+cleanup:
+  cd(sh);
+  R z;
+}
+
 K range(K a)
 { 
   I t=a->t, n=a->n;
@@ -139,8 +172,9 @@ K range(K a)
   CSR(3,R charRange(a))
   CSR(4,R symRange(a)) }
 
-  g=grade_up(a);if(!g)GC;h=kI(g);
+  if((z=strRange(a)))R z;
   //elapsed("grade up");
+  g=grade_up(a);if(!g)GC;h=kI(g);
   k=newK(-1,n);if(!k)GC;m=kI(k);
   DO(n,m[h[i]]=i);
   //elapsed("reorder");

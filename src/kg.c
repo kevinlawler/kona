@@ -61,13 +61,10 @@ I KC(K a, K b)//List Compare (K Compare)
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   I A=ABS(at);
   
-  // K3.2: <("aaa";"bb";,"c";"d") is 0 1 2 3
-  if(3!=A){
-    if(at<bt)R -1;
-    if(at>bt)R 1;
-    if(an<bn) R -1;
-    if(an>bn) R 1;
-  }
+  if(at<bt)R -1;
+  if(at>bt)R  1;
+  if(an<bn)R -1;
+  if(an>bn)R  1;
 
   I u,v;C c,d;
   if     (7==A)R 0;//TODO: sort functions?
@@ -158,11 +155,13 @@ Z void doMergeGrade(K a, I r, K x, K y, I s, I t)
   else doMergeGrade(a,r,x,y,m+1,t);
   merger(a,r,x,y,s,t,m);
 }
-Z uI StoU(S s,I n){ uI h=0;DO(8,h<<=8;if(i<n)h+=(UC)s[i])R h; }
+Z uI StoU(S s,I n,I t){
+  uI h=0;
+  if(3==t)R(((uI)-1)<<8)+(UC)*s;DO(8,h<<=8;h+=i<n?(UC)s[i]:0)R h; }
 Z K strGrade(K a,I r)
 {
   uI h=0;I k,s=1;K z=0,x=newK(-1,a->n);M(x);
-  DO(xn,K y=kK(a)[i];if(3!=ABS(yt)||yn>8){s=0;break;}kU(x)[i]=(k=StoU(kC(y),yn));h|=k)
+  DO(xn,K y=kK(a)[i];if(3!=ABS(yt)||yn>8){s=0;break;}kU(x)[i]=(k=StoU(kC(y),yn,yt));h|=k)
   if(s)z=radixGrade(x,r,h);
   cd(x);R z;
 }
