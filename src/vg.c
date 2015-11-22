@@ -112,9 +112,10 @@ Z K hashRange(K x)
   K h=newH(xn);M(h);
   K z=newK(xt,xn);M(h,z);
   DO(xn,m|=kU(x)[i]);while(!(1&m)){m>>=1;sa++;}
-  DO(xn,uI p;uI v=kU(x)[i];uI u=v>>sa;
+  DO(xn,uI p;uI u;uI v=kU(x)[i];
       if(!v){if(!h0){h0=1;kI(z)[j++]=0;}}
-      else if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;})
+      else{u=v>>sa;u^=(u>>32);
+      if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;}})
   //O("u:%lld xn:%lld\n",u,xn);
   if(xn==j)GC;
   K y=newK(xt,j);if(!y)GC;
