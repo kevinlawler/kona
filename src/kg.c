@@ -73,10 +73,11 @@ I KC(K a, K b)//List Compare (K Compare)
   else if(6==A)R 0;
   else if(5==A)R 0;//TODO: sort dictionaries?
   else if(4==A)DO(an, u=SC(kS(a)[i],kS(b)[i]); if(u) R u)
-  else if(3==A)DO(an, c=kC(a)[i]; d=kC(b)[i]; if(c<d)R -1; if(c>d) R 1)
+  else if(3==A)DO(MIN(an,bn)+1, c=kC(a)[i]; d=kC(b)[i]; if(c<d)R -1;if(c>d) R 1)
   else if(2==A)DO(an, u=FC(kF(a)[i],kF(b)[i]); if(u)R u)
-  else if(1==A)DO(an, u=kI(a)[i]; v=kI(b)[i]; if(u<v)R -1; if(u>v) R 1)  
+  else if(1==A)DO(an, u=kI(a)[i]; v=kI(b)[i]; if(u<v)R -1;if(u>v) R 1)  
   else if(0==A)DO(an, u=KC(kK(a)[i],kK(b)[i]); if(u) R u)
+  if(3==A&&an!=bn)R an<bn?-1:1;
   R 0;
 }
 
@@ -157,11 +158,11 @@ Z void doMergeGrade(K a, I r, K x, K y, I s, I t)
   else doMergeGrade(a,r,x,y,m+1,t);
   merger(a,r,x,y,s,t,m);
 }
-Z uI StoU(S s,I n,I t){ uI h=0;DO(8,h<<=8;h+=i<n?(UC)s[i]:0)R h; }
+Z uI StoU(S s,I n,I t){ uI h=0;DO(8,h<<=8;h+=i<n?(UC)s[i]:0)R h|(n?1:0); }
 Z K strGrade(K a,I r)
 {
   uI h=0;I k,s=1;K z=0,x=newK(-1,a->n);M(x);
-  DO(xn,K y=kK(a)[i];if(-3!=yt||yn>8){s=0;break;}kU(x)[i]=(k=StoU(kC(y),yn,yt));h|=k)
+  DO(xn,K y=kK(a)[i];if(-3!=yt||yn>7){s=0;break;}kU(x)[i]=(k=StoU(kC(y),yn,yt));h|=k)
   if(s)z=radixGrade(x,r,h);
   cd(x);R z;
 }
