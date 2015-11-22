@@ -325,7 +325,7 @@ K plus_scan(K x, K y)
 
   K z;
   
-  if(!x && y->c==1 && (yt==t || sizeof(I)==sizeof(F))) z=ci(y); //reuse vector you know will be discarded
+  if(!x && rc(y) && (yt==t || sizeof(I)==sizeof(F))) z=ci(y); //reuse vector you know will be discarded
   else z=newK(t,n);
   U(z)
 

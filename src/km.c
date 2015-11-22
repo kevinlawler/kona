@@ -36,8 +36,8 @@ F mUsed=0.0, mMax=0.0;
 #endif
 Z I kexpander(K *p,I n);
 Z K kapn_(K *a,V v,I n);
-Z V amem(I k);
-Z V kalloc(I k);
+Z V amem(I k,I r);
+Z V kalloc(I k,I*r);
 Z V unpool(I r);
 
 V alloc(size_t sz) {
@@ -51,17 +51,23 @@ I OOM_CD(I g, ...) //out-of-memory count-decrement
   va_start(a,g);while(o!=(v=va_arg(a,V)))cd(v); va_end(a);
   R 0;
 }
+I rc(K x){R (x->_c)>>8;}
+Z K ic(K x){x->_c+=256;R x;}
+Z K dc(K x){x->_c-=256;R x;}
+Z I glsz(K x){R 255&(x->_c);}
+Z K slsz(K x,I r){x->_c&=~(uI)255;x->_c|=r;R x;}
+K mrc(K x,I c){I k=sz(xt,xn);I r=lsz(k);x->_c=(c<<8)|r;R x;}
 //Arthur says he doesn't use malloc or free. Andrei Moutchkine claims smallest unit is vm page (his truss says no malloc + add pages one at a time).
 //Arthur not using malloc is probably true. No strdup & related functions in binary's strings. Note: Skelton references "different allocator" not in \w report
 //This source would be improved by getting ridding of remaing malloc/calloc/realloc
 K cd(K x)
 {
   #ifdef DEBUG
-  if(x && x->c <=0 ) { er(Tried to cd() already freed item) dd(tests) dd((L)x) dd(x->c) dd(x->t) dd(x->n) show(x); }
+  if(x && rc(x) <=0 ) { er(Tried to cd() already freed item) dd(tests) dd((L)x) dd(rc(x)) dd(x->t) dd(x->n) show(x); }
   #endif 
 
   P(!x,0)
-  x->c -= 1;
+  dc(x);
 
   SW(xt)
   {
@@ -69,7 +75,7 @@ K cd(K x)
     CS(0, DO(xn, cd(kK(x)[xn-i-1]))) //repool in reverse, attempt to maintain order
   }
 
-  if(x->c > 0) R x;
+  if(x->_c > 255) R x;
 
   #ifdef DEBUG
   DO(kreci, if(x==krec[i]){krec[i]=0; break; })
@@ -85,11 +91,12 @@ K cd(K x)
   #endif
   //assumes seven_type x->k is < PG
   I o=((size_t)x)&(PG-1);//file-mapped? 1:
-  I k=sz(xt,xn), r=lsz(k);
+  I r=glsz(x);
   //assert file-maps have sizeof(V)==o and unpooled blocks never do (reasonable)
   //in 32-bit Linux: sizeof(V)==4 but file-maps have o==8
   //in 64-bit Linux: sizeof(V)==8 and file-maps have o==8
   if(o==8 || r>KP_MAX){    //(file-mapped or really big) do not go back into pool.
+    I k=sz(xt,xn);
     I res=munmap(((V)x)-o,k+o); if(res)R UE; if(r>KP_MAX) mUsed -= (k+o);
   }
   else repool(x,r);
@@ -99,7 +106,7 @@ K cd(K x)
 K ci(K x)
 {
   P(!x,0)
-  x->c++;
+  ic(x);
   SW(xt)
   {
     CSR(5,)
@@ -123,27 +130,27 @@ K newK(I t, I n)
 { 
   K z;
   if(n>0 && n>MAX_OBJECT_LENGTH)R ME;//coarse (ignores bytes per type). but sz can overflow
-  I k=sz(t,n);
-  U(z=kalloc(k))
+  I k=sz(t,n),r;
+  U(z=kalloc(k,&r))
   //^^ relies on MAP_ANON being zero-filled for 0==t || 5==t (cd() the half-complete), 3==ABS(t) kC(z)[n]=0 (+-3 types emulate c-string)
-  z->c=1; z->t=t; z->n=n;
+  ic(slsz(z,r)); z->t=t; z->n=n;
   #ifdef DEBUG
   krec[kreci++]=z;
   #endif
   R z;
 }
 
-Z V kalloc(I k) //bytes. assumes k>0
+Z V kalloc(I k,I*r) //bytes. assumes k>0
 {
-  I r=lsz(k);
-  if(r>KP_MAX)R amem(k);// allocate for objects of sz > 2^KP_MAX
-  R unpool(r);
+  *r=lsz(k);
+  if(*r>KP_MAX)R amem(k,*r);// allocate for objects of sz > 2^KP_MAX
+  R unpool(*r);
 }
 
-Z V amem(I k) {
+Z V amem(I k,I r) {
   K z;
   if(MAP_FAILED==(z=mmap(0,k,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON,-1,0)))R ME;
-  I r=lsz(k); if(r>KP_MAX){ mUsed += k;  if(mUsed>mMax)mMax=mUsed; }
+  if(r>KP_MAX){ mUsed += k;  if(mUsed>mMax)mMax=mUsed; }
   R z;
 }
 
@@ -154,7 +161,7 @@ Z V unpool(I r)
   I k= ((I)1)<<r;
   if(!*L)
   {
-    U(z=amem(k))
+    U(z=amem(k,r))
     if(k<PG)
     { 
       V y=z;
@@ -198,20 +205,20 @@ Z I kexpander(K*p,I n) //expand only.
 {
   K a=*p;
   V v; I c=sz(a->t,a->n),d=sz(a->t,n),e=nearPG(c),f=d-e;
-  I r = lsz(c);
+  I r = glsz(a);
   if(r>KP_MAX) //Large anonymous mmapped structure - (simulate mremap)
   {
     if(f<=0) R 1;
 #if defined(__linux__)
     V*w=mremap(a,c,d,MREMAP_MAYMOVE);
-    if(MAP_FAILED!=w) {*p=(K)w; R 1;}
+    if(MAP_FAILED!=w) {*p=(K)w;R 1;}
 #else  
     F m=f/(F)PG; I n=m, g=1; if(m>n) n++;
     DO(n, if(-1==msync(a+e+PG*i,1,MS_ASYNC)) {if(errno!=ENOMEM) {g=0; break;}}
           else {g=0; break;})
     if(g) if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1; //Add pages to end
 #endif
-    U(v=amem(d))   memcpy(v,a,c); *p=v;
+    U(v=amem(d,r))   memcpy(v,a,c); *p=v;
     I res=munmap(a,c); if(res) { show(kerr("munmap")); R 0; }
     R 1; //Couldn't add pages, copy to new space
   }
@@ -220,7 +227,7 @@ Z I kexpander(K*p,I n) //expand only.
   if(r==s) R 1; //assert r<=s
   K x=unpool(s); U(x)
   memcpy(x,a,c);
-  *p=x;
+  *p=x;slsz(*p,s);
   repool(a,r);
   R 1;
 }

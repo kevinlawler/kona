@@ -23,7 +23,7 @@ typedef const C* cS;
 typedef unsigned char UC;
 typedef unsigned long UI;
 typedef I veci __attribute__ ((vector_size (16)));
-typedef struct k0{I c,t,n;struct k0*k[1];}*K; //main K object
+typedef struct k0{I _c,t,n;struct k0*k[1];}*K; //main K object
 typedef struct m1{char a,b,c[sizeof(I)-3],d;I n;} M1; //inet sent message header.  m.a?little-:big-endian,m.b is type???, m.d in {0,1,2}->{3:,4:,response}, m.n is size of nested K struct in bytes. c unknown, inserted [5] for 64b alignment
 typedef struct m0{M1 m1;I r;K k;} M0; //r=read so far. inet message reader. there is probably a more elegant way to do this
 enum TYPE_SEVEN_MEMBERS {CONTeXT,DEPTH,CODE,LOCALS,PARAMS,CONJ,CACHE_WD,CACHE_TREE,TYPE_SEVEN_SIZE};  //sp(), code in {-4, -4, -4[3], -3, -4,-4,-4,-4}, Kd(), Kd(), Kv()/0-List-w/-NULLs

@@ -59,7 +59,7 @@ Z K overDyad(K a, V *p, K b) {
                      if(!g)g=newK(ABS(yt),1);
                      memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt));
                      c=dv_ex(d,p-1,g);
-                     if(2==g->c){cd(g);g=0;} cd(d);
+                     if(2==rc(g)){cd(g);g=0;} cd(d);
                      if(!c) GC;) //TODO: oom err/mmo unwind above - oom-g
   if(0==yt) DO(yn-1, d=c;
                      c=dv_ex(d,p-1,kK(y)[i+1]); cd(d);
@@ -628,7 +628,7 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
                 if(grnt){cd(grnt); grnt=0;}} 
               U(x) z=bk(x)?_n():x; 
               if(fer>0 && !fCheck)R z; 
-              if(grnt && (!prnt || prnt->c==2)){if(prnt)cd(prnt); prnt=ci(grnt);} })
+              if(grnt && (!prnt || rc(prnt)==2)){if(prnt)cd(prnt); prnt=ci(grnt);} })
     CS(4, for(i=-1;i<n;i++)
             if(-1==i||bk(v[i])){
               U(x=ex1(v+1+i,0,&i,n,1)) 
@@ -896,11 +896,11 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
     if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5 || ABS(d->t)!=d->t)) ){
       K x = d;
-      if(x->c) {d=kclone(x); cd(x);}
+      if(rc(x)) {d=kclone(x); cd(x);}
     }
     else if((*w)->t!=6){ 
       K x = *w;
-      if(x->c>1) {*w=kclone(x); cd(x);}
+      if(rc(x)>1) {*w=kclone(x); cd(x);}
     }
 
     K h=dot_tetradic_2(w,b,c,d);

@@ -131,3 +131,4 @@ extern TR DT[];
 extern L offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
 K TABLE_END();
 void nfinish();
+I rc(K x);

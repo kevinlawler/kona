@@ -36,3 +36,5 @@ extern I tests;
 K cd(K a);
 I OOM_CD(I g, ...);
 I cl2(I v);
+I rc(K x);
+K mrc(K x,I c);
