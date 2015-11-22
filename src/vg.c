@@ -95,7 +95,7 @@ Z K symRange(K x)
   R y;
 }
 
-#define HFR 2
+#define HFR 1
 Z K newH(I n){ I m=1<<(HFR+cl2(n));K h=newK(-1,m);M(h);R h; }
 Z I hg(K h,uI hk,I k,uI*p)
 {
