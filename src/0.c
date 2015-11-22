@@ -107,7 +107,7 @@ K _0m(K a) {
   DO(s, if('\n'!=v[i]&&'\r'!=v[i])kK(z)[d]=(V)1+(L)kK(z)[d]; else if('\n'==v[i])d++) //2nd run: count lengths (cheat & use pointers' space)
   DO(c,e=(L)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
   e=0;
-  DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n; if('\n'==v[e])e++) //3rd run: populate
+  DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=k->n; if('\r'==v[e])e++;if('\n'==v[e])e++) //3rd run: populate
 
 cleanup:
   if(v){if(b)free(v);else {I r=munmap(v,s); if(r)R UE;} }
