@@ -25,7 +25,7 @@
 //Simple tests on Kona confirmed 6 is an improvement over 5
 #define KP_MIN 6  //2^x, must be at least ceil(lg(sizeof(V)))
 #define KP_MAX 25 //2^x, 25->32MB  //TODO: base on available memory at startup (fixed percent? is 32M/2G a good percent?)
-V KP[26]; //KPOOL
+V KP[KP_MAX+1]; //KPOOL
 I PG; //pagesize:  size_t page_size = (size_t) sysconf (_SC_PAGESIZE);
 F mUsed=0.0, mMax=0.0;
 

@@ -5,6 +5,8 @@
 #include "vc.h"
 #include "vg.h"
 
+#include "mt.h"
+
 /* grade / grouping / sorting / shape verbs */
 
 //TODO: sort type-0 lists, functions, symbols, etc.
@@ -107,16 +109,23 @@ Z I hg(K h,uI hk,I k,uI*p)
 }
 #define hs(h,p,k) kI(h)[p]=(k)
 
+Z uI hcc[8]={0,0,0,0,0,0,0,0};
+Z uint32_t hc(uI u)
+{
+    DO(8,u^=hcc[i];u+=u>>8;)
+    return (uint32_t)u^(u>>32);
+}
+
 Z K hashRange(K x)
 {
+  if(!hcc[0])DO(8,hcc[i]=genrand64_int64());
   I j=0,sa=0,h0=0;uI m=0;
   K h=newH(xn);M(h);
   K z=newK(xt,xn);M(h,z);
   DO(xn,m|=kU(x)[i]);if(m)while(!(1&m)){m>>=1;sa++;}
   DO(xn,uI p;uI u;uI v=kU(x)[i];
       if(!v){if(!h0){h0=1;kI(z)[j++]=0;}}
-      else{u=v>>sa;u^=(u>>32);
-      if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;}})
+      else{u=hc(v);if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;}})
   //O("u:%lld xn:%lld\n",u,xn);
   if(xn==j)GC;
   K y=newK(xt,j);if(!y)GC;
