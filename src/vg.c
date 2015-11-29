@@ -224,10 +224,13 @@ Z K symGroup(K x)
   I j=0;
   K uk=newK(-1,xn);M(uk);I*u=kI(uk);
   setS(1,0);setS(2,0);
+  //trst();
   DO(xn,S s=kS(x)[i];if(!SV(s,2)){u[j]=(I)s;SV(s,2)=++j;}SV(s,1)++)
+  //elapsed("fill");
   K y=newK(0,j);M(y,uk);
   DO(j,K z=newK(-1,SV((S)u[i],1));M(z,y,uk);z->n=0;kK(y)[i]=z)
   DO(xn,S s=kS(x)[i];I w=SV(s,2)-1;K z=kK(y)[w];kI(z)[z->n++]=i)
+  //elapsed(" grp");
   cd(uk);
   R y;
 }
@@ -275,9 +278,6 @@ K group(K x)
   c=newK(-1,n);M(b,c);h=kI(c);
   DO(n,h[g[i]]=i);
   //Step through, on duplicate set uniques-=1, mark by inverting sign of corresponding index
-  //I *h=kI(c);
-  if(-2==t)DO(n-1,if(kF(x)[g[n-i-1]]==kF(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
-  if(-1==t)DO(n-1,if(kI(x)[g[n-i-1]]==kI(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
   if( 0==t)DO(n-1,if(matchI(kK(x)[g[n-i-1]],kK(x)[g[n-i-2]])){--u;g[n-i-1]*=-1;})
  
   z=newK(0,u);
