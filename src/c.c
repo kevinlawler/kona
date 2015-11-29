@@ -537,9 +537,8 @@ Z K backslash_t(S s) {
       tmr_ival = r;
       R _n();
     }
-    I d=clock(); 
-    cd(X(s));
-    d=(clock()-d)/((F)CLOCKS_PER_SEC/1000);
+    I d=clock();K z=X(s);d=(clock()-d)/((F)CLOCKS_PER_SEC/1000);
+    cd(z);//it takes time
     R Ki(d);
   }
   R Ki(tmr_ival);

@@ -224,10 +224,13 @@ Z K symGroup(K x)
   I j=0;
   K uk=newK(-1,xn);M(uk);I*u=kI(uk);
   setS(1,0);setS(2,0);
+  //trst();
   DO(xn,S s=kS(x)[i];if(!SV(s,2)){u[j]=(I)s;SV(s,2)=++j;}SV(s,1)++)
+  //elapsed("fill");
   K y=newK(0,j);M(y,uk);
   DO(j,K z=newK(-1,SV((S)u[i],1));M(z,y,uk);z->n=0;kK(y)[i]=z)
   DO(xn,S s=kS(x)[i];I w=SV(s,2)-1;K z=kK(y)[w];kI(z)[z->n++]=i)
+  //elapsed(" grp");
   cd(uk);
   R y;
 }
