@@ -224,13 +224,17 @@ cleanup:
 
 Z K charGroup(K x)
 {
+  trst();
   I h[1+UCHAR_MAX],c[1+UCHAR_MAX],j=0;
   memset(h,0,(1+UCHAR_MAX)*sizeof(I));
   memset(c,0,(1+UCHAR_MAX)*sizeof(I));
   DO(xn,UC u=(UC)kC(x)[i];if(!h[u])h[u]=++j;I w=h[u]-1;c[w]++;)
+  //elapsed(" cnt");
   K y=newK(0,j);M(y);
-  DO(j,K z=newK(-1,c[i]);M(z,y);kK(y)[i]=z;z->n=0)
-  DO(xn,UC u=(UC)kC(x)[i];I w=h[u]-1;K z=kK(y)[w];kI(z)[z->n++]=i)
+  DO(j,K z=newK(-1,c[i]);M(z,y);kK(y)[i]=z;c[i]=0;)
+  //elapsed("newK");
+  DO(xn,UC u=(UC)kC(x)[i];I w=h[u]-1;K z=kK(y)[w];kI(z)[c[w]++]=i)
+  //elapsed("fill");
   R y;
 }
 
@@ -241,17 +245,22 @@ Z K symGroup(K x)
   setS(1,0);setS(2,0);
   DO(xn,S s=kS(x)[i];if(!SV(s,2)){u[j]=(I)s;SV(s,2)=++j;}SV(s,1)++)
   K y=newK(0,j);M(y,uk);
-  DO(j,K z=newK(-1,SV((S)u[i],1));M(z,y,uk);z->n=0;kK(y)[i]=z)
-  DO(xn,S s=kS(x)[i];I w=SV(s,2)-1;K z=kK(y)[w];kI(z)[z->n++]=i)
+  DO(j,S s=(S)u[i];K z=newK(-1,SV(s,1));M(z,y,uk);kK(y)[i]=z;u[i]=0)
+  DO(xn,S s=kS(x)[i];I w=SV(s,2)-1;K z=kK(y)[w];kI(z)[u[w]++]=i)
   cd(uk);
   R y;
 }
 
 Z K groupI(K x,K y,I n)//#x=#a;n=#?a
 {
-  K z=newK(0,n);M(z);
-  DO(n,K v=newK(-1,kI(y)[i]);M(v,z);kK(z)[i]=v;v->n=0)
-  DO(xn,I w=kI(x)[i];K v=kK(z)[w];kI(v)[v->n++]=i)
+  K z=newK(0,n);M(z);I*c=kI(y);
+  if(n<65537){
+    DO(n,K v=newK(-1,c[i]);M(v,z);kK(z)[i]=v;c[i]=0)
+    DO(xn,I w=kI(x)[i];K v=kK(z)[w];kI(v)[c[w]++]=i)
+  }else{
+    DO(n,K v=newK(-1,c[i]);M(v,z);kK(z)[i]=v;v->n=0)
+    DO(xn,I w=kI(x)[i];K v=kK(z)[w];kI(v)[v->n++]=i)
+  }
   cd(y);cd(x);
   R z;
 }

@@ -174,7 +174,7 @@ Z V unpool(I r)
     *L=z;
   }
   z=*L;*L=*z;*z=0;
-  mUsed += ((I)1)<<r;  if(mUsed>mMax)mMax=mUsed;
+  mUsed += k;  if(mUsed>mMax)mMax=mUsed;
   R z;
 }
 
@@ -199,10 +199,11 @@ I cl2(I v) //optimized 64-bit ceil(log_2(I))
 I lsz(I k){R k<=((I)1)<<KP_MIN?KP_MIN:cl2(k);} //pool lane from size. Ignore everywhere lanes < KP_MIN. MAX() was eliminated as an optimization
 I repool(V v,I r)//assert r < KP_MAX 
 {
-  memset(v,0,((I)1)<<r);
+  I k=((I)1)<<r;
+  memset(v,0,k);
   *(V*)v=KP[r];
   KP[r]=v;
-  mUsed -= ((I)1)<<r;
+  mUsed -= k;
   R 0;
 }
 Z I kexpander(K*p,I n) //expand only. 
@@ -225,15 +226,41 @@ Z I kexpander(K*p,I n) //expand only.
     I res=munmap(a,c); if(res) { show(kerr("munmap")); R 0; }
     R 1; //Couldn't add pages, copy to new space
   }
-  I d=sz(a->t,n),s=lsz(d);
+  I d=sz(a->t,n);
   //Standard pool object
-  if(r==s)R 1; //assert r<=s
+  if(d<=(1<<r))R 1;
+  I s=lsz(d);
   K x=kallocI(d,s); U(x)
   I c=sz(a->t,a->n);
   memcpy(x,a,c);
   *p=x; slsz(*p,s);
   repool(a,r);
   R 1;
+}
+
+Z K kap1_(K *a,V v)//at<=0
+{
+  K k=*a;
+  I t=k->t,m=k->n,p=m+1;
+  if(!kexpander(&k,p))R 0;
+  if(k!=*a)
+  {
+    #ifdef DEBUG
+    DO(kreci, if(*a==krec[i]){krec[i]=0; break; })
+    #endif
+    *a=k;
+  }
+  k->n=p;
+  SW(-t)
+  {
+    CS(0, kK(k)[m]=ci(((K*)v)[0]));
+    CS(1, kI(k)[m]=*(I*)v);
+    CS(2, kF(k)[m]=*(F*)v);
+    CS(3, kC(k)[m]=*(C*)v;kC(k)[p]=0);
+    CS(4, kS(k)[m]=*(S*)v)
+    CD:   R 0;
+  }
+  R k;
 }
 
 Z K kapn_(K *a,V v,I n)
@@ -274,7 +301,8 @@ Z K kapn_(K *a,V v,I n)
 
 extern K kapn(K *a,V v,I n){R kapn_(a,v,n);}
 
-extern K kap(K*a,V v){R kapn_(a,v,1);}
+extern K kap(K*a,V v){ if(!a)R 0; R (0<(*a)->t)?kapn_(a,v,1):kap1_(a,v); }
+//extern K kap(K*a,V v){R kapn_(a,v,1);}
 
 N newN(){R unpool(lsz(sizeof(Node)));}
 PDA newPDA(){PDA p=unpool(lsz(sizeof(Pda)));U(p) p->c=alloc(1); if(!p->c){ME;R 0;} R p;}
