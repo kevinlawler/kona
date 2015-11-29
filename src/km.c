@@ -140,11 +140,15 @@ K newK(I t, I n)
   R z;
 }
 
+Z V kallocI(I k,I r)
+{
+  if(r>KP_MAX)R amem(k,r);// allocate for objects of sz > 2^KP_MAX
+  R unpool(r);
+}
+
 Z V kalloc(I k,I*r) //bytes. assumes k>0
 {
-  *r=lsz(k);
-  if(*r>KP_MAX)R amem(k,*r);// allocate for objects of sz > 2^KP_MAX
-  R unpool(*r);
+  *r=lsz(k);R kallocI(k,*r);
 }
 
 Z V amem(I k,I r) {
@@ -203,31 +207,31 @@ I repool(V v,I r)//assert r < KP_MAX
 }
 Z I kexpander(K*p,I n) //expand only. 
 {
-  K a=*p;
-  V v; I c=sz(a->t,a->n),d=sz(a->t,n),e=nearPG(c),f=d-e;
-  I r = glsz(a);
+  K a=*p;I r = glsz(a);
   if(r>KP_MAX) //Large anonymous mmapped structure - (simulate mremap)
   {
+    V v;I c=sz(a->t,a->n),d=sz(a->t,n),e=nearPG(c),f=d-e;
     if(f<=0) R 1;
 #if defined(__linux__)
     V*w=mremap(a,c,d,MREMAP_MAYMOVE);
     if(MAP_FAILED!=w) {*p=(K)w;R 1;}
 #else  
     F m=f/(F)PG; I n=m, g=1; if(m>n) n++;
-    DO(n, if(-1==msync(a+e+PG*i,1,MS_ASYNC)) {if(errno!=ENOMEM) {g=0; break;}}
+    DO(n, if(-1==msync((V)a+e+PG*i,1,MS_ASYNC)) {if(errno!=ENOMEM) {g=0; break;}}
           else {g=0; break;})
-    if(g) if(MAP_FAILED!=mmap(a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1; //Add pages to end
+    if(g) if(MAP_FAILED!=mmap((V)a+e,f,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANON|MAP_FIXED,-1,0)) R 1;  //Add pages to end
 #endif
-    U(v=amem(d,r))   memcpy(v,a,c); *p=v;
+    U(v=amem(d,r)) memcpy(v,a,c); *p=v;
     I res=munmap(a,c); if(res) { show(kerr("munmap")); R 0; }
     R 1; //Couldn't add pages, copy to new space
   }
+  I d=sz(a->t,n),s=lsz(d);
   //Standard pool object
-  I s=lsz(d);
-  if(r==s) R 1; //assert r<=s
-  K x=unpool(s); U(x)
+  if(r==s)R 1; //assert r<=s
+  K x=kallocI(d,s); U(x)
+  I c=sz(a->t,a->n);
   memcpy(x,a,c);
-  *p=x;slsz(*p,s);
+  *p=x; slsz(*p,s);
   repool(a,r);
   R 1;
 }

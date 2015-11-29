@@ -110,6 +110,7 @@ Z I hg(K h,uI hk,I k,uI*p)
 #define hs(h,p,k) kI(h)[p]=(k)
 
 Z uI hcc[8]={0,0,0,0,0,0,0,0};
+Z void hcinit(){if(!hcc[0])DO(8,hcc[i]=genrand64_int64());}
 Z uint32_t hc(uI u)
 {
     DO(8,u^=hcc[i];u+=u>>8;)
@@ -118,11 +119,10 @@ Z uint32_t hc(uI u)
 
 Z K hashRange(K x)
 {
-  if(!hcc[0])DO(8,hcc[i]=genrand64_int64());
-  I j=0,sa=0,h0=0;uI m=0;
+  hcinit();
+  I j=0,h0=0;
   K h=newH(xn);M(h);
   K z=newK(xt,xn);M(h,z);
-  DO(xn,m|=kU(x)[i]);if(m)while(!(1&m)){m>>=1;sa++;}
   DO(xn,uI p;uI u;uI v=kU(x)[i];
       if(!v){if(!h0){h0=1;kI(z)[j++]=0;}}
       else{u=hc(v);if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;}})
@@ -224,15 +224,38 @@ Z K symGroup(K x)
   I j=0;
   K uk=newK(-1,xn);M(uk);I*u=kI(uk);
   setS(1,0);setS(2,0);
-  //trst();
   DO(xn,S s=kS(x)[i];if(!SV(s,2)){u[j]=(I)s;SV(s,2)=++j;}SV(s,1)++)
-  //elapsed("fill");
   K y=newK(0,j);M(y,uk);
   DO(j,K z=newK(-1,SV((S)u[i],1));M(z,y,uk);z->n=0;kK(y)[i]=z)
   DO(xn,S s=kS(x)[i];I w=SV(s,2)-1;K z=kK(y)[w];kI(z)[z->n++]=i)
-  //elapsed(" grp");
   cd(uk);
   R y;
+}
+
+Z K groupI(K x,K y,I n)//#x=#a;n=#?a
+{
+  K z=newK(0,n);M(z);
+  DO(n,K v=newK(-1,kI(y)[i]);M(v,z);kK(z)[i]=v;v->n=0)
+  DO(xn,I w=kI(x)[i];K v=kK(z)[w];kI(v)[v->n++]=i)
+  cd(y);cd(x);
+  R z;
+}
+
+Z K hashGroup(K x)
+{
+  hcinit();
+  I j=0,h0=0;
+  K h=newH(xn);M(h);K ok=newK(-1,h->n);M(ok,h);I*o=kI(ok);
+  K xok=newK(-1,xn);M(xok,ok,h);I*xo=kI(xok);
+  K ck=newK(-1,xn);M(ck,xok,ok,h);I*c=kI(ck);
+  DO(xn,uI v=kU(x)[i];
+      if(!v){if(!h0)h0=j++;xo[i]=h0;c[h0]++;}
+      else{uI u=hc(v);
+      uI p;if(!hg(h,u,v,&p)){hs(h,p,v);o[p]=j++;}
+      I w=o[p];xo[i]=w;c[w]++;})
+  cd(ok);cd(h);
+  K z=groupI(xok,ck,j);
+  R z;
 }
 
 K group(K x)
@@ -242,8 +265,10 @@ K group(K x)
   I u=n,*g,*h;
   K z=0,b=0,c=0;
 
-  if(-4==t)R symGroup(x);
-  if(-3==t)R charGroup(x);
+  SW(-t){
+  CSR(1,)CSR(2,R hashGroup(x))
+  CSR(3,R charGroup(x))
+  CSR(4,R symGroup(x)) }
   
   M(b=grade_up(x));g=kI(b);
   //Nastier code would eliminate this second sort.
