@@ -120,12 +120,14 @@ Z uint32_t hc(uI u)
 Z K intRange(K x)
 {
   hcinit();
-  I j=0,h0=0;
+  I j=0,h0=0,sa=0;uI m=0;
   K h=newH(xn);M(h);
   K z=newK(xt,xn);M(h,z);
-  DO(xn,uI p;uI u;uI v=kU(x)[i];
+  DO(xn,m|=kU(x)[i]);if(m)while(!(m&1)){m>>=1;sa++;}
+  DO(xn,uI v=kU(x)[i];
       if(!v){if(!h0){h0=1;kI(z)[j++]=0;}}
-      else{u=hc(v);if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;}})
+      else{v>>=sa;uI u=m<h->n?v:hc(v);uI p;
+        if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;}})
   //O("u:%lld xn:%lld\n",u,xn);
   if(xn==j)GC;
   K y=newK(xt,j);if(!y)GC;
@@ -136,12 +138,31 @@ cleanup:
   R z;
 }
 
+Z I KEQ(K a, K b)//List Equal (K Equal)
+{
+  I at=a->t, an=a->n, bt=b->t, bn=b->n;
+  I A=ABS(at);
+  
+  if(at!=bt)R 0;
+  if(an!=bn)R 0;
+
+  if     (7==A)R 0;//TODO: sort functions?
+  else if(6==A)R 1;
+  else if(5==A)R 0;//TODO: sort dictionaries?
+  else if(4==A)DO(an, if(kS(a)[i]!=kS(b)[i])R 0)
+  else if(3==A)DO(an, if(kC(a)[i]!=kC(b)[i])R 0)
+  else if(2==A)DO(an, if(FC(kF(a)[i],kF(b)[i]))R 0)
+  else if(1==A)DO(an, if(kI(a)[i]!=kI(b)[i])R 0)  
+  else if(0==A)DO(an, if(!KEQ(kK(a)[i],kK(b)[i]))R 0)
+  R 1;
+}
+
 Z K newSH(I n){ I m=1<<(HFR+cl2(n));K sh=newK(-1,m);M(sh);R sh; }
 Z K shg(K sh,uI hk,K k,uI*p)
 {
   I n=sh->n;K*d=kK(sh);uI u=hk&(n-1);
   while(d[u]){
-    if(!KC(k,d[u])){*p=u;R k;}
+    if(KEQ(k,d[u])){*p=u;R k;}
     if(++u==n)u=0;
   }*p=u;R 0;
 }
@@ -171,6 +192,7 @@ Z uI hcode(K x)
 
 Z K listRange(K x)
 {
+  hcinit();
   I j=0;
   setS(1,0);
   K sh=newSH(xn);M(sh);
@@ -268,13 +290,14 @@ Z K groupI(K x,K y,I n)//#x=#a;n=#?a
 Z K intGroup(K x)
 {
   hcinit();
-  I j=0,h0=0;
+  I j=0,h0=0,sa=0;uI m=0;
   K h=newH(xn);M(h);K ok=newK(-1,h->n);M(ok,h);I*o=kI(ok);
   K xok=newK(-1,xn);M(xok,ok,h);I*xo=kI(xok);
   K ck=newK(-1,xn);M(ck,xok,ok,h);I*c=kI(ck);
+  DO(xn,m|=kU(x)[i]);if(m)while(!(m&1)){m>>=1;sa++;}
   DO(xn,uI v=kU(x)[i];
       if(!v){if(!h0)h0=j++;xo[i]=h0;c[h0]++;}
-      else{uI u=hc(v);
+      else{v>>=sa;uI u=m<h->n?v:hc(v);
       uI p;if(!hg(h,u,v,&p)){hs(h,p,v);o[p]=j++;}
       I w=o[p];xo[i]=w;c[w]++;})
   cd(ok);cd(h);
