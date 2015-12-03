@@ -52,3 +52,4 @@ I valence(V p);
 I sva(V p);
 I adverbClass(V p);
 K kerr(cS s);
+K last(K a);

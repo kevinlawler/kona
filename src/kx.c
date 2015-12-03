@@ -49,7 +49,8 @@ Z K overDyad(K a, V *p, K b) {
   P(k,k)
 
   K u=0,v=0;
-  K y=a?v=join(u=enlist(a),b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
+  K y=a?u=enlist(a),v=joinI(&u,b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
+
   K z=0,g=0;
   if(yt  > 0){z=ci(y); GC;}
   if(yn == 0){if(VA(*o))z=LE; GC; } //Some verbs will handle this in alt_funcs
@@ -78,7 +79,7 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
   if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_scan))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)
 
-  K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u); //oom
+  K u=0; K y=a?u=enlist(a),joinI(&u,b):ci(b); cd(u); //oom
   if(yt  > 0 || yn == 0) R y;
 
   K z=newK(0,yn),c,d;
@@ -152,14 +153,13 @@ Z K scanMonad(K a, V *p, K b)
   if(a) {if(1 == a->t){useN=1; n=*kI(a);}else if(7==a->t)useB=1;}
   P(n < 0,IE) //mmo
 
-  if(useN) DO(n, U(v=reverse(u)) d=first(v); cd(v); c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); u=join(w=u,v); cd(w); cd(v); U(u))
+  if(useN) DO(n, U(d=last(u)) c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); w=u; u=joinI(&w,v); cd(w); cd(v); U(u))
   else if(useB)
   {
     I t;
     do
     {
-      U(v=reverse(u))
-      d=first(v); cd(v);
+      U(d=last(u))
       K*aa=&a;
       K g=dv_ex(0,(V)&aa,d); U(g)
       t=(1==g->t && *kI(g));
@@ -167,16 +167,16 @@ Z K scanMonad(K a, V *p, K b)
       if(!t){cd(d); break;}
       c=dv_ex(0,p-1,d); cd(d);
       U(c) U(v=enlist(c)) cd(c);
-      u=join(w=u,v); cd(w); cd(v); U(u)
+      w=u; u=joinI(&w,v); cd(w); cd(v); U(u)
     }while(1);
   }
   else while(1) //mm/o + error checking   eg if(!c) ... 
   {
-    d=first(v=reverse(u));cd(v);
+    U(d=last(u));
     if(matchI(b,c) || matchI(c,d))flag=1;
     if(!flag && c)
     {
-      u=join(v=u,w=enlist(c));
+      U(w=enlist(c)); v=u; u=joinI(&v,w);
       cd(v);cd(w);cd(d);
       d=c;
     }
@@ -258,11 +258,11 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
   if(a)
   {
     K u,v,f,d;
-    f=first(b);
+    f=first(b);M(f);
     d=dv_ex(a,p-1,f);
     u=enlist(d);
     M(u,z)
-    v=join(u,z);
+    v=joinI(&u,z);
     cd(u);cd(z);cd(f);cd(d);
     R v;
   }
@@ -520,7 +520,7 @@ K vf_ex(V q, K g)
         kV(f)[CACHE_TREE]=tree; }
       if(fsf && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
         K j0=dot_monadic(kV(prnt)[LOCALS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
-        K j2=join(j0,j1); cd(kV(prnt)[CACHE_TREE]); kV(prnt)[CACHE_TREE]=dot_monadic(j2);
+        K j2=join(ci(j0),j1); cd(j0); cd(kV(prnt)[CACHE_TREE]); kV(prnt)[CACHE_TREE]=dot_monadic(j2);
         cd(j0); cd(j1); cd(j2); tree=kV(prnt)[CACHE_TREE]; cd(kV(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; }
 
       DO(p->n,e=EVP(DI(tree,i)); cd(*e); *e=0; if(r && i<r->n) *e=ci(kK(r)[i]); if(!*e && j<g->n) *e=ci(kK(g)[j++])) //merge in: CONJ with function args
@@ -552,7 +552,7 @@ K vf_ex(V q, K g)
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"z")){w=kclone(kK(d)[i]); break;})
       if(w){
         K p=kK(g)[0]; cd(kK(w)[1]); kK(w)[1]=kclone(p); K we=enlist(w);
-        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,we);
+        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(ci(j0),we); cd(j0);
         cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); cd(w); cd(we); cd(j0); cd(j2); encp=3; } } }
   if(encp==1) { I ff=0;
     if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"y"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n) { 
@@ -562,7 +562,7 @@ K vf_ex(V q, K g)
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"y")){y=kclone(kK(d)[i]); break;})
       if(y) {
         K p=kK(g)[0]; cd(kK(y)[1]); kK(y)[1]=kclone(p); K ye=enlist(y);
-        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,ye);
+        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(ci(j0),ye); cd(j0);
         cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); cd(y); cd(ye); cd(j0); cd(j2); encp=2; } } }
   if(encp==0) { I ff=0;
     if(z && z->t==7 && z->n==3 && kV(z)[CODE] && strchr(kC(kK(z)[CODE]),"x"[0]) && kV(z)[PARAMS] && kK(z)[PARAMS]->n) {
@@ -572,7 +572,7 @@ K vf_ex(V q, K g)
       DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"x")){x=kclone(kK(d)[i]); break;})
       if(x) {
         K p=kK(g)[0]; cd(kK(x)[1]); kK(x)[1]=kclone(p); K xe=enlist(x);
-        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(j0,xe);
+        K j0=dot_monadic(kK(z)[CACHE_TREE]); K j2=join(ci(j0),xe); cd(j0);
         cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); cd(x); cd(xe); cd(j0); cd(j2); encp=1; } } }
 
 cleanup:
@@ -842,7 +842,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   if(!v[1] && !k) { K z=ex_(*v,1);  // n case
     if(z>(K)DT_SIZE && z->t==7 && z->n==3) {
       if(prnt && kV(z)[PARAMS] && kV(prnt)[CACHE_TREE] && !kV(z)[CACHE_TREE] && !kK(z)[LOCALS]->n) {
-        K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(j0,j1); 
+        K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(ci(j0),j1); cd(j0);
         if(encp==0)kV(z)[CACHE_TREE]=dot_monadic(j2); if(encp==1)kV(z)[CACHE_TREE]=dot_monadic(j1);
         cd(j0); cd(j1); cd(j2); cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; }
       if(prnt && kV(prnt)[CODE] && kK(prnt)[CODE]->t==-3 && kC(kK(prnt)[CODE])[0]=="{"[0] &&
@@ -864,7 +864,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         kV(z)[CACHE_TREE]=kclone(kK(prnt)[CACHE_TREE]); if(prnt)cd(prnt); prnt=ci(z); }
       else if(kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n && kV(z)[PARAMS] && kK(z)[PARAMS]->n) {
         K j0=dot_monadic(kV(z)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-        K j2=join(j0,j1); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
+        K j2=join(ci(j0),j1); cd(j0); kV(z)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
     R z; }
 
   if(!VA(*v) && (offsetColon == v[1] || (VA(v[1]) && offsetColon==v[2]) ) ) //Handle assignment
@@ -920,10 +920,10 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n) {
         if(kK(prnt)[CACHE_TREE]->n) {
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-          K j2=join(j0,j1); cd(kK(t3)[CACHE_TREE]); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); fsf=1; }
+          K j2=join(ci(j0),j1); cd(j0); cd(kK(t3)[CACHE_TREE]); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); fsf=1; }
         else if(kV(prnt)[CONJ]) {
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-          K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
+          K j2=join(ci(j0),j1); cd(j0); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
       if(prnt)cd(prnt); prnt=ci(t3); }
 
     //if(v[1]!=t3) if(!VA(t3)) show(t3);//for use with below
@@ -946,17 +946,17 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         if(kK(prnt)[LOCALS]->n){
           if(kV(t3)[CACHE_WD] && !kV(t3)[CACHE_TREE]){kK(t3)[CACHE_TREE]=kK(prnt)[CACHE_TREE]; ci(kK(t3)[CACHE_TREE]);}
           else if(kK(t3)[PARAMS]->n || grnt){
-            K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(j0,j1);
+            K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(ci(j0),j1); cd(j0);
             if(kV(t3)[CACHE_TREE] && kK(t3)[CACHE_TREE]->n)cd(kK(t3)[CACHE_TREE]);
             kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
         else if( !(kK(kK(prnt)[CACHE_WD])[CODE] && kK(kK(prnt)[CACHE_WD])[CODE]->t==-4
           && (*(K*)kS(kK(kK(prnt)[CACHE_WD])[CODE])[0])->t==7
           && kK(*(K*)kS(kK(kK(prnt)[CACHE_WD])[CODE])[0])[CACHE_TREE] ) ) {
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-          K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
+          K j2=join(ci(j0),j1); cd(j0); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
       else if(kV(prnt)[CACHE_TREE] && 1==kK(prnt)[CACHE_TREE]->n && !kV(prnt)[CACHE_WD] && !kV(t3)[CACHE_TREE]) {
         K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
-        K j2=join(j0,j1); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); }
+        K j2=join(ci(j0),j1); cd(j0); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); }
       cd(prnt); }
     prnt=ci(t3); }
 

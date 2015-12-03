@@ -309,7 +309,7 @@ K minus_eachpair(K x, K y)
   K z = newK(yt,yn-1);
   if     (-2==yt) DO(yn-1, kF(z)[i]=kF(y)[i+1]-kF(y)[i])
   else if(-1==yt) DO(yn-1, kI(z)[i]=kI(y)[i+1]-kI(y)[i])
-  if(x){K u,v,f,d; f=first(y);d=minus(x,f); u=enlist(d); M(u,z) v=join(u,z); cd(u);cd(z);cd(f);cd(d); R v; }
+  if(x){K u,v,f,d; f=first(y);d=minus(x,f); u=enlist(d); M(u,z) v=joinI(&u,z); cd(u);cd(z);cd(f);cd(d); R v; }
   R z;
 }
 

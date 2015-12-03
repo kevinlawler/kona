@@ -394,6 +394,17 @@ K first(K a)
   R ci(a);//Atoms
 }
 
+K last(K a)
+{ //Empty lists return prototypical atoms, e.g., *0#0.0 yields 0.0 
+  I at=a->t, an=a->n;
+  if(-4==at)R Ks(an?kS(a)[an-1]:LS);
+  if(-3==at)R Kc(an?kC(a)[an-1]:' ');//Vectors
+  if(-2==at)R Kf(an?kF(a)[an-1]:0.0);
+  if(-1==at)R Ki(an?kI(a)[an-1]:0);
+  if( 0==at)R an?ci(kK(a)[an-1]):_n();//Lists - *() yields _n
+  R ci(a);//Atoms
+}
+
 Z K reshaper(K a, K b, I d, I f, I* p)
 { //a is non-empty int vector with: (0 0s, 0 -1s),(1 -1),or(1+ 0s)
   I bt=b->t, bn=b->n;
@@ -558,29 +569,45 @@ K where(K x)
   R z;
 }
 
+#define KSWAP(t,a) {t _t=a(z)[i];a(z)[i]=a(z)[an-i-1];a(z)[an-i-1]=_t;}
 //TODO: The smarter way to do this is to write it in such a way that it can return the same input (e.g., if refcount == 1?, then use a temp holder and do the swaps in pairs)
 K reverse(K a)
 {
   I at=a->t,an=a->n;
   if(0<at)R ci(a);//Atoms
-  K z=newK(at,an); U(z)
-  if     (-4==at) DO(an,kS(z)[i]=kS(a)[an-i-1]) //This could all be refactored
-  else if(-3==at) DO(an,kC(z)[i]=kC(a)[an-i-1])
-  else if(-2==at) DO(an,kF(z)[i]=kF(a)[an-i-1])
-  else if(-1==at) DO(an,kI(z)[i]=kI(a)[an-i-1])
-  else if( 0==at) DO(an,kK(z)[i]=ci(kK(a)[an-i-1]))
+  K z=a;
+  if (1==rc(a)){
+    I n=an>>1;
+    O("revI");
+    if     (-4==at) DO(n,KSWAP(S,kS)) //This could all be refactored
+    else if(-3==at) DO(n,KSWAP(C,kC))
+    else if(-2==at) DO(n,KSWAP(F,kF))
+    else if(-1==at) DO(n,KSWAP(I,kI))
+    else if( 0==at) DO(n,KSWAP(K,kK))
+  }else{
+    z=newK(at,an); U(z)
+    if     (-4==at) DO(an,kS(z)[i]=kS(a)[an-i-1]) //This could all be refactored
+    else if(-3==at) DO(an,kC(z)[i]=kC(a)[an-i-1])
+    else if(-2==at) DO(an,kF(z)[i]=kF(a)[an-i-1])
+    else if(-1==at) DO(an,kI(z)[i]=kI(a)[an-i-1])
+    else if( 0==at) DO(an,kK(z)[i]=ci(kK(a)[an-i-1]))
+  }
   R z;
 }
 
 I countI(K x){R xt>0?1:xn;}
 K count(K x){R Ki(countI(x));}   //[sic] Should always be 1 for an atom (t of 5,7 may have different n)
 
-K join(K x, K y) {      //TODO: 5,6?
+K joinI(K*a, K y) {      //TODO: 5,6?
+  K x=*a;
   I xk=countI(x), yk=countI(y), zt=0;
   if(ABS(xt)==ABS(yt)) zt=-ABS(xt);  //K-Improvement?: ABS(at)=1or2 && ABS(bt)==1or2 should yield zt==-2
   if(!xk) zt=-ABS(yt); 
   else if(!yk) zt=-ABS(xt);  //'else' is sic. In "K3.21 2006-02-01" right empty list takes precedence
   if(zt < -4) zt=0;
+
+  if(1==rc(x)&&zt&&zt==xt){O("joinI");R ci(kapn(a,kV(y),yk));}
+
   I zn=xk+yk;
   K z=newK(zt,zn);U(z)
 
@@ -596,5 +623,7 @@ K join(K x, K y) {      //TODO: 5,6?
     K c=promote(x); K d=promote(y);
     DO(xk,kK(z)[i]=ci(kK(c)[i]))
     DO(yk,kK(z)[xk+i]=ci(kK(d)[i]))
-    cd(c); cd(d);  }
+    cd(c); cd(d); }
   R z; }
+
+K join(K x,K y){R joinI(&x,y);}
