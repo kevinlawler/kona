@@ -5,6 +5,7 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
+#define _WIN32_WINNT 0x0501
 #include <stdint.h>
 #include <_mingw.h>
 #include <winsock2.h>
@@ -32,6 +33,7 @@
 
 #include <unistd.h>    //sbrk,sysconf
 #include <fcntl.h>     //O_RDWR etc
+#define _TIMESPEC_DEFINED
 #include <pthread.h>
 
 #include "ts.h" //data types + macros

@@ -15,6 +15,52 @@
 
 #ifdef WIN32
 #include "win/fnmatch.h"
+#ifndef gmtime_r
+struct tm*gmtime_r(const time_t*tp,struct tm*r)
+{
+  struct tm*p=gmtime(tp);
+  memset(r,0,sizeof(*r));
+  if(p){*r=*p;p=r;}
+  R p;
+}
+#endif
+#ifndef localtime_r
+struct tm*localtime_r(const time_t*tp,struct tm*r)
+{
+  struct tm*p=localtime(tp);
+  memset(r,0,sizeof(*r));
+  if(p){*r=*p;p=r;}
+  R p;
+}
+#endif
+#ifndef getenv_s
+int getenv_s(size_t*n,S buf,size_t nelt,cS v)
+{
+  if(!n||(!buf&&nelt>0)||!v)R EINVAL;
+  S r=getenv(v);
+  size_t req=0;
+  if(r){
+    req=1+strlen(r);
+    if(n)*n=req;
+  }
+  if(nelt<req)R ERANGE;
+  if(r)strcpy(buf,r);
+  R 0;
+}
+#endif
+#ifndef _putenv_s
+int _putenv_s(cS nm,cS v)
+{
+  if(!nm||!v)R EINVAL;
+  size_t req=strlen(nm)+strlen(v)+2;
+  S buf=(S)alloc(req);
+  if(!buf)R ENOMEM;
+  sprintf(buf,"%s=%s",nm,v);
+  int r=putenv(buf);
+  free(buf);
+  R r;
+}
+#endif
 #endif
 
 //Reserved verbs/functions (_verb)

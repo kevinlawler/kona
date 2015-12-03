@@ -922,7 +922,8 @@ K _4d_(S srvr,S port,K y){
 
 #else
 
-Z void execute(LPSTR argv, I fWait) {
+Z void execute(S *argvP, I fWait) {
+  S argv=*argvP;
   I i=0,j=0;
   if(argv[0]==' '){
     while(argv[i]==' ')++i;
