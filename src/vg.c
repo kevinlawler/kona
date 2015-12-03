@@ -578,7 +578,6 @@ K reverse(K a)
   K z=a;
   if (1==rc(a)){
     I n=an>>1;
-    O("revI");
     if     (-4==at) DO(n,KSWAP(S,kS)) //This could all be refactored
     else if(-3==at) DO(n,KSWAP(C,kC))
     else if(-2==at) DO(n,KSWAP(F,kF))
@@ -606,7 +605,7 @@ K joinI(K*a, K y) {      //TODO: 5,6?
   else if(!yk) zt=-ABS(xt);  //'else' is sic. In "K3.21 2006-02-01" right empty list takes precedence
   if(zt < -4) zt=0;
 
-  if(1==rc(x)&&zt&&zt==xt){O("joinI");R ci(kapn(a,kV(y),yk));}
+  if(1==rc(x)&&zt&&zt==xt)R ci(kapn(a,kV(y),yk));
 
   I zn=xk+yk;
   K z=newK(zt,zn);U(z)
