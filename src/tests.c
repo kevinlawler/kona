@@ -356,7 +356,7 @@ Z I tests02()
 
 
   // \p
-  TC( 4:."\\p",6)
+  TC( 4:."\\p", 1) //return the result,can be used in scripts
 
   TC(3999, #5:2000#1) //5:monadic should not be subject to "..." display eliding (before displaying it anyway)
   //TC(33599997, #5:16799999#1) // Forces r>KP_MAX in kexpander for 32-bit-Linux or OSX
@@ -690,6 +690,7 @@ Z I tests02()
   TC(1 0 1 0, x:1 0 1 0; +\\x; x)
   TC(3, c:2; .k["c+1"])
   TC(43, c:2; d.c:42; d["c+1"])
+  TC(`a`b`c, a:1;b:2;c:3; ."\\v")
 #ifdef K3_ARITH
   TC(0i, 0i+0i)                           // plus
   TC(0i, 0i+0I)
