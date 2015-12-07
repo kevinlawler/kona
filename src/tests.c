@@ -688,6 +688,8 @@ Z I tests02()
   TC(("\000a";"\000b";"\000c"), ?("\000a";"\000b";"\000c"))
   TC(54, #0:"README.md")
   TC(1 0 1 0, x:1 0 1 0; +\\x; x)
+  TC(3, c:2; .k["c+1"])
+  TC(43, c:2; d.c:42; d["c+1"])
 #ifdef K3_ARITH
   TC(0i, 0i+0i)                           // plus
   TC(0i, 0i+0I)

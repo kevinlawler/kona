@@ -5,3 +5,4 @@ K collapse(K x);                     //ko.c
 K of(K x, K y);                      //vd.c
 extern V offsetSSR,offsetWhat,offsetAt,offsetDot,offsetColon;  //k.c
 extern K KTREE;                      //k.c
+K wd_(S s,I n,K*dict,K func);        //p.c

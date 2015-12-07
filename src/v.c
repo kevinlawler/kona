@@ -100,7 +100,7 @@ I isColonDyadic(K x){R isVerbDyadic(x,offsetColon);}
 Z I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
 
 //TODO: oom at_verb everywhere
-K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/directory & b is executable string like "1+1+c"
+K at_verb(K a, K b)//[Internal Function]
 {//"of" depends on this even though @[d;i] = .[d;,i] <--- that equality doesn't always hold
   if(!b) R b;
   if(0==b->t && 0==b->n)R newK(0,0);//Overriding right-arg () 
@@ -128,6 +128,11 @@ K at_verb(K a, K b)//[Internal Function]  TODO: should handle a is dict/director
     else if(-2==at) DO(bn,kF(z)[i]=kF(a)[kI(b)[i]])
     else if(-1==at) DO(bn,kI(z)[i]=kI(a)[kI(b)[i]])
     else if( 0==at){DO(bn,kK(z)[i]=ci(kK(a)[kI(b)[i]])) if(bt==ABS(bt) || bn!=1)z=collapse(z);}
+  }
+  else if(3==ABS(bt))//a is dict/directory & b is executable string like "1+1+c"
+  {
+      P(5!=at,TE)
+      z=ex(wd_(kC(b),bn,&a,0));
   }
   else if(4==ABS(bt))
   {
