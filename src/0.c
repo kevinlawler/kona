@@ -54,6 +54,7 @@ Z I disk(K x);
 Z I rrep_4(S *z,S a,S t);
 Z K readVector(K x,I t);
 Z I sendall(I s,S b,I k);
+Z K _5d_(K x,K y,I dosync);
 
 Z V freopen_stdin() {
 #if defined(__OpenBSD__)
@@ -512,7 +513,7 @@ Z K _1d_write(K x,K y,I dosync) {
 
   wrep(y,v,1);
 
-  if(dosync) msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
+  if(dosync)msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
   r=munmap(v,n); if(r)R UE;
 
   R _n();
@@ -974,7 +975,8 @@ Z K run(K x) {
   R _n(); }
 
 K _3d(K x,K y) {      //'async' TCP
-  if(4==xt && !**kS(x)) R run(y);
+  if(3==ABS(xt)) R _5d_(x,y,0); // f 5: x fast logging
+  if(4==xt) R!**kS(x)?run(y):_5d_(x,y,0);
   P(1!=xt, TE)
   R _3d_(x,y); }
 
@@ -1004,7 +1006,7 @@ K _5m(K x) {
   R z; }
 
 //TODO Does 5:d need a filesize double? Trunc replace O_Creat? In other numeric i/o verbs? Note: trunc doesn't necessarily reserve disk space so can still have disk err
-K _5d(K x,K y) {
+K _5d_(K x,K y,I dosync) {
   //TODO: what if a file is mapped using 1: read and I use 5: write to append to it? does my variable holding the 1: map change?
   //K3.2 5:dyadic can create files for all types except +1 (uses 1:dyadic). +1 maybe a bug? fixed here
   //       TODO: update: it's not a bug, see K2.9   f 5:n   truncate file to n items
@@ -1071,11 +1073,12 @@ K _5d(K x,K y) {
   else if(-2==yt)  memcpy(d,ke(y),y->n*sizeof(F));
   else if(-1==yt)  memcpy(d,ke(y),y->n*sizeof(I));
 
-  msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
+  if(dosync)msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
   res=munmap(v,n); if(res)R UE;
 
   R Ki(fn+yn); //mm/o
 }
+K _5d(K x,K y) { R _5d_(x,y,1); }
 
 K _6m(K x) { R readVector(x,-3);} //Believe 6:"file.K" to be equivalent to "c"1:"file.K"
 

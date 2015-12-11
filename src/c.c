@@ -374,6 +374,7 @@ K backslash(S s, I n, K*dict)
                "1: dyadic   write binary file `f 1: 4 5 6 \n"
                "1: monadic  read binary file  1: `f (mmapped)\n"
                "2: monadic  read binary file  2: `f (copied to memory)\n"
+               "3: dyadic   append to binary file, w/o sync `f 3: ,7\n"
                "5: dyadic   append to binary file `f 5: ,7\n"
                "6: dyadic   write raw byte string `f 6: \"\\01\\02\\03\"\n"
                "6: monadic  read raw byte string  6: `f\n"
