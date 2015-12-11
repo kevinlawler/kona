@@ -261,7 +261,7 @@ K backslash(S s, I n, K*dict)
               "_f       anonymous reference to current function\n"
               "_h       host name\n"
               "_i       index of current amendment\n"
-              //"_k     \n"
+              "_k       build date as string\n"
               //"_m     \n"
               "_n       nil\n"
               "_p       host port\n"
