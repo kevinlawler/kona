@@ -81,6 +81,20 @@ K KFIXED;
 
 pthread_mutex_t execute_mutex;
 
+C khome[PATH_MAX+1];
+Z void khinit()
+{
+  I n;S h;
+  khome[0]=0;
+  if((h=getenv("KHOME"))){
+    n=strlen(h);if(n+1>PATH_MAX)R;//doesn't fit
+    strcpy(khome,h);strcpy(khome+n,"/");
+  }else if((h=getenv("HOME"))){
+    n=strlen(h);if(n+3>PATH_MAX)R;
+    strcpy(khome,h);strcpy(khome+n,"/k/");
+  }
+}
+
 I kinit() {       //oom (return bad)
   atexit(finally);
 
@@ -141,6 +155,7 @@ I kinit() {       //oom (return bad)
   KONA_PORT=newK(1,1);*kI(KONA_PORT)=0;
   KONA_GSET=_n();
   KONA_IDX=_n();
+  khinit();
   R 0; }
 
 Z I randomBits(){

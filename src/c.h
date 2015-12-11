@@ -27,3 +27,4 @@ void boilerplate();
 extern I tmr_ival;
 K DI(K d,I i);
 S ES(K d);
+extern C khome[];

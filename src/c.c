@@ -1,13 +1,14 @@
 #include "incs.h"
 
 #include "k.h"
+#include "km.h"
 #include "c.h"
 
 I fLoad=0;
 
 S sp(S k);
 K*denameD(K*d,S t,I create);
-Z I filexist(S s);
+Z K filexist(S s);
 Z K backslash_b(S s,I n); 
 Z K backslash_d(S s,I n,K*dict);
 Z K backslash_e(S s,I n);
@@ -42,32 +43,34 @@ void boilerplate()
 //Q. What if K is sending a large message to a client or server. Does it block?
 //A. ?
 
-I filexist(S s){
-  FILE *f=fopen(s,"r");  if(f){fclose(f); R 1;}
-  S sk=strcat(s,".k");
-  FILE *g=fopen(sk,"r"); if(g){fclose(g); R 2;}
-  R 0;}
-
-K filename(S s)
-{
-  K p;
-  I b=!filexist(s),n=strlen(s);
-  U(p=newK(-3,n+2*b))
-  strcpy(kC(p),s);
-  if(b){kerr("undescribed");strcat(kC(p)+n,".k");}
-  R p;
-}
+Z K filexist(S s){
+  FILE*f;C b[PATH_MAX+1];S p;I n=0;
+  strcpy(b,s);
+recheck:
+  f=fopen(b,"r"); if(f){p=b;GC;}
+  strcat(b,".k");
+  f=fopen(b,"r"); if(f){p=b;GC;}
+  if(!n){
+    n=strlen(khome);if(n+strlen(s)+2>PATH_MAX)R 0;
+    strcpy(b,khome);strcpy(b+n,s); goto recheck; }
+  R 0;
+cleanup:
+  fclose(f);
+  K kp=newK(-3,strlen(p));M(kp);
+  strcpy(kC(kp),p);
+  R kp; }
 
 Z FILE *loadf(S s)
 {
-  FILE *f;
-  K p=filename(s);
-  f=fopen(kC(p),"r"); if(!f)show(kerr("file"));
+  FILE *f=0;
+  K p=filexist(s);
+  if(p)f=fopen(kC(p),"r");
+  if(!p||!f)show(kerr("file"));
   cd(p);
   R f;
 }
 
-K load(S s) //TODO: working dir is stable ... store then reset after reading scripts
+K load(S s)
 {
   I ofLoad=fLoad,ofCmplt=fCmplt; //global state
   S old_;
