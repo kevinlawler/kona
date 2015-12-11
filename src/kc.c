@@ -74,6 +74,7 @@ I args(int n,S*v) {
     CS('x',  k=X(optarg); printAtDepth(0,k,0,0,0,0); O("\n"); cd(k); exit(0) )
     CSR(':', )
     CS('?',  O("%c\nabort",optopt); exit(0)) }
+  S h=getenv("KINIT");if(h) load(h);
   while(optind < n) load(v[optind++]);
   R 0; }
 
