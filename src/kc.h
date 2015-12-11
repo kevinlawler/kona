@@ -13,6 +13,8 @@ extern K KONA_IDX;
 K _n();
 extern F mUsed;
 extern F mMax;
+extern F mAlloc;
+extern F mMap;
 extern I fWksp;
 extern __thread I fer;
 extern I fLoad;

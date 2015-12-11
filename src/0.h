@@ -46,5 +46,7 @@ K _0m(K a);
 I bswapI(I n);
 V membswpI(V d,V s,I n,I x);
 V membswpF(V d,V s,I n,I x);
-
 K read_tape(I i,I j,I type);
+extern F mMap;
+extern F mUsed;
+extern F mMax;

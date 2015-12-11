@@ -265,7 +265,7 @@ K backslash(S s, I n, K*dict)
               //"_m     \n"
               "_n       nil\n"
               "_p       host port\n"
-              //"_s     \n"
+              "_s       space used allocated mmapped max\n"
               "_t       current UTC time (int)\n"
               //"_u     \n"
               "_v       current global variable under amendment\n"

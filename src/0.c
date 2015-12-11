@@ -465,6 +465,8 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
     offset-=mod;
 
     if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,offset))){R SE;}
+    mMap+=length;
+    mUsed+=length;if(mUsed>mMax)mMax=mUsed;
 
     z=(K)(((V)u+mod)-3*sizeof(I)); //3*sizeof(I) for c,t,n
 

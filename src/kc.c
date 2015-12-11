@@ -281,7 +281,8 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   free(*a);*a=0;*n=0;
   free(s);s=0;
  done:
-  if(fWksp) { O("used now : %lld\n",(I)mUsed); O("max used : %lld\n",(I)mMax);
+  if(fWksp) { O("used now : %lld (%lld %lld)\n",(I)mUsed,(I)mAlloc,(I)mMap);
+              O("max used : %lld\n",(I)mMax);
               O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
               O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);

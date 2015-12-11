@@ -1026,7 +1026,7 @@ K _d(){R Ks(d_);}
 K _v(){R ci(KONA_GSET);}
 K _i(){R ci(KONA_IDX);}
 K _f(){R 0;} //Dummy function. Actual value computed inside of the parse function
-K _s(){R NYI;}
+K _s(){R mstat();}
 K _p(){R ci(KONA_PORT);}
 K _w(){R ci(KONA_WHO);}
 K _u(){R NYI;}
