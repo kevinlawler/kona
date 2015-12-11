@@ -100,16 +100,19 @@ kapi-test: src/kapi-test.o $(LIB)
 	$(CC) ${CFLAGS} $^ -o $@ -L. -lkona $(LDFLAGS)
 
 k: CFLAGS += $(PRODFLAGS)
-k: $(OBJS) src/main.o
-	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
+k: src/kbuild.h $(OBJS) src/main.o
+	$(CC) ${CFLAGS} $(OBJS) src/main.o -o $@ $(LDFLAGS)
 
 k_test: CFLAGS += $(DEVFLAGS)
-k_test: $(OBJS_T) src/main.t.o src/tests.t.o
-	$(CC) ${CFLAGS} $^ -o $@ $(LDFLAGS)
+k_test: src/kbuild.h $(OBJS_T) src/main.t.o src/tests.t.o
+	$(CC) ${CFLAGS} $(OBJS_T) src/main.t.o src/tests.t.o -o $@ $(LDFLAGS)
 
 k_dyn: CFLAGS += $(PRODFLAGS)
-k_dyn: $(OBJS)
-	$(CC) ${CFLAGS} $^ -rdynamic -o $@ $(LDFLAGS)
+k_dyn: src/kbuild.h $(OBJS)
+	$(CC) ${CFLAGS} $(OBJS) -rdynamic -o $@ $(LDFLAGS)
+
+src/kbuild.h:
+	echo "#define KBUILD_DATE \"`date +%Y-%m-%d`\"" >$@
 
 test: k_test
 
@@ -117,7 +120,7 @@ install:
 	install k $(PREFIX)/bin/k
 
 clean:
-	$(RM) -r k k_test *.exe k.dSYM k_test.dSYM src/*.o src/win/*.o
+	$(RM) -r k k_test *.exe k.dSYM k_test.dSYM src/*.o src/win/*.o src/kbuild.h
 
 TAGS: *.c *.h
 	etags *.[ch]

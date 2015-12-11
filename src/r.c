@@ -13,6 +13,8 @@
 #include "vf.h"
 #include "vg.h"
 
+#include "kbuild.h"
+
 #ifdef WIN32
 #include "win/fnmatch.h"
 #ifndef gmtime_r
@@ -1031,7 +1033,7 @@ K _p(){R ci(KONA_PORT);}
 K _w(){R ci(KONA_WHO);}
 K _u(){R NYI;}
 K _a(){R ci(KONA_ARGS);}
-K _k(){Z K x=0;if(!x){S d=__DATE__;x=newK(-3,strlen(d));M(x);strcpy(kC(x),d);}R ci(x);}
+K _k(){Z K x=0;if(!x){Z S d=KBUILD_DATE;x=newK(-3,strlen(d));M(x);strcpy(kC(x),d);}R ci(x);}
 K _m(){R NYI;}
 
 /////////////////////////////////////////
