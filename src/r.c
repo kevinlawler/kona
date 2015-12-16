@@ -990,7 +990,7 @@ K _vs(K x,K y) {   //vector from scalar (k3 version), radix & clock arithmetic (
     DO(z->n, kI(z)[i] %= a)
     Ireverse(z); }
   else if(-1==xt) {   // && 1==y->t /clock
-    DO(xn, if(kI(x)[i]<1) R DOE)
+    DO(xn-1, if(kI(x)[i+1]<1) R DOE)
     U(z=newK(-1,xn))
     I a = *kI(y), n =z->n;
     if(a<0){I s=1;DO(xn,s*=kI(x)[i]) a = s - (-a % s);} //a nice property. maybe not crucial
