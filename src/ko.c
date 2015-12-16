@@ -10,11 +10,11 @@ K kclone(K a)//Deep copy -- eliminate where possible
 {
   if(!a) R 0;
   I t=a->t,n=a->n;
-  K z= 7==t?Kv():newK(t,n);
+  K z= 7==t?Kv():newK(-5==t?-1:t,n);z->t=t;
   if     (4==ABS(t)) DO(n, kS(z)[i]=kS(a)[i])  //memcpy everywhere is better
   else if(3==ABS(t)) DO(n, kC(z)[i]=kC(a)[i]) 
   else if(2==ABS(t)) DO(n, kF(z)[i]=kF(a)[i]) 
-  else if(1==ABS(t)) DO(n, kI(z)[i]=kI(a)[i]) 
+  else if(-5==t||1==ABS(t)) DO(n, kI(z)[i]=kI(a)[i]) 
   else if(0==    t ) DO(n, kK(z)[i]=kclone(kK(a)[i])) 
   else if(5==    t ) DO(n, kK(z)[i]=kclone(kK(a)[i]))
   else if(7==    t )

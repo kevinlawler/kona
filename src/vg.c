@@ -126,8 +126,8 @@ Z K intRange(K x)
   DO(xn,m|=kU(x)[i]);if(m)while(!(m&1)){m>>=1;sa++;}
   DO(xn,uI v=kU(x)[i];
       if(!v){if(!h0){h0=1;kI(z)[j++]=0;}}
-      else{v>>=sa;uI u=m<h->n?v:hc(v);uI p;
-        if(!hg(h,u,v,&p)){hs(h,p,v);kI(z)[j++]=v;}})
+      else{uI vsa=v>>sa;uI u=m<h->n?vsa:hc(vsa);uI p;
+        if(!hg(h,u,vsa,&p)){hs(h,p,vsa);kI(z)[j++]=v;}})
   //O("u:%lld xn:%lld\n",u,xn);
   if(xn==j)GC;
   K y=newK(xt,j);if(!y)GC;
@@ -157,7 +157,6 @@ Z I KEQ(K a, K b)//List Equal (K Equal)
   R 1;
 }
 
-Z K newSH(I n){ I m=1<<(HFR+cl2(n));K sh=newK(-1,m);M(sh);R sh; }
 Z K shg(K sh,uI hk,K k,uI*p)
 {
   I n=sh->n;K*d=kK(sh);uI u=hk&(n-1);
@@ -195,7 +194,7 @@ Z K listRange(K x)
   hcinit();
   I j=0;
   setS(1,0);
-  K sh=newSH(xn);M(sh);
+  K sh=newH(xn);M(sh);
   K z=newK(xt,xn);M(sh,z);
   DO(xn,uI p;K kv=kK(x)[i];
      uI u=hcode(kv);
@@ -309,7 +308,7 @@ Z K listGroup(K x)
 {
   hcinit();
   I j=0;
-  K h=newSH(xn);M(h);K ok=newK(-1,h->n);M(ok,h);I*o=kI(ok);
+  K h=newH(xn);M(h);K ok=newK(-1,h->n);M(ok,h);I*o=kI(ok);
   K xok=newK(-1,xn);M(xok,ok,h);I*xo=kI(xok);
   K ck=newK(-1,xn);M(ck,xok,ok,h);I*c=kI(ck);
   DO(xn,K v=kK(x)[i];uI u=hcode(v);
@@ -626,3 +625,61 @@ K joinI(K*a, K y) {      //TODO: 5,6?
   R z; }
 
 K join(K x,K y){R joinI(&x,y);}
+
+Z I _hg(K h,uI k,I v,K x,uI*p)
+{
+  I n=h->n;I*d=kI(h),i;uI u=k&(n-1);
+  while(-1!=(i=d[u])){
+    if(v==kI(x)[i]){*p=u;R i;}
+    if(++u==n)u=0;
+  }
+  *p=u;R xn;
+}
+
+Z I _hgk(K h,uI k,K v,K x,uI*p)
+{
+  I n=h->n;I*d=kI(h),i;uI u=k&(n-1);
+  while(-1!=(i=d[u])){
+    if(KEQ(v,kK(x)[i])){*p=u;R i;}
+    if(++u==n)u=0;
+  }
+  *p=u;R xn;
+}
+
+Z I _hgv(K h,uI k,V v,K x,uI*p)
+{
+  I n=h->n;I*d=kI(h),i;uI u=k&(n-1);
+  while(-1!=(i=d[u])){
+    if(v==kV(x)[i]){*p=u;R i;}
+    if(++u==n)u=0;
+  }
+  *p=u;R xn;
+}
+
+K _hash(K x)
+{
+  P(xt>0,RE)
+  uI p;K y=(-3==xt)?newK(-1,1+UCHAR_MAX):newH(xn);M(y);
+  hcinit();
+  DO(yn,kI(y)[i]=-1);
+  SW(-xt){
+  CS(0,DO(xn,K v=kK(x)[i];if(xn==_hgk(y,hcode(v),v,x,&p))hs(y,p,i)))
+  CSR(1,)CS(2,DO(xn,uI v=kU(x)[i];if(xn==_hg(y,hc(v),(I)v,x,&p))hs(y,p,i)))
+  CS(3,DO(xn,uI k=(UC)kC(x)[i];if(xn==kI(y)[k])kI(y)[k]=i))
+  CS(4,setS(1,0);DO(xn,S v=kS(x)[i];if(!SV(v,1))SV(v,1)=fnv1a((UC*)v,strlen(v));if(xn==_hgv(y,SV(v,1),v,x,&p))hs(y,p,i)))}
+  y->t=-5; R y;
+}
+
+K hash_find(K a,K b)
+{
+  K x=kK(a)[0],y=kK(a)[1];uI k,p;I i;
+  P(xt>0,DOE)
+  if(xt&&(xt+b->t))R Ki(xn);
+  hcinit();
+  SW(-xt){
+  CS(0,i=_hgk(y,hcode(b),b,x,&p))
+  CSR(1,)CS(2,{uI v=*kU(b);i=_hg(y,hc(v),(I)v,x,&p);})
+  CS(3,k=(UC)*kC(b);i=kI(y)[k];if(i<0)i=xn)
+  CS(4,{S v=*kS(b);k=fnv1a((UC*)v,strlen(v));i=_hgv(y,k,v,x,&p);}) }
+  R Ki(i);
+}

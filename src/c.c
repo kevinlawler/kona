@@ -315,6 +315,7 @@ K backslash(S s, I n, K*dict)
               "_draw    draw x random numbers from 0 to y-1\n"
               "_dv      delete value\n"
               "_dvl     delete several values\n"
+              "_hash    hash, (x;_hash x)?y\n"
               "_in      true if x is in y\n"
               "_lin     _in for several values\n"
               "_lsq     matrix division\n"

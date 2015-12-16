@@ -18,3 +18,4 @@ I FC(F a,F b);
 K Ki(I x);
 K at(K x,K y);
 K find(K a,K b);
+K hash_find(K a,K b);

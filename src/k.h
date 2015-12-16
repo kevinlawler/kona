@@ -133,3 +133,4 @@ K TABLE_END();
 void nfinish();
 I rc(K x);
 K joinI(K*a,K b);
+K _hash(K x);

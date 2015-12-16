@@ -17,7 +17,10 @@ K find(K a, K b)
   if(-2==at && 1==bt){F fb=I2F(*kI(b));DO(an, if(!FC(kF(a)[i],fb))R Ki(i));}
   if(-1==at && 2==bt)DO(an, if(!FC(I2F(kI(a)[i]),*kF(b)))R Ki(i))
   if(-1==at && 1==bt)DO(an, if(kI(a)[i]==*kI(b))R Ki(i))
-  if(!at)DO(an, if(matchI(kK(a)[i],b))R Ki(i))
+  if(!at){
+    if(2==an&&-5==kK(a)[1]->t)R hash_find(a,b);
+    DO(an, if(matchI(kK(a)[i],b))R Ki(i))
+  }
   R Ki(an);
 }
 
