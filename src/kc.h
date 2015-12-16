@@ -37,7 +37,7 @@ extern K NIL;
 void seedPRNG(I s);
 N newN();
 extern N SYMBOLS;
-extern V offsetSSR,offsetWhat,offsetAt,offsetDot,offsetColon;
+extern V offsetSSR,offsetWhat,offsetAt,offsetDot,offsetColon,offsetJoin;
 extern C vc[];
 I charpos(S s,C c);
 extern V vd[];

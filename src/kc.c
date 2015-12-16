@@ -134,6 +134,7 @@ I kinit() {       //oom (return bad)
   offsetAt    = (V)DT_OFFSET(at);
   offsetDot   = (V)DT_OFFSET(dot);
   offsetColon = (V)DT_OFFSET(colon_dyadic);
+  offsetJoin  = (V)DT_OFFSET(join);
   offsetSSR   = (V)DT_OFFSET(_ssr);
 
   kerr("undescribed");

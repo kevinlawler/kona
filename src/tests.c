@@ -697,6 +697,8 @@ Z I tests02()
   TC(0, v:1.9999999999999 2.;v?2.)
   TC(2, v:1.9999999999999 2.;(v;_hash v)?2)
   TC(1, v:1.9999999999999 2.;(v;_hash v)?2.)
+  TC((), "",())                           // join-over
+  TC("", "",/())
 #ifdef K3_ARITH
   TC(0i, 0i+0i)                           // plus
   TC(0i, 0i+0I)

@@ -96,7 +96,7 @@ C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
 //V vm[]  = {_VERB1};
 //V vd[]  = {_VERB2};
 
-V offsetSSR, offsetWhat, offsetAt, offsetDot, offsetColon;
+V offsetSSR, offsetWhat, offsetAt, offsetDot, offsetColon, offsetJoin;
 L offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
 
 S IFS[3] = {"x","y","z"};
