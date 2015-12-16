@@ -990,10 +990,10 @@ K _vs(K x,K y) {   //vector from scalar (k3 version), radix & clock arithmetic (
     DO(z->n, kI(z)[i] %= a)
     Ireverse(z); }
   else if(-1==xt) {   // && 1==y->t /clock
-    DO(xn-1, if(kI(x)[i+1]<1) R DOE)
+    DO(xn,if(!i&&!*kI(x))continue;if(kI(x)[i]<1)R DOE)
     U(z=newK(-1,xn))
     I a = *kI(y), n =z->n;
-    if(a<0){I s=1;DO(xn,s*=kI(x)[i]) a = s - (-a % s);} //a nice property. maybe not crucial
+    if(a<0){I s=1;DO(xn,s*=(kI(x)[i]?kI(x)[i]:-1)); a = s - (-a % s);} //a nice property. maybe not crucial
     DO(n, kI(z)[i] = kI(x)[x->n-1-i])  // z:|x
     if(n) *kI(z) = *kI(z)? a / *kI(z):0; 
     DO(n-1, I d=kI(z)[i+1]; kI(z)[i+1] = d?kI(z)[i]/d:0) // divide scan
