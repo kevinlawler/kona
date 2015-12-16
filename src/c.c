@@ -116,7 +116,7 @@ K backslash(S s, I n, K*dict)
       "\\.        assignment/amend, function, control flow help\n"
       "\\b [s|t]  show/set break mode (stop|trace|none)\n"
       "\\d [d|^]  change k directory (^=previous)\n" 
-      "\\e [n]    show/set error flag (0=off)\n"
+      "\\e [n]    show/set error flag (0=off,1=on,2=exit)\n"
       "\\l f      load script f or f.k\n"
       "\\p [n]    show/set print precision (0=full)\n"
       "\\r [s]    show/set random seed (0=random)\n" 
@@ -494,7 +494,8 @@ Z K backslash_e(S s,I n) {
   if(n==2) {O("%lld\n",fError); R _n();}
   if(n==4 && s[3]==*"0") { fError=0; R _n(); }
   if(n==4 && s[3]==*"1") { fError=1; R _n(); }
-  O("valid options are: 0, 1\n"); R _n();
+  if(n==4 && s[3]==*"2") { fError=2; R _n(); }
+  O("valid options are: 0, 1, 2\n"); R _n();
 }
 
 Z K backslash_s(S s)

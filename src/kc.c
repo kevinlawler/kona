@@ -276,6 +276,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   //151012AP was -1, Changed to fer!=2 for fclose. Reverted to -1 (regression issue #312). fclose problem?? (issue #384).
   if(strcmp(errmsg,"undescribed") && fer!=-1) { oerr(); I ctl=0;
     if(fError){
+      if(2==fError)exit(1);
       if(lineA){
         if(fnc){ I cnt=0,i;
           if(strlen(fnc)==1)for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
