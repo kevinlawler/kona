@@ -568,15 +568,17 @@ K where(K x)
   R z;
 }
 
-#define KSWAP(t,a) {t _t=a(z)[i];a(z)[i]=a(z)[an-i-1];a(z)[an-i-1]=_t;}
+#define KSWAP(t,x) {t _t=x(z)[i];x(z)[i]=x(z)[an-i-1];x(z)[an-i-1]=_t;}
 //TODO: The smarter way to do this is to write it in such a way that it can return the same input (e.g., if refcount == 1?, then use a temp holder and do the swaps in pairs)
 K reverse(K a)
 {
   I at=a->t,an=a->n;
   if(0<at)R ci(a);//Atoms
-  K z=a;
+  K z;
   if (1==rc(a)){
     I n=an>>1;
+    z=ci(a);
+    if(!n)R z;
     if     (-4==at) DO(n,KSWAP(S,kS)) //This could all be refactored
     else if(-3==at) DO(n,KSWAP(C,kC))
     else if(-2==at) DO(n,KSWAP(F,kF))

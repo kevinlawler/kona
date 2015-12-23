@@ -34,6 +34,7 @@ K KTREE;  //dictionary, the main/global variable storage area
 I SEED;   //seed for PRNG
 S d_;    //sym: handle of current K-Tree dictionary / mth: thread-local storage
 
+S HOST_IFACE; //multihomed host
 S IPC_PORT;
 S HTTP_PORT;
 

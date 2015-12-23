@@ -8,6 +8,58 @@
 S lineA;
 S lineB;
 
+#if 0
+Z S mm[] = {
+  "UNMARKED",
+  "IGNORE",
+  "BRACKET",
+  "END",
+  "PAREN",
+  "BRACE",
+  "QUOTE",
+  "SYMBOL",
+  "NAME",
+  "NUMBER",
+  "VERB",
+  "ADVERB",
+  "MARK_CONDITIONAL",
+  "COUNT" };
+Z I dumm(I *m,I n){O("\n");DO(n,if(m[i]<0)O("-");O("%s ",mm[ABS(m[i])]));R 0;}
+Z void showx(K x){ O("[%lld,%lld,%lld] ",xt,xn,rc(x));show(x);if(6==xt)O("\n");}
+Z void A(I n){DO(n,O(" "));}
+Z void dum7(K*_v,I a){
+  K v=*_v;
+  int n=0;I vt=v->t,vn=v->n,f=1;
+  S typ7[]={"wd","wordfn","cfn","charfn",":[]","if[]","while[]","do[]"};
+  V e=0;V*kw=kW(v);
+  if(!a)O("\n");
+  if(7==vt){
+    A(a);O("[%lld,%lld,%lld,%s]\n",vt,vn,rc(v),typ7[vn]);
+    SW(vn){
+    CS(2, A(a);O(" val: %p %p %p\n",kw[0],kw[1],kw[2]))
+    CD: {
+      K par=(K)kV(v)[PARAMS],loc=(K)kV(v)[PARAMS],conj=(K)kV(v)[CONJ];
+      if(par->n){A(a);O("params: ");dum7(&par,a+2);}
+      if(loc->n){A(a);O("locals: ");dum7(&loc,a+2);}
+      if(conj){A(a);O("  conj: ");dum7(&conj,a+2);}
+      if(3==vn){
+        K cw=(K)kV(v)[CACHE_WD];K ct=(K)kV(v)[CACHE_TREE];
+        if(cw){A(a);O("  cachewd: ");dum7(&cw,a+2);}
+        if(ct){A(a);O("cachetree: ");dum7(&ct,a+2);}
+        A(a);showx(v);
+      } else
+        while((e=*kw++)){
+          if(f){A(a);O("entries-->\n");f=0;}
+          A(a);O("%d entry",n++);
+          if((L)e<DT_SIZE){O("  dt: %s (%p)\n",DT[(L)e].text,e);}
+          else dum7((K*)e,a+2); } } } }
+  else{ A(a);O("%p ",_v);showx(v); }
+}
+#else
+#define dumm(x,y)
+#define dum7(x,y)
+#endif
+
 //Parser
 
 Z I formed_group(C c){S s="\n \\/\"";R charpos(s,c);} //could be table-lookup instead
@@ -252,6 +304,8 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ;
   marker(mark_verb,  MARK_VERB)  // ( D+: | _AA+ | V ) where D := [0-9] , V := ~!@#$%^&*_-+=|<,>.?:
   marker(mark_ignore,MARK_IGNORE)// get leftover spaces, anything else we want to ignore
 
+  dumm(m,n);
+
   DO(n,if(m[i]==MARK_UNMARKED){cd(v);cd(km); R PE;}) 
   //DO(n,if(m[i]>0 && (!i || m[i]!=ABS(m[i-1]) )){cd(v);cd(km); R PE;})  //this is true but unnecessary. we handle "_db_bd 1"
 
@@ -286,6 +340,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ;
 
   kV(v)[CODE]=kw; // return what we just built
   kW(v)[c]=0;
+  dum7(&v,0);
   R v; 
 }
 

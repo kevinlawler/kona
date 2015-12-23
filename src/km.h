@@ -39,3 +39,5 @@ I cl2(I v);
 I rc(K x);
 K mrc(K x,I c);
 K mstat(void);
+void trst();
+void elapsed(S m);

@@ -18,14 +18,15 @@ M0 CP[FD_SETSIZE+1]; //Connection Pool (large array), last entry for Windows _4d
 
 Z I close_tape(I i,I sockfd);
 Z K modified_execute(K x);
-K KONA_WHO,KONA_PORT;
+K KONA_WHO,KONA_PORT,KONA_CLIENT;
 
 void nfinish()
 {
 #ifdef WIN32
   extern I listener;
-  if (IPC_PORT || HTTP_PORT)
-    closesocket(listener);
+  if (IPC_PORT || HTTP_PORT) {
+    closesocket(listener); listener=0;
+  }
   WSACleanup();
 #endif
 }
@@ -53,17 +54,25 @@ void *get_in_addr(struct sockaddr *sa) {   //get sockaddr, IPv4 or IPv6
   if (sa->sa_family == AF_INET) R &(((struct sockaddr_in*)sa)->sin_addr);
   R  &(((struct sockaddr_in6*)sa)->sin6_addr); }
 
-I wipe_tape(I i) { if(CP[i].k)cd(CP[i].k); memset(&CP[i],0,sizeof(CP[0])); R 0;} //safe to call >1 time
+Z I _oldw,_oldc;
+Z void mhbegin(I i){
+  _oldw=*kI(KONA_WHO); _oldc=*kI(KONA_CLIENT);
+  *kI(KONA_WHO)=i; *kI(KONA_CLIENT)=CP[i].a; }
+Z void mhend(){ *kI(KONA_WHO)=_oldw; *kI(KONA_CLIENT)=_oldc; }
+
+I wipe_tape(I i) { I a=CP[i].a; if(CP[i].k)cd(CP[i].k); memset(&CP[i],0,sizeof(CP[0])); CP[i].a=a; R 0;} //safe to call >1 time
 Z I close_tape(I i,I sockfd) {
-  wipe_tape(i); I r=closesocket(sockfd); if(r)show(kerr("file"));
+  mhbegin(i);
+  wipe_tape(i); CP[i].a=0;
+  I r=closesocket(sockfd); if(r){show(kerr("file"));r=0;}
   FD_CLR(sockfd, &master);
   K x=*denameS(".",".m.c",0); 
-  if(6==xt)R O("ct-D\n"),0;
-  if(3!=ABS(xt))R O("type error"),1;
-  *kI(KONA_WHO)=i;
+  if(6==xt){r=0;O("ct-D\n");GC;}
+  if(3!=ABS(xt)){r=1;O("type error");GC;}
   KX(x);
-  *kI(KONA_WHO)=0;
-  R 0; }
+cleanup:
+  mhend();
+  R r; }
 
 C bx[128]={0},by[128]={0};
 
@@ -195,7 +204,7 @@ K read_tape(I i, I j, I type) {   // type in {0,1} -> {select loop, 4: resp read
 
     //Modified execution of received K value. First received transmission in a 3: or 4: 
     K m=(2>msg_type)?*denameS(".",msg_type?".m.g":".m.s",0):0;
-	  z=(!m||6==m->t)?modified_execute(h):at(m,h);
+    if(!m||6==m->t)z=modified_execute(h);else{ mhbegin(i);z=at(m,h);mhend(); }
 	  if(msg_type){
   		K u=newK(0,2),s=Ki(0);
   		M(u,s)

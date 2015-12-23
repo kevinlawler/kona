@@ -36,6 +36,7 @@ I tc(S a, S b) //test comparison .  R 0,1,2
 
   KTREE=Kd();
   K x = X(a); fer=fom=0; if(cls){cd(cls);cls=0;}
+  // fprintf(stderr,"testing: %s\n",b);
   K y = X(b); fer=fom=0; if(cls){cd(cls);cls=0;}
   I m=matchI(x,y);
 
@@ -702,7 +703,17 @@ Z I tests02()
   TC("", "",/())
   TC((,0), 0,/())                         // leading 0 in x _vs y
   TC(201512 12, 0 100_vs 20151212)
-  TC(-1 0, 0 100_vs-100)
+  TC(-1 0, 0 100_vs-100)                  // c/ join
+  TC("", " "/"")
+  TC(" ", " "/" ")
+  TC(" ", ";"/" ")
+  TC(" ; ; ", ";"/(," ";," ";," "))
+  TC((,"alpha"), " "\"alpha")             // c\ split
+  TC(("";"lph";""), "a"\"alpha")
+  TC((,"a";"pha"), "l"\"alpha")
+  TC(("";"";"";""), "a"\"aaa")
+  TC_("x:.+(`a`b;1 2); y:x; f:{.[x;,`a;:;11]}; f`y; x",".+(`a`b;1 2)")
+  TC_("x:.+(`a`b;1 2); y:x; f:{.[x;,`a;:;11]}; f`y; y",".+(`a`b;11 2)")
 #ifdef K3_ARITH
   TC(0i, 0i+0i)                           // plus
   TC(0i, 0i+0I)

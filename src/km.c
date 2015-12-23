@@ -58,6 +58,7 @@ Z K dc(K x){x->_c-=256;R x;}
 Z I glsz(K x){R 255&(x->_c);}
 Z K slsz(K x,I r){x->_c&=~(uI)255;x->_c|=r;R x;}
 K mrc(K x,I c){I k=sz(xt,xn);I r=lsz(k);x->_c=(c<<8)|r;R x;}
+#define STAT(x)
 //Arthur says he doesn't use malloc or free. Andrei Moutchkine claims smallest unit is vm page (his truss says no malloc + add pages one at a time).
 //Arthur not using malloc is probably true. No strdup & related functions in binary's strings. Note: Skelton references "different allocator" not in \w report
 //This source would be improved by getting ridding of remaing malloc/calloc/realloc
@@ -73,7 +74,7 @@ K cd(K x)
   SW(xt)
   {
     CSR(5,)
-    CS(0, DO(xn, cd(kK(x)[xn-i-1]))) //repool in reverse, attempt to maintain order
+    CS(0, STAT(trst()); DO(xn, cd(kK(x)[xn-i-1])); STAT(elapsed("cd"))) //repool in reverse, attempt to maintain order
   }
 
   if(x->_c > 255) R x;
@@ -111,11 +112,13 @@ K ci(K x)
 {
   P(!x,0)
   ic(x);
+
   SW(xt)
   {
     CSR(5,)
     CS(0, DO(xn, ci(kK(x)[i])))
   }
+
   R x;
 }
 

@@ -16,7 +16,8 @@ I bk(V p);
 K wd_(S s,I n,K *dict,K func);
 K ex(K a);
 K DI(K d,I i);
-K kclone(K a);
+K kcloneI(K a,const char*f,int n);
+#define kclone(a) kcloneI(a,__FILE__,__LINE__)
 K Kv();
 K dot_tetradic(K a,K b,K c,K y);
 K at_tetradic(K a,K b,K c,K y);

@@ -4,6 +4,8 @@
 #include "r.h"
 #include "vc.h"
 
+#include "va.h"
+
 /* scalar arithmetic verbs */
 
 #ifdef K3_ARITH
@@ -86,10 +88,42 @@ K times(K a, K b)//TODO: Float results will respect intermediate OI or Oi. Other
   K z=newK(zt,zn);U(z)
 
   #define TIMES(x, y) ((x) * (y))
+#ifndef K3_ARITH
   SCALAR_OP(TIMES,times)
+#else
+  #define TIMES_FI(x, y) ((x) * I2F(y))
+  #define TIMES_IF(x, y) (I2F(x) * (y))
+       if(2==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(TIMES,   kF(z),kF(a),kF(b)) }
+  else if(2==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(TIMES_FI,kF(z),kF(a),kI(b)) }
+  else if(1==ABS(at)&&2==ABS(bt)){ SCALAR_OP_CASE(TIMES_IF,kF(z),kI(a),kF(b)) }
+  else if(1==ABS(at)&&1==ABS(bt)){ SCALAR_OP_CASE(TIMES,   kI(z),kI(a),kI(b)) }
+  else if(0==at||0==bt){ dp(&z,times,a,b); }
+  #undef TIMES_FI
+  #undef TIMES_IF
+#endif
   #undef TIMES
 
   R z;
+}
+
+K _dot(K a,K b)
+{
+  SCALAR_INIT(2);
+  I A=ABS(at),B=ABS(bt);
+  I accI=0;F accF=0.0;
+  #define DOT_F   accF+=x*y
+  #define DOT_FI  accF+=x*I2F(y)
+  #define DOT_IF  accF+=I2F(x)*y
+  #define DOT_I   accI+=x*y
+       if(2==A&&2==B){ F x,y;   SCALAR_EXPR_CASE(DOT_F, F,kF(a),kF(b),x,y) }
+  else if(2==A&&1==B){ F x;I y; SCALAR_EXPR_CASE(DOT_FI,F,kF(a),kI(b),x,y) }
+  else if(1==A&&2==B){ I x;F y; SCALAR_EXPR_CASE(DOT_IF,F,kI(a),kF(b),x,y) }
+  else if(1==A&&1==B){ I x,y;   SCALAR_EXPR_CASE(DOT_I, I,kI(a),kI(b),x,y) }
+  else if(0==A||0==B){
+    K x,y=plus_over(0,(x=times(a,b))); cd(x);
+    R y;
+  }
+  R 1==ABS(zt)?Ki(accI):Kf(accF);
 }
 
 K mod(K a, K b) //In K4: {x-y*x div y}

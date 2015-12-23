@@ -38,6 +38,49 @@ __thread I frg=0;    // Flag reset globals
          I fnci=0;   // indicator of next function pointer position
          I fom=0;    // Flag overMonad (curried)
 
+Z K cjoin(K x,K y) {
+  P(3!=xt,TE)
+  if(3==ABS(yt))R ci(y);
+  P(yt,TE);
+  if(!yn)R newK(-3,0);
+  I zn=0;K v;
+  DO(yn,v=kK(y)[i];if(-3!=v->t)R TE;zn+=v->n)
+  zn+=yn?(yn-1)*xn:0;
+  K z=newK(-3,zn);M(z);S p=kC(z);
+  DO(yn-1,v=kK(y)[i];memcpy(p,kC(v),v->n);p+=v->n;memcpy(p,kC(x),xn);p+=xn)
+  v=kK(y)[yn-1];memcpy(p,kC(v),v->n);
+  R z;
+}
+
+Z K csplit(K x,K y) {//scan 2x
+  P(3!=xt,TE);
+  P(3!=ABS(yt),TE);
+  int delim=*kC(x);S s=kC(y);
+  I p0,p1,zn=0,i=0;
+  while(i<yn){
+    I j=i,n=0;
+    while(i<yn&&delim!=s[i]){i++;n++;}
+    p0=j;p1=n;zn++;
+    if(i<yn&&delim==s[i])i++;
+  }
+  if(yn&&delim==s[yn-1])zn++;
+  if(!zn)R newK(0,0);
+  else if(1==zn){
+    if(yn==p1)R enlist(y);
+    K z=newK(-3,p1);M(z);
+    memcpy(kC(z),s+p0,p1);
+    y=enlist(z);cd(z);
+    R y;
+  }
+  I j=0;K z=newK(0,zn);M(z);
+  DO(zn,
+    p0=j;p1=0;
+    while(j<yn&&delim!=s[j]){j++;p1++;}
+    K d=newK(-3,p1);M(d,z);memcpy(kC(d),s+p0,p1);kK(z)[i]=d;
+    if(j<yn&&delim==s[j])j++;)
+  R z;
+}
+
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 Z K overDyad(K a, V *p, K b) {
   V *o=p-1; K(*f)(K,K);
@@ -79,6 +122,11 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
   K k=0;
   if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_scan))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)
+
+  if(!a){
+    I fn=0;if(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)fn=1;  //f is a function
+    else if(3==(*(K*)*o)->t)R csplit(*(K*)*o,b);
+  }
 
   K u=0; K y=a?u=enlist(a),joinI(&u,b):ci(b); cd(u); //oom
   if(yt  > 0 || yn == 0) R y;
@@ -126,21 +174,23 @@ Z K overMonad(K a, V *p, K b)
     c=c?c:ci(b);
   }
   else{   // f/x
-    if(*(p-1)<(V)DT_SIZE || 7==(*(K*)*(p-1))->t){  //f is a function
+    V*o=p-1;
+    if(*o<(V)DT_SIZE || 7==(*(K*)*o)->t){  //f is a function
       while(1){
         if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
         if(flag)break;
         if(u!=b) cd(u);
         u=c?c:u;
-        U(c=dv_ex(0,p-1,u))
+        U(c=dv_ex(0,o,u))
         if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; } cd(c); R u;}
     else{  //f is data
+      a=*(K*)*o;if(3==a->t)R cjoin(a,b);
       while(1){   // f/x
         if(matchI(b,c) || (u!=b && matchI(u,c)))flag=1;
         if(u!=b) cd(u);
         if(flag)break;
         u=c?c:u;
-        U(c=dv_ex(0,p-1,u))
+        U(c=dv_ex(0,o,u))
         if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; } } }
   R c;
 }
@@ -171,7 +221,7 @@ Z K scanMonad(K a, V *p, K b)
       w=u; u=joinI(&w,v); cd(w); cd(v); U(u)
     }while(1);
   }
-  else while(1) //mm/o + error checking   eg if(!c) ... 
+  else while(1) //mm/o + error checking   eg if(!c) ...
   {
     U(d=last(u));
     if(matchI(b,c) || matchI(c,d))flag=1;
@@ -895,13 +945,20 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
     if(fer>0) { cd(c); cd(d); cd(b); R _n(); }
 
-    if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5 || ABS(d->t)!=d->t)) ){
+    /* XXX
+    if(*w){O("\n%lld w: ",rc(*w));show(*w);}else O("\n  w: NULL");
+    if(b){O("\n%lld b: ",rc(b));show(b);}
+    if(c){O("\n%lld c: ",rc(c));show(c);}
+    if(d){O("\n%lld d: ",rc(d));show(d);}
+    */
+
+    if(cirRef(*w,d) || (((*w)->t==6 && d) && (d->t==0 || d->t==5 || ABS(d->t)!=d->t))){
       K x = d;
       if(rc(x)) {d=kclone(x); cd(x);}
     }
     else if((*w)->t!=6){ 
       K x = *w;
-      if(rc(x)>1) {*w=kclone(x); cd(x);}
+      if(rc(x)>1) { *w=kclone(x); cd(x); }
     }
 
     K h=dot_tetradic_2(w,b,c,d);
@@ -971,6 +1028,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 }
 
 I cirRef(K x,K y){
+  if(x&&(x==y))R 1; // XXX
   I f=0;
   if(xt==6 || !y || (yt!=0 && yt!=5) || (UI)x<DT_SIZE) R 0;
   DO(yn, f=cirRef_(x,kK(y)[yn-i-1],f))

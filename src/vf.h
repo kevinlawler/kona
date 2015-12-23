@@ -8,7 +8,8 @@ I FC(F a,F b);
 F FF(F f);
 I charpos(S s,C c);
 extern I PP;
-K kclone(K a);
+K kcloneI(K a,const char*f,int n);
+#define kclone(a) kcloneI(a,__FILE__,__LINE__)
 K at(K x,K y);
 K format(K a);
 K newK(I t,I n);
