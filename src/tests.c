@@ -246,6 +246,9 @@ Z I tests02()
   TC_( "(2 0;2 1)", "for:{[n;f]f\'!n}; {[i]for[i]{[j]i,j}}2" )                 //issue #388
   TC_( "(();,1 0;(2 0;2 1))", "for:{[n;f]f\'!n}; for[3]{[i]for[i]{[j]i,j}}" )  //issue #388
   TC(21.8, c: 1 4 3 0.5 -2; mdev:{x-(+/x)%#x}; fo:{+/ _sqr mdev x}; fo c)      //issue #390
+  TC(2, mi:{:[x!2;(x-1)%2; _ ((x-1),x)%2.0]}; {mi x}5; {mi x}5)                //issue #391
+  TC(1, m:{:[x!2; 1; 2]}; {m x}5; {m x}5)                                      //issue #391
+  TC(1, m:{:[x; 1; 2]}; {m x}5; {m x}5)                                        //issue #391
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
