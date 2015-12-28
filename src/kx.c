@@ -1010,7 +1010,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         else{
           if( kV(prnt)[CACHE_WD] && kK(prnt)[CACHE_WD]->t==7 
               && kV(kK(prnt)[CACHE_WD])[LOCALS] && kK(kK(prnt)[CACHE_WD])[LOCALS]->n 
-              && kV(prnt)[CACHE_TREE] && kK(prnt)[CACHE_TREE]->n) {
+              && kV(prnt)[CACHE_TREE] && kK(prnt)[CACHE_TREE]->n
+              && !kV(kK(kK(kK(kK(prnt)[CACHE_WD])[LOCALS])[0])[1])[CONJ]) {
             if(kV(t3)[CACHE_TREE])cd(kK(t3)[CACHE_TREE]);
             K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
             K j2=join(ci(j0),j1); cd(j0); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } } }

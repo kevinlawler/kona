@@ -250,6 +250,7 @@ Z I tests02()
   TC(1, m:{:[x!2; 1; 2]}; {m x}5; {m x}5)                                      //issue #391
   TC(1, m:{:[x; 1; 2]}; {m x}5; {m x}5)                                        //issue #391
   TC(1, m:{:[x; 1; 2]}; {m 3}5; {m 3}5)                                        //issue #391
+  TC(6, mi:{:[x!2;(x-1)%2; _ ((x-1),x)%2.0]}; am:{(+/x)%#x}; p: 1 4 6 7 8; km:{am x[mi(#x)]}; km p; km p) //#391
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
