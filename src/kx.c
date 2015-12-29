@@ -82,7 +82,7 @@ Z K csplit(K x,K y) {//scan 2x
 }
 
 //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
-Z K overDyad(K a, V *p, K b) {
+K overDyad(K a, V *p, K b) {
   V *o=p-1; K(*f)(K,K);
 
   K k=0; I i=0;

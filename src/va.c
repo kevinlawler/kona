@@ -106,7 +106,6 @@ K times(K a, K b)//TODO: Float results will respect intermediate OI or Oi. Other
   R z;
 }
 
-/*
 K _dot(K a,K b)
 {
   SCALAR_INIT(2);
@@ -121,12 +120,12 @@ K _dot(K a,K b)
   else if(1==A&&2==B){ I x;F y; SCALAR_EXPR_CASE(DOT_IF,F,kI(a),kF(b),x,y) }
   else if(1==A&&1==B){ I x,y;   SCALAR_EXPR_CASE(DOT_I, I,kI(a),kI(b),x,y) }
   else if(0==A||0==B){
-    K x,y=plus_over(0,(x=times(a,b))); cd(x);
+    V p[]={0,(V)0x16};
+    K x,y=overDyad(0,p+2,(x=times(a,b))); cd(x);
     R y;
   }
   R 1==ABS(zt)?Ki(accI):Kf(accF);
 }
-*/
 
 K mod(K a, K b) //In K4: {x-y*x div y}
 {
