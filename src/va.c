@@ -106,6 +106,7 @@ K times(K a, K b)//TODO: Float results will respect intermediate OI or Oi. Other
   R z;
 }
 
+/*
 K _dot(K a,K b)
 {
   SCALAR_INIT(2);
@@ -125,6 +126,7 @@ K _dot(K a,K b)
   }
   R 1==ABS(zt)?Ki(accI):Kf(accF);
 }
+*/
 
 K mod(K a, K b) //In K4: {x-y*x div y}
 {

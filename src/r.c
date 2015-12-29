@@ -90,18 +90,19 @@ S_DYAD(binl, "{x _bin/: y}")
 S_DYAD(dvl,  "{x@&(#y)=y?/:x}" ) 
 // 151013AP S_DYAD(di,   "{:[@x;._f[. x;(!x)?/:y];x@&@[(#x)#1;y;:;0]]}") 
 S_DYAD(di,   "{r::[@x;_n;(#x)#1];:[@x;. _f[. x;(!x)?/:y];x@&@[r;y;:;0]]}") 
+S_DYAD(dot,  "+/*") //reimplementing this would make matrix math faster. See SSE dot call
 S_DYAD(dv,   "{x _dvl ,y}") 
 S_DYAD(in,   "{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}") 
 // 151012AP S_DYAD(lin,  "{_in[;y]/:x}") 
 S_DYAD(lin,  "{_in[;y]'x}") 
-S_DYAD(mul,  "{x _dot/:\\:+y}") 
+S_DYAD(mul,  "{x _dot\\:y}") 
 S_DYAD(sv,   "{{z+y*x}/[0;x;y]}")  
 S_DYAD(hat,  "{:[(1~4:x)|(2~4:x); _f[!x;y];:[@y;_f[x;,y]; x _dvl y]]}") //or "caret" or "without"
 
 S_TRIAD(ssr, "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\"=y$:),0)+/:x _ss y)_ x;,/ :[7=4:z;@[x;i;z];4:z$:;@[x;i;:[;z]];@[x;i;:;z]]}") //missing a few things
 
 #define W(x)      x
-#define _SYSTEMN  W(T) W(a) W(c) W(d) W(f) W(h) W(i) W(k) W(m) W(n) W(p) W(s) W(t) W(u) W(v) W(w)
+#define _SYSTEMN  W(T) W(a) W(d) W(f) W(h) W(i) W(k) W(m) W(n) W(p) W(s) W(t) W(u) W(v) W(w)
 #define _MATH     W(acos) W(asin) W(atan) W(ceil) W(cos) W(cosh) W(exp) W(floor) W(log) W(sin) W(sinh) W(sqr) W(sqrt) W(tan) W(tanh)
 //#define _SYSTEM1  _MATH W(abs) W(bd) W(ceiling) W(ci) W(db) W(dj) W(exit) W(getenv) W(gtime) W(host) W(ic) W(inv) W(jd) W(lt) W(ltime) W(size) 
 //#define _SYSTEM2  W(bin) W(binl) W(di) W(dot) W(draw) W(dv) W(dvl) W(hat) W(in) W(lin) W(lsq) W(mul) W(setenv) W(sm) W(ss) W(sv) W(vsx)
