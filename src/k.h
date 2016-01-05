@@ -5,6 +5,7 @@ void finally();
 extern I PG;
 extern I fError;
 extern __thread I fer;
+extern __thread I fer1;
 extern I fnci;
 extern S recur(S x);
 

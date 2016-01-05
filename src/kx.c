@@ -21,6 +21,7 @@ I cirRef(K p,K y);
 I cirRef_(K p,K y,I f);
 
 __thread I fer=0;    // Flag Early Return 
+__thread I fer1=0;
 __thread I fwh=0;    // Flag While
 __thread I stk=0;    // Stack counter
 __thread I stk1=0;   // Additional stack counter
@@ -702,8 +703,10 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
           R _n())
     CD: z=newK(0,n?e:0); 
         if(n)for(i=n-1;i>=-1;i--)if(-1==i||bk(v[i])){         
-          if(offsetColon==(v+1+i)[0] && (UI)(v+1+i)[1]>DT_SIZE)fer=1; x=ex1(v+1+i,0,&i,n,0); 
-          if(fer>0 && !fCheck){cd(z); R x;} M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}  // (c:9;a+b;c:1) oom
+          if(offsetColon==(v+1+i)[0] && (UI)(v+1+i)[1]>DT_SIZE)fer=1;
+          x=ex1(v+1+i,0,&i,n,0); 
+          if(fer1 || fer>0 && (v[0]==(V)offsetColon || v[2]==(V)1) && !fCheck){cd(z); fer1=1; R x;}
+          M(x,z) kK(z)[--e]=bk(x)?2==r?0:_n():x;}  // (c:9;a+b;c:1) oom
   }
 
   //Note on brackets: [] is _n, not (). Expression [1;1] (0-type with two atoms) is different from [1 1] (integer vector)
