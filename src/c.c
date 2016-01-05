@@ -82,7 +82,7 @@ K load(S s)
   if(!f){O("%s.k: file not found\n",s);r=FE;GC;}
   lines(f); if(fclose(f)){r=FE;GC;} scrLim--;
   if(fCmplt==1) { kerr("open-in-next-line"); oerr(); }
-  kerr("undescribed"); fer=0;
+  kerr("undescribed"); fer=fer1=0;
   r=_n();
 cleanup:
   fLoad=ofLoad;fCmplt=ofCmplt;
