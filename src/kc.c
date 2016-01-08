@@ -317,7 +317,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
               O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
               O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
-  kerr("undescribed"); fer=fnci=fom=0; fnc=lineA=lineB=0; if(cls){cd(cls);cls=0;}
+  kerr("undescribed"); fer=fer1=fnci=fom=0; fnc=lineA=lineB=0; if(cls){cd(cls);cls=0;}
   R c; }
 
 I tmr_ival=0;
