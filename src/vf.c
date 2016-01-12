@@ -1,5 +1,6 @@
 #include "incs.h"
 #include "k.h"
+#include "p.h"
 #include "km.h"
 #include "vf.h"
 
@@ -56,6 +57,40 @@ K formKfCS(S s) // 0.0 $ "123\000456\000" is 123 ('\0' char)
   R Kf(r); //oom
 }
 
+Z S formatBfn(K a,I*n){
+  //XXX: This was copied from printAtDepth in k.c.
+  I i,k,m; S s,r=alloc(1),rp=r;
+  V *v=kW(a),*p;
+  *n=0;
+  for(i=0;(p=v[i]);i++)
+  { //TODO: mute extraneous :
+    I q=(L)p;
+    if(q < DT_SIZE && q >= DT_SPECIAL_VERB_OFFSET)
+    {  s=DT[q].text;
+       k=strlen(s);
+       m=s[k-1]==':' && 1==DT[q].arity;
+       U(r=realloc(r,1+(*n+=k+m)))
+       memcpy(rp,s,k);
+       rp+=k;
+       if(m)*rp++=':';
+    }
+    else if((k=sva(p))){m=k!=2;U(r=realloc(r,1+(*n+=1+m))) *rp++=verbsChar(p);if(m)*rp++=':';}
+    else if((k=adverbClass(p))) {m=k!=1;U(r=realloc(r,1+(*n+=1+m))) *rp++=adverbsChar(p);if(m)*rp++=':';}
+    else; //XXX
+  }
+  *rp=0;R r;
+}
+
+Z K formatFn(K a)
+{
+  SW(a->n){
+    CS(1,{K k;I n;S s=formatBfn(a,&n);U(s) k=newK(-3,n);memcpy(kC(k),s,n+1);R k;})
+    CS(2,R 0)
+    CS(3,{K k;S f=kC(kV(a)[CODE]);I n=strlen(f);k=newK(-3,n+2);kC(k)[0]='{';memcpy(kC(k)+1,f,n);kC(k)[n+1]='}';kC(k)[n+2]=0;R k;})
+    CD:R 0;
+  }
+}
+
 Z K formatS(S x)
 { I n=strlen(x);
   K z=newK(-3,n);
@@ -85,7 +120,7 @@ K format(K a)
   I at=a->t, an=a->n;
   K z;
   if(3==ABS(at)){z=kclone(a); z->t=-3; R z;}
-  else if(7==at)R 0;//TODO: wordfunc and charfunc and cfunc
+  else if(7==at)R formatFn(a);
   else if(6==at)R newK(-3,0);
   else if(5==at)R formatS(sp(".(..)"));//Beats me -- this has a similar signature to a _hash
   else if(4==at)R formatS(*kS(a));
