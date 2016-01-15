@@ -1029,9 +1029,9 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
   *v=VA(t3)?t3:(V)&t3;
-  if(*(v+i)==(V)offsetEach && (!grnt || prnt==grnt)){if(grnt)cd(grnt); grnt=ci(prnt);}
+  if(*(v+i)==(V)offsetEach && !grnt)grnt=ci(prnt);
   e=dv_ex(0,v+i,t2); *v=u;
-  if(*(v+i)==(V)offsetEach && prnt==grnt){if(grnt)cd(grnt); grnt=0;}
+  if(*(v+i)==(V)offsetEach && prnt==grnt){cd(grnt);grnt=0;}
   cd(t2); if(!VA(t3) && (encp!=3 || (encp==3 && kV(t3)[CACHE_WD])))cd(t3);
     //the encp conditions address the 2 variations of issue #247, neither of which work in k2.8 or k3.2
   R e; 
