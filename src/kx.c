@@ -1024,7 +1024,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(ci(j0),j1); cd(j0);
           if(kV(t3)[CACHE_TREE] && kK(t3)[CACHE_TREE]->n)cd(kK(t3)[CACHE_TREE]);
           kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
-      cd(prnt); }
+      if(grnt)cd(prnt); else grnt=prnt; } 
     prnt=ci(t3); }
 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
