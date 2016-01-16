@@ -68,6 +68,6 @@ void OS(N x,I y)
 {
   if(!x)R;
   OS(x->c[0],y);
-  if(x->k&&SV(x->k,y))O("%s: %lld\n",x->k,SV(x->k,y));
+  if(x->k&&SV(x->k,y))O("%p: %lld\n",x->k,SV(x->k,y));
   OS(x->c[1],y);
 }
