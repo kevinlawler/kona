@@ -149,7 +149,7 @@ Z K overMonad(K a, V *p, K b)
   K u=b,c=0;I flag=0;
 
   I useN=0,n=0,useB=0;
-  if(a) {if(1 == a->t){useN=1; n=*kI(a);} else if(7==a->t){useB=1;}}
+  if(a) {if(1==a->t){useN=1; n=*kI(a);} else if(7==a->t || 6==a->t){useB=1;}}
   P(n<0,IE)
 
   if(useN) //n f/x
