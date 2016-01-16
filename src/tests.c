@@ -256,6 +256,7 @@ Z I tests02()
   TC_("1.5", "i:{(2#x)#1.,x#0.};f:{(+%\':+x)[;!-1+#x]};*{+/(f(+\\x))[!-1+#x;]*|i -1+#x}2 2#2. 3 1 2")   //issue #396
   TC(9, {c:{. x};c "9"}0)                         // issue 397
   TC(3, :(3;4)@0)                                 // issue 397
+  TC((), ,/())                                    // issue 399
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
