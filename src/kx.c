@@ -126,7 +126,7 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
   P(k,k)
 
   if(!a
-     && !(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)    //f is a function
+     && !(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)    //f is NOT a function
      && 3==(*(K*)*o)->t) R csplit(*(K*)*o,b);
 
   K u=0; K y=a?u=enlist(a),joinI(&u,b):ci(b); cd(u); //oom
