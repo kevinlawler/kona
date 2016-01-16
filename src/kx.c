@@ -125,7 +125,9 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
   if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_scan))k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)
 
-  if(!a) if(!(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)) if(3==(*(K*)*o)->t)R csplit(*(K*)*o,b);
+  if(!a
+     && !(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)    //f is a function
+     && 3==(*(K*)*o)->t) R csplit(*(K*)*o,b);
 
   K u=0; K y=a?u=enlist(a),joinI(&u,b):ci(b); cd(u); //oom
   if(yt  > 0 || yn == 0) R y;
