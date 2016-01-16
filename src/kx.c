@@ -89,8 +89,9 @@ K overDyad(K a, V *p, K b) {
   K k=0; I i=0;
   if(a&&*o==offsetJoin&&!b->t&&!b->n)R 0<a->t?enlist(a):ci(a);
   if(b->t==0) while(i<b->n && !kK(b)[i]->t){++i;}
-  if( *o!=(V)0x34 || (*o==(V)0x34 && i==b->n) ) {    //only a partial fix for join-over (where all elts of b are lists)
-    if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_over)) k=f(a,b); } //k==0 just means not handled. Errors are not set to come from alt_funcs
+  if( *o!=offsetJoin || (*o==offsetJoin && i==b->n) ) { //only a partial fix for join-over (where all elts of b are lists)
+    if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_over)) k=f(a,b); } //k==0 just means not handled.
+                                                                //Errors are not set to come from alt_funcs
   P(k,k)
 
   K u=0,v=0;
