@@ -70,11 +70,9 @@ Z K formatFn(K a){
            else; }
          n=strlen(s); z=newK(-3,n); memcpy(kC(z),s,n+1); R z; )
     CS(2,R 0)
-    CS(3,{K k;S f=kC(kV(a)[CODE]); I n=strlen(f);
-           k=newK(-3,n+2);
-           kC(k)[0]='{';memcpy(kC(k)+1,f,n);
-           kC(k)[n+1]='}';
-           kC(k)[n+2]=0;R k; } )
+    CS(3,{S f=kC(kV(a)[CODE]); I n=strlen(f); z=newK(-3,n+2);
+          kC(z)[0]='{';memcpy(kC(z)+1,f,n);
+          kC(z)[n+1]='}'; kC(z)[n+2]=0; R z; } )
     CD:R 0; } }
 
 Z K formatS(S x)

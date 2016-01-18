@@ -270,7 +270,6 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   {
     if(1==a->n)
     {
-      //XXX: This is duplicated in vf.c:formatBfn.
       I i,k; S s;
       V *v=kW(a),*p;
       for(i=0;(p=v[i]);i++)
