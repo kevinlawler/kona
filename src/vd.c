@@ -139,6 +139,7 @@ K dot_ref(K *p, K *x, K *z, I s, K c, K y)
     K args=newK(0,argc);U(args)//Cheating 0-type w/ NULLs 
     kK(args)[0]=ci(*p);
     if(argc > 1) kK(args)[1] = ci(y);
+    fam=0;
     K r = specialAmendDot(c,args);
     cd(args);
     U(r)

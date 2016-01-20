@@ -38,6 +38,7 @@ __thread I frg=0;    // Flag reset globals
          V fncp[128];// DT pointers of executed functions
          I fnci=0;   // indicator of next function pointer position
          I fom=0;    // Flag overMonad (curried)
+         I fam=1;    // Flag amend: 1=OK to print response
 
 Z K cjoin(K x,K y) {
   P(3!=xt,TE)
@@ -673,7 +674,7 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
   {
     CS(0, for(i=-1;i<n;i++)                      //  c:9;a+b;c:1
             if(-1==i||bk(v[i])){
-              cd(z); frg++; x=ex1(v+1+i,0,&i,n,1); frg--; 
+              cd(z); frg++; fam=1; x=ex1(v+1+i,0,&i,n,1); frg--; 
               if(!frg){encp=0; 
                 if(encf){cd(encf); encf=0;} 
                 if(grnt){cd(grnt); grnt=0;}} 
@@ -972,7 +973,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   while(v[1] && adverbClass(v[2+i])) i++;
   //TODO: Catch 0-returned-errors here and below
   if(!sva(v[0]) && (i || 2==sva(v[1]))) {  //na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
-    t2=ex2(v+2+i,k); if(fer>0 && strcmp(errmsg,"undescribed")) R t2;
+    t2=ex2(v+2+i,k); fam=1; if(fer>0 && strcmp(errmsg,"undescribed")) R t2;
        //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
     if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3) {
