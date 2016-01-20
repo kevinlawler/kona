@@ -32,8 +32,6 @@ I valence(V p);
 I adverbClass(V p);
 extern I vn_ct;
 I sva(V p);
-C verbsChar(V p);
-C adverbsChar(V p);
 L charsAdverb(C c);
 L charsVerb(C c);
 I isCharVerb(C c);

@@ -22,3 +22,5 @@ K formKiCS(S s);
 K Ks(S x);
 S sp(S k);
 S CSK(K x);
+C verbsChar(V p);
+C adverbsChar(V p);

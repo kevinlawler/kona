@@ -1,6 +1,5 @@
 #include "incs.h"
 #include "k.h"
-#include "p.h"
 #include "km.h"
 #include "vf.h"
 
@@ -57,22 +56,17 @@ K formKfCS(S s) // 0.0 $ "123\000456\000" is 123 ('\0' char)
   R Kf(r); //oom
 }
 
-Z K formatFn(K a){
-  V *v=kW(a),p; I i,k,n,r=0; K z=0; C t[256]=""; S s=(C*)t;
+Z K formatFn(K a){ V *v=kW(a),p; I i,k,n,r=0; K z=0; C t[256]=""; S s=(C*)t;
   SW(a->n){
     CS(1,for(i=0;(p=v[i]);i++){ L q=(L)p;
-           if(q<DT_SIZE && q>=DT_SPECIAL_VERB_OFFSET){
-              S u=DT[q].text; n=strlen(u); strncpy(s+r,u,n); r+=n; }
-           else if(k=adverbClass(p)){
-             t[r]=adverbsChar(p); if(k!=1)t[r+1]=':'; r++;}
-           else if(k=sva(p)){
-             t[r]=verbsChar(p); if(k!=2)t[r+1]=':'; r++; }
-           else; }
+           if(q<DT_SIZE && q>=DT_SPECIAL_VERB_OFFSET){S u=DT[q].text; n=strlen(u); strncpy(s+r,u,n); r+=n;}
+           else if(k=adverbClass(p)){t[r]=adverbsChar(p); if(k!=1)t[r+1]=':'; r++;}
+           else if(k=sva(p)){t[r]=verbsChar(p); if(k!=2)t[r+1]=':'; r++;}
+           else;}
          n=strlen(s); z=newK(-3,n); memcpy(kC(z),s,n+1);)
     CS(2,)
     CS(3,{S f=kC(kV(a)[CODE]); I n=strlen(f); z=newK(-3,n+2);
-          kC(z)[0]='{';memcpy(kC(z)+1,f,n);
-          kC(z)[n+1]='}'; kC(z)[n+2]=0;} ) }
+          kC(z)[0]='{';memcpy(kC(z)+1,f,n); kC(z)[n+1]='}'; kC(z)[n+2]=0;})}
   R z;}
 
 Z K formatS(S x)
