@@ -12,8 +12,15 @@
 #define LLONG_MAX	INT64_MAX
 #endif
 
-typedef void* V;
+#ifdef __i386__
 typedef long L;
+typedef unsigned long UI;
+#else
+typedef long long L;
+typedef unsigned long long UI;
+#endif
+
+typedef void* V;
 typedef long long I; //there are cases where casting pointer arithmetic to signed int will fail
 typedef unsigned long long uI;
 typedef double F;
@@ -21,7 +28,6 @@ typedef char C; //Store +-3 type '\0' terminated
 typedef C* S;
 typedef const C* cS;
 typedef unsigned char UC;
-typedef unsigned long UI;
 typedef I veci __attribute__ ((vector_size (16)));
 typedef struct k0{I _c,t,n;struct k0*k[1];}*K; //main K object
 typedef struct m1{char a,b,c[sizeof(I)-3],d;I n;} M1; //inet sent message header.  m.a?little-:big-endian,m.b is type???, m.d in {0,1,2}->{3:,4:,response}, m.n is size of nested K struct in bytes. c unknown, inserted [5] for 64b alignment
