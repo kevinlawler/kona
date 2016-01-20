@@ -12,12 +12,12 @@
 #define LLONG_MAX	INT64_MAX
 #endif
 
-#ifdef __i386__
-typedef long L;
-typedef unsigned long UI;
-#else
+#ifdef __x86_64__
 typedef long long L;
 typedef unsigned long long UI;
+#else
+typedef long L;
+typedef unsigned long UI;
 #endif
 
 typedef void* V;
