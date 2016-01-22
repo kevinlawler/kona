@@ -911,7 +911,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   //TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
 
   if(bk(v[1])) { K z= ex_(*v,1); if(fer==2 && !fCheck)R (K)0;
-    if(prnt && z->t==7) {
+    if(prnt && z && z->t==7) {
       if(kV(prnt)[PARAMS] && !kK(prnt)[PARAMS]->n && kV(z)[LOCALS] && !kK(z)[LOCALS]->n
          && kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n) {
         kV(z)[CACHE_TREE]=kclone(kK(prnt)[CACHE_TREE]); if(prnt)cd(prnt); prnt=ci(z); }
