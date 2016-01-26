@@ -659,7 +659,13 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
   U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
   K z=ex_(&a,0); cd(a); if(fer==1)fer=fer1=0; 
-  fwh=stk=stk1=prj=prj2=fsf=0; if(prnt)cd(prnt); prnt=0; R z; 
+  fwh=stk=stk1=prj=prj2=fsf=0;
+  #ifdef NSL
+  if(prnt && encp==3){cd(prnt); prnt=0;} else prnt=0;      //NSL works, tests fail
+  #else
+  if(prnt)cd(prnt); prnt=0;                                //tests work, NSL no response
+  #endif
+  R z;
 }
 
 Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]} 
@@ -680,7 +686,10 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
                 if(grnt){cd(grnt); grnt=0;}} 
               U(x) z=bk(x)?_n():x; 
               if(fer>0 && !fCheck)R z; 
-              if(grnt && (!prnt || rc(prnt)==2)){if(prnt)cd(prnt); prnt=ci(grnt);} })
+              #ifndef NSL
+              if(grnt && (!prnt || rc(prnt)==2)){if(prnt)cd(prnt); prnt=ci(grnt);} //tests work, NSL no response
+              #endif
+            } )      
     CS(4, for(i=-1;i<n;i++)
             if(-1==i||bk(v[i])){
               U(x=ex1(v+1+i,0,&i,n,1)) 
@@ -901,9 +910,11 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       if(prnt && kV(prnt)[CODE] && kK(prnt)[CODE]->t==-3 && kC(kK(prnt)[CODE])[0]=="{"[0] &&
         kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0] && strchr(kC(kK(prnt)[CODE]),"y"[0])){
         if(encf)cd(encf); encf=ci(prnt);}
-      if(encp!=2 || !prnt){
-        if(prnt){if(grnt)cd(grnt); grnt=prnt;} prnt=ci(z);}
-        //more verbosely: if(prnt){if(grnt)cd(grnt); grnt=ci(prnt); cd(prnt);} prnt=ci(z);} 
+      #ifdef NSL
+      if(encp!=2 || !prnt)prnt=z;                                              //NSL works, tests fail
+      #else
+      if(encp!=2 || !prnt){if(prnt){if(grnt)cd(grnt);grnt=prnt;}prnt=ci(z);}   //tests work, NSL no response
+      #endif
       else {cd(z); R prnt;} }
     R z; }
 
@@ -1025,7 +1036,10 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
           K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); K j2=join(ci(j0),j1); cd(j0);
           if(kV(t3)[CACHE_TREE] && kK(t3)[CACHE_TREE]->n)cd(kK(t3)[CACHE_TREE]);
           kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
-      if(grnt)cd(prnt); else grnt=prnt; } 
+      #ifndef NSL
+      if(grnt)cd(prnt); else grnt=prnt;                    //tests work, NSL no response
+      #endif
+    }
     prnt=ci(t3); }
 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
