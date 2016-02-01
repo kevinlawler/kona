@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include "kona.h"
 
+extern K _jd(K);
 extern K wd(S s, I n);
 extern K dot(K,K);
 extern K newK(I t, I n);
@@ -33,7 +34,7 @@ K gp(S s) {R gpn_(s,strlen(s));}
 
 I sfn(S s, K(*f)(), I i) { R 0; }
 I sdf(I i, I(*f)()) { R NYI; } // XXX
-I scd(I i) { I rclose(i); if(r)R FE; R r;} // XXX
+I scd(I i) { I r=close(i); if(r)R kerr("file"); R r;} // XXX
 
 K gsk(S s, K k) { return gnk(3, gs(sp(s)), k, 0); }
 
