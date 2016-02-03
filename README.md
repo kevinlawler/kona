@@ -1,4 +1,4 @@
-# [Kona](http://kona.github.io/)
+# [Kona](http://kona.github.io/) [![Build Status](https://travis-ci.org/kevinlawler/kona.svg?branch=master)](https://travis-ci.org/kevinlawler/kona)
 
 ![Kona](https://raw.githubusercontent.com/kevinlawler/kona/master/Kona.png)
 
