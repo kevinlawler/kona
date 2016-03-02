@@ -147,11 +147,11 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
   if(!m[0] || !strcmp(m,"/dev/fd/1") || !strcmp(m,"/dev/stdout")){    //write to stdout
     //stdout if m is ` or "" or "\000..." (is O_TRUNC necessary when we have ftruncate below?)
     I r; f=1;
-    if(3==ABS(t)) {r=write(f,kC(b),s); if(!r)show(kerr("write"));}
+    if(3==ABS(t)) {if(write(f,kC(b),s)==-1)show(WE);}
       //This is duplicated but I don't see how to factor it right now (choose write/memcpy funcs?)
     else DO(n, k=kK(b)[i];
       if(3==ABS(k->t)) r=write(f,kC(k),k->n);
-      r=write(f,"\n",1); if(!r)show(kerr("write"));) }
+      r=write(f,"\n",1); if(r==-1)show(WE);)}
   else {                                                              //write to mmap'd file
     if(m[0])f=open(m,O_RDWR|O_CREAT|O_TRUNC,07777);
     P(f<0,DOE)
@@ -170,8 +170,7 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
     else DO(n, k=kK(b)[i]; if(3==ABS(k->t)){memcpy(v+c,kC(k),k->n); c+=k->n;} v[c++]='\n'; )
 
     //msync(v,s,MS_SYNC|MS_INVALIDATE); //slow
-    r=munmap(v,s); if(r)R UE;
-  }
+    r=munmap(v,s); if(r)R UE; }
 
   R _n();
 }
