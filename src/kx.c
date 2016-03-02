@@ -257,7 +257,8 @@ Z K each2(K a, V *p, K b)
       if(f)d=dv_ex(a,p-1,kK(b)[i]);
       else d=dv_ex(0,p-1,kK(b)[i]);
       if(grnt && !prnt)prnt=ci(grnt); M(d,z) kK(z)[i]=d)
-    R demote(z);
+    z=demote(z); if(z->t==1)z->t=-1;
+    R z;
   }
 }
 
