@@ -257,8 +257,8 @@ Z I tests02()
   TC(9, {c:{. x};c "9"}0)                         // issue 397
   TC(3, :(3;4)@0)                                 // issue 397
   TC((), ,/())                                    // issue 399
-  TC_(",1", "#:\',0")
-  TC_(",1", "#:\',,0")
+  TC_(",1", "#:\',0")                             // issue 417
+  TC_(",1", "#:\',,0")                            // issue 417
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
