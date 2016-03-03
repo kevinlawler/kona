@@ -154,7 +154,7 @@ K read_tape(I i, I j, I type) {   // type in {0,1} -> {select loop, 4: resp read
         C c[7+sf+sbx]; c[0]='{'; c[1+sf]='}'; c[2+sf]='['; c[5+sf+sbx]=']';
         c[3+sf]=c[4+sf+sbx]='"'; c[6+sf+sbx]='\0';
         DO(sf,c[1+i]=f[i])  DO(sbx,c[4+sf+i]=bx[i])
-        K r=X(c); I w=128; C bck[w];
+        K r=X(c); if(strcmp(errmsg,"undescribed")){oerr();GC;} I w=128; C bck[w];
         switch(r->t){
           CS(1, {n=snprintf(bck,w,"%lld",*kI(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
           CS(2, {n=snprintf(bck,w,"%f",*kF(r)); if(n>=w){bck[w-4]=bck[w-3]=bck[w-2]='.';}})
