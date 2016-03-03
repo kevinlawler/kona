@@ -272,6 +272,45 @@ Z K symGroup(K x)
   R y;
 }
 
+K group(K x)
+{
+  I t=xt, n=xn;
+  P(t>0,RE)
+  I u=n,*g,*h;
+  K z=0,b=0,c=0;
+
+  if(-4==t)R symGroup(x);
+  if(-3==t)R charGroup(x);
+  
+  M(b=grade_up(x));g=kI(b);
+  //Nastier code would eliminate this second sort.
+  c=newK(-1,n);M(b,c);h=kI(c);
+  DO(n,h[g[i]]=i);
+  //Step through, on duplicate set uniques-=1, mark by inverting sign of corresponding index
+  //I *h=kI(c);
+  if(-2==t)DO(n-1,if(kF(x)[g[n-i-1]]==kF(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
+  if(-1==t)DO(n-1,if(kI(x)[g[n-i-1]]==kI(x)[g[n-i-2]])  {--u;g[n-i-1]*=-1;})
+  if( 0==t)DO(n-1,if(matchI(kK(x)[g[n-i-1]],kK(x)[g[n-i-2]])){--u;g[n-i-1]*=-1;})
+ 
+  z=newK(0,u);
+  M(b,c,z);
+  I k=0,p=0,v;
+  while(p<n && k<u)//This is a tricky algorithm.
+  { //Dupes in g marked negative. h[p] is index of a[p] in sorted a
+    for(v=1;p+v<n && g[h[p]+v]<0;v++);//Find the length of z[k]
+    K s=newK(-1,v); 
+    M(b,c,z,s)
+    DO(v, kI(s)[i]=ABS(g[h[p]+i]))//ABS because duplicates marked negative
+    kK(z)[k]=s;
+    while(++p<n && g[h[p]]<0);
+    k++;
+  }
+  cd(b);
+  cd(c);
+  R z;
+}
+
+/*
 Z K groupI(K x,K y,I n)//#x=#a;n=#?a
 {
   K z=newK(0,n);M(z);I*c=kI(y);
@@ -356,6 +395,7 @@ K group(K x)
   cd(c);
   R z;
 }
+*/
 
 I VAT(I i){R 1<=i && i<=4?i:0;} //vector atom type
 
