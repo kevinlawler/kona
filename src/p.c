@@ -598,10 +598,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){z=(V)0x7c; break;}   //trace or scan
                       if(s[k]==':' && s[strlen(s)-1]!=':' && lineB && lineB[strlen(lineB)-1]!=']' && lineB[0]!=')'){
-                        I i=0; I c=0;
-                        for(i=k-1;i>0;i--){if(s[i]!=' '){c=s[i];break;}}
-                        if(c==';')z=(V)0x7d;
-                        if(z==(V)0x7d) break; }
+                        I i=0;
+                        for(i=k-1;i>0;i--){if(s[i]!=' '){c=s[i];break;} } }
                       if('_'==s[k] && r > 1)
                       {
                         if(k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r]) R (L)PE;
