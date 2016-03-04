@@ -311,91 +311,97 @@ K group(K x)
 }
 
 /*
-Z K groupI(K x,K y,I n)//#x=#a;n=#?a
-{
-  K z=newK(0,n);M(z);I*c=kI(y);
-  if(n<65537){
-    DO(n,K v=newK(-1,c[i]);M(v,z);kK(z)[i]=v;c[i]=0)
-    DO(xn,I w=kI(x)[i];K v=kK(z)[w];kI(v)[c[w]++]=i)
-  }else{
-    DO(n,K v=newK(-1,c[i]);M(v,z);kK(z)[i]=v;v->n=0)
-    DO(xn,I w=kI(x)[i];K v=kK(z)[w];kI(v)[v->n++]=i)
-  }
-  cd(y);cd(x);
-  R z;
-}
-
-Z K intGroup(K x)
-{
-  hcinit();
-  I j=0,h0=0,sa=0;uI m=0;
-  K h=newH(xn);M(h);K ok=newK(-1,h->n);M(ok,h);I*o=kI(ok);
-  K xok=newK(-1,xn);M(xok,ok,h);I*xo=kI(xok);
-  K ck=newK(-1,xn);M(ck,xok,ok,h);I*c=kI(ck);
-  DO(xn,m|=kU(x)[i]);if(m)while(!(m&1)){m>>=1;sa++;}
-  DO(xn,uI v=kU(x)[i];
-      if(!v){if(!h0)h0=j++;xo[i]=h0;c[h0]++;}
-      else{v>>=sa;uI u=m<h->n?v:hc(v);
-      uI p;if(!hg(h,u,v,&p)){hs(h,p,v);o[p]=j++;}
-      I w=o[p];xo[i]=w;c[w]++;})
-  cd(ok);cd(h);
-  K z=groupI(xok,ck,j);
-  R z;
-}
-
-Z K listGroup(K x)
-{
-  hcinit();
-  I j=0;
-  K h=newH(xn);M(h);K ok=newK(-1,h->n);M(ok,h);I*o=kI(ok);
-  K xok=newK(-1,xn);M(xok,ok,h);I*xo=kI(xok);
-  K ck=newK(-1,xn);M(ck,xok,ok,h);I*c=kI(ck);
-  DO(xn,K v=kK(x)[i];uI u=hcode(v);
-      uI p;if(!shg(h,u,v,&p)){shs(h,p,v);o[p]=j++;}
-      I w=o[p];xo[i]=w;c[w]++)
-  cd(ok);cd(h);
-  K z=groupI(xok,ck,j);
-  R z;
-}
-
-K group(K x)
-{
-  I t=xt, n=xn;
-  P(t>0,RE)
-  I u=n,*g,*h;
-  K z=0,b=0,c=0;
-
-  SW(-t){
-  CSR(0,R listGroup(x))
-  CSR(1,)CSR(2,R intGroup(x))
-  CSR(3,R charGroup(x))
-  CSR(4,R symGroup(x)) }
-  
-  M(b=grade_up(x));g=kI(b);
-  //Nastier code would eliminate this second sort.
-  c=newK(-1,n);M(b,c);h=kI(c);
-  DO(n,h[g[i]]=i);
-  //Step through, on duplicate set uniques-=1, mark by inverting sign of corresponding index
-  if( 0==t)DO(n-1,if(matchI(kK(x)[g[n-i-1]],kK(x)[g[n-i-2]])){--u;g[n-i-1]*=-1;})
- 
-  z=newK(0,u);
-  M(b,c,z);
-  I k=0,p=0,v;
-  while(p<n && k<u)//This is a tricky algorithm.
-  { //Dupes in g marked negative. h[p] is index of a[p] in sorted a
-    for(v=1;p+v<n && g[h[p]+v]<0;v++);//Find the length of z[k]
-    K s=newK(-1,v); 
-    M(b,c,z,s)
-    DO(v, kI(s)[i]=ABS(g[h[p]+i]))//ABS because duplicates marked negative
-    kK(z)[k]=s;
-    while(++p<n && g[h[p]]<0);
-    k++;
-  }
-  cd(b);
-  cd(c);
-  R z;
-}
-*/
+ * The following code was merged from @pahihu on Nov 29, 2015
+ * in commit e8673c0df9ec4fc9f3e705f6d77b89f529d02d4d titled
+ * "kexpander() fixed, group() uses hashing for IF"
+ * However, it caused issue #416: "Group and integer vectors with leading zero"
+ * The previous version of group() has been restored (above).
+ * 
+ * Z K groupI(K x,K y,I n)//#x=#a;n=#?a
+ * {
+ *   K z=newK(0,n);M(z);I*c=kI(y);
+ *   if(n<65537){
+ *     DO(n,K v=newK(-1,c[i]);M(v,z);kK(z)[i]=v;c[i]=0)
+ *     DO(xn,I w=kI(x)[i];K v=kK(z)[w];kI(v)[c[w]++]=i)
+ *   }else{
+ *     DO(n,K v=newK(-1,c[i]);M(v,z);kK(z)[i]=v;v->n=0)
+ *     DO(xn,I w=kI(x)[i];K v=kK(z)[w];kI(v)[v->n++]=i)
+ *   }
+ *   cd(y);cd(x);
+ *   R z;
+ * }
+ *
+ * Z K intGroup(K x)
+ * {
+ *   hcinit();
+ *   I j=0,h0=0,sa=0;uI m=0;
+ *   K h=newH(xn);M(h);K ok=newK(-1,h->n);M(ok,h);I*o=kI(ok);
+ *   K xok=newK(-1,xn);M(xok,ok,h);I*xo=kI(xok);
+ *   K ck=newK(-1,xn);M(ck,xok,ok,h);I*c=kI(ck);
+ *   DO(xn,m|=kU(x)[i]);if(m)while(!(m&1)){m>>=1;sa++;}
+ *   DO(xn,uI v=kU(x)[i];
+ *       if(!v){if(!h0)h0=j++;xo[i]=h0;c[h0]++;}
+ *       else{v>>=sa;uI u=m<h->n?v:hc(v);
+ *       uI p;if(!hg(h,u,v,&p)){hs(h,p,v);o[p]=j++;}
+ *       I w=o[p];xo[i]=w;c[w]++;})
+ *   cd(ok);cd(h);
+ *   K z=groupI(xok,ck,j);
+ *   R z;
+ *  }
+ *
+ * Z K listGroup(K x)
+ * {
+ *   hcinit();
+ *   I j=0;
+ *   K h=newH(xn);M(h);K ok=newK(-1,h->n);M(ok,h);I*o=kI(ok);
+ *   K xok=newK(-1,xn);M(xok,ok,h);I*xo=kI(xok);
+ *   K ck=newK(-1,xn);M(ck,xok,ok,h);I*c=kI(ck);
+ *   DO(xn,K v=kK(x)[i];uI u=hcode(v);
+ *       uI p;if(!shg(h,u,v,&p)){shs(h,p,v);o[p]=j++;}
+ *       I w=o[p];xo[i]=w;c[w]++)
+ *   cd(ok);cd(h);
+ *   K z=groupI(xok,ck,j);
+ *   R z;
+ * }
+ *
+ * K group(K x)
+ * {
+ *   I t=xt, n=xn;
+ *   P(t>0,RE)
+ *   I u=n,*g,*h;
+ *   K z=0,b=0,c=0;
+ *
+ *   SW(-t){
+ *   CSR(0,R listGroup(x))
+ *   CSR(1,)CSR(2,R intGroup(x))
+ *   CSR(3,R charGroup(x))
+ *   CSR(4,R symGroup(x)) }
+ * 
+ *   M(b=grade_up(x));g=kI(b);
+ *   //Nastier code would eliminate this second sort.
+ *   c=newK(-1,n);M(b,c);h=kI(c);
+ *   DO(n,h[g[i]]=i);
+ *   //Step through, on duplicate set uniques-=1, mark by inverting sign of corresponding index
+ *   if( 0==t)DO(n-1,if(matchI(kK(x)[g[n-i-1]],kK(x)[g[n-i-2]])){--u;g[n-i-1]*=-1;})
+ *
+ *   z=newK(0,u);
+ *   M(b,c,z);
+ *   I k=0,p=0,v;
+ *   while(p<n && k<u)//This is a tricky algorithm.
+ *   { //Dupes in g marked negative. h[p] is index of a[p] in sorted a
+ *     for(v=1;p+v<n && g[h[p]+v]<0;v++);//Find the length of z[k]
+ *     K s=newK(-1,v); 
+ *     M(b,c,z,s)
+ *     DO(v, kI(s)[i]=ABS(g[h[p]+i]))//ABS because duplicates marked negative
+ *     kK(z)[k]=s;
+ *     while(++p<n && g[h[p]]<0);
+ *     k++;
+ *   }
+ *   cd(b);
+ *   cd(c);
+ *   R z;
+ * }
+ */
 
 I VAT(I i){R 1<=i && i<=4?i:0;} //vector atom type
 
