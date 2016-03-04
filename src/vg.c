@@ -295,7 +295,7 @@ Z K intGroup(K x)
   K ck=newK(-1,xn);M(ck,xok,ok,h);I*c=kI(ck);
   DO(xn,m|=kU(x)[i]);if(m)while(!(m&1)){m>>=1;sa++;}
   DO(xn,uI v=kU(x)[i];
-      if(!v){if(!h0)h0=j++;xo[i]=h0;c[h0]++;}
+      if(!v){if(!h0)h0=++j;xo[i]=h0-1;c[h0-1]++;}
       else{v>>=sa;uI u=m<h->n?v:hc(v);
       uI p;if(!hg(h,u,v,&p)){hs(h,p,v);o[p]=j++;}
       I w=o[p];xo[i]=w;c[w]++;})
