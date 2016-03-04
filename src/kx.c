@@ -1003,7 +1003,16 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
             //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3;
     t0=ex_(*v,1); if(fer>0 && strcmp(errmsg,"undescribed")){cd(t2); R(t0);}
-    if(!prnt && t0->t==7 && t0->n==3){if(prnt)cd(prnt); prnt=ci(t0);}
+    if(t0>(K)DT_SIZE && t0->t==7 && t0->n==3) {
+      if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t0)[LOCALS]->n) {
+        if(kK(prnt)[CACHE_TREE]->n) {
+          K j0=dot_monadic(kV(t0)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
+          K j2=join(ci(j0),j1); cd(j0); cd(kK(t0)[CACHE_TREE]); kV(t0)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); fsf=1; }
+        else if(kV(prnt)[CONJ]) {
+          K j0=dot_monadic(kV(t0)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]); 
+          K j2=join(ci(j0),j1); cd(j0); kV(t0)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2); } }
+      if(prnt)cd(prnt); prnt=ci(t0); }
+    if(!prnt && t0->t==7 && t0->n==3)prnt=ci(t0);
     e= dv_ex(t0,v+1+i,t2); v[1]=u; cd(t0); cd(t2); if(!VA(t3)) cd(t3);
     R e; }
 
