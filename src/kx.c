@@ -437,10 +437,10 @@ K vf_ex(V q, K g)
   I n=-1,j=0;
   if(!k&&!(*(V*)q)){cd(g); R 0;}// (2="2") 2 err
 
-  K h=0;  //issue #297
-  if(q>(V)DT_SIZE){ h=(K)(*(V*)q);
-     if(h->t==7 && kK(h)[CODE] && kK(h)[CODE]->t==-4 && kK(h)[CODE]->n==3 && (UI)kK(kK(h)[CODE])[0]>DT_SIZE
-       && (*(K*)(kS(kK(h)[CODE])[0]))->t==0 ) { z=dot(*(K*)(kS(kK(h)[CODE])[0]),g); GC; } }
+  if(q>(V)DT_SIZE){ K h=(K)(*(V*)q);
+    if(h->t==7 && h->n==1 && kK(h)[CODE] && (UI)kK(kK(h)[CODE])[0]>DT_SIZE){
+      if(kK(h)[CODE]->n==3 && (*(K*)(kS(kK(h)[CODE])[0]))->t==0 ) { z=dot(*(K*)(kS(kK(h)[CODE])[0]),g); GC; } 
+      if((UI)kK(kK(h)[CODE])[1]==0x3a && g->t==0 && g->n==1 ){ z=dot( *(K*)(kS(kK(h)[CODE])[0]), kK(g)[0] ); GC; } } }
 
   n=valence(q); I ee=0;
   if(q>(V)DT_SIZE){
