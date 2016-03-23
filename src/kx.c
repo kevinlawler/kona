@@ -241,25 +241,21 @@ Z K scanMonad(K a, V *p, K b)
   R u;
 }
 
-Z K each2(K a, V *p, K b)
-{
+Z K each2(K a, V *p, K b) {
   I bt=b->t, bn=b->n; K prnt0=0,grnt0=0;
   if(bt > 0) R dv_ex(0,p-1,b);
-  else
-  {
+  else {
     K z = newK(0,bn),d=0; U(z)
     K g; I f=*p==(V)offsetEach && (*(p-1)==(V)offsetOver || *(p-1)==(V)offsetScan) && *(p-2)<(V)DT_SIZE;
     if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt));
-      if(f)d=dv_ex(a,p-1,g);
-      else d=dv_ex(0,p-1,g);
+      if(f)d=dv_ex(a,p-1,g); else d=dv_ex(0,p-1,g);
       cd(g); M(d,z) kK(z)[i]=d)
     if(0==bt){
-      if(prnt && !prnt0)prnt0=ci(prnt); if(grnt && !grnt0)grnt0=ci(grnt);
+      if(prnt)prnt0=ci(prnt); if(grnt)grnt0=ci(grnt);
       DO(bn,
         if(f)d=dv_ex(a,p-1,kK(b)[i]);
         else {
-          if(prnt0){cd(prnt);prnt=ci(prnt0);}
-          if(grnt0){cd(grnt);grnt=ci(grnt0);}
+          if(prnt0){cd(prnt);prnt=ci(prnt0);} if(grnt0){cd(grnt);grnt=ci(grnt0);}
           d=dv_ex(0,p-1,kK(b)[i]);}
         if(!d || !z){if(prnt0){cd(prnt0);prnt0=0;} if(grnt0){cd(grnt0);grnt0=0;}}
         if(grnt && !prnt)prnt=ci(grnt);
