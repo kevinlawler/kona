@@ -28,10 +28,8 @@ __thread I stk1=0;   // Additional stack counter
 __thread I prj=0;    // Projection flag
 __thread I prj2=0;   // 2nd Projection flag
 __thread K prnt=0;   // Parent of Subfunction 
-__thread K prnt0=0;  // save Parent
 __thread I fsf=0;    // Flag for Subfunctions
 __thread K grnt=0;   // GrandParent of Subfunction
-__thread K grnt0=0;  // save GrandParent
 __thread K cls=0;    // Closure: level 2 linkage
 __thread K encf=0;   // Enclosing Function
 __thread I encp=0;   // Enclosing Function Param
@@ -245,7 +243,7 @@ Z K scanMonad(K a, V *p, K b)
 
 Z K each2(K a, V *p, K b)
 {
-  I bt=b->t, bn=b->n;
+  I bt=b->t, bn=b->n; K prnt0=0,grnt0=0;
   if(bt > 0) R dv_ex(0,p-1,b);
   else
   {
