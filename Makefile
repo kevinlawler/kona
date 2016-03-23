@@ -1,6 +1,5 @@
 PREFIX = /usr/local
 CFLAGS=-g
-#CFLAGS=-g -DNSL
 PRODFLAGS = -O3 #-pg -g3
 LIB=libkona.a
 DEVFLAGS = -O0 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
