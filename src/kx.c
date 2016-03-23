@@ -28,8 +28,10 @@ __thread I stk1=0;   // Additional stack counter
 __thread I prj=0;    // Projection flag
 __thread I prj2=0;   // 2nd Projection flag
 __thread K prnt=0;   // Parent of Subfunction 
+__thread K prnt0=0;  // save Parent
 __thread I fsf=0;    // Flag for Subfunctions
 __thread K grnt=0;   // GrandParent of Subfunction
+__thread K grnt0=0;  // save GrandParent
 __thread K cls=0;    // Closure: level 2 linkage
 __thread K encf=0;   // Enclosing Function
 __thread I encp=0;   // Enclosing Function Param
@@ -253,11 +255,19 @@ Z K each2(K a, V *p, K b)
       if(f)d=dv_ex(a,p-1,g);
       else d=dv_ex(0,p-1,g);
       cd(g); M(d,z) kK(z)[i]=d)
-    if(0==bt) DO(bn,
-      if(f)d=dv_ex(a,p-1,kK(b)[i]);
-      else d=dv_ex(0,p-1,kK(b)[i]);
-      if(grnt && !prnt)prnt=ci(grnt); M(d,z) kK(z)[i]=d)
+    if(0==bt){
+      if(prnt && !prnt0)prnt0=ci(prnt); if(grnt && !grnt0)grnt0=ci(grnt);
+      DO(bn,
+        if(f)d=dv_ex(a,p-1,kK(b)[i]);
+        else {
+          if(prnt0){cd(prnt);prnt=ci(prnt0);}
+          if(grnt0){cd(grnt);grnt=ci(grnt0);}
+          d=dv_ex(0,p-1,kK(b)[i]);}
+        if(!d || !z){if(prnt0){cd(prnt0);prnt0=0;} if(grnt0){cd(grnt0);grnt0=0;}}
+        if(grnt && !prnt)prnt=ci(grnt);
+        M(d,z) kK(z)[i]=d)}
     z=demote(z); if(z->t==1)z->t=-1;
+    if(prnt0){cd(prnt0);prnt0=0;} if(grnt0){cd(grnt0);grnt0=0;}
     R z;
   }
 }
