@@ -595,11 +595,11 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                       }
                       //else z=denameD(dict,u,1);
                       else {
-                        I i;for(i=0;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc++;break;}
+                        I i;for(i=0;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc=1;break;}
                         #ifndef DEBUG
                         if(!fdc)O("value error\n");
                         #endif
-                        z=denameD(dict,u,fdc>0);}
+                        z=denameD(dict,u,fdc);}
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){z=(V)0x7c; break;}   //trace or scan
