@@ -277,7 +277,7 @@ I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 //      this rule doesn't apply to function argument lists, eg: f:{  [a] 1} is ok. however f: {\n\n  [a;b;d]  1+1} not ok
 //      so the check probably has to do with whether some useful symbol occurred on the line already
 //other errors: syntax error
-K wd(S s, I n){lineA=s; R wd_(s,n,denameD(&KTREE,d_,1),0);}
+K wd(S s, I n){lineA=s; fdc=0;R wd_(s,n,denameD(&KTREE,d_,1),0);}
 K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ; 
                                 //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
 {
@@ -593,7 +593,13 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         else z=denameS(kV(func)[CONTeXT],u,1);//Otherwise check the context (refactor with above?) 
                           //The way this else-branch is set up, {b;b:1} will create context-global b though K3.2 won't. Seems OK
                       }
-                      else z=denameD(dict,u,1);
+                      //else z=denameD(dict,u,1);
+                      else {
+                        I i;for(i=0;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc++;break;}
+                        #ifndef DEBUG
+                        if(!fdc)O("value error\n");
+                        #endif
+                        z=denameD(dict,u,fdc>0);}
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){z=(V)0x7c; break;}   //trace or scan

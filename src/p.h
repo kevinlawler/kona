@@ -1,6 +1,7 @@
 L charsAdverb(C c);
 extern V adverbs[];
 extern I fbs;
+extern __thread I fdc;
 V alloc(size_t sz);
 L charsVerb(C c);
 I SC(S a,S b);

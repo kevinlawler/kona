@@ -34,6 +34,7 @@ __thread K cls=0;    // Closure: level 2 linkage
 __thread K encf=0;   // Enclosing Function
 __thread I encp=0;   // Enclosing Function Param
 __thread I frg=0;    // Flag reset globals
+__thread I fdc=1;    // Flag denameD create
          S fnc=0;    // Most recent function from Dispatch Table
          V fncp[128];// DT pointers of executed functions
          I fnci=0;   // indicator of next function pointer position
@@ -587,7 +588,7 @@ K vf_ex(V q, K g)
         if(t) cd(kV(f)[CACHE_WD]);
         K fc = kclone(f); //clone the function to pass for _f
         cd(kV(fc)[CONJ]); kV(fc)[CONJ]=0;
-        kV(fc)[DEPTH]++; fw=wd_(kC(o),o->n,&tree,fc); kV(f)[CACHE_WD]=fw; cd(fc); }
+        kV(fc)[DEPTH]++; fdc=0;fw=wd_(kC(o),o->n,&tree,fc); kV(f)[CACHE_WD]=fw; cd(fc); }
 
       #ifdef DEBUG
       if(stk1>5) {cd(g); kerr("stack"); R _n();}
