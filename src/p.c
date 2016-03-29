@@ -593,13 +593,13 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         else z=denameS(kV(func)[CONTeXT],u,1);//Otherwise check the context (refactor with above?) 
                           //The way this else-branch is set up, {b;b:1} will create context-global b though K3.2 won't. Seems OK
                       }
-                      //else z=denameD(dict,u,1);
                       else {
                         I i;for(i=0;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc=1;break;}
+                        I all=1;for(i=0;i<strlen(lineA);i++)if(!isalpha(lineA[i])){all=0;break;}
                         #ifndef DEBUG
-                        if(!fdc)O("value error\n");
+                        if(!fdc||all)O("value error\n");
                         #endif
-                        z=denameD(dict,u,fdc);}
+                        z=denameD(dict,u,fdc&&!all);}
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){z=(V)0x7c; break;}   //trace or scan
