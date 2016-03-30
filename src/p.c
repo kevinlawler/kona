@@ -595,7 +595,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                       }
                       else {
                         I i;for(i=0;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc=1;break;}
-                        I all=1;for(i=0;i<strlen(lineA);i++)if(!isalpha(lineA[i])){all=0;break;}
+                        I all=1;for(i=0;i<strlen(lineA);i++)if(!isalnum_(lineA[i])){all=0;break;}
+                        if(lineA[0]=='_')all=0;
                         #ifndef DEBUG
                         if(!fdc||all)O("value error\n");
                         #endif
