@@ -394,7 +394,7 @@ void vitter(I *a,I n,I N) //Method D
         top--; bottom--;
       }
       if(Nreal/(-X+Nreal) >= y1 * exp(log(y2)*nmin1inv)){Vprime=exp(log(RF())*nmin1inv);break;}
-      Vprime = exp(log(RF()*ninv));
+      Vprime = exp(log(RF())*ninv);
     }
     j+=S+1;
     a[i++]=j;
