@@ -492,7 +492,7 @@ Z I tests02()
   TC( (@[.:;"5 (a:5)/1";:] ), (1;"rank") )  
 
   TC(13, ({x(|+\\)\\1 1} 5)[5;0])
-  TC( (.[.:;,"@[a-b]";:]) , (1;"type") ) //specific err not important
+  TC( (.[.:;,"@[a-b]";:]) , (1;"parse") ) //specific err not important
 
   TC( 5, _ceiling 4.6)
   TC(-4, _ceiling -4.6)
@@ -629,10 +629,10 @@ Z I tests02()
   TC(".k", ."\\d a"; ."\\d .k"; $_d)  // check for memory leaks
   TC(1 2, a:.((`b;1);(`c;2)); `a[`b`c])
   TC(3, a:1; \\b:2; c:3) // check: \b n
-  TC(5, a[5])
-  TC(5 6, a[5 6])
-  TC(5, a 5)
-  TC(5 6, a 5 6)
+  TC(skip, 5, a[5])                // value error          
+  TC(skip, 5 6, a[5 6])            // value error
+  TC(skip, 5, a 5)                 // value error
+  TC(skip, 5 6, a 5 6)             // value error
   TC(a:{a[x]}; a 5, )
   TC(4 3 2 1 0, r:{:[x;x,_f[x-1];0]}; r[4]) 
   TC(4 3 2 1 0, r:{:[x;x,r[x-1];0]}; r[4]) 

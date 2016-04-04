@@ -597,11 +597,9 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         I i;for(i=0;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc=1;break;}
                         I all=1;for(i=0;i<strlen(lineA);i++)if(!isalnum_(lineA[i])){all=0;break;}
                         if(lineA[0]=='_')all=0;
-                        #ifndef DEBUG
                         K ent=kK(kK(KTREE)[0])[1]; I ikt=0;
                         if(ent!=_n())for(i=0;i<ent->n;i++)if(u==*kS(kK(kK(ent)[i])[0])){ikt=1;break;}
-                        if((!fdc||all)&&!ikt)O("value error\n");
-                        #endif
+                        if((!fdc||all)&&!ikt)R (L)VLE;
                         z=denameD(dict,u,fdc&&!all); }
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"

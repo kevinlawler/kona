@@ -109,6 +109,7 @@ typedef struct tr{ I adverbClass; I arity; V func; S text; AF alt_funcs; } TR; /
 #define SYE kerr("syntax")
 #define NYI kerr("nyi")
 #define LMT kerr("limit")
+#define VLE kerr("value")
 
 #define RTIME(d,...) {d=clock();{__VA_ARGS__;}d=(clock()-d)/CLOCKS_PER_SEC;}
 #define TIME(...) {F d; RTIME(d,__VA_ARGS__); O("Elapsed:%.7f\n",d);}

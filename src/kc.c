@@ -288,7 +288,8 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
   //151012AP was -1, Changed to fer!=2 for fclose. Reverted to -1 (regression issue #312). fclose problem?? (issue #384).
-  if(strcmp(errmsg,"undescribed") && fer!=-1) { oerr(); I ctl=0;
+  if(!strcmp(errmsg,"value"))oerr();
+  else if(strcmp(errmsg,"undescribed") && fer!=-1) { oerr(); I ctl=0;
     if(fError){
       if(2==fError)exit(1);
       if(lineA){
