@@ -492,7 +492,7 @@ Z I tests02()
   TC( (@[.:;"5 (a:5)/1";:] ), (1;"rank") )  
 
   TC(13, ({x(|+\\)\\1 1} 5)[5;0])
-  TC( (.[.:;,"@[a-b]";:]) , (1;"parse") ) //specific err not important
+  TC( (.[.:;,"@[a-b]";:]) , (1;"type") ) //specific err not important
 
   TC( 5, _ceiling 4.6)
   TC(-4, _ceiling -4.6)
