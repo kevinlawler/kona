@@ -36,7 +36,7 @@ S ES(K d){ R *kS(kK(d)[0]);}        //dictionary entry's symbol
 K DE(K d,S b){DO(d->n,K x=DI(d,i);if(b==ES(x))R x)R 0;} //dictionary entry lookup
 Z K* EIA(K a,I i){R kK(a)+i;}         //dictionary entry's address of i-th index
 K* EVP(K e){R EIA(e,1);}            //dictionary entry's value-pointer address (K*)
-Z K* EAP(K e){R EIA(e,2);}            //dictionary entry's attribute_dictionary-pointer address (K*)
+K* EAP(K e){R EIA(e,2);}            //dictionary entry's attribute_dictionary-pointer address (K*)
 K   EV(K e){R *EVP(e);}             //dictionary entry's stored value
 
 //Potential K3/4 bug (won't spend time looking):  names in functions (params,
@@ -47,7 +47,7 @@ K   EV(K e){R *EVP(e);}             //dictionary entry's stored value
 //Weird: Found some bug in K3.2 were running .` would add a copy of the entries in the root of the K tree every time. 
 //Not sure how to reproduce
 
-Z K lookupEntryOrCreate(K *p, S k) {    //****only *dict or *_n are passed to here
+K lookupEntryOrCreate(K *p, S k) {    //****only *dict or *_n are passed to here
   K a=*p, x;
   if(5==a->t) if((x=DE(a,k))) R x;
   P(!strlen(k),TE) //TODO verify this noting `. is not `

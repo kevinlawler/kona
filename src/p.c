@@ -383,6 +383,33 @@ Z I param_validate(S s,I n) // Works on ([]) and {[]} but pass inside exclusive 
   R 4==p?1:2; //State-4 yield 1 (pass, good parameters), otherwise yield 2 (fail, bad paramters)
 }
 
+Z K* inKtreeR(K*p,S t,I create) {
+  if(!*t)R p;
+  if('.'==*t)t++;
+  I c=0,a=(*p)->t;
+  while(t[c] && '.'!=t[c])c++;
+  S u=strdupn(t,c);//oom
+  S k=sp(u); //oom
+  free(u);
+  t+=c;
+  P('_'==*k,(K*)kerr("reserved"))// ... not positive this goes here. does it fit in LOC? or parser maybe?
+
+  //Probably the below error check (and any others in front of LOC) should be moved into LOC
+  //and LOC should have the potential to return 0 (indicating other errors as well, e.g. out of memory)
+  P(!(6==a || 5==a),(K*)TE)
+  K e=0;
+  if(create) { e=(K)lookupEntryOrCreate(p,k); P(!e,(K*)ME) }
+  else { K a=*p; if(5==a->t)e=DE(a,k); P(!e,(K*)0) }
+  if('.'==*t && (!t[1] || '.'==t[1])) { t++; p=(K*)EAP(e); }    //attribute dict
+  else p=EVP(e); //value
+  R inKtreeR(p,t,create);
+}
+
+K* inKtree(K*d, S t, I create) {
+  if(!simpleString(t)) R 0; //some kind of error
+  R inKtreeR('.'==*t||!*t?&KTREE:d,t,create);
+}
+
 //TODO: capture - oom all
 I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func) 
   //IN string, string length, pos in string, markings; 
@@ -597,9 +624,10 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         I i;for(i=0;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc=1;break;}
                         I all=1;for(i=0;i<strlen(lineA);i++)if(!isalnum_(lineA[i])){all=0;break;}
                         if(lineA[0]=='_')all=0;
-                        K ent=kK(kK(KTREE)[0])[1]; I ikt=0;
-                        if(ent!=_n())for(i=0;i<ent->n;i++)if(u==*kS(kK(kK(ent)[i])[0])){ikt=1;break;}
-                        if((!fdc||all)&&!ikt)O("value error\n");
+                        z=inKtree(dict,u,0);
+                        #ifndef DEBUG
+                        if((!fdc||all)&&!z)O("value error\n");
+                        #endif
                         //if((!fdc||all)&&!ikt)R (L)VLE;
                         z=denameD(dict,u,fdc&&!all); }
       ) 
