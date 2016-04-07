@@ -626,7 +626,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         if(lineA[0]=='_')all=0;
                         z=inKtree(dict,u,0);
                         #ifndef DEBUG
-                        if((!fdc||all)&&!z)O("value error\n");
+                        if((!fdc||all)&&!z)O("value error: %s\n",u);
                         #endif
                         //if((!fdc||all)&&!ikt)R (L)VLE;
                         z=denameD(dict,u,fdc&&!all); }
