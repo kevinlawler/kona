@@ -625,10 +625,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         I all=1;for(i=0;i<strlen(lineA);i++)if(!isalnum_(lineA[i])){all=0;break;}
                         if(lineA[0]=='_')all=0;
                         z=inKtree(dict,u,0);
-                        #ifndef DEBUG
-                        if((!fdc||all)&&!z)O("value error: %s\n",u);
-                        #endif
-                        //if((!fdc||all)&&!ikt)R (L)VLE;
+                        if((!fdc||all)&&!z)R (L)VLE;
                         z=denameD(dict,u,fdc&&!all); }
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
