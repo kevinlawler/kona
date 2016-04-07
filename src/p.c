@@ -7,6 +7,7 @@
 
 S lineA;
 S lineB;
+__thread I fdc=1;   // Flag denameD create
 
 #if 0
 Z S mm[] = {

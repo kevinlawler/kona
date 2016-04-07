@@ -34,7 +34,6 @@ __thread K cls=0;    // Closure: level 2 linkage
 __thread K encf=0;   // Enclosing Function
 __thread I encp=0;   // Enclosing Function Param
 __thread I frg=0;    // Flag reset globals
-__thread I fdc=1;    // Flag denameD create
          S fnc=0;    // Most recent function from Dispatch Table
          V fncp[128];// DT pointers of executed functions
          I fnci=0;   // indicator of next function pointer position
