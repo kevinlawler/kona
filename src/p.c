@@ -626,7 +626,11 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         I all=1;for(i=0;i<strlen(lineA);i++)if(!isalnum_(lineA[i])){all=0;break;}
                         if(lineA[0]=='_')all=0;
                         z=inKtree(dict,u,0);
-                        if((!fdc||all)&&!z)R (L)VLE;
+                        if((!fdc||all)&&!z){L err=(L)VLE;
+                           #ifndef DEBUG
+                           oerr(); O("%s\n%c\n",u,'^');
+                           #endif
+                           R err;}
                         z=denameD(dict,u,fdc&&!all); }
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
