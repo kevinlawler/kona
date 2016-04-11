@@ -618,7 +618,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                           {if(':'==s[k+r])r++; z=denameS(kV(func)[CONTeXT],u,1);}
                         else if(dict==(K*)kV(func)+LOCALS && ':'==s[k+r] && -MARK_VERB==m[k+r]) z=denameD(dict,u,1); 
                           //K3.2:  a+:1 format applies to context-globals not locals
-                        else z=denameS(kV(func)[CONTeXT],u,1);//Otherwise check the context (refactor with above?) 
+                        else z=denameS(kV(func)[CONTeXT],u,0);//Otherwise check the context (refactor with above?) 
                           //The way this else-branch is set up, {b;b:1} will create context-global b though K3.2 won't. Seems OK
                       }
                       else {
