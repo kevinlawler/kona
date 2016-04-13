@@ -272,6 +272,7 @@ Z I tests02()
   TC_(",0 1 2", "= 0 0 0")                        // issue 416
   TC_(",1", "#:\',0")                             // issue 417
   TC_(",1", "#:\',,0")                            // issue 417
+  TC(1, a:1; .k~...k)                             // issue 429
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
