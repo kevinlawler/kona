@@ -394,8 +394,10 @@ Z K dv_ex(K a, V *p, K b)
   if(flag) tmp=vf_ex(*p,b); 
   else {
     if(stk>2e6) R kerr("stack"); stk++;
-    if(encp && (encp!=2 || (strchr(kC(kK(encf)[CODE]),"z"[0]))) && encp!=3 && DT_SIZE<(UI)*p)tmp=vf_ex(&encf,g);
-    else tmp=vf_ex(*p,g);
+//        **** Next 2 lines removed to fix #432. They may be needed when returning to #244 and #247
+//  if(encp && (encp!=2 || (strchr(kC(kK(encf)[CODE]),"z"[0]))) && encp!=3 && DT_SIZE<(UI)*p)tmp=vf_ex(&encf,g);
+//  else
+      tmp=vf_ex(*p,g);
     stk--; if(grnt && !prnt)prnt=ci(grnt); }
 
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
