@@ -766,86 +766,46 @@ Z K ex0(V*v,K k,I r) //r: {0,1,2} -> {code, (code), [code]}
   R z;
 }
 
-Z K bv_ex(V*p,K k)
-{
-  V q=*p;
-  K x;
+Z K bv_ex(V*p,K k) {
+  V q=*p; K x; I n=0;   //assert 0!=k->n    assert k==b->n (otherwise, projection/VE, which shouldn't reach here)
 
-  //assert 0!=k->n
-  //assert k==b->n (otherwise, projection/VE, which shouldn't reach here)
-  I n=0;
+  //This may contribute to bv_ex subtriadic problems
+  if(!adverbClass(*p) && valence(*p)<3){ if(k->n<2)R VE;  R dv_ex(kK(k)[0],p,kK(k)[1]); }
 
- 
-  
-  //This block may contribute to bv_ex subtriadic problems
-  if(!adverbClass(*p) && valence(*p) < 3)
-  {
-    if(k->n < 2) { R VE; }
-    R dv_ex(kK(k)[0],p,kK(k)[1]);
-  }
-
-  if(offsetOver==(L)q)
-  {
+  if(offsetOver==(L)q) {
     DO(k->n-1, x=kK(k)[i+1]; if(!x->n)R ci(*kK(k)); if(!atomI(x)){if(n&&n!=x->n)R LE;else n=x->n)} //return x_0 if any empty list x_{i>0}
     n=MAX(1,n);//if nothing was a list set to 1
-    K z=ci(*kK(k));
-    K g=newK(0,k->n);
-    M(z,g);
-    DO(n, *kK(g)=z;
-          DO2(g->n-1, x=itemAtIndex(kK(k)[j+1],i); M(x,g) kK(g)[j+1]=x;)
-          x=bv_ex(p-1,g);
-          M(x,g)
-          DO2(g->n, cd(kK(g)[j]); kK(g)[j]=0) //set to 0 in case OOM happens
+    K z=ci(*kK(k)); K g=newK(0,k->n); M(z,g);
+    DO(n, *kK(g)=z; DO2(g->n-1, x=itemAtIndex(kK(k)[j+1],i); M(x,g) kK(g)[j+1]=x;)
+          x=bv_ex(p-1,g); M(x,g) DO2(g->n, cd(kK(g)[j]); kK(g)[j]=0) //set to 0 in case OOM happens
           z=x) 
-    cd(g);
-    R z;
-  }
+    cd(g); R z; }
 
-  if(offsetScan==(L)q)
-  {
-    DO(k->n-1, x=kK(k)[i+1]; if(!x)continue; if(!x->n)R ci(*kK(k)); if(!atomI(x)){if(n&&n!=x->n)R LE;else n=x->n)} //return x_0 if any empty list x_{i>0}
+  if(offsetScan==(L)q) {
+    DO(k->n-1, x=kK(k)[i+1]; if(!x)continue; if(!x->n)R ci(*kK(k)); if(!atomI(x)){if(n&&n!=x->n)R LE;else n=x->n)}
+       //return x_0 if any empty list x_{i>0}
     if(!n) R bv_ex(p-1,k); //  {x+y+z}\[1;1;1] yields 1 but {x+y+z}\[1;1;1 1] yields (1 1;3 3;5 5)  
     n=MAX(1,n);//if nothing was a list set to 1
-    K z=newK(0,1); 
-    K g=newK(0,k->n);
-    M(z,g);
-    kK(z)[0]=ci(*kK(k));
+    K z=newK(0,1); K g=newK(0,k->n); M(z,g); kK(z)[0]=ci(*kK(k));
     DO(n,*kK(g)=ci(kK(z)[z->n-1]); DO2(g->n-1, x=itemAtIndex(kK(k)[j+1],i); M(x,z,g) kK(g)[j+1]=x;)
          x=bv_ex(p-1,g); M(x,z,g) DO2(g->n, cd(kK(g)[j]); kK(g)[j]=0 ) //set to 0 in case OOM happens
          kap(&z,&x); cd(x);) 
-    cd(g);
-    z=collapse(z); //unnecessary?
-    R z;
-  }
+    cd(g); z=collapse(z); //unnecessary?
+    R z; }
 
-  if(offsetEach==(L)q)
-  {
+  if(offsetEach==(L)q) {
     DO(k->n, x=kK(k)[i];if(!x)continue; if(!x->n)R newK(0,0); if(!atomI(x)){if(n&&n!=x->n)R LE;else n=x->n)} //return () on any empty list
     I c=!n;//collapse needed
     n=MAX(1,n);//if nothing was a list set to 1
     K z=newK(0,n), g=newK(0,k->n); M(g,z)//break [;;...] into subpieces for f, store in g
-    DO(n, K x; DO2(k->n, x=itemAtIndex(kK(k)[j],i); M(x,g,z) kK(g)[j]=x) x=bv_ex(p-1,g); M(x,z,g) kK(z)[i]=x; DO2(k->n, cd(kK(g)[j]); kK(g)[j]=0))//sic =0
-    cd(g);
-    if(c)z=collapse(z);else z=demote(z);
-    R z;
-  }
+    DO(n, K x; DO2(k->n, x=itemAtIndex(kK(k)[j],i); M(x,g,z) 
+          kK(g)[j]=x) x=bv_ex(p-1,g); M(x,z,g) kK(z)[i]=x; DO2(k->n, cd(kK(g)[j]); kK(g)[j]=0))//sic =0
+    cd(g); if(c)z=collapse(z);else z=demote(z); R z; }
 
-  if(offsetEachright==(L)q) 
-  {
-    P(k->n!=2,VE)
-    K a=kK(k)[0],b=kK(k)[1];
-    R eachright2(a,p,b);
-  }
-  if(offsetEachleft ==(L)q)
-  {
-    P(k->n!=2,VE)
-    K a=kK(k)[0],b=kK(k)[1];
-    R eachleft2(a,p,b);
-  }
+  if(offsetEachright==(L)q) { P(k->n!=2,VE) K a=kK(k)[0],b=kK(k)[1]; R eachright2(a,p,b); }
+  if(offsetEachleft ==(L)q) { P(k->n!=2,VE) K a=kK(k)[0],b=kK(k)[1]; R eachleft2(a,p,b); }
   if(offsetEachpair ==(L)q) R NYI;//todo: is this reachable?
-
-  R vf_ex(*p,k);
-}
+  R vf_ex(*p,k); }
 
 K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (full pieces in between semicolons/newlines) 
 {
