@@ -13,6 +13,11 @@ K was originally designed by Arthur Whitney and [Kx Systems](http://kx.com/). Pr
 
 Kx's KDB+ uses the Q language, and is built on top of K4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of K3. Earlier, Kx sold K2 as its primary product. Before K2, UBS had a 5-year exclusive license to K1. To the confusion of all, these terms are used interchangeably. Kx's K3, K2 and K1 are basically no longer available. While you get K4 with KDB+, K4 is proprietary to Kx and no documentation is available. Kona is a reimplementation that targets K3 but includes features inferred from K4 or implemented elsewhere. Kona is unaffiliated with Kx.
 
+Mailing Lists
+-------------
+[kona-user](https://groups.google.com/forum/#!forum/kona-user) is about using the Kona programming language.
+
+[konda-dev](https://groups.google.com/forum/#!forum/kona-dev) is about developing the Kona language itself.
 
 Installation
 ------------
