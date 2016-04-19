@@ -246,8 +246,7 @@ I lines(FILE*f) {
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
 I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
-  S s=0; I b=0,c=0,m=0;
-  K k; F d;
+  S s=0; I b=0,c=0,m=0; K k; F d; fer=0;
 
   //I o = isatty(STDIN) && f==stdin; //display results to stdout?
   I o = isatty(STDIN); //display results to stdout?
