@@ -8,6 +8,7 @@
 S lineA;
 S lineB;
 __thread I fdc=1;   // Flag denameD create
+I fll=0;            //flag line length
 
 #if 0
 Z S mm[] = {
@@ -324,7 +325,7 @@ K wd_(S s, I n, K*dict, K func) //parse: s input string, n length ;
   I oc=overcount(m,n);
   K kw=newK(-4,1+oc); M(v,km,ks2,kw) V*w=(V*)kK(kw);//words. Assumes terminal extra NULL
 
-  I c=0,j=0;
+  I c=0,j=0;  if(!fll)fll=strlen(s2); else fll=-1;
   DO(y, i+=-1+(j=capture(s2,y,i,m,w,&c,(K*)kV(v)+LOCALS,dict,func)); if(!j){M(0,v,km,ks2,kw)} ) 
   //O("sl:");DO(n  ,if(!s2[i])break;O("%4c" ,s2[i]))O("\n"); O("ml:");DO(n  ,O("%4ld",m[i]))O("\n"); O("##:");DO(n  ,O("%4ld",  i ))O("\n"); 
   cd(km);cd(ks2);
@@ -416,6 +417,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
   //IN string, string length, pos in string, markings; 
   //OUT words, current #words; IN locals-storage, names-storage, charfunc/NULL
 {
+  if(fll && fll!=n)fll=-1;
   V z=0,*p=w+*d; *p=0;
   I r=1,v=0,y=0,a,b=0,c;S u="",e;K g;I l;
 
@@ -621,16 +623,15 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         else z=denameS(kV(func)[CONTeXT],u,0);//Otherwise check the context (refactor with above?) 
                       }
                       else {
-                        I i;for(i=0;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc=1;break;}
-                        I all=1;for(i=0;i<strlen(lineA);i++)if(!isalnum_(lineA[i])){all=0;break;}
-                        if(lineA[0]=='_')all=0;
+                        if(fll>0)fdc=0;
+                        I i;for(i=k;i<strlen(s);i++)if(s[i]==':'||s[i]=='x'){fdc=1;break;}
                         z=inKtree(dict,u,0);
-                        if((!fdc||all)&&!z){L err=(L)VLE;
+                        if((!fdc)&&!z){L err=(L)VLE;
                            #ifndef DEBUG
                            oerr(); O("%s\n%c\n",u,'^');
                            #endif
                            R err;}
-                        z=denameD(dict,u,fdc&&!all); }
+                        z=denameD(dict,u,fll&&fdc); }
       ) 
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){z=(V)0x7c; break;}   //trace or scan

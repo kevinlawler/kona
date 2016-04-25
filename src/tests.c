@@ -859,9 +859,9 @@ Z I tests01()
   TC(+,+)
   TC(+-|, ||;+-|)
   TC(1 , 1 2 . 0)
-  TC(11, .(`a;();:;11);a;a;a;a)
+  TC(skip, 11, .(`a;();:;11);a;a;a;a)           // This fails in k2.8 & k3.2
   TC(`a, .(`a;();:;22))
-  TC(33, .(`a;();:;33);a)
+  TC(skip, 33, .(`a;();:;33);a)                 // This fails in k2.8 & k3.2
   TC(1,a:1)
   TC(2,a:2)
   TC(3,+[1;2])
