@@ -19,6 +19,7 @@ Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
 I cirRef(K p,K y);
 I cirRef_(K p,K y,I f);
+K kdef(V v);
 
 __thread I fer=0;    // Flag Early Return 
 __thread I fer1=0;
@@ -851,6 +852,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
         b[j]=q;
   )
   kV(a)[CODE] = kb;
+  if(fll>0 && 2==kb->n && kdefClass(kV(kb)[0])){K z=kdef(kV(kb)[0]); cd(a); R z;}
   R a;
 }
 

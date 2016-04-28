@@ -127,6 +127,8 @@ I adverbClass(V p) //0: not an adverb, 1: / \ ', 2: /: \: ':
   R 0;
 } 
 
+I kdefClass(I n){R n==98||n==101||n==107||n==108||n==111||n==112||n==113||n==114||n==115||n==117||n==121||n==123;}
+
 Z I specialValence(V p){ R (p==offsetSSR||p==offsetWhat)?3:(p==offsetAt||p==offsetDot)?4:0;}
 I valence(V p)
 {

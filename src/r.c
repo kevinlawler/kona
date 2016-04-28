@@ -83,22 +83,41 @@ Z S rangematch(S p,C t,S r);
 #define S_TRIAD_(f,v,t) K v; K f(K x,K y,K w){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,&v);cd(v);} K k=newK(0,3); U(k) kK(k)[0]=x; kK(k)[1]=y; kK(k)[2]=w; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
 #define S_TRIAD(f,x) S_TRIAD_(_##f,f##_KVAR,x)
 
-S_MONAD(gtime, "{(_dj _ x % 86400; 100 _sv 24 60 60 _vsx x ! 86400)}") //will error until _sv works
-S_MONAD(inv,   "{((2##*x)#1,&#*x)_lsq x}")
+#define __binl  "{x _bin/: y}"
+#define __di    "{r::[@x;_n;(#x)#1];:[@x;. _f[. x;(!x)?/:y];x@&@[r;y;:;0]]}"
+#define __dv    "{x _dvl ,y}"
+#define __dvl   "{x@&(#y)=y?/:x}"
+#define __gtime "{(_dj _ x % 86400; 100 _sv 24 60 60 _vsx x ! 86400)}"
+#define __hat   "{:[(1~4:x)|(2~4:x); _f[!x;y];:[@y;_f[x;,y]; x _dvl y]]}"
+#define __in    "{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}"
+#define __inv   "{((2##*x)#1,&#*x)_lsq x}"
+#define __lin   "{{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}[;y]'x}"
+#define __mul   "{x _dot\\:y}"
+#define __ssr   "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\"=y$:),0)+/:x _ss y)_ x;,/ :[7=4:z;@[x;i;z];4:z$:;@[x;i;:[;z]];@[x;i;:;z]]}"
+#define __sv    "{{z+y*x}/[0;x;y]}"
 
-S_DYAD(binl, "{x _bin/: y}")
-S_DYAD(dvl,  "{x@&(#y)=y?/:x}" ) 
-// 151013AP S_DYAD(di,   "{:[@x;._f[. x;(!x)?/:y];x@&@[(#x)#1;y;:;0]]}") 
-S_DYAD(di,   "{r::[@x;_n;(#x)#1];:[@x;. _f[. x;(!x)?/:y];x@&@[r;y;:;0]]}") 
-S_DYAD(dv,   "{x _dvl ,y}") 
-S_DYAD(in,   "{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}") 
-// 151012AP S_DYAD(lin,  "{_in[;y]/:x}") 
-S_DYAD(lin,  "{_in[;y]'x}") 
-S_DYAD(mul,  "{x _dot\\:y}") 
-S_DYAD(sv,   "{{z+y*x}/[0;x;y]}")  
-S_DYAD(hat,  "{:[(1~4:x)|(2~4:x); _f[!x;y];:[@y;_f[x;,y]; x _dvl y]]}") //or "caret" or "without"
+S_MONAD(gtime, __gtime) //will error until _sv works
+S_MONAD(inv,   __inv)
 
-S_TRIAD(ssr, "{if[_n~x;:_n];i:1+2*!_.5*#x:(0,/(0,+/~+\\(>\':0,\"[\"=y)-<\':(\"]\"=y$:),0)+/:x _ss y)_ x;,/ :[7=4:z;@[x;i;z];4:z$:;@[x;i;:[;z]];@[x;i;:;z]]}") //missing a few things
+S_DYAD(binl, __binl)
+S_DYAD(dvl,  __dvl)
+// 151013AP S_DYAD(di,   "{:[@x;._f[. x;(!x)?/:y];x@&@[(#x)#1;y;:;0]]}")
+S_DYAD(di,   __di)
+S_DYAD(dv,   __dv)
+S_DYAD(in,   __in)
+// 151012AP S_DYAD(lin,  "{_in[;y]/:x}")
+//S_DYAD(lin,  "{_in[;y]'x}")
+S_DYAD(lin,  __lin)
+S_DYAD(mul,  __mul)
+S_DYAD(sv,   __sv)
+S_DYAD(hat,  __hat) //or "caret" or "without"
+
+S_TRIAD(ssr, __ssr) //missing a few things
+
+K kdef(I n) {
+  SW(n){CS(98,R X(__gtime))  CS(101,R X(__inv))  CS(107,R X(__binl))  CS(108,R X(__di))    CS(111,R X(__dv))   CS(112, R X(__dvl))   
+        CS(113,R X(__hat))   CS(114,R X(__in))   CS(115, R X(__lin))  CS(117, R X(__mul))  CS(121, R X(__sv))  CS(123, R X(__ssr)) }
+  R (K)0; }
 
 #define W(x)      x
 #define _SYSTEMN  W(T) W(a) W(c) W(d) W(f) W(h) W(i) W(k) W(m) W(n) W(p) W(s) W(t) W(u) W(v) W(w)
