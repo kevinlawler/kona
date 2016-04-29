@@ -13,7 +13,7 @@
 extern volatile sig_atomic_t interrupted;
 
 Z K bv_ex(V *p,K k);
-Z K dv_ex(K a,V *p,K b);
+K dv_ex(K a,V *p,K b);
 Z K ex0(V *v,K k,I r);
 Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
@@ -331,7 +331,7 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
 
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type
 //TODO: consider merging dv_ex with vf_ex
-Z K dv_ex(K a, V *p, K b)
+K dv_ex(K a, V *p, K b)
 {
   if(!p || !*p) R 0; //TODO: ???
   U(b)

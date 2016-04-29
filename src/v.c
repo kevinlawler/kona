@@ -7,6 +7,8 @@
 #include "v.h"
 #include "r.h"
 
+K dv_ex(K a,V *p,K b);
+
 /* misc verbs */
 
 K itemAtIndex(K a, I i) {   // Return i-th item from any type as K - TODO: oom wherever this is used
@@ -115,6 +117,7 @@ K at_verb(K a, K b) {    //[Internal Function]
     if(-4==bt){z=newK(0,bn); DO(bn,kK(z)[i]=_n()) R z;}//0#` handled above
     R TE; }
   if(1==ABS(bt)) {   //Note switch to "b->t" here
+    if(at==7 && an==3){K* p=&a; R dv_ex(0,(V*)&p,b);}
     P(0<at,TE) //Type/Rank/Length Error. (Several cases are eliminated before here.)
     I x; DO(bn, if((x=kI(b)[i]) >= an || x <0) R XE)
     z=newK(at*-bt,bn);
