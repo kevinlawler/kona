@@ -100,59 +100,45 @@ I isColonDyadic(K x){R isVerbDyadic(x,offsetColon);}
 Z I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
 
 //TODO: oom at_verb everywhere
-K at_verb(K a, K b)//[Internal Function]
-{//"of" depends on this even though @[d;i] = .[d;,i] <--- that equality doesn't always hold
+K at_verb(K a, K b) {    //[Internal Function]
+  //"of" depends on this even though @[d;i] = .[d;,i] <--- that equality doesn't always hold
   if(!b) R b;
   if(0==b->t && 0==b->n)R newK(0,0);//Overriding right-arg () 
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   K z;
-
-  if(at==6)//Left side nil (sort of like empty dict?)
-  { //K3.2 - complicated functionality. Leads me to believe this part was implemented some other way
+  if(at==6) {   //Left side nil (sort of like empty dict?)
+    //K3.2 - complicated functionality. Leads me to believe this part was implemented some other way
     //2009.11.10 - probably it was. see how nil case was folded in in at_ref
     if( 1==ABS(bt))R ci(b);//Overrides
     if( 6==bt || (0>=bt && 0==bn)) R newK(0,0);//Careful: dicts can have 0==bn
     if( 4==bt)R _n();
     if(-4==bt){z=newK(0,bn); DO(bn,kK(z)[i]=_n()) R z;}//0#` handled above
-    R TE;
-  }
-
-  if(1==ABS(bt))//Note switch to "b->t" here
-  {
+    R TE; }
+  if(1==ABS(bt)) {   //Note switch to "b->t" here
     P(0<at,TE) //Type/Rank/Length Error. (Several cases are eliminated before here.)
     I x; DO(bn, if((x=kI(b)[i]) >= an || x <0) R XE)
-
     z=newK(at*-bt,bn);
     if     (-4==at) DO(bn,kS(z)[i]=kS(a)[kI(b)[i]]) //TODO: memcpy
     else if(-3==at) DO(bn,kC(z)[i]=kC(a)[kI(b)[i]])
     else if(-2==at) DO(bn,kF(z)[i]=kF(a)[kI(b)[i]])
     else if(-1==at) DO(bn,kI(z)[i]=kI(a)[kI(b)[i]])
-    else if( 0==at){DO(bn,kK(z)[i]=ci(kK(a)[kI(b)[i]])) if(bt==ABS(bt) || bn!=1)z=collapse(z);}
-  }
-  else if(3==ABS(bt))//a is dict/directory & b is executable string like "1+1+c"
-  {
-      P(5!=at,TE)
-      z=ex(wd_(kC(b),bn,&a,0));
-  }
-  else if(4==ABS(bt))
-  {
+    else if( 0==at){DO(bn,kK(z)[i]=ci(kK(a)[kI(b)[i]])) if(bt==ABS(bt) || bn!=1)z=collapse(z);} }
+  else if(3==ABS(bt)) {   //a is dict/directory & b is executable string like "1+1+c"
+    P(5!=at,TE)
+    z=ex(wd_(kC(b),bn,&a,0)); }
+  else if(4==ABS(bt)) {
     P(5!=at,TE)
     z=newK(0,bn);
     DO(bn, kK(z)[i]=ci(lookup(a,kS(b)[i])))
-    z=collapse(z);
-  }
-  else if(6==bt)
-  {
-    if     (0>=at)z=ci(a);
+    z=collapse(z); }
+  else if(6==bt) {
+    if(0>=at)z=ci(a);
     else if(5==at){z=newK(0,an); DO(an, kK(z)[i]=ci(EV(DI(a,i)))) z=collapse(z);} //TODO: untested
-    else R TE; // Type{3,4}/Rank{1,2} Error
-  }
+    else R TE; }  // Type{3,4}/Rank{1,2} Error
   else if(0==bt){z=newK(0,bn);U(z)  DO(bn,M(z,kK(z)[i]=at_verb(a,kK(b)[i]))) }
   else if(isDotDyadic(b) && at==5){z=newK(0,an); DO(an, kK(z)[i]=ci(*EAP(DI(a,i))))}
   else R TE;
-
-  R z;
-}
+  R z; }
 
 // "`k @ 0" ;  "`k @ `a" ; "`k @ \"a\"" ; "`.k @ \"a\"" ; "`.k @ `a" ; "`.k @ `gdfgdfg" ; "`.k @ 1.0" ; "`.k @ 1 2 3" but "`asdas @ 0 1" ; "`sasd @ \"a\"" ; " `.asasas @ \"f\""
 K at(K x, K y)
