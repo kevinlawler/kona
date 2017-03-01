@@ -18,6 +18,9 @@
 #include <netdb.h>
 #include <dlfcn.h>
 #include <sys/mman.h>  //mmap
+#ifndef MAP_NORESERVE
+#define MAP_NORESERVE 0
+#endif
 #endif
 
 #include <limits.h>
