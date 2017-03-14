@@ -19,6 +19,7 @@ K DE(K d,S b);
 K Kd();
 K kerr(cS s);
 K *EVP(K e);
+K *EAP(K e);
 K DI(K d,I i);
 K kap(K *a,V v);
 K ci(K a);
