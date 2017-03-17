@@ -14,7 +14,7 @@
 #ifndef WIN32
 #include <netinet/tcp.h>
 #include <pthread.h>
-#ifndef PTHREAD_MUTEX_RECURSIVE
+#if !defined(PTHREAD_MUTEX_RECURSIVE) && defined(PTHREAD_MUTEX_RECURSIVE_NP)
 #define PTHREAD_MUTEX_RECURSIVE PTHREAD_MUTEX_RECURSIVE_NP
 #endif
 #else
