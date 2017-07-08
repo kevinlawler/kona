@@ -29,7 +29,7 @@ S fBreak = "t";
 
 void boilerplate()
 {
- if(!isatty(STDOUT) || !isatty(STDIN)) R;
+  if(!isatty(STDOUT) || !isatty(STDIN)) R;
   O("K Console - Enter \\ for help\n\n");
   prompt(0);
 }

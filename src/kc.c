@@ -14,7 +14,7 @@
 #ifndef WIN32
 #include <netinet/tcp.h>
 #include <pthread.h>
-#if !defined(PTHREAD_MUTEX_RECURSIVE) && defined(PTHREAD_MUTEX_RECURSIVE_NP)
+#ifndef PTHREAD_MUTEX_RECURSIVE
 #define PTHREAD_MUTEX_RECURSIVE PTHREAD_MUTEX_RECURSIVE_NP
 #endif
 #else
@@ -241,8 +241,9 @@ cleanup:
   fCheck=ofCheck;
   R 0; }
 
+static I fln=0;
 I lines(FILE*f) {
-  S a=0;I n=0;PDA p=0; while(-1!=line(f,&a,&n,&p)){} R 0;}
+  S a=0;I n=0;PDA p=0; fln=1; while(-1!=line(f,&a,&n,&p)){fln=0;} R 0;}
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
 I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
@@ -252,6 +253,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   I o = isatty(STDIN); //display results to stdout?
 
   if(-1==(c=getline_(&s,&m,f))) GC;
+  if(fln&&(s[0]=='#' && s[1]=='!')) GC;
   if(s[0]=='\\' && s[1]=='\n') {
     if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
@@ -409,6 +411,7 @@ I attend() {  //K3.2 uses fcntl somewhere
   if(pthread_create(&thread, NULL, timer_thread, NULL)){
     perror("Create timer thread"); abort(); }
 
+  fln=1;
   for(;;) { // main loop  
     scrLim = 0;
     read_fds = master; // copy it 
@@ -421,6 +424,7 @@ I attend() {  //K3.2 uses fcntl somewhere
       if (FD_ISSET(i, &read_fds)) {
         if(i==STDIN) {
           nbytes=line(stdin,&a,&n,&q);
+          fln=0;
           if(nbytes<=0){
             if(!IPC_PORT && !HTTP_PORT) exit(0); //Catch CTRL+D 
             else FD_CLR(i,&master);} }
