@@ -29,7 +29,9 @@ S fBreak = "t";
 
 void boilerplate()
 {
-  if(!isatty(STDOUT) || !isatty(STDIN)) R;
+  #ifndef __MINGW32__
+    if(!isatty(STDOUT) || !isatty(STDIN)) R;		//kluge:  isatty() fails using mingw-10.0 with msys2
+  #endif
   O("K Console - Enter \\ for help\n\n");
   prompt(0);
 }

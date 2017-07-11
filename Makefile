@@ -7,7 +7,7 @@ DEVFLAGS = -O0 -g3 -DDEBUG -Wunused -Wreturn-type -Wimplicit-int #-Wall
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
 # Win-64
-ifeq (mingw32_nt-6.2,$(OS))
+ifeq (mingw64_nt-10.0,$(OS))
 CC=gcc -DWIN32=1
 PRODFLAGS += -D_FILE_OFFSET_BITS=64
 LDFLAGS = -lws2_32 -static -lpthread
@@ -19,7 +19,7 @@ OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
 endif
 
 # Win-32
-ifeq (mingw32_nt-6.0,$(OS))
+ifeq (mingw32_nt-10.0,$(OS))
 CC=gcc -DWIN32=1
 LDFLAGS = -lws2_32 -static -lpthread
 OBJS= src/win/mman.o src/win/dlfcn.o src/win/safe-ctype.o src/win/fnmatch.o \
@@ -131,7 +131,7 @@ TAGS: *.c *.h
 .PHONY: all clean install android-debug
 
 # Dependencies.
-ifeq (mingw32_nt-6.2,$(OS))
+ifeq (mingw64_nt-10.0,$(OS))
 src/win/dlfcn.c: src/win/dlfcn.h
 src/win/mman.c: src/win/mman.h
 src/win/safe-ctype.c: src/win/safe-ctype.h
@@ -139,7 +139,7 @@ src/win/fnmatch.c: src/win/fnmatch.h src/win/safe-ctype.h src/win/ansidecl.h
 src/*.o: src/incs.h src/ts.h Makefile src/k.h src/win/mman.h src/win/dlfcn.h
 endif
 
-ifeq (mingw32_nt-6.0,$(OS))
+ifeq (mingw32_nt-10.0,$(OS))
 src/win/dlfcn.c: src/win/dlfcn.h
 src/win/mman.c: src/win/mman.h
 src/win/safe-ctype.c: src/win/safe-ctype.h

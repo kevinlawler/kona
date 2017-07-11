@@ -249,8 +249,13 @@ I lines(FILE*f) {
 I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   S s=0; I b=0,c=0,m=0; K k; F d; fer=0;
 
-  //I o = isatty(STDIN) && f==stdin; //display results to stdout?
-  I o = isatty(STDIN); //display results to stdout?
+  //kluge:  isatty() fails using mingw-10.0 with msys2 
+  #ifndef __MINGW32__
+    //I o = isatty(STDIN) && f==stdin; //display results to stdout?
+    I o = isatty(STDIN); //display results to stdout?
+  #else
+    I o = 1;
+  #endif
 
   if(-1==(c=getline_(&s,&m,f))) GC;
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
