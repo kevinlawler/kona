@@ -279,6 +279,8 @@ Z I tests02()
   TC(9, f:{x*x}; g:{x+1}; (f;g)[0;3])             // issue 419
   TC(3, g:{x+1}; (0 1 2 3;g)[0;3])                // issue 419
   TC_("_n","{c:y}[];" )                           // issue 451
+  TC((0 1;2 3;4 5), t:.+(`f`g`h;3 2#!6); t`f`g`h) // issue 460
+  TC((0 1;2 3), t:.+(`f`g`h;3 2#!6); t`f`g)       // issue 460
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
