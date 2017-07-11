@@ -391,7 +391,7 @@ K dv_ex(K a, V *p, K b)
     V*p1=*p;
     if((UI)*p1>DT_SIZE){
       K p2=*p1;
-      if(7!=p2->t && -1!=p2->t) flag=1; } }
+      if(7!=p2->t && -1!=p2->t && 5!=p2->t) flag=1; } }
   if(flag) tmp=vf_ex(*p,b); 
   else {
     if(stk>2e6) R kerr("stack"); stk++;
