@@ -17,6 +17,6 @@ extern C errmsg[256];
 K Ki(I);
 I bswapI(I n);
 void dm1(S msg,M1*m);
-
+I oerr();
 K read_tape(I i,I j,I type);
 extern M0 CP[FD_SETSIZE+1];

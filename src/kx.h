@@ -54,3 +54,4 @@ I sva(V p);
 I adverbClass(V p);
 K kerr(cS s);
 K last(K a);
+I kdefClass(I n);

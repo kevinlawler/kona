@@ -4,6 +4,7 @@
 #ifndef WIN32
 #include <netinet/tcp.h> //#include <sys/socket.h> //#include <netinet/in.h>
 #include <dlfcn.h>
+#include <sys/wait.h>
 #else
 #include <unistd.h>
 #include "win/dlfcn.h"
@@ -902,7 +903,7 @@ Z void execute(S *argvP, I fWait) {
   else if(pid == 0) {
     if(execvp(*argvP,argvP) < 0) { O("*** ERROR: exec failed\n"); exit(1); } }
   else {
-    if(fWait) { while (wait(&status) != pid)  ; } } }
+    if(fWait) { while (wait((int*)&status) != pid)  ; } } }
 
 K _4d_(S srvr,S port,K y){
   struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr; I r;

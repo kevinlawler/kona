@@ -400,7 +400,7 @@ Z K* inKtreeR(K*p,S t,I create) {
   //and LOC should have the potential to return 0 (indicating other errors as well, e.g. out of memory)
   P(!(6==a || 5==a),(K*)TE)
   K e=0;
-  if(create) { e=(K)lookupEntryOrCreate(p,k); P(!e,(K*)ME) }
+  if(create) { e=lookupEntryOrCreate(p,k); P(!e,(K*)ME) }
   else { K a=*p; if(5==a->t)e=DE(a,k); P(!e,(K*)0) }
   if('.'==*t && (!t[1] || '.'==t[1])) { t++; p=EAP(e); }    //attribute dict
   else p=EVP(e); //value

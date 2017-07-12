@@ -852,7 +852,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
         b[j]=q;
   )
   kV(a)[CODE] = kb;
-  if(fll>0 && 2==kb->n && kdefClass(kV(kb)[0])){K z=kdef(kV(kb)[0]); cd(a); R z;}
+  if(fll>0 && 2==kb->n && kdefClass((I)kV(kb)[0])){K z=kdef(kV(kb)[0]); cd(a); R z;}
   R a;
 }
 

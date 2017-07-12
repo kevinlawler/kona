@@ -62,3 +62,5 @@ extern S right;
 extern S left;
 extern S formed_dfa;
 I charpos(S s,C c);
+K lookupEntryOrCreate(K *p,S k);
+I oerr();
