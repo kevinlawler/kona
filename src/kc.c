@@ -203,7 +203,7 @@ S recur(S s) {
   S rem=strstr(st,nm);  //remainder of st beginning with nm (if it exists)
   if(rem && ('['==*(rem+strlen(nm)) ||' '==*(rem+strlen(nm)))) {
     I offset=rem-st; C prior=*(s+i+2+offset-1); S res;  //prior is character before rem in s
-    if('_'!=prior && !isalnum(prior)) {
+    if('_'!=prior && !isalnum(prior) && '"'!=prior) {
       res=alloc(1+sl+(2-n)); I ii,beg=k-strlen(rem);
       for(ii=0;ii<beg;ii++){res[ii]=s[ii];}
       res[beg]='_'; res[beg+1]='f';
