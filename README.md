@@ -37,7 +37,7 @@ Navigate to the directory you want to install Kona, then type:
 
 Then, while in the "kona" directory, run:
 
-    ./k                      #./k_test for debug mode
+    ./k                      #./k_test to run the test suite
 
 Android builds are similar, but you must set use this command when running `make`:
 
