@@ -46,8 +46,7 @@ I getdelim_(S *s,I *n,I d,FILE *f)
   R *n=m;
 }
 
-#if defined(__OpenBSD__) || defined(__NetBSD__) ||  \
-   (defined(__MACH__) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1070)
+#if defined(__MACH__) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1070
 I getline(S *s,size_t*n, FILE *f){ R getdelim(s,n,'\n',f);}
 I getdelim(S *s,size_t*n, I d, FILE *f)//target, current capacity, delimiter, file
 {
