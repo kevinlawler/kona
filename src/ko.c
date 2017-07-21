@@ -52,7 +52,7 @@ K _kclone(K a)//Deep copy -- eliminate where possible
       )
       CS(2, M(z,kv=newK(-4,3))
             v=(V*)kK(kv);
-            memcpy(v,kW(a),3*sizeof(V));
+            memcpy(v,kW(a),sizeof(V));
         )
       CS(3,M(z,kv=_kclone((K)kV(a)[CODE])))
     }
