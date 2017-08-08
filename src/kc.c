@@ -14,8 +14,10 @@
 #ifndef WIN32
 #include <netinet/tcp.h>
 #include <pthread.h>
+#ifndef	__FreeBSD__
 #ifndef PTHREAD_MUTEX_RECURSIVE
 #define PTHREAD_MUTEX_RECURSIVE PTHREAD_MUTEX_RECURSIVE_NP
+#endif
 #endif
 #else
 extern void win_usleep(unsigned int); //buggy TDMGCC64 usleep()
