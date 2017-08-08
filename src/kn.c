@@ -62,16 +62,24 @@ Z void mhend(){ *kI(KONA_WHO)=_oldw; *kI(KONA_CLIENT)=_oldc; }
 
 I wipe_tape(I i) { I a=CP[i].a; if(CP[i].k)cd(CP[i].k); memset(&CP[i],0,sizeof(CP[0])); CP[i].a=a; R 0;} //safe to call >1 time
 Z I close_tape(I i,I sockfd) {
+  #ifndef __NetBSD__
+  #ifndef __OpenBSD__
   mhbegin(i);
+  #endif
+  #endif
   wipe_tape(i); CP[i].a=0;
   I r=closesocket(sockfd); if(r){show(kerr("file"));r=0;}
   FD_CLR(sockfd, &master);
   K x=*denameS(".",".m.c",0); 
-  if(6==xt){r=0;O("ct-D\n");GC;}
+  if(6==xt){r=0; /*O("ct-D\n");*/ GC;}
   if(3!=ABS(xt)){r=1;O("type error");GC;}
   KX(x);
 cleanup:
+  #ifndef __NetBSD__
+  #ifndef __OpenBSD__
   mhend();
+  #endif
+  #endif
   R r; }
 
 C bx[128]={0},by[128]={0};

@@ -359,6 +359,7 @@ Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 fd_set master; //select framework after beej's public domain c
 I attend() {  //K3.2 uses fcntl somewhere
+  fer=fwh=stk=stk1=prj=prj2=fsf=0;
   S a=0;I n=0; PDA q=0; //command-line processing variables
 
   fd_set read_fds;
