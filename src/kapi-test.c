@@ -7,6 +7,10 @@
 Z int pass, fail;
 
 extern K KTREE;
+extern K X(S);
+extern K show(K);
+extern I attend();
+extern void boilerplate();
 
 #define tst(e)	if(e){pass++;}else{fprintf(stderr, "Failed:%s\n", #e); fail++;}
 
