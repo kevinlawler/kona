@@ -291,8 +291,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
 
-  //if(o && fam)show(k); cd(k); fam=1;    //fam checking suppressed to fix issue #433
-  if(o)show(k); cd(k); fam=1;
+  if(o && fam)show(k); cd(k); fam=1;
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
