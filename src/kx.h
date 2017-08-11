@@ -13,7 +13,7 @@ K ex1(V *w,K k,I *i,I n,I f);
 K _n();
 extern C errmsg[256];
 I bk(V p);
-K wd_(S s,I n,K *dict,K func);
+K wd_(S s,int n,K *dict,K func);
 K ex(K a);
 K DI(K d,I i);
 K kcloneI(K a,const char*f,int n);

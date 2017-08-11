@@ -65,7 +65,7 @@ extern S IPC_PORT;
 extern S HTTP_PORT;
 I attend();
 extern fd_set master;
-K wd(S s,I n);
+K wd(S s,int n);
 K ex(K a);
 I lines(FILE *f);
 K kap(K *a,V v);

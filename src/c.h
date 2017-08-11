@@ -9,7 +9,7 @@ extern C PPON;
 extern I PPMAX;
 extern I fCmplt;
 K precision(UI n);
-K wd(S s,I n);
+K wd(S s,int n);
 K ex(K a);
 K show(K a);
 I getline_(S *s,I *n,FILE *f);

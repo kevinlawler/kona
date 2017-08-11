@@ -41,8 +41,8 @@ K backslash(S s,I n,K*dict);
 extern S d_;
 extern K KTREE;
 K *denameD(K *d,S t,I create);
-K wd_(S s,I n,K *dict,K func);
-K wd(S s,I n);
+K wd_(S s,int n,K *dict,K func);
+K wd(S s,int n);
 I maX(I a,I b);
 I mark(I *m,I k,I t);
 enum mark_members {MARK_UNMARKED,MARK_IGNORE,MARK_BRACKET,MARK_END,MARK_PAREN,MARK_BRACE,MARK_QUOTE,MARK_SYMBOL,
