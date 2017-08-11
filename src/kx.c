@@ -669,7 +669,7 @@ Z V ex_(V a, I r)//Expand wd()->7-0 types, expand and evaluate brackets
 
 K ex(K a) {   //Input is (usually, but not always) 7-0 type from wd()
   U(a); if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n)fwh=1;
-  if(a->t==7 && kV(kK(a)[CODE])[1]==offsetColon) fam=0;
+  if(a->t==7 && kV(kK(a)[CODE])[1]==offsetColon && kI(kK(a)[CODE])[2]!=0x43) fam=0; else fam=1;
   K z=ex_(&a,0); cd(a); if(fer==1)fer=fer1=0; 
   fwh=stk=stk1=prj=prj2=fsf=0;
   if(prnt)cd(prnt); prnt=0;
