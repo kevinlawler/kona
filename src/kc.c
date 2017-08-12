@@ -150,6 +150,7 @@ I kinit() {       //oom (return bad)
   offsetColon = (V)DT_OFFSET(colon_dyadic);
   offsetJoin  = (V)DT_OFFSET(join);
   offsetSSR   = (V)DT_OFFSET(_ssr);
+  offset3m    = (V)DT_OFFSET(_3m);
 
   kerr("undescribed");
   SYMBOLS=newN(); //Initialize intern pool 
