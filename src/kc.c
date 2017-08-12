@@ -292,7 +292,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
 
-  if(o && fam)show(k); cd(k); fam=1;
+  if(o && fam)show(k); cd(k);
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
@@ -359,7 +359,7 @@ Z void handle_SIGINT(int sig) { interrupted = 1; }
 
 fd_set master; //select framework after beej's public domain c
 I attend() {  //K3.2 uses fcntl somewhere
-  fer=fwh=stk=stk1=prj=prj2=fsf=0;
+  fer=0;
   S a=0;I n=0; PDA q=0; //command-line processing variables
 
   fd_set read_fds;
