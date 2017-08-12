@@ -89,13 +89,6 @@ K rtrn(K x) {fer=1; R ci(x);}
 K eachright(){R 0;} K eachleft(){R 0;} K eachpair(){R 0;}
 
 C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
-#define _VERB1 flip,negate,first,reciprocal,reverse,where,shape,enumerate,grade_up,grade_down,group,not_attribute,atom,range,floor_verb,enlist,count,format,dot_monadic,colon_monadic
-#define _VERB2 plus,minus,times,divide,max_or,min_and,power,rotate_mod,less,more,equals,match,at,what,drop_cut,join,take_reshape,dollar,dot,colon_dyadic
-#define _0VERB1 _0m,_1m,_2m,_3m,_4m,_5m,_6m
-#define _0VERB2 _0d,_1d,_2d,_3d,_4d,_5d,_6d //This has a dependency in the parser - magic number 6
-
-//V vm[]  = {_VERB1};
-//V vd[]  = {_VERB2};
 
 V offsetSSR, offsetWhat, offsetAt, offsetDot, offsetColon, offsetJoin, offset3m;
 L offsetOver, offsetScan, offsetEach, offsetEachright, offsetEachleft, offsetEachpair;
