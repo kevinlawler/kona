@@ -234,10 +234,12 @@ Z void trim(S s) {
 */
 
 Z I syntaxChk(S s) {
-  I i,j=0;
-  for(i=0;i<strlen(s);++i) {
-    if(s[i]=='\"') break;
-    if(s[i]=='\'') {j=1; break;} }
+  //I i;
+  I j=0;
+  //for(i=0;i<strlen(s);++i) {
+  //  if(s[i]=='\"') break;
+  //  if(s[i]=='\'') {j=1; break;} }
+  if(s[0]=='\'') j=1;
   R j; }
 
 I check() {      //in suspended execution mode: allows checking of state at time of error
