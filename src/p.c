@@ -271,6 +271,11 @@ enum mark_members{MARK_UNMARKED,MARK_IGNORE,MARK_BRACKET,MARK_END,MARK_PAREN,MAR
 //Corrected soon after. No sense in duplicating logic here: let the word-converter decide the true count
 Z I overcount(I*m,I n) {I c=0,p=0;DO(n, if( WORD_START(m[i]) && !(m[i]==p && GREEDY_START(p))){p=m[i];c++;}) R c; }
 
+Z I syntaxChk(S s) {
+  I j=0;
+  if(s[0]=='\'' && s[1]!='\"') j=1;
+  R j; }
+
 I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 #define marker(a,b) DO(n,i+=maX(0,-1+mark(m+i,a(s,n,i,m),b))) 
 //Some parse error cases missing...but it seems OK/preferable to ignore them e.g.  _t.a or 'a.....' (floor t.a or a. ...)
@@ -285,6 +290,7 @@ K wd_(S s, int n, K*dict, K func) //parse: s input string, n length ;
 {
   if(!s) R 0;
   if(strstr(s,":\\t")) { show(kerr("\\t  syntax")); R 0; }
+  if(syntaxChk(s)) R SYE;
   if('\\'==s[0] && fbs){fbs=0; R backslash(s,n,dict);}  
 
   PDA p=0;
