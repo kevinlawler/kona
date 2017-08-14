@@ -233,6 +233,13 @@ Z void trim(S s) {
     if(c>2 && (s[c-1]==':' || s[c-1]=='{') && s[c-2]==' ' && s[c-3]!='/'){s[c-2]=s[c-1]; c--;} } }
 */
 
+Z I syntaxChk(S s) {
+  I i,j=0;
+  for(i=0;i<strlen(s);++i) {
+    if(s[i]=='\"') break;
+    if(s[i]=='\'') {j=1; break;} }
+  R j; }
+
 I check() {      //in suspended execution mode: allows checking of state at time of error
   I ofCheck=fCheck;
   kerr("undescribed"); prompt(++fCheck); S a=0;  I n=0;  PDA q=0;
@@ -276,6 +283,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
 
   trim(*a); //remove leading blanks
+  if(syntaxChk(*a)) {k=SYE; GC;}
   S newA=recur(*a); if(newA){ free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if((*a)[0]=='\\')fbs=1; else fbs=0;
