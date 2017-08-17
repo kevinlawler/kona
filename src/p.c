@@ -272,9 +272,23 @@ enum mark_members{MARK_UNMARKED,MARK_IGNORE,MARK_BRACKET,MARK_END,MARK_PAREN,MAR
 Z I overcount(I*m,I n) {I c=0,p=0;DO(n, if( WORD_START(m[i]) && !(m[i]==p && GREEDY_START(p))){p=m[i];c++;}) R c; }
 
 Z I syntaxChk(S s) {
-  I j=0;
-  if(s[0]=='\'' && s[1]!='\"') j=1;
-  R j; }
+  if(s[0]=='\t') R 1;
+  I n=strlen(s);
+  if(n==1) {
+    if(s[0]=='\'') R 1;
+    else R 0; }
+  I i,j,k=0;
+  for(i=0;i<n;++i) if(s[i]!=' ')break;    //1st non-blank (if it exists)
+  if(i>=n-1)R 0;
+  for(j=i+1;j<n;++j) if(s[j]!=' ')break;  //2nd non-blank (if it exists)
+  //O("i:%lld  j:%lld  n:%lld\n",i,j,n); O("s:%s\n",s); O("s[i]:%d  s[j]:%d\n",s[i],s[j]);
+  if(s[i]=='\\' && s[j]=='\\') R 0;
+  if((s[i]=='\'' && s[j]!='\"') || j==n) R 1;
+  for(i=0;i<n;++i) {
+    if(s[i]=='\"')break;
+    if(s[i]=='\013' || s[i]=='\014' || (s[i]=='\'' && s[i-1]==';') || (i>1 && s[i]=='\'' && s[i-2]=='\\'))R 1;}
+  if(n>3){for(i=2;i<n;++i){if(s[i]=='\\' && s[i-1]=='\\' && s[i-2]=='\\') R 1;}}
+  R k; }
 
 I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 #define marker(a,b) DO(n,i+=maX(0,-1+mark(m+i,a(s,n,i,m),b))) 

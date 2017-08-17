@@ -244,7 +244,7 @@ cleanup:
   fCheck=ofCheck;
   R 0; }
 
-static I fln=0;
+Z I fln=0;
 I lines(FILE*f) {
   S a=0;I n=0;PDA p=0; fln=1; while(-1!=line(f,&a,&n,&p)){fln=0;} R 0;}
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
