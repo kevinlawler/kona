@@ -283,6 +283,7 @@ Z I tests02()
   TC({(y)+x}, {(y)+x})                            // issue 458
   TC((0 1;2 3;4 5), t:.+(`f`g`h;3 2#!6); t`f`g`h) // issue 460
   TC((0 1;2 3), t:.+(`f`g`h;3 2#!6); t`f`g)       // issue 460
+  TC(0=/!0, 0)                                    // issue 468
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )

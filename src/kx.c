@@ -97,7 +97,7 @@ K overDyad(K a, V *p, K b) {
   P(k,k)
 
   K u=0,v=0;
-  K y=a?u=enlist(a),v=joinI(&u,b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
+  K y=a?v=join(u=enlist(a),b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
 
   K z=0,g=0;
   if(yt  > 0){z=ci(y); GC;}
@@ -131,7 +131,7 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
      && !(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)    //f is NOT a function
      && 3==(*(K*)*o)->t) R csplit(*(K*)*o,b);
 
-  K u=0; K y=a?u=enlist(a),joinI(&u,b):ci(b); cd(u); //oom
+  K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u); //oom
   if(yt  > 0 || yn == 0) R y;
 
   K z=newK(0,yn),c,d;
@@ -207,7 +207,7 @@ Z K scanMonad(K a, V *p, K b)
   if(a) {if(1 == a->t){useN=1; n=*kI(a);}else if(7==a->t)useB=1;}
   P(n < 0,IE) //mmo
 
-  if(useN) DO(n, U(d=last(u)) c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); w=u; u=joinI(&w,v); cd(w); cd(v); U(u))
+  if(useN) DO(n, U(d=last(u)) c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); u=join(w=u,v); cd(w); cd(v); U(u))
   else if(useB)
   {
     I t;
@@ -221,7 +221,7 @@ Z K scanMonad(K a, V *p, K b)
       if(!t){cd(d); break;}
       c=dv_ex(0,p-1,d); cd(d);
       U(c) U(v=enlist(c)) cd(c);
-      w=u; u=joinI(&w,v); cd(w); cd(v); U(u)
+      u=join(w=u,v); cd(w); cd(v); U(u)
     }while(1);
   }
   else while(1) //mm/o + error checking   eg if(!c) ...
@@ -230,7 +230,7 @@ Z K scanMonad(K a, V *p, K b)
     if(matchI(b,c) || matchI(c,d))flag=1;
     if(!flag && c)
     {
-      U(w=enlist(c)); v=u; u=joinI(&v,w);
+      u=join(v=u,w=enlist(c));
       cd(v);cd(w);cd(d);
       d=c;
     }
@@ -321,7 +321,7 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
     d=dv_ex(a,p-1,f);
     u=enlist(d);
     M(u,z)
-    v=joinI(&u,z);
+    v=join(u,z);
     cd(u);cd(z);cd(f);cd(d);
     R v;
   }

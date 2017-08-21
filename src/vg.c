@@ -598,16 +598,12 @@ K reverse(K a)
 I countI(K x){R xt>0?1:xn;}
 K count(K x){R Ki(countI(x));}   //[sic] Should always be 1 for an atom (t of 5,7 may have different n)
 
-K joinI(K*a, K y) {      //TODO: 5,6?
-  K x=*a;
+K join(K x, K y) {      //TODO: 5,6?
   I xk=countI(x), yk=countI(y), zt=0;
   if(ABS(xt)==ABS(yt)) zt=-ABS(xt);  //K-Improvement?: ABS(at)=1or2 && ABS(bt)==1or2 should yield zt==-2
   if(!xk) zt=-ABS(yt); 
   else if(!yk) zt=-ABS(xt);  //'else' is sic. In "K3.21 2006-02-01" right empty list takes precedence
   if(zt < -4) zt=0;
-
-  if(1==rc(x)&&zt&&zt==xt)R ci(kapn(a,kV(y),yk));
-
   I zn=xk+yk;
   K z=newK(zt,zn);U(z)
 
@@ -623,10 +619,8 @@ K joinI(K*a, K y) {      //TODO: 5,6?
     K c=promote(x); K d=promote(y);
     DO(xk,kK(z)[i]=ci(kK(c)[i]))
     DO(yk,kK(z)[xk+i]=ci(kK(d)[i]))
-    cd(c); cd(d); }
+    cd(c); cd(d);  }
   R z; }
-
-K join(K x,K y){R joinI(&x,y);}
 
 Z I _hg(K h,uI k,I v,K x,uI*p)
 {

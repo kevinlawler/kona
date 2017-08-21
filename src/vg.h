@@ -46,4 +46,3 @@ V alloc(size_t);
 K symGrade(K a,I r);
 I cl2(I v);
 K last(K a);
-K joinI(K*a,K b);
