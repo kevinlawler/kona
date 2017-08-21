@@ -63,6 +63,7 @@ K of(K a, K b)  //TODO: oom all (see of2() for M(z,kK(z)[i]=...) pattern )
   K z=0;
   if(at==4 && bt==0) {
     C s[256]; strcpy(s,d_); strcat(s,"."); strcat(s,*kS(a));
+    S ss=*kS(a); I i; for(i=0;i<strlen(ss);++i)if(ss[i]=='_')R DOE; 
     K *aa=denameD(&KTREE,(S)sp(s),1);
     K *f=&kK(b)[0];
     R of2(*aa,f,bn>0?1+f:0,bn-1);
