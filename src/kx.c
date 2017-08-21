@@ -101,6 +101,7 @@ K overDyad(K a, V *p, K b) {
 
   K z=0,g=0;
   if(yt  > 0){z=ci(y); GC;}
+  if(!a && *o==(V)0x2a){z=Ki(1); GC;}
   if(yn == 0){if(VA(*o))z=LE; GC; } //Some verbs will handle this in alt_funcs
   K c=first(y),d;//mm/o
   //TODO: this reuse of g should be implemented in other adverbs
