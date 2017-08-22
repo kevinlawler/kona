@@ -22,6 +22,7 @@ extern I passed;
 extern I test_print;
 extern S lineB;
 extern I fom;
+extern I fbr;
 extern __thread K cls;
 I tc(S a,S b);
 I tp(I x);
