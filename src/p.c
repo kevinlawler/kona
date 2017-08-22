@@ -281,7 +281,6 @@ Z I syntaxChk(S s) {
   for(i=0;i<n;++i) if(s[i]!=' ')break;    //1st non-blank (if it exists)
   if(i>=n-1)R 0;
   for(j=i+1;j<n;++j) if(s[j]!=' ')break;  //2nd non-blank (if it exists)
-  //O("i:%lld  j:%lld  n:%lld\n",i,j,n); O("s:%s\n",s); O("s[i]:%d  s[j]:%d\n",s[i],s[j]);
   if(s[i]=='\\' && s[j]=='\\') R 0;
   if((s[i]=='\'' && s[j]!='\"') || j==n) R 1;
   for(i=0;i<n;++i) {
@@ -292,7 +291,6 @@ Z I syntaxChk(S s) {
     if(s[i]==',' && s[i-1]=='\\') R 1;
     if(s[i]=='?' && (s[i-1]=='-' || s[i-1]=='\\')) R 1;}}
   if(n>2){for(i=2;i<n;++i){
-    if(s[i]=='\\' && s[i-1]=='\\' && s[i-2]=='\\') R 1;
     if(s[i]=='\\' && s[i-1]==':' && (s[i-2]!='/' && s[i-2]!='\\')) R 1;
     if(s[i]=='/' && (s[i-1]=='+' || s[i-1]=='\'' || s[i-1]=='>' || s[i-1]=='%' || s[i-1]=='*' || s[i-1]=='?' || s[i-1]=='&' || s[i-1]=='\\') && s[i-2]=='/') R 1;
     if(s[i]=='/' && s[i-1]=='/' && s[i-2]=='-') R 1;
