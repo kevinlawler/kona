@@ -657,7 +657,9 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                       }
                       else {
                         if(fll>0)fdc=0;
-                        I i;for(i=k;i<strlen(s);i++)if(s[i]==':'|| (fbr && (s[i]=='x'||s[i]=='y'||s[i]=='z'))){fdc=1;break;}
+                        I i;for(i=k;i<strlen(s);i++){
+                               if(!fbr && s[i]==';')break;
+                               else if(s[i]==':'|| (fbr && (s[i]=='x'||s[i]=='y'||s[i]=='z'))){fdc=1;break;}}
                         z=inKtree(dict,u,0);
                         if((!fdc)&&!z){L err=(L)VLE;
                            #ifndef DEBUG
