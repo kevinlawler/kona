@@ -60,8 +60,8 @@ Z K formatFn(K a){ V *v=kW(a),p; I i,k,n,r=0; K z=0; C t[256]=""; S s=(C*)t;
   SW(a->n){
     CS(1,for(i=0;(p=v[i]);i++){ L q=(L)p;
            if(q<DT_SIZE && q>=DT_SPECIAL_VERB_OFFSET){S u=DT[q].text; n=strlen(u); strncpy(s+r,u,n); r+=n;}
-           else if(k=adverbClass(p)){t[r]=adverbsChar(p); if(k!=1)t[r+1]=':'; r++;}
-           else if(k=sva(p)){t[r]=verbsChar(p); if(k!=2)t[r+1]=':'; r++;}
+           else if((k=adverbClass(p))){t[r]=adverbsChar(p); if(k!=1)t[r+1]=':'; r++;}
+           else if((k=sva(p))){t[r]=verbsChar(p); if(k!=2)t[r+1]=':'; r++;}
            else;}
          n=strlen(s); z=newK(-3,n); memcpy(kC(z),s,n+1);)
     CS(2,)
