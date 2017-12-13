@@ -91,8 +91,8 @@ K _0m(K a) {
     I k=0; for(j=0;j<=i;j++){if(ss[j]!='\004')ss[k++]=ss[j];}
     z=newK(-3,k-1); for(j=0;j<k-1;++j){kC(z)[j]=ss[j];}
     GC; }
-  else if( (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) //read stdin
-           || 4==t && (!strcmp(*kS(a),"/dev/fd/0") || !strcmp(*kS(a),"/dev/stdin")) ){
+  else if( (3==ABS(t) && (!strcmp(m,"/dev/fd/0") || !strcmp(m,"/dev/stdin"))) || //read stdin
+	   (4==t && (!strcmp(*kS(a),"/dev/fd/0") || !strcmp(*kS(a),"/dev/stdin"))) ){
     b=getdelim_(&v,&s,EOF,stdin);
     P(freopen_stdin() == NULL, FE)
     if(b==-1){z=newK(0,0); GC;} }
