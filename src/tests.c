@@ -286,6 +286,8 @@ Z I tests02()
   TC(0=/!0, 0)                                    // issue 468
   TC(=/!0, 1)                                     // issue 475
   TC(=/1 2 3, 0)                                  // issue 475
+  TC(120, fac:{[n] :[n=0;1;n*fac n-1]}; fac 5)    // issue 487
+  TC(120, fac:{[n] :[n=0;1;n*_f n-1]}; fac 5)     // issue 487
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
