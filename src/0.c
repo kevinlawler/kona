@@ -132,7 +132,7 @@ Z I ok_0dw(K b) {       //b must be +-3, or 0 containing {+3,-3,()}
 Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
   I t=b->t, n=b->n; K k;
   P(!ok_0dw(b),TE)
-  S m=CSK(a); I s=0,f;
+  S m=CSK(a); I s=0,f=0;
 
   struct stat sb;
   if(stat(m,&sb)!=-1 && (sb.st_mode & S_IFMT)==S_IFIFO){                                 //write to FIFO
@@ -557,7 +557,8 @@ I rep(K x,I y) {   //#bytes in certain net/disk representations
   I m=sizeof(I)*(y?4:2), r=m, n=xn, q=0;  //y crutch for factor {0,1}->{net size, disk size}
   SW(xt) {
     CSR(0,) CS(5, DO(xn,r+=rep(kK(x)[i],y)))
-    CSR('\007',) CS('\010', if(1==xn);    ) //TODO - seven_types on disk  (1==xn --> no size increase)
+    CSR('\007',) CS('\010', if(1==xn)
+       ;  )  //TODO - seven_types on disk  (1==xn --> no size increase)
     CS(-4, DO(n, r+=1+strlen(kS(x)[i])))
     CS(-3, r+= (1+n)*sizeof(C))
     CS(-2, r+=     n*sizeof(F))
