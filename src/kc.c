@@ -77,9 +77,9 @@ Z void multihomeini(S*x)
 
 I args(int n,S*v) {
   K a,k; I c,len; U(KONA_ARGS=newK(0, n))
-  DO(n, len=strlen(v[i]); 
-        if(!(a=newK(-3, len))){cd(KONA_ARGS);R 0;} 
-        strncpy(kC(a),v[i],len); 
+  DO(n, len=strlen(v[i]);
+        if(!(a=newK(-3, len))){cd(KONA_ARGS);R 0;}
+        strncpy(kC(a),v[i],len);
         kK(KONA_ARGS)[i]=a )
   while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c) {
     CS('h',  if(IPC_PORT)O("-i accepted, cannot also have -h\n"); else HTTP_PORT=optarg;)
@@ -154,8 +154,8 @@ I kinit() {       //oom (return bad)
   offset3m    = (V)DT_OFFSET(_3m);
 
   kerr("undescribed");
-  SYMBOLS=newN(); //Initialize intern pool 
-  seedPRNG(-271828/*randomBits()*/); 
+  SYMBOLS=newN(); //Initialize intern pool
+  seedPRNG(-271828/*randomBits()*/);
   NIL=Kn();
   KFIXED=newK(0,0); kap(&KFIXED,&NIL);cd(NIL);
   d_ = sp(".k"); LS=sp(""); DO(3,IFP[i]=sp(IFS[i]))
@@ -253,7 +253,7 @@ I lines(FILE*f) {
 I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   S s=0; I b=0,c=0,m=0; K k; F d; fbr=fer=0; fam=1;
 
-  //kluge:  isatty() fails using mingw-10.0 with msys2 
+  //kluge:  isatty() fails using mingw-10.0 with msys2
   #ifndef __MINGW32__
     //I o = isatty(STDIN) && f==stdin; //display results to stdout?
     I o = isatty(STDIN); //display results to stdout?
@@ -270,10 +270,10 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
   b=parsedepth(*p);
-  if(v==3) { show(kerr("nest")); GC; } 
+  if(v==3) { show(kerr("nest")); GC; }
   if(v==2) { show(kerr("unmatched")); b=0; GC; }
   if(v==1) { fCmplt=1; goto done; }         //generally incomplete
-  if(v==0) fCmplt=0;  
+  if(v==0) fCmplt=0;
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
 
   trim(*a); //remove leading blanks
@@ -293,7 +293,8 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
 
-  if(o && fam)show(k); cd(k);
+  if(o && fam)show(k);
+  cd(k);
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
@@ -306,19 +307,20 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
           if(strlen(fnc)==1)for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
           else for(i=0;i<strlen(lineA)-1;i++) {if(lineA[i]==fnc[0]) if(lineA[i+1]==fnc[1]) {ptr=&lineA[i]; cnt++;}}
           if(cnt==1) { ctl=1; O("%s\n",lineA); if(!ptr)ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
-          if(cnt>1 && fnci && fnci<127) { I num=0; 
+          if(cnt>1 && fnci && fnci<127) { I num=0;
             for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
             O("%s\n",lineA); O("at execution instance %lld of \"%s\"\n",num,fnc); }}}
       if(lineB && !ctl && strcmp(lineA,lineB)) {
         if(fnc) { I cnt=0,i; O("%s\n",lineB);
           for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
           if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }
-          if(cnt>1 && fnci && fnci<127) { I num=0; 
-            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; } 
+          if(cnt>1 && fnci && fnci<127) { I num=0;
+            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
             O("at execution instance %lld of %s\n",num,fnc); }}}
       if(lineA || lineB)  check();          //enter suspended execution mode for checking
       if(!lineA && !lineB) O("%s\n",*a); }}
-  if(*p)pdafree(*p);*p=0;
+  if(*p)pdafree(*p);
+  *p=0;
   free(*a);*a=0;*n=0;
   free(s);s=0;
  done:
@@ -343,7 +345,8 @@ V timer_thread(V arg)
         if(pthread_mutex_unlock(&execute_mutex)){
           perror("Unlock mutex in timer_thread())"); abort();}
       }
-      if(z)cd(z); cd(a);
+      if(z)cd(z);
+      cd(a);
     }
 #ifdef WIN32
     win_usleep(tmr_ival?1000*tmr_ival:10000);
@@ -372,7 +375,7 @@ I attend() {  //K3.2 uses fcntl somewhere
 
   int nbytes;
   //char remoteIP[INET6_ADDRSTRLEN];
-  I yes=1;  // for setsockopt() SO_REUSEADDR, below 
+  I yes=1;  // for setsockopt() SO_REUSEADDR, below
   int i, rv;
   struct addrinfo hints, *ai, *p;
   FD_ZERO(&master); // clear the master and temp sets
@@ -385,9 +388,9 @@ I attend() {  //K3.2 uses fcntl somewhere
   sigemptyset(&sa.sa_mask);
   I res=sigaction(SIGINT, &sa, NULL); if(res){show(kerr("sigaction")); R -1;}
 
-  // get us a socket and bind it 
+  // get us a socket and bind it
   memset(&hints, 0, sizeof hints);
-  hints.ai_family = AF_INET; 
+  hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
 
@@ -400,18 +403,19 @@ I attend() {  //K3.2 uses fcntl somewhere
     for(p = ai; p != NULL; p = p->ai_next) {
       listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
       if (listener < 0) continue;
-      // lose the "address already in use" error message 
+      // lose the "address already in use" error message
 
       #if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
-      setsockopt(listener, SOL_SOCKET, SO_REUSEADDR | SO_NOSIGPIPE , &yes, sizeof(I)); 
+      setsockopt(listener, SOL_SOCKET, SO_REUSEADDR | SO_NOSIGPIPE , &yes, sizeof(I));
       #endif
 
       if (bind(listener, p->ai_addr, p->ai_addrlen) < 0){
-        if(close(listener))show(kerr("file")); continue; }
+        if(close(listener))show(kerr("file"));
+        continue; }
       break; }
     //K3.2 k aborts/exits if port is in use. k -i 1234. OK.  k -i 1234 ->  "i\nabort\n" exit;
-    if (!p) { fprintf(stderr, "server: failed to bind\n"); exit(2); } 
-    freeaddrinfo(ai); 
+    if (!p) { fprintf(stderr, "server: failed to bind\n"); exit(2); }
+    freeaddrinfo(ai);
     if (-1==listen(listener, 10)) { perror("listen"); exit(3); }
     FD_SET(listener, &master);
     fdmax = listener; }
@@ -421,34 +425,34 @@ I attend() {  //K3.2 uses fcntl somewhere
     perror("Create timer thread"); abort(); }
 
   fln=1;
-  for(;;) { // main loop  
+  for(;;) { // main loop
     scrLim = 0;
-    read_fds = master; // copy it 
+    read_fds = master; // copy it
     if (-1==select(fdmax+1,&read_fds,0,0,0)) {  //null timeval -> select blocks
       if (errno == EINTR) { interrupted = 0; errno = 0; } //ignore, was interrupted by C-c
       else {perror("select");exit(4);} }
-    
-    // run through the existing connections looking for data to read 
-    for(i = 0; i <= fdmax; i++) 
+
+    // run through the existing connections looking for data to read
+    for(i = 0; i <= fdmax; i++)
       if (FD_ISSET(i, &read_fds)) {
         if(i==STDIN) {
           nbytes=line(stdin,&a,&n,&q);
           fln=0;
           if(nbytes<=0){
-            if(!IPC_PORT && !HTTP_PORT) exit(0); //Catch CTRL+D 
+            if(!IPC_PORT && !HTTP_PORT) exit(0); //Catch CTRL+D
             else FD_CLR(i,&master);} }
-        else if(i == listener) {         // handle new connections 
-          addrlen = sizeof remoteaddr; 
+        else if(i == listener) {         // handle new connections
+          addrlen = sizeof remoteaddr;
           newfd = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
-          if (newfd == -1) perror("accept"); 
+          if (newfd == -1) perror("accept");
           else  {
             wipe_tape(newfd); //new conn needs this since connections can die without notification (right?)
-            FD_SET(newfd, &master); // add to master set 
+            FD_SET(newfd, &master); // add to master set
             if (newfd > fdmax) fdmax = newfd;
-            setsockopt(newfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I)); 
+            setsockopt(newfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(I));
             CP[newfd].a=ntohl(((struct sockaddr_in*)&remoteaddr)->sin_addr.s_addr);
           } }//disable nagle
-            //printf("server: new connection from %s on socket %d\n", inet_ntop(remoteaddr.ss_family, 
+            //printf("server: new connection from %s on socket %d\n", inet_ntop(remoteaddr.ss_family,
             //        get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN), newfd);
         else if(a) continue; //K3.2 blocks if in the middle of processing the command-line (should we sleep here?)
         else read_tape(i,i,0); } } }
@@ -472,7 +476,7 @@ void *socket_thread(void *arg) {
   socklen_t addrlen;
 
   // create socket for server
-  I yes=1;struct addrinfo *result=NULL, *p=NULL, hints; 
+  I yes=1;struct addrinfo *result=NULL, *p=NULL, hints;
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
@@ -483,7 +487,7 @@ void *socket_thread(void *arg) {
 
   for(p = result; p != NULL; p = p->ai_next) {
     if(INVALID_SOCKET==(listener=socket(p->ai_family, p->ai_socktype, p->ai_protocol))) continue;
-    setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(I)); 
+    setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(I));
 
     // bind listener socket
     if(SOCKET_ERROR==bind(listener, p->ai_addr, (int)p->ai_addrlen)){
@@ -491,38 +495,38 @@ void *socket_thread(void *arg) {
       continue;}
     break; }
 
-  if (!p) { fprintf(stderr, "server: failed to bind\n"); exit(2); } 
+  if (!p) { fprintf(stderr, "server: failed to bind\n"); exit(2); }
   freeaddrinfo(result);
-    
-  if(SOCKET_ERROR==listen(listener, 10)){O("listen() failed with error: %ld\n", WSAGetLastError()); exit(3);} 
+
+  if(SOCKET_ERROR==listen(listener, 10)){O("listen() failed with error: %ld\n", WSAGetLastError()); exit(3);}
   else FD_SET(listener, &master);
 
-  SOCKET SockSet[FD_SETSIZE]; 
+  SOCKET SockSet[FD_SETSIZE];
   for(i=0;i<10;i++) SockSet[i]=INVALID_SOCKET;
   I nfd=1;   //Count of FDs including listener & clients
   I nca=0;   //Count of most clients ever activated
   I free=0;  //A previously used socket position is now free
   I nxt=0;   //Next socket position to use
-    
+
   for(;listener;) {   // main loop for Windows clients (sockets)
     read_fds = master;
     i=select(nfd,&read_fds,0,0,0); if(-1==i) O("select error\n");
     if(FD_ISSET(listener, &read_fds)) {
-      addrlen = sizeof remoteaddr; 
+      addrlen = sizeof remoteaddr;
       SockSet[nxt] = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
       if(INVALID_SOCKET==SockSet[nxt]){O("accept() failed with %ld\n",WSAGetLastError()); exit(4);}
       else {
         wipe_tape(nxt);
-        FD_SET(SockSet[nxt], &master); nfd++; 
+        FD_SET(SockSet[nxt], &master); nfd++;
         CP[nxt].a=ntohl(((struct sockaddr_in*)&remoteaddr)->sin_addr.s_addr);
-        if(!free) {nca++; nxt=nca;} } } 
+        if(!free) {nca++; nxt=nca;} } }
     else {
       for(i=0; i<nca; i++) {
         if(FD_ISSET(SockSet[i], &read_fds)) {
           if ((K)-1==read_tape(i,SockSet[i],0)) {
             SockSet[i]=INVALID_SOCKET; nfd--; } } } }
     free=0;
-    for(i=0; i<nca; i++) {if(INVALID_SOCKET==SockSet[i]) {free=1; nxt=i; break;} } }   
+    for(i=0; i<nca; i++) {if(INVALID_SOCKET==SockSet[i]) {free=1; nxt=i; break;} } }
   R 0; }
 
 I attend() {
@@ -540,10 +544,10 @@ I attend() {
       perror("Create socket thread"); abort();} }
 
   for(;;) {   // main loop for Windows stdin
-    scrLim = 0;  
+    scrLim = 0;
     for(;;) {
       if (-1==line(stdin, &a, &n, &q)) exit(0);
       } }
-  R 0; }     
+  R 0; }
 
 #endif
