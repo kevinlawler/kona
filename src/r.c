@@ -75,7 +75,7 @@ Z I jdn_from_date(I year,I month,I day);
 Z S rangematch(S p,C t,S r);
 
 //'S' for [pre-]Scripted. These macros should be refactored/rewritten. Certainly don't need new K every time.
-//The a=kreci stuff is a kluge we use since f##_KVAR == vs_KVAR (and KFIXED) live outside the test framework 
+//The a=kreci stuff is a kluge we use since f##_KVAR == vs_KVAR (and KFIXED) live outside the test framework
 #define S_MONAD_(f,v,t) K v; K f(K x){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,&v);cd(v);} K k=newK(0,1); U(k) kK(k)[0]=x; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
 #define S_MONAD(f,x) S_MONAD_(_##f,f##_KVAR,x)
 #define S_DYAD_(f,v,t) K v; K f(K x,K y){I a=kreci; if(!v){U(v=X(t)) kap(&KFIXED,&v);cd(v);} K k=newK(0,2); U(k) kK(k)[0]=x; kK(k)[1]=y; K z=vf_ex(&v,k); DO(k->n,kK(k)[i]=0) cd(k); kreci=a+1; R z; }
@@ -115,7 +115,7 @@ S_DYAD(hat,  __hat) //or "caret" or "without"
 S_TRIAD(ssr, __ssr) //missing a few things
 
 K kdef(I n) {
-  SW(n){CS(98,R X(__gtime))  CS(101,R X(__inv))  CS(107,R X(__binl))  CS(108,R X(__di))    CS(111,R X(__dv))   CS(112, R X(__dvl))   
+  SW(n){CS(98,R X(__gtime))  CS(101,R X(__inv))  CS(107,R X(__binl))  CS(108,R X(__di))    CS(111,R X(__dv))   CS(112, R X(__dvl))
         CS(113,R X(__hat))   CS(114,R X(__in))   CS(115, R X(__lin))  CS(117, R X(__mul))  CS(121, R X(__sv))  CS(123, R X(__ssr)) }
   R (K)0; }
 
@@ -171,18 +171,18 @@ K _abs(K a) // _abs is separate from other math functions because it maintains t
 
 I net(K x) {R sizeof(M1)+rep(x,0);}//#bytes in corresponding network message. see disk()
 //Q/K4 uses -8!x method instead. it's still 32-bit headers, don't know how much of a speedup that is given minimum packet size / zipped IPC in kdb+2.7
-K _bd(K x)//This differs from K3.2 in order to support 64-bit 
+K _bd(K x)//This differs from K3.2 in order to support 64-bit
 {
   I s = net(x);
-  //P(s>1234567890L,LE) //"this message is too big" ? 
+  //P(s>1234567890L,LE) //"this message is too big" ?
   K z=newK(-3,s); U(z)
   M1*m=(V)kK(z);
   I u=1;
   m->a=*(S)&u;//little-endian?
   m->n=s-sizeof(M1);
   wrep(x,sizeof(M1)+(V)m,0); //assert #bytes in x or z couldn't change
-  R z; 
-} 
+  R z;
+}
 
 K _ceiling(K a){R floor_ceil(a,ceil);}
 
@@ -190,7 +190,7 @@ K _ci(K a)
 {
   I t=a->t,n=a->n;
   P(ABS(t) > 1,TE)
-  K z=newK(t*3,n); 
+  K z=newK(t*3,n);
   if(!t) DO(n,kK(z)[i]=_ci(kK(a)[i]))
   else   DO(n, kC(z)[i]=  (C) (UC) (kI(a)[i] % 256l) ); //TODO: more complete testing
   R z;
@@ -245,7 +245,7 @@ K _host(K a) //lfop
     {
       I q = ntohl(((struct sockaddr_in *)c->ai_addr)->sin_addr.s_addr);
       freeaddrinfo(c);
-      errno=0; 
+      errno=0;
       R Ki(q);
     }
   }
@@ -260,21 +260,21 @@ K _host(K a) //lfop
     if(!getnameinfo((struct sockaddr *)&s,sizeof s,host,sizeof host,0,0,0))
     {
       errno=0; //getnameinfo
-      R Ks(sp(host)); 
+      R Ks(sp(host));
     }
   }
   else R TE;
 
   errno=0;
   R kerr("value");
-} 
+}
 
 
 K _ic(K a)
 {
   I t=a->t,n=a->n;
   P(t && 3 != ABS(t),TE)
-  K z=newK(t/3,n); 
+  K z=newK(t/3,n);
   if(!t) DO(n,kK(z)[i]=_ic(kK(a)[i])) //TODO: more complete testing  "_ic _ci -300 + !605"
   else   DO(n, kI(z)[i]= (UC) (C) kC(a)[i] ); //TODO: this is weird? or escape parsing is. compare _ic "\477"  here-Ki(255) k3.2-Ki(63)
   R z;
@@ -305,7 +305,7 @@ K _lt(K a)
   if(!t) DO(n,kK(z)[i]=_lt(kK(a)[i]))
   else DO(n,kI(z)[i]=kI(a)[i]+d)
   R z;
-} 
+}
 K _ltime(K a){R _gtime(_lt(a));} //TODO:mm/o
 
 I stat_sz(S u, I*n)
@@ -316,7 +316,7 @@ I stat_sz(S u, I*n)
   R 0;
 }
 
-K _size(K a) 
+K _size(K a)
 {
   I t=a->t, n=0;
 
@@ -329,10 +329,10 @@ K _size(K a)
 //Dyadic System Functions ///////////////
 /////////////////////////////////////////
 //K3.2 bug: (0 1;0.0 1.0) _bin 0 1 -> 2   but (0 1;0 1) _bin 0 1 -> 0
-K _bin(K x,K y) 
+K _bin(K x,K y)
 { P(xt>0,RE)
   R Ki(binr(x,0,xn-1,y));
-} 
+}
 
 K _draw(K a,K b)
 {
@@ -362,7 +362,7 @@ K _draw(K a,K b)
 
 Z void vitter_a(I *a,I n,I N,I j) //Method A
 {
-  I S,i=0; 
+  I S,i=0;
   F top=N-n, Nreal=N, V, quot;
   while(n >= 2)
   {
@@ -372,7 +372,7 @@ Z void vitter_a(I *a,I n,I N,I j) //Method A
       S++; top--; Nreal--;
       quot = (quot * top)/Nreal;
     }
-    j+=S+1; 
+    j+=S+1;
     a[i++]=j;
     Nreal--; n--;
   }
@@ -406,7 +406,7 @@ void vitter(I *a,I n,I N) //Method D
       if(Vprime <= 1.0) break;
       y2=1.0; top = -1.0+Nreal;
       if(-1+n > S){bottom=-nreal+Nreal;limit=-S+N;}
-      else{bottom=-1.0+negSreal+Nreal; limit=qu1;} 
+      else{bottom=-1.0+negSreal+Nreal; limit=qu1;}
       for(t=N-1;t>=limit;t--)
       {
         y2=(y2*top)/bottom;
@@ -472,7 +472,7 @@ K _lsq(K a,K b)
     y=at?a:kK(a)[k];
     x=at?z:kK(z)[k];
     DO(n,s=0.;if(w[i]){DO2(m,s+=u[j][i]*(-2==y->t?kF(y)[j]:kI(y)[j]))s/=w[i];}t[i]=s)
-    DO(n,s=0.;DO2(n,s+=v[i][j]*t[j];kF(x)[i]=s)) 
+    DO(n,s=0.;DO2(n,s+=v[i][j]*t[j];kF(x)[i]=s))
   )
 
   free(u[0]);free(u);free(w);free(v[0]);free(v);free(t);
@@ -819,7 +819,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
 
   S t=CSK(a),p=CSK(b); //t text, p pattern
 
-  I lp=strlen(p); 
+  I lp=strlen(p);
   if(!lp)R LE;
   I *r=alloc(lp*sizeof(I)); //oom
 
@@ -828,7 +828,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
 
   C c,d;
   I occ[256];
-  DO(256,occ[i]=-1); 
+  DO(256,occ[i]=-1);
 
   C v[256],w[256];
 
@@ -842,7 +842,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
     else
     {
       q=rangematch(q+1,0,v);
-      if(!q){free(p); R DOE;} 
+      if(!q){free(p); R DOE;}
       I any=0;
       DO(256,if(v[i]){occ[i]=m;any=1;})
       if(!any){free(p); R newK(-1,0);} //!0 or length err (as in "")? this pattern matches nothing (like "[^\000-\377]"). R here saves '?' logic later
@@ -861,7 +861,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
 
   while(i>0) //Precompute strong good suffix heurisitics
   {
-    while(j<=m) 
+    while(j<=m)
     {
       flag=0;
       c=p[r[i-1]]; d=p[r[j-1]];
@@ -884,7 +884,7 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
   {
     if(4==b->t)//if pattern is sym (eg `"123") break on word boundaries
     {
-      while(i<n-m && (isalnum(t[i+m]) || (i && isalnum(t[i-1])))) i++; 
+      while(i<n-m && (isalnum(t[i+m]) || (i && isalnum(t[i-1])))) i++;
       if(i==n-m && i && isalnum(t[i-1]))break; //case "0 0 0pattern" _ss `pattern
     }
 
@@ -898,10 +898,10 @@ K _ss(K a,K b) //Strong evidence K3.2 uses Boyer-Moore: wildcard at end of patte
       j--;
     }
 
-    if(j<0) 
+    if(j<0)
     {
       kap(&z,&i); //nlogn ... optimal is n (count first || allocate n/m space then trim) oom
-      i+=m; //for non-overlapping matches 
+      i+=m; //for non-overlapping matches
       //i+=s[0]; //for overlapping matches
     }
     else i+= MAX(s[j+1],j-occ[(I)t[i+j]]);
@@ -927,7 +927,7 @@ Z S rangematch(S p, C t, S r) //BSD.  p pattern t testchar r represented. R 0 on
 			p+=2;
 			if(!d)R 0;
 			if((UC)c<=(UC)t && (UC)t<=(UC)d) k=1;
-      if(r)DO(1+(UC)d-(UC)c, r[i+(UC)c] = !n) 
+      if(r)DO(1+(UC)d-(UC)c, r[i+(UC)c] = !n)
 		}
     else{if(c==t)k=1; if(r)r[(UC)c]=!n;}
 	}
@@ -953,7 +953,7 @@ K _vsx(K x,K y) //vector from scalar (improved version), radix & clock arithmeti
     z=demote(z);
   }
   else if(1==xt) // && 1==y->t /radix
-  { //K3.2 mishandles 2 _vs 0 from our perspective (could be said to mishandle _vs, though see above) {(1_|{ _ y % x}[x]\y)!x} 
+  { //K3.2 mishandles 2 _vs 0 from our perspective (could be said to mishandle _vs, though see above) {(1_|{ _ y % x}[x]\y)!x}
     P(*kI(x)<2, DOE)
     U(z=newK(-1,0))
     I a = *kI(x), b = *kI(y), c=b/a;
@@ -974,9 +974,9 @@ K _vsx(K x,K y) //vector from scalar (improved version), radix & clock arithmeti
     I a = *kI(y), n =z->n;
     if(a<0){I s=1;DO(xn,s*=kI(x)[i]) a = s - (-a % s);} //a nice property. maybe not crucial
     DO(n, kI(z)[i] = kI(x)[x->n-1-i])  // z:|x
-    if(n) *kI(z) = *kI(z)? a / *kI(z):0; 
+    if(n) *kI(z) = *kI(z)? a / *kI(z):0;
     DO(n-1, I d=kI(z)[i+1]; kI(z)[i+1] = d?kI(z)[i]/d:0) // divide scan
-    DO(n-1, kI(z)[n-1-i] = kI(z)[n-2-i] - kI(z)[n-1-i] * kI(x)[i] ) 
+    DO(n-1, kI(z)[n-1-i] = kI(z)[n-2-i] - kI(z)[n-1-i] * kI(x)[i] )
     if(n) *kI(z) = a - *kI(z) * kI(x)[xn-1];
     Ireverse(z);
     R z;
@@ -1013,9 +1013,9 @@ K _vs(K x,K y) {   //vector from scalar (k3 version), radix & clock arithmetic (
     I a = *kI(y), n =z->n;
     if(a<0){I s=1;DO(xn,s*=(kI(x)[i]?kI(x)[i]:-1)); a = s - (-a % s);} //a nice property. maybe not crucial
     DO(n, kI(z)[i] = kI(x)[x->n-1-i])  // z:|x
-    if(n) *kI(z) = *kI(z)? a / *kI(z):0; 
+    if(n) *kI(z) = *kI(z)? a / *kI(z):0;
     DO(n-1, I d=kI(z)[i+1]; kI(z)[i+1] = d?kI(z)[i]/d:0) // divide scan
-    DO(n-1, kI(z)[n-1-i] = kI(z)[n-2-i] - kI(z)[n-1-i] * kI(x)[i] ) 
+    DO(n-1, kI(z)[n-1-i] = kI(z)[n-2-i] - kI(z)[n-1-i] * kI(x)[i] )
     if(n) *kI(z) = a - *kI(z) * kI(x)[xn-1];
     Ireverse(z);
     R z; }
@@ -1024,7 +1024,7 @@ K _vs(K x,K y) {   //vector from scalar (k3 version), radix & clock arithmetic (
 /////////////////////////////////////////
 //Niladic (Reserved Symbols) ////////////
 /////////////////////////////////////////
-K _t(){R Ki(time(0) + k_epoch_offset);}  
+K _t(){R Ki(time(0) + k_epoch_offset);}
 K _T()
 {
   struct timeval t;
@@ -1035,7 +1035,7 @@ K _T()
   gmtime_r(&tr,&u);
   R Kf(jdn_from_date(1900+u.tm_year,1+u.tm_mon,u.tm_mday)+((u.tm_hour*60*60 + u.tm_min*60 + u.tm_sec + t.tv_usec/1.0e6)/86400.0));
 }
-K _n(){R ci(NIL);}  
+K _n(){R ci(NIL);}
 K _h()
 {
   C c[256];
@@ -1071,7 +1071,7 @@ Z I CIX(K a,I i,K x) //compare a[i] vs x,  a->t <= 0
                CS(2,*kF(k)=kF(a)[i])
                CS(3,*kC(k)=kC(a)[i])
                CS(4,*kS(k)=kS(a)[i])
-              } 
+              }
 
   //HACK: K3.2 handles x=1|2, a=-1|-2 case but not x=-1|-2. see K3.2 bug at _bin
   //Note: Comparing 64-bit integer to 64-bit double is going to cause problems (int overflows mantissa, double doesn't fit in int)
@@ -1125,7 +1125,7 @@ Z I date_from_jdn(I j)
   day   = e - (153*m+2)/5 + 1;
   month = m + 3 - 12*(m/10);
   year  = b*100 + d - 4800 + m/10;
-  
+
   R year*10000 + month*100 + day;
 }
 

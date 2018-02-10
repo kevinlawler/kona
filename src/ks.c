@@ -21,7 +21,7 @@ S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be c
   #define LINK(n,x) (n)->c[((x)+1)/2] // -1 => 0 , 1 => 1
   if(!k)R 0;//used in glue. used in _2m_4. used in parse. Probably a good argument to keep since it's exposed for libraries via 2: dyadic
   N t=SYMBOLS, s=t->c[1],p=s,q=p,r; I a,x;
-  if(!s){s=t->c[1]=newN();P(!s,(S)ME);s->k=sdupI(k); if(!s->k){free(s);t->c[1]=0;ME;} R s->k;} // <-- strdup here and below 
+  if(!s){s=t->c[1]=newN();P(!s,(S)ME);s->k=sdupI(k); if(!s->k){free(s);t->c[1]=0;ME;} R s->k;} // <-- strdup here and below
   while(q)
   { if(!(a=SC(k,p->k))){R p->k;}//In the usual tree put: p->k=k,p->v=v before returning
     if(!(q=LINK(p,a))){q=newN();P(!q,(S)ME);q->k=sdupI(k);if(!q->k){free(q);ME; R 0;} LINK(p,a)=q;break;}//Usual tree would q->v=v. mmo
@@ -35,7 +35,7 @@ S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be c
   else if(s->b==-a){s->b=0; R p->k;}
   if(r->b==a){p=r; LINK(s,a)=LINK(r,-a); LINK(r,-a)=s; s->b=r->b=0;}
   else if(r->b==-a)
-  { p=LINK(r,-a); LINK(r,-a)=LINK(p,a); 
+  { p=LINK(r,-a); LINK(r,-a)=LINK(p,a);
     LINK(p,a)=r; LINK(s,a)=LINK(p,-a); LINK(p,-a)=s;
     if     (p->b== a){s->b=-a; r->b=0;}
     else if(p->b== 0){s->b= 0; r->b=0;}
@@ -43,7 +43,7 @@ S sp(S k)//symbol from phrase: string interning, Ks(sp("aaa")). This should be c
     p->b=0;
   }
   t->c[s==t->c[1]?1:0]=p;
-  R q->k; 
+  R q->k;
 }
 
 //S spkC(K a){S u=strdupn(kC(a),a->n),v=sp(u);free(u);R v;}

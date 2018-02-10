@@ -3,7 +3,7 @@
 #include "k.h"
 
 //  Note:
-//  
+//
 //  To test out-of-memory handling on determininistic calls, execute the string
 //  and record the number of allocations n. Then simulate out of memory,
 //  running the string each time for each i < n. Allocating functions such as
@@ -87,7 +87,7 @@ Z I testsIO()
   //binary - 1: 2:
   TC(1,t:`testfile00; a:(1;1.0;"c";`d;1 2;3.0 4.0;"ef";`g`h;();(1;`z)); t 1: a;  &/ a ~/: (1:t;2:t)) //leaves a file
 }
- 
+
 Z I tests02()
 {
   TC(`b,(`a`b)[1])
@@ -122,7 +122,7 @@ Z I tests02()
   TC(3 4, a: 1 2;{a+:2} 0; a)
   TC(_n, b:9;{b:b} 0)
   TC((2 4) , ((1+)[1]; (1+|+)[1;2]) )
-  TC((),=!0) // =: Group had a bug with one element lists 
+  TC((),=!0) // =: Group had a bug with one element lists
   TC((,,0),=,1)
   TC((,0;,1),=1 2)
   TC((,0;,1),=2 1)
@@ -184,12 +184,12 @@ Z I tests02()
   TC( 5, {+/x,{x+y,{x-{x+{b:3; g:{b}; b:4; :7; g[]}0}5}12}[1;2]}1) // early-return in level-5
   TC( 7, {+/x,{x+y,{x-{x+{b:3; g:{b}; b:4; g[]}0}5}12}[1;2]; :7}1) // early-return in level-1
   TC( 3, {{b:3; g:{b}; b:4; g[]}0}0)    // unbuffered double braces
-  TC( 4, {1+{b:3; g:{b}; b:4; g[]}0}0)  // buffered double braces 
+  TC( 4, {1+{b:3; g:{b}; b:4; g[]}0}0)  // buffered double braces
   TC( 8, {({b:3;g:{b};b:4;g[]}0) + {b:5;g:{b};b:6;g[]}0}0) //double independent subfuncs
   TC( 3, b:9; {b:3;g:{b};b:4;g[]}0)     // pre-existing K-Tree entry
   TC(25, {{+/x,{x+y,{x-{x+{b:3;g:{b};b:4;g[]}0}5}12}[1;2]}1 + {x+{b:3;g:{b};b:4;g[]}0}5 + {x-{x+{b:3;g:{b};b:4;g[]}0}5}12 + x}4)
          // 4 stacks: depth-5, depth-2, depth-3, and implicit
-  TC(1 3 10 3 10, g:1; do[2;{a:10; g::g,{x,a}x}3]; g) // do[2;] loop with subfunction (implicit arg) 
+  TC(1 3 10 3 10, g:1; do[2;{a:10; g::g,{x,a}x}3]; g) // do[2;] loop with subfunction (implicit arg)
   TC( 7, f:{x+y+z}; g:f[1;;3]; {b:3; h:{b}; b:4; g[h[ ] ] }0) // projection and subfunction
   TC_( "3", "{:[x<2;1;_f[x-1]*x]}'2 3 4; {b:3; g:{b}; b:4; g[]}0") // muti-statement combo test
   TC(120, {b:3; g:{b}; a::{:[x<2; 1; _f[x-1]*x]}5; g[ ]}0; a) // embedded _f with atom-arg
@@ -307,7 +307,7 @@ Z I tests02()
   //Degenerate uses of : colon verb
   TC(1, (::)[1])  //monadic
   TC(2, (:)[0;2]) //dyadic
-  
+
   //Conditionals
   TC(_n,:[1;])
   TC(_n,:[0;])
@@ -378,7 +378,7 @@ Z I tests02()
   TC_("1" , "a:(!11)#\\:,(`a;\"c\";1); &/{x~_db _bd x}'a")
   //TC((1;"parse"), .[.:;,"_db_bd 1";:] ) //we handle this case now instead of error
   TC(2,  _db_bd_db_bd 2) //should be able to handle this case
-  
+
   TC(skip, 1,&/{x~_db _bd x}/: (+;+:;-;-:)) // handle unreserved monadic,dyadic verbs
 
   TC(0 2, @[.:;"1+1";:])
@@ -405,8 +405,8 @@ Z I tests02()
   TC(3999, #5:2000#1) //5:monadic should not be subject to "..." display eliding (before displaying it anyway)
   //TC(33599997, #5:16799999#1) // Forces r>KP_MAX in kexpander for 32-bit-Linux or OSX
   //TC(33999997, #5:16999999#1) // Forces r>KP_MAX in kexpander for Cygwin
-  TC(5:(+),   (,"+")) 
-  TC(5:(|/), "|/") 
+  TC(5:(+),   (,"+"))
+  TC(5:(|/), "|/")
   TC(5:(_acos;_tanh;_abs;_size;_bin;_vsx;_ssr;_vs), "(_acos;_tanh;_abs;_size;_bin;_vsx;_ssr;_vs)")
   TC_("a:.'(+;-);a@\\:1 2", "3 -1")
 
@@ -417,7 +417,7 @@ Z I tests02()
   TC(2 2#(), ((;);(;)))
 
   TC({x+y}/1 2 3 4, 10)
- 
+
   //Radix _vsx and _vs (unbounded)
   TC(!0, 2 _vs 0) //an artifact of writing K in K (K3.2),
                   //but sensible if you intend 30000 and 30 to have the same length _vsx[2;] (leading zeroes)
@@ -449,16 +449,16 @@ Z I tests02()
   TC((0 0 10;0 16 40;13 46 40) , 24 60 60 _vsx/: 10 1000 1000000) // /: is redundant for us
   TC(0 0, 1 1 _vs 0)
   TC(0 0, 1 1 _vsx 0)
- 
+
   TC(skip, 0, (_+[2;]) 11) //segfault
-  TC((1;"parse"),  @[.:;"if[1; `0:“bad unicode quotes”]";:]) 
+  TC((1;"parse"),  @[.:;"if[1; `0:“bad unicode quotes”]";:])
   TC(1, 40<#0:"README.md")
 
   //f'[x;y;z;...]
   TC_("6", "f:{x+y+z}; f'[1;2;3]")
   TC_("6", "f:{x+y+z}; f''[1;2;3]")
   TC_("()", "f:{x+y+z}; f'[();2;3]")
-  TC_("_n","{x}'[]"); 
+  TC_("_n","{x}'[]");
   TC_("12 15 18", "f:{x+y+z}; f'[1 2 3;4 5 6;7 8 9]")
   TC_("22 25 28", "f:{[a;b;c;d] a+b+c+d}; f'[1 2 3;4 5 6;7 8 9;10]")
   TC_("22 26 30", "f:{[a;b;c;d] a+b+c+d}; f'[1 2 3;4 5 6;7 8 9;10 11 12]")
@@ -474,13 +474,13 @@ Z I tests02()
   TC(16 17 18, (+)/[1 2 3;4 5 6] )
   TC((), {x+y+z}/[();1 2 3;4 5 6])
   TC(1 4 2 5 3 6, {x,y,z}/[();1 2 3;4 5 6])
-  TC((,7), @/[,1;0 0 0;+;1 2 3]) 
-  TC((,5), @/[,1;4#0;+;1]) 
+  TC((,7), @/[,1;0 0 0;+;1 2 3])
+  TC((,5), @/[,1;4#0;+;1])
   TC(3 1,  ./[1 1;0 0;+; 1 1])
   TC(2,+/[1 1])
   TC(3 3,+/[1 1;1 1])
   TC(_n, +/[])
-  
+
   //f\[x;y;z;...]
   TC((1 2 3;5 6 7;10 11 12;16 17 18), (+)\\[1 2 3;4 5 6] )
   TC((1 2 3;5 6 7;10 11 12;16 17 18), +\\[1 2 3;4 5 6] )
@@ -502,11 +502,11 @@ Z I tests02()
   TC( (@[0$;0 1.0;:]) , (1;"type"))
   TC( (@[0$;`a`a;:])  , (1;"type"))
 
-  TC( (@[.:;"a:(1 2)[0]:3";:] ), (1;"parse") )  
-  TC( (@[.:;"a:(0 1;2 3); a[0][1]:9";:] ), (1;"parse") )  
+  TC( (@[.:;"a:(1 2)[0]:3";:] ), (1;"parse") )
+  TC( (@[.:;"a:(0 1;2 3); a[0][1]:9";:] ), (1;"parse") )
   TC( (@[.:;"(1):2";:] ), (0;2) )    //optional, differs from K3.2
   TC( (@[.:;"a: 1 1 1; a/[0] +: 10";:] ), (1;"valence") ) //not clear here. think ... +:10 is ... index flip 10. Should be parse err?
-  TC( (@[.:;"5 (a:5)/1";:] ), (1;"rank") )  
+  TC( (@[.:;"5 (a:5)/1";:] ), (1;"rank") )
 
   TC(13, ({x(|+\\)\\1 1} 5)[5;0])
   TC( (.[.:;,"@[a-b]";:]) , (1;"parse") )
@@ -545,19 +545,19 @@ Z I tests02()
   TC(::::,::::)
   TC(5:(:), ,":")
   TC(5:(::), "::")
-  TC(5:(::::), "::::") 
+  TC(5:(::::), "::::")
   TC_("(1;\"parse\")", "@[.:;\":::\";:]")  //:::, :::::, and so on return parse error (monadic colons ending in dyadic) with
   TC_("(1;\"parse\")", "@[.:;\":::::\";:]")//more elborate code you could handle these cases, but that seems pointless
-  TC_("(1;\"parse\")", "@[.:;\":::5::::\";:]") 
+  TC_("(1;\"parse\")", "@[.:;\":::5::::\";:]")
   TC_("(1;\"parse\")", "@[.:;\"a _abs: \";:]") //more generally PE for anything not assignment ending in dyadic colon (except a solitary dyadic colon)
   TC_("(1;\"parse\")", "@[.:;\"4:::\";:]")
 
-  TC(2,a:2 3;a@*:0) 
+  TC(2,a:2 3;a@*:0)
   TC(0=#:,a:0;a=#:)
 
   TC(skip, _n, do[3;."\" \"_sv 1"]) //bv_ex error mishandling caused crash  //k2.8 and Kona yield "type error" not _n
   TC(skip, _n, do[3;."1_sv \" \""]) //^^    //k2.8 yields _n   Kona yields "type error" (Kona seems correct. See ref p.221)
-  
+
   TC(6 7 8, (21>+/)(2+)/!3)
   TC((1;"wsfull"),@[.:;"0I#0";:])
   TC((1;"wsfull"),@[.:;"&0I";:])
@@ -605,7 +605,7 @@ Z I tests02()
   TC_("3 4 5","{x+y}'[1;]2 3 4")
   TC_("skip","(,':)[1 2;3 4] ~ (1 2;4 3)")
 
-  TC(("ab";,"ab";("ab";"cd")), (2 2 # "abcd")[(0;,0;0 1)]) // indexing scalars & singletons 
+  TC(("ab";,"ab";("ab";"cd")), (2 2 # "abcd")[(0;,0;0 1)]) // indexing scalars & singletons
   TC(("a";),"a",:[1;;"b"])  // concatenating with "nothing"
 
   //COW: Copy On Write
@@ -646,13 +646,13 @@ Z I tests02()
   TC(".k", ."\\d a"; ."\\d .k"; $_d)  // check for memory leaks
   TC(1 2, a:.((`b;1);(`c;2)); `a[`b`c])
   TC(3, a:1; \\b:2; c:3) // check: \b n
-  TC(skip, 5, a[5])                // value error          
+  TC(skip, 5, a[5])                // value error
   TC(skip, 5 6, a[5 6])            // value error
   TC(skip, 5, a 5)                 // value error
   TC(skip, 5 6, a 5 6)             // value error
   TC(a:{a[x]}; a 5, )
-  TC(4 3 2 1 0, r:{:[x;x,_f[x-1];0]}; r[4]) 
-  TC(4 3 2 1 0, r:{:[x;x,r[x-1];0]}; r[4]) 
+  TC(4 3 2 1 0, r:{:[x;x,_f[x-1];0]}; r[4])
+  TC(4 3 2 1 0, r:{:[x;x,r[x-1];0]}; r[4])
   TC(1, `a.1)   //issue #290
   TC(1, `a@1)         //issue #291
   TC(1 2 3, `a@1 2 3) //issue #291
@@ -829,7 +829,7 @@ Z I tests02()
   TC(-1.0,(-1)^1)
   TC( 0n, (-1)^0n)
 #endif
-  R 0; 
+  R 0;
 }
 
 Z I tests01()
@@ -841,8 +841,8 @@ Z I tests01()
   TC(sizeofS:sizeof(S),sizeofI:sizeof(I))
   TC(1,1)
   TC(1 1, 1 1)
-  TC(1 1,1,1) 
-  TC(2,1+1)   
+  TC(1 1,1,1)
+  TC(2,1+1)
   TC((),())
   TC((),1 2 3@())
   TC((), (1 2 3)())
@@ -887,9 +887,9 @@ Z I tests01()
   TC(1+2 3,..[`b;();:;3 4])
   TC(2, a:1;b:4;b:5;c:1;d:2)
   TC(30,  ((10 20;30 40);50)[0;1;0])
-  TC(`b,b:1;.[`b;();-:]) 
-  TC(33,b:33;..[`b;()]) 
-  TC(-33,b:33; ..[`b;();-:]) 
+  TC(`b,b:1;.[`b;();-:])
+  TC(33,b:33;..[`b;()])
+  TC(-33,b:33; ..[`b;();-:])
   TC(10,a:10)
   TC(1 2 3,a:1 2 3)
   TC(3,a:1+a:1+a:1)
@@ -909,20 +909,20 @@ Z I tests01()
   TC(1, a:(((((1))))))
   TC(6, a:2;f:(1+a+);a:10; f 3) //Phrases ending in verb/adverb that get converted to 7-types need to "finally resolve" variables
   TC(0,a:b:10;a:14;b~14)
-  TC(-10, a:0; a -: 10) 
-  TC(-1 -2 -3, a:1 2 3; a -:) 
+  TC(-10, a:0; a -: 10)
+  TC(-1 -2 -3, a:1 2 3; a -:)
   TC(6, a: 1 2 3; 1+a[0]+:4)
   TC(5, a: 1 2 3; 1+a[0]+:4;a[0])
   TC(2, a: 1 2 3; 1-a[0]-:)
   TC(-1, a: 1 2 3; 1-a[0]-:;a[0])
   TC(3, a:2; z:1 2 3; z[a])
-  TC(1, a:0; z:(1 2; 3 4); z[a][a]) 
+  TC(1, a:0; z:(1 2; 3 4); z[a][a])
   TC(1   , a:0;z:((1 2;3 4);(5 6;7 8);(9 10;11 12));z[a][a][a])
   TC(8   , a:0;z:((1 2;3 4);(5 6;7 8);(9 10;11 12));z[a][a][a:1])
   TC(1 2, a:_n; 1 2[a][a][a][a][a][a][a][a][][][][][][][a][][][][][][a][][][][])
   TC((1 2;3 4) , ( 1 2 \n 3 4))
   TC(0 1 2,! 3)
-  TC(4 ,2*2 ) 
+  TC(4 ,2*2 )
   TC(0,+/())
   TC(0,|/())
   TC(1,*/())
@@ -972,12 +972,12 @@ Z I testsBook()
   TC(5 9, 2 6 + 3)
   TC(5 -6, 2 + 3 -8)
   TC(5 -2, 2 6 + 3 -8)
-  TC(((7 8;9 10 11);(13;15 16)), (2;3 4) + ((5 6;7 8 9);(10;11 12))) 
+  TC(((7 8;9 10 11);(13;15 16)), (2;3 4) + ((5 6;7 8 9);(10;11 12)))
   TC((2 7;-23), 2 4 -23 8 7 @ (0 4; 2))
   TC(1, @"a")
   TC( (1;(+;102)) , f:+; (@f;(f;102)))
   TC((1;;2), (1; _n ; 2))
-  TC(4 3, ^ (1 2 3; "abc"; `x `y `z; 5.4 1.2 -3.56)) 
+  TC(4 3, ^ (1 2 3; "abc"; `x `y `z; 5.4 1.2 -3.56))
   TC(2 3 2, ^ ((1 2; `a `b; "AB"); ("CD"; 3 4; `c `d)))
   TC(2 3, ^ ((0 1 2; `a; "AB"); ("CD"; 3 4; `c `d)))
   TC(3, # 1 -2 3)
@@ -989,7 +989,7 @@ Z I testsBook()
   TC(((9;"a";"b";"c");(8;1.5;`xyz);(7;100;3.76;`efgh)),d:9 8 7; i:(0;(1;2 2)); y: ("abc";((1.5;`xyz);(100;(3.76;`efgh)))); @[d;i;,;y] )
   TC(9 60 70 6 5 4 3 30 40 0, d:9 8 7 6 5 4 3 2 1 0;i:2 7 1 8 2 8; y: 50 30 60 20 70 40; @[d;i;:;y])
   TC((5 2.14;("a";"b";"cxyz")), .[(5 2.14; "abc");1 2; ,; "xyz"])
-  TC( ((1 2 3 400 600;4 5 6 7 500);(8 9;10;11 12);(13 14 100 300;15 16 17 18 200;19 20)), 
+  TC( ((1 2 3 400 600;4 5 6 7 500);(8 9;10;11 12);(13 14 100 300;15 16 17 18 200;19 20)),
        d:((1 2 3;4 5 6 7);(8 9;10; 11 12);(13 14;15 16 17 18; 19 20)); i:(2 0;0 1 0); y:(100 200 300; 400 500 600); .[d;i;,;y])
   TC((600 500;(8 9;10;11 12);(300;200;19 20)), d:((1 2 3;4 5 6 7);(8 9;10;11 12);(13 14;15 16 17 18;19 20)); i: (2 0; 0 1 0); y:(100 200 300; 400 500 600);.[d;i;:;y])
   TC(((1 2 3;-4 -5 -6 -7);(8 9;10;11 12);(13 14;-15 -16 -17 -18;19 20))  , d:((1 2 3; 4 5 6 7);(8 9;10; 11 12);(13 14; 15 16 17 18;19 20)); i: (2 0; 0 1 0); y: (100 200 300; 400 500 600); .[d;i;-:])
@@ -999,7 +999,7 @@ Z I testsBook()
   TC(1,-2~4:0.0 0i)
   TC(0.0 0i,0.0 0I)
   TC(1, 0i = 0I)
-  TC(0, 0i ~ 0I) 
+  TC(0, 0i ~ 0I)
   TC(1, @1)
   TC(0, @2 3 )
   TC(1, @"Z" )
@@ -1079,11 +1079,11 @@ Z I testsBook()
   TC("   2.35", 7.2 $ 2.345)
   TC(" 714.00", 7.2 $ 714)
 #ifdef WIN32
-  TC("1.2e-034", $ 1.2e-34) 
+  TC("1.2e-034", $ 1.2e-34)
   TC("2.35e+000" , -9.2 $ 2.345)
   TC("7.14e+002" , -9.2 $ 714)
 #else
-  TC("1.2e-34", $ 1.2e-34) 
+  TC("1.2e-34", $ 1.2e-34)
   TC("2.35e+00 " , -9.2 $ 2.345)
   TC("7.14e+02 " , -9.2 $ 714)
 #endif
@@ -1115,8 +1115,8 @@ Z I testsBook()
   TC((2 3 4;("abcdefg";2 3 4)), d:.((`a;2 3 4);(`b;"abcdefg")); (d @`a; d @ `b`a))
   TC(((8 9;10;11 12);11 12;11) , d:((1 2 3;4 5 6 7);(8 9;10;11 12);(13 14;15 16 17 18;19 20) ); (d . 1; d . 1 2; d . 1 2 0) )
   TC(11 11, d:((1 2 3;4 5 6 7);(8 9;10;11 12);(13 14;15 16 17 18;19 20) ); ((((d @ 1)@2)@0);(d @/1 2 0)) )
-  TC(((13 14;15 16 17 18);(1 2 3;4 5 6 7)), d:((1 2 3;4 5 6 7);(8 9;10;11 12);(13 14;15 16 17 18;19 20) ); d . (2 0;0 1)  ) 
-  TC((1 2 3;8 9;13 14), d:((1 2 3;4 5 6 7);(8 9;10;11 12);(13 14;15 16 17 18;19 20) ); d . (;0)  ) 
+  TC(((13 14;15 16 17 18);(1 2 3;4 5 6 7)), d:((1 2 3;4 5 6 7);(8 9;10;11 12);(13 14;15 16 17 18;19 20) ); d . (2 0;0 1)  )
+  TC((1 2 3;8 9;13 14), d:((1 2 3;4 5 6 7);(8 9;10;11 12);(13 14;15 16 17 18;19 20) ); d . (;0)  )
   TC(((2 1;5 4);(14 13;16 15;20 19)), d:((1 2 3;4 5 6 7);(8 9;10;11 12);(13 14;15 16 17 18;19 20)); d . (0 2;;1 0) )
   TC(30,(1;.((`a; 2 3 4);(`b; 10 20 30 40))) . (1; `b; 2))
   TC(1 2 3, 1 2 3 . ())
@@ -1174,7 +1174,7 @@ Z I testsBook()
   TC(0.0, %%0)
   TC(0i, %0)
   TC(1, 0i>3.13)  // test for issue #230
-  TC(0N, 0%0)             
+  TC(0N, 0%0)
   TC(2 4 1 3, |3 1 4 2)
   TC(m:(8 1 6;3 5 7;4 9 2); |m , (4 9 2;3 5 7;8 1 6))
   TC(`three, *|`one`two`three)
@@ -1185,7 +1185,7 @@ Z I testsBook()
   //TC(0.0, 2.4 ! 0.4) //yields 0.4 in K4
   TC(0.0,2.0 ! 1.0)
   TC(2.0,5.0 ! 3)
-  TC(("  0";"0.1") , 3 $  1.8 -2.7 ! 0.2) 
+  TC(("  0";"0.1") , 3 $  1.8 -2.7 ! 0.2)
   TC(-1,5 ! -3)
   TC(-1.0, 5.0 ! -3.0)
   TC(-3 0 -1, -3 4 -17 ! -4)
@@ -1251,9 +1251,9 @@ Z I testsBook()
   //Amend, Index, Apply & Assign
   TC(6 7 8, a:1 2 3;a+:5; a)
   TC((0 2 4;1 3 5) , b: 3 2 # ! 6; r: b +:; b ) //manual has error
-  TC(((101 2 103;103 4 105);(103 105;101 103))  , a:(1 2 3;3 4 5); r: a[1 0;0 2] +: 100; (a;r) ) 
-  TC((10 11 12 13;(`ab;"cde");-8 -9 -10 -11), a:3 4#!12; a[1]:(`ab;"cde"); a[0]+:10;a[2] -:;a  ) 
-  TC((101 2 103 4;101 103 ) ,a:1+!4;r: a[0 2] +: 100; (a;r) ) 
+  TC(((101 2 103;103 4 105);(103 105;101 103))  , a:(1 2 3;3 4 5); r: a[1 0;0 2] +: 100; (a;r) )
+  TC((10 11 12 13;(`ab;"cde");-8 -9 -10 -11), a:3 4#!12; a[1]:(`ab;"cde"); a[0]+:10;a[2] -:;a  )
+  TC((101 2 103 4;101 103 ) ,a:1+!4;r: a[0 2] +: 100; (a;r) )
   TC( (.,(`a;(`b;"c"))) , d:.,(`a;1 2 3); d[`a]: (`b;"c"); d)
   TC_(".((`a;1;)\n  (`b;1;)\n  (`c;1;))","a[`a`b`c]:1;a")
   TC(10 20 30, a:3 3#!9; a[;1]:10 20 30)
@@ -1269,10 +1269,10 @@ Z I testsBook()
   //Names
   TC( a.b_c.d:1;a.b_c.d, 1)
 
-  TC_("#:'(1;,1;1 2;1 2 3)","1 1 2 3") 
+  TC_("#:'(1;,1;1 2;1 2 3)","1 1 2 3")
   TC_("skip", "#'(1;1 2)"  "(#[1;];#[1 2;])")  //This is true, and will pass, but set to skip until projections are actually compared correctly
   TC_("a:(#'3 4 6)[0]; a 9", "9 9 9")
-  TC_(".'\"98\"", ".'\"98\"") // .'"98" was causing crash bug. now projects  
+  TC_(".'\"98\"", ".'\"98\"") // .'"98" was causing crash bug. now projects
 
   TC(1, 4 _in 1 7 2 4 6 3)
   TC(0, 4 3 _in 1 7 2 4 6 3)
@@ -1319,12 +1319,12 @@ Z I testsBook()
   TC((1;"domain") , @[.:;".`\" \"";:])
   TC((1;"domain") , @[.:;".`\"Ŕ̡̢͘͝x̀2́̀H̨̀͘l͘͞͞͠v̶̡͘͡k̷̡͞͝ ̛(̨͏͏͞Q̧͏y̵̴͘͠͡,̶̴̴̕͞\"";:])
 
-  TC(_n,.`"f") 
-  TC(_n,.`".f") 
-  TC(_n,.`".k.xyz") 
-  TC(_n,.`".k.xyz.") 
-  TC(_n,.`".k.xyz.b") 
-  TC(_n,.`".k.xyz..b") 
+  TC(_n,.`"f")
+  TC(_n,.`".f")
+  TC(_n,.`".k.xyz")
+  TC(_n,.`".k.xyz.")
+  TC(_n,.`".k.xyz.b")
+  TC(_n,.`".k.xyz..b")
 
   TC(_ssr[1], _ssr 1)
   TC(_ssr[1;2], (_ssr 1) 2)
@@ -1433,14 +1433,14 @@ Z I testsBook()
  show(format(Kc('c')));
  show(format(Kf(1.123456789)));
  show(format(Ks(sp("what"))));
- show(count(format(Ks(sp("ok"))))); 
- show(count(format(Ks(sp("o"))))); 
- show(count(format(Ks(sp(""))))); 
+ show(count(format(Ks(sp("ok")))));
+ show(count(format(Ks(sp("o")))));
+ show(count(format(Ks(sp("")))));
  */
 
  /*
  K z=newK(0,3);
- DO(z->n, kK(z)[i]=enumerate(Ki(10))) 
+ DO(z->n, kK(z)[i]=enumerate(Ki(10)))
  K e2=plus(Ki(1),enumerate(Ki(2)));
  K je=join(enlist(join(enlist(e2),enlist(e2))),enlist(e2));
  show(je);
@@ -1461,7 +1461,7 @@ Z I testsBook()
   //show(dict);
   K gd=dot_monadic(dict);
   //show(gd); P("%d\n", isKey(gd,sp("a"))); P("%d\n", isKey(gd,sp("b"))); P("%d\n", isKey(gd,sp("c")));
-  
+
   K d2=newK(0,2);
   kK(d2)[0]=cl0ne(kK(dict)[0]);
   K b2=newK(0,3);
@@ -1516,7 +1516,7 @@ Z I testsBook()
   fc->n=strlen(fcs);//don't do this
   ke(fc)=fcs;//or this
   show(fc);
-  show(group(fc));  
+  show(group(fc));
   //run grade_up on this to test low/high chars: "abcdefghi\001\002\xff\xfe";
   K ic=newK(-1,6);
   kI(ic)[0]=2; kI(ic)[1]=1; kI(ic)[2]=2; kI(ic)[3]=2; kI(ic)[4]=1; kI(ic)[5]=1;
@@ -1545,11 +1545,11 @@ Z I testsBook()
   show(mergeGrade(newK(0,0),0));
   show(charGrade(newK(-3,0),0));
   */
-  
+
 
   //show(Ks(sp("gg"))); show(Ks(sp("xx"))); show(Ks(sp("aa"))); show(Ks(sp("bb")));
   /*
-  S z; z=""; P("%s - %s\n", z, sp(z)); 
+  S z; z=""; P("%s - %s\n", z, sp(z));
   #include <time.h>
   time_t seconds;
   time(&seconds);
@@ -1575,7 +1575,7 @@ Z I testsBook()
   show(negate(a));show(negate(zero));show(reverse(negate(g)));
   show(where(zero)); show(where(a)); show(reverse(where(b))); show(where(d));
   show(reciprocal(negate(b)));
-  show(drop_cut(Ki(9),enumerate(Ki(15)))); show(drop_cut(Ki(-9),enumerate(Ki(15)))); show(drop_cut(Ki(2),enumerate(Ki(15)))); 
+  show(drop_cut(Ki(9),enumerate(Ki(15)))); show(drop_cut(Ki(-9),enumerate(Ki(15)))); show(drop_cut(Ki(2),enumerate(Ki(15))));
   show(drop_cut(Ki(-2),enumerate(Ki(15)))); show(drop_cut(Ki(15),enumerate(Ki(15)))); show(drop_cut(Ki(15),enumerate(Ki(0))));
   show(drop_cut(join(Ki(2),join(Ki(2),Ki(8))),enumerate(Ki(10))));
   show(drop_cut(join(Ki(2),join(Ki(10),Ki(12))),join(enumerate(Ki(10)),Kf(3.4) )));//Error. 12>b->n
@@ -1589,7 +1589,7 @@ Z I testsBook()
   show(equal(Ki(3),enumerate(Ki(10)))); show(equal(enumerate(Ki(9)),Kf(4.000000000000000000001)));
   show(equal(enumerate(Ki(10)),enumerate(Ki(10)))); show(equal(Kc('a'),Kc('s'))); show(equal(Kc('s'),Kc('s')));
   show(floor_verb(enlist(join(Kf(1.99999999),Kf(-1.000000000000000001)))));
-  show(shape(enumerate(Ki(3)))); show(shape(enlist(enumerate(Ki(3))))); 
+  show(shape(enumerate(Ki(3)))); show(shape(enlist(enumerate(Ki(3)))));
   show(shape(join(join(h,h),h)));
   show(shape(join(join(h,h),enlist(enlist(b)))));
   show(take_reshape(Ki(0),Kf(9)));
@@ -1698,7 +1698,7 @@ Z I testsBook()
   //show(ex(sw("-:\\1")));
 
   //K mf= Kv(); kV(mf)[2] = calloc(10,sizeof(V)); kW(mf)[0] = reciprocal; kW(mf)[1] = reverse; kW(mf)[2] = negate;
-  //K mf2= Kv(); kV(mf2)[2] = calloc(10,sizeof(V)); kW(mf2)[0] = reciprocal; kW(mf2)[1] = negate; kW(mf2)[2] = plus; 
+  //K mf2= Kv(); kV(mf2)[2] = calloc(10,sizeof(V)); kW(mf2)[0] = reciprocal; kW(mf2)[1] = negate; kW(mf2)[2] = plus;
   //K mo3 = Kv(); kV(mo3)[2] = calloc(10,sizeof(V)); kW(mo3)[0] = negate; kW(mo3)[1] = negate; kW(mo3)[2] = negate;
   //K mf3= Kv(); kV(mf3)[2] = calloc(10,sizeof(V)); kW(mf3)[0] = reverse; kW(mf3)[1] = mo3; kW(mf3)[2] = over; kW(mf3)[3] = negate; kW(mf3)[4] = plus;
 
@@ -1746,7 +1746,7 @@ Z I testsBook()
   //show(glue(Ks(sp("")),Ks(sp("aaa"))));
   //show(glue(Ks(sp(".k")),Ks(sp("aaa.m"))));
   //show(glue(Ks(sp(".k.m.n")),Ks(sp("aaa"))));
-  
+
   //K* kz = unhand(Ks(sp(".k"))); *kz=ex(sw("1+1")); show(*kz); show(KTREE); //WARNING - no free; wrecks .`.k
 
   //unhandOrCreate(Ks(sp(".a.b")));
@@ -1756,15 +1756,15 @@ Z I testsBook()
   //unhandOrCreate(Ks(sp(".a.c.e.f.g.h")));
   //show(KTREE);
 
-  //show(at_tetradic(_(1,2),_(0),_(-:),0));  
-  //show(at_tetradic(_(1,2),_(0,1),_(-:),0));  
-  //show(at_tetradic(_(1,2),_(0,0),_(-:),0));  
+  //show(at_tetradic(_(1,2),_(0),_(-:),0));
+  //show(at_tetradic(_(1,2),_(0,1),_(-:),0));
+  //show(at_tetradic(_(1,2),_(0,0),_(-:),0));
   //show(at_tetradic(Ks(sp("")),Ks(sp("abc")),_(:),_(1)));  show(KTREE);
-  //show(at_tetradic(make(newK(0,0)),Ks(sp("a")),_(:),_(1)));  
-  //show(at_tetradic(_(!5),_(0,1,2,3,0),_(:),_(9)));  
-  //show(at_tetradic(_(!5),_(0,1,2,3,0),_(:),_(9,8,7,6,5)));  
-  //show(at_tetradic(_(!5),_(0,1,2,3,0),_(+),_(9,8,7,6,5)));  
-  //show(at_tetradic(_(!3),_(,!3),_(+),_(2)));  
+  //show(at_tetradic(make(newK(0,0)),Ks(sp("a")),_(:),_(1)));
+  //show(at_tetradic(_(!5),_(0,1,2,3,0),_(:),_(9)));
+  //show(at_tetradic(_(!5),_(0,1,2,3,0),_(:),_(9,8,7,6,5)));
+  //show(at_tetradic(_(!5),_(0,1,2,3,0),_(+),_(9,8,7,6,5)));
+  //show(at_tetradic(_(!3),_(,!3),_(+),_(2)));
 
   //show(at_tetradic(Ks(sp(".k")),Ks(sp("kxyz")),_(:),_(1)));  show(KTREE);
   //show(at_tetradic(Ks(sp(".k")),Ks(sp("a")),_(:),_(1)));  show(KTREE);
@@ -1802,7 +1802,7 @@ Z I testsBook()
   //show(dot_tetradic(bb,_(0,1,1),_(-:),0)); show(Kn());
   //show(dot_tetradic(bb,_(1,0,0),_(-:),0)); show(Kn());
   //show(dot_tetradic(bb,_(0,1,,1,1),_(+),Ki(100))); show(Kn());
-  
+
   //show(vf_ex(at, join(_(,!5),join(_(1),_(-:)))));
   //show(vf_ex(at, join(_(,!5),join(_(0),join(_(:),_(7))) ) ));
   //show(vf_ex(dot, join(_(,!5),join(_(1),_(-:)))));
@@ -1815,10 +1815,10 @@ Z I testsBook()
   //show(dollar(Ks(sp("")),dc));
   //show(dollar(_(9),Kn()));
   //show(dollar(_(0),Kc('\0')));
-  //show(dollar(Kf(7.2),Kf(2.345))); 
-  //show(dollar(Kf(7.2),Ki(714))); 
-  //show(dollar(Kf(-9.2),Kf(2.345))); 
-  //show(dollar(Kf(-9.2),Kf(714))); 
+  //show(dollar(Kf(7.2),Kf(2.345)));
+  //show(dollar(Kf(7.2),Ki(714)));
+  //show(dollar(Kf(-9.2),Kf(2.345)));
+  //show(dollar(Kf(-9.2),Kf(714)));
   //Under Linux A+ had a problem with strtod on string "00" (0.0 $ "00")
 
   //show(_abs  (enumerate(Ki(10))));
@@ -1838,7 +1838,7 @@ Z I testsBook()
   //show(_tanh (enumerate(Ki(10))));
 
   // also  "1+ * :'(3 0;5 2;7 4)" works (monad colon not flush with *)
-  
+
   //K x = newK(0,0), K k;
   //DO(1000, k = Ki(i); kap(&x,&k); show(x)  )
   //dd(x->n)
@@ -1858,9 +1858,7 @@ Z I testsBook()
   //show(_(_size "h.h"));
 
   //(0;0.0) $\: ("0N";"-0I";"0I";"0n";"-0i";"0i")
- 
+
   // .(`;();:;1)  --> Bug / reference error, adds empty dictionary to .k, empties other dictionaries
 
   //K k; k=_("ab"); DO(5000, kap(&k,"c")) cd(k); k=_(1 2 3); DO(5000, kap(&k,&i); ) cd(k); //Make sure kap works and is speedy
-
-

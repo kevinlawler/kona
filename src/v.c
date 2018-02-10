@@ -46,7 +46,7 @@ K   EV(K e){R *EVP(e);}             //dictionary entry's stored value
 //dict entries are deleted (what method) from K TREE what happens the next time
 //you run the function?  does function context affect this?
 
-//Weird: Found some bug in K3.2 were running .` would add a copy of the entries in the root of the K tree every time. 
+//Weird: Found some bug in K3.2 were running .` would add a copy of the entries in the root of the K tree every time.
 //Not sure how to reproduce
 
 K lookupEntryOrCreate(K *p, S k) {    //****only *dict or *_n are passed to here
@@ -96,7 +96,7 @@ K* denameS(S dir_string, S t, I create) {
 //K* denameBig(K dir_sym,K name_sym){R denameS(*kS(dir_sym),*kS(name_sym));} //[unnecessary?] wrapper for K-object inputs
 
 K* lookupEVOrCreate(K *p, S k){K x=lookupEntryOrCreate(p,k); R x?EVP(x):0; } //mm/o
-K lookup(K a, S b){K x=DE(a,b); R x?EV(x):_n();} 
+K lookup(K a, S b){K x=DE(a,b); R x?EV(x):_n();}
 Z I isVerbDyadic(K x,V v){R xt==7 && kW(x)[0]==v && !kW(x)[1];}
 I isColonDyadic(K x){R isVerbDyadic(x,offsetColon);}
 Z I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
@@ -105,7 +105,7 @@ Z I isDotDyadic(K x)  {R isVerbDyadic(x,offsetDot);}
 K at_verb(K a, K b) {    //[Internal Function]
   //"of" depends on this even though @[d;i] = .[d;,i] <--- that equality doesn't always hold
   if(!b) R b;
-  if(0==b->t && 0==b->n)R newK(0,0);//Overriding right-arg () 
+  if(0==b->t && 0==b->n)R newK(0,0);//Overriding right-arg ()
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   K z;
   if(at==6) {   //Left side nil (sort of like empty dict?)
@@ -181,7 +181,7 @@ Z I updateIndex(K *p,I x, K r) //assert (*p)->t is <= 0 and valid x
     cd(*p);
     *p=t;
     cd(kK(*p)[x]);
-    kK(*p)[x] = ci(r);  
+    kK(*p)[x] = ci(r);
   }
   else
   {
@@ -205,7 +205,7 @@ K atom(K a){R Ki(atomI(a));}//_n is atom
 
 //TODO: Is this a stable thing if my function mucks with the tree above me? No, but find 'reference error'
 //TODO: Does this do the right thing for functions/nouns with valence > 2 ?
-//TODO: k-tree elements with subelements whose refcount is >1 will bork???? 
+//TODO: k-tree elements with subelements whose refcount is >1 will bork????
 //TODO: add ability to return error, catch errors in calling functions
 K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
 {
@@ -229,9 +229,9 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
     DO(bn, I x=kI(b)[i]; P(x<0 || x>=pn,XE))
 
     DO(atomI(b)?1:n,
-      K args=newK(0,argc);U(args)//Cheating 0-type w/ NULLs 
-      kK(args)[0]=itemAtIndex(*p,kI(b)[i%bn]); 
-      if(argc > 1) kK(args)[1] = atomI(b)?ci(y):itemAtIndex(y,i%yn); 
+      K args=newK(0,argc);U(args)//Cheating 0-type w/ NULLs
+      kK(args)[0]=itemAtIndex(*p,kI(b)[i%bn]);
+      if(argc > 1) kK(args)[1] = atomI(b)?ci(y):itemAtIndex(y,i%yn);
       K r = specialAmendDot(c,args);
       M(r,args)
       updateIndex(p,kI(b)[i%bn],r);
@@ -243,15 +243,15 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
   {
     P(5!=pt && 6!=pt,TE)
     DO(atomI(b)?1:n,
-      K args=newK(0,argc);U(args)//Cheating 0-type w/ NULLs 
+      K args=newK(0,argc);U(args)//Cheating 0-type w/ NULLs
       S u = kS(b)[i%bn];
       kK(args)[0]= ci(*lookupEVOrCreate(p,u)); // ... mm/o? tricky
       if(argc > 1) kK(args)[1] = atomI(b)?ci(y):itemAtIndex(y,i%yn);
       K r = specialAmendDot(c,args);
       M(r,args)
-      K *v = EVP(DE(*p,u)); 
+      K *v = EVP(DE(*p,u));
       cd(*v);
-      *v=r; 
+      *v=r;
       cd(args);
    )
   }
@@ -263,15 +263,15 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
     K k = 5==pt?Ks(LS):Ki(0);
     U(k)
     if(y) M(k,y = promote(y))
-    
+
     if(5==pt) DO(pn, *kS(k)=ES(DI(*p,i)); at_ref(p,k,c,y?kK(y)[i%yn]:0) )
     else DO(pn, *kI(k)=i; at_ref(p,k,c,y?kK(y)[i%yn]:0))
     cd(k);cd(y);
   }
-  else if(0==bt) DO(n, K e=0; if(y)U(e=itemAtIndex(y,i%yn)) at_ref(p,kK(b)[i%bn],c,e); cd(e) ) 
+  else if(0==bt) DO(n, K e=0; if(y)U(e=itemAtIndex(y,i%yn)) at_ref(p,kK(b)[i%bn],c,e); cd(e) )
   else R TE;
   // @[.,(`a;10);1.0;:;9]
-  R 0; 
+  R 0;
 }
 
 
@@ -282,7 +282,7 @@ K at_tetradic(K a, K b, K c, K y)
   K e=dot_tetradic(a,d,c,y);
   cd(d);
   R e;
-} 
+}
 
 K colon_monadic(K a){R ci(a);}
 K colon_dyadic(K a, K b){R ci(b);}
@@ -305,7 +305,7 @@ K not_attribute(K a)
   else if(2==ABS(t)){U(z=newK(t/2,n)) DO(n,kI(z)[i]= (0==kF(a)[i])?1:0;)}//sic
   else if(1==ABS(t)){U(z=newK(t,  n)) DO(n,kI(z)[i]= (0==kI(a)[i])?1:0;)}
   else if(0==ABS(t)){U(z=newK(t,  n)) DO(n,if(!(kK(z)[i]=not_attribute(kK(a)[i]))){cd(z);R 0;})}//if 0, valid list contains >0 syms
-  else R TE; 
+  else R TE;
   R z;
 }
 
@@ -352,7 +352,7 @@ K enumerate(K a)
     K e,r,s;
     DO(n,x=kI(a)[i];p*=x;if(x<0||p<0)R IE;)
     if(n==0)p=0;
-    U(z=newK(0,p)) 
+    U(z=newK(0,p))
     if(p>0)
     {
       DO(p,e=newK(-1,a->n);M(e,z) kK(z)[i]=e)
@@ -367,8 +367,8 @@ K enumerate(K a)
     I n= t==1?*kI(a):(I)*kF(a);
     #if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
     if(n>2e8) R LMT;
-    #endif 
-    P(n<0,DOE) z=newK(-1,n); 
+    #endif
+    P(n<0,DOE) z=newK(-1,n);
     U(z) DO(n,kI(z)[i]=i) }
   else R DOE;
   R z;

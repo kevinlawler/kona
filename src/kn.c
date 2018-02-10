@@ -34,7 +34,7 @@ void nfinish()
 I ninit()
 {
   static I _done = 0;
-  
+
   if (!_done) {
 #ifdef WIN32
     WSADATA wsaData;
@@ -43,7 +43,7 @@ I ninit()
     if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
       { O("Could not find useable version of Winsock.dll\n"); exit(1); }
     atexit(nfinish);
-#endif    
+#endif
     _done = 1;
   }
   R _done;
@@ -68,7 +68,7 @@ Z I close_tape(I i,I sockfd) {
   wipe_tape(i); CP[i].a=0;
   I r=closesocket(sockfd); if(r){show(kerr("file"));r=0;}
   FD_CLR(sockfd, &master);
-  K x=*denameS(".",".m.c",0); 
+  K x=*denameS(".",".m.c",0);
   if(6==xt){r=0; /*O("ct-D\n");*/ GC;}
   if(3!=ABS(xt)){r=1;O("type error");GC;}
   KX(x);
@@ -89,7 +89,7 @@ Z K modified_execute(K x) //TODO: consider: this should be modified to use error
   K a=(K)-1;
   if(4==xt || 3==ABS(xt)) a=X(CSK(x));
   if(!xt && xn>0) a=vf_ex(offsetDot,x);
-  
+
   if((K)-1!=a){
     if(pthread_mutex_unlock(&execute_mutex)){
       perror("Unlock mutex in mod_ex()"); abort();}
@@ -107,7 +107,7 @@ K read_tape(I i, I j, I type) {   // type in {0,1} -> {select loop, 4: resp read
     if(nbytes<=0){
       if (nbytes==0)O("server: socket %lld hung up\n", j);
       else perror("recv"); GC;}
-    K h=*denameS(".",".m.h",0); 
+    K h=*denameS(".",".m.h",0);
     if(6==h->t){send(j,bx,nbytes,0); bx[0]='\0'; close_tape(i,j); R (K)0;}  //echo back only if .m.h does not exist
     else {
       if(7!=h->t && 3!=h->n) {
@@ -122,7 +122,7 @@ K read_tape(I i, I j, I type) {   // type in {0,1} -> {select loop, 4: resp read
             for(n=0;n<128;++n){if(bx[n]=='\r' || bx[n]=='\0')break;} bx[n]='\0';
             for(n=0;n<128;++n){if(by[n]=='\r' || by[n]=='\0')break;} by[n]='\0';
             for(n=0;n<128;++n){if(bz[n]=='\r')break;} bz[n]='\0';
-            I sbx=strlen(bx); I sby=strlen(by); I sbz=strlen(bz); 
+            I sbx=strlen(bx); I sby=strlen(by); I sbz=strlen(bz);
             C c[13+sf+sbx+sby+sbz]; c[0]='{'; c[1+sf]='}'; c[2+sf]='['; c[11+sf+sbx+sby+sbz]=']';
             c[3+sf]=c[4+sf+sbx]=c[6+sf+sbx]=c[7+sf+sbx+sby]=c[9+sf+sbx+sby]=c[10+sf+sbx+sby+sbz]='"';
             c[5+sf+sbx]=c[8+sf+sbx+sby]=';'; c[12+sf+sbx+sby+sbz]='\0';
@@ -168,15 +168,15 @@ K read_tape(I i, I j, I type) {   // type in {0,1} -> {select loop, 4: resp read
         send(j,bck,strlen(bck),0); bx[0]='\0'; by[0]='\0'; close_tape(i,j); R (K)0; } } }
   I u=1;I a=*(S)&u;
   I c=CP[i].r, m=sizeof(M1),g; K z=0;
-  S b = c<m?c+(S)&CP[i].m1:c+kC(CP[i].k); 
-  g = c<m?m-c:CP[i].m1.n; 
-  nbytes = recv(j,b,g,0); 
+  S b = c<m?c+(S)&CP[i].m1:c+kC(CP[i].k);
+  g = c<m?m-c:CP[i].m1.n;
+  nbytes = recv(j,b,g,0);
   if(nbytes <= 0) {
     if (nbytes == 0)/*O("server: socket %lld hung up\n", j)*/;
     else perror("recv");
     GC; }
   //fill struct data + k data
-  CP[i].r += nbytes; //DO(nbytes, O("b%lld : %o\n",i,(UC)b[i])) 
+  CP[i].r += nbytes; //DO(nbytes, O("b%lld : %o\n",i,(UC)b[i]))
   if(m == CP[i].r) { //We've read enough bytes to fill our struct m1 with transmission data (it's also the _db header)
     //TODO: so that we get the right sizes, etc, in the M1, rearrange bytes based on little-endianness indicator CP[i].m1.a
     if(a!=CP[i].m1.a) CP[i].m1.n=bswapI(CP[i].m1.n);
@@ -206,7 +206,7 @@ K read_tape(I i, I j, I type) {   // type in {0,1} -> {select loop, 4: resp read
   		cd(h);
       R r; }
 
-    //Modified execution of received K value. First received transmission in a 3: or 4: 
+    //Modified execution of received K value. First received transmission in a 3: or 4:
     K m=(2>msg_type)?*denameS(".",msg_type?".m.g":".m.s",0):0;
     if(!m||6==m->t)z=modified_execute(h);else{ mhbegin(i);z=at(m,h);mhend(); }
 	  if(msg_type){
@@ -231,4 +231,3 @@ cleanup:
   close_tape(i,j);
   R (K)-1;
 }
-

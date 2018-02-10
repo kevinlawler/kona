@@ -32,12 +32,12 @@ K power(K a, K b)
   P(at <= 0 && bt <= 0 && an != bn, LE)
   P(type > 2, TE);
 
-  I zt=type;                    
-  if(MIN(at,bt) < 1) zt=-zt;    
-  if(!at || !bt) zt=0;          
-  if(1==zt*zt)zt*=2;		
-  I zn=at>0?bn:an;              
-  K z=newK(zt,zn); U(z)             
+  I zt=type;
+  if(MIN(at,bt) < 1) zt=-zt;
+  if(!at || !bt) zt=0;
+  if(1==zt*zt)zt*=2;
+  I zn=at>0?bn:an;
+  K z=newK(zt,zn); U(z)
 
 #ifndef K3_ARITH
   F x,y;
@@ -136,7 +136,7 @@ K mod(K a, K b) //In K4: {x-y*x div y}
 
   K z=newK(t,an); U(z)
   I c,d,e; F f,g,h;
-#if __INT_MAX__ == 2147483647  
+#if __INT_MAX__ == 2147483647
   F ct=1e-13; // Comparison tolerance for 32 bit
 #else
   F ct=0; // Not needed for 64 bit
@@ -153,15 +153,15 @@ K mod(K a, K b) //In K4: {x-y*x div y}
     // if(d>0) DO(an, c=kI(a)[i]; e=d?c-d*(c%d):c; kI(z)[i]=e)
     // else    DO(an, c=kI(a)[i]; e=d?c-d*floor(c/(F)d):c; kI(z)[i]=e) //TODO: casting to F is slow/wrong for big#. NB: floor does not equal truncate for negatives
 
-  } 
-  else if(0==at) DO(an, if(!(kK(z)[i]=mod(kK(a)[i],b))){cd(z);R 0;}) 
+  }
+  else if(0==at) DO(an, if(!(kK(z)[i]=mod(kK(a)[i],b))){cd(z);R 0;})
   R z;
 }
 
 K minus(K a, K b)
 {
   SCALAR_INIT(2)
-  K z=newK(zt,zn);U(z)              
+  K z=newK(zt,zn);U(z)
 
   #define MINUS(x, y) ((x) - (y))
 #ifndef K3_ARITH
@@ -210,7 +210,7 @@ K divide(K a, K b)//NB: Integral values promoted to float
   R z;
 }
 
-K reciprocal(K x){K y,z; U(y=Kf(1)) z=divide(y,x); cd(y); R z;} 
+K reciprocal(K x){K y,z; U(y=Kf(1)) z=divide(y,x); cd(y); R z;}
 
 K min_and(K a, K b)
 {

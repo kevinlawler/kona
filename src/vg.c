@@ -142,7 +142,7 @@ Z I KEQ(K a, K b)//List Equal (K Equal)
 {
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   I A=ABS(at);
-  
+
   if(at!=bt)R 0;
   if(an!=bn)R 0;
 
@@ -152,7 +152,7 @@ Z I KEQ(K a, K b)//List Equal (K Equal)
   else if(4==A)DO(an, if(kS(a)[i]!=kS(b)[i])R 0)
   else if(3==A)DO(an, if(kC(a)[i]!=kC(b)[i])R 0)
   else if(2==A)DO(an, if(FC(kF(a)[i],kF(b)[i]))R 0)
-  else if(1==A)DO(an, if(kI(a)[i]!=kI(b)[i])R 0)  
+  else if(1==A)DO(an, if(kI(a)[i]!=kI(b)[i])R 0)
   else if(0==A)DO(an, if(!KEQ(kK(a)[i],kK(b)[i]))R 0)
   R 1;
 }
@@ -208,7 +208,7 @@ cleanup:
 }
 
 K range(K a)
-{ 
+{
   I t=a->t, n=a->n;
   K z=0,g=0,k=0;
   I u=n,*h=0,*m=0;
@@ -331,7 +331,7 @@ K group(K x)
   CSR(1,)CSR(2,R intGroup(x))
   CSR(3,R charGroup(x))
   CSR(4,R symGroup(x)) }
- 
+
   M(b=grade_up(x));g=kI(b);
   //Nastier code would eliminate this second sort.
   c=newK(-1,n);M(b,c);h=kI(c);
@@ -345,7 +345,7 @@ K group(K x)
   while(p<n && k<u)//This is a tricky algorithm.
   { //Dupes in g marked negative. h[p] is index of a[p] in sorted a
     for(v=1;p+v<n && g[h[p]+v]<0;v++);//Find the length of z[k]
-    K s=newK(-1,v); 
+    K s=newK(-1,v);
     M(b,c,z,s)
     DO(v, kI(s)[i]=ABS(g[h[p]+i]))//ABS because duplicates marked negative
     kK(z)[k]=s;
@@ -361,7 +361,7 @@ I VAT(I i){R 1<=i && i<=4?i:0;} //vector atom type
 
 K flip(K a)
 {
-  K x;I i,p=a->n,q=-1; 
+  K x;I i,p=a->n,q=-1;
   if(a->t || !p)R ci(a);//Identity on atoms/vectors && empty 0-list && 0-list of atoms
   DO(p, x=kK(a)[i]; if(x->t<1)q=x->n);
   if(-1==q)R ci(a);//Identity on 0-list of atoms
@@ -383,7 +383,7 @@ K flip(K a)
 }
 
 K first(K a)
-{ //Empty lists return prototypical atoms, e.g., *0#0.0 yields 0.0 
+{ //Empty lists return prototypical atoms, e.g., *0#0.0 yields 0.0
   I at=a->t, an=a->n;
   if(-4==at)R Ks(an?*kS(a):LS);
   if(-3==at)R Kc(an?*kC(a):' ');//Vectors
@@ -394,7 +394,7 @@ K first(K a)
 }
 
 K last(K a)
-{ //Empty lists return prototypical atoms, e.g., *0#0.0 yields 0.0 
+{ //Empty lists return prototypical atoms, e.g., *0#0.0 yields 0.0
   I at=a->t, an=a->n;
   if(-4==at)R Ks(an?kS(a)[an-1]:LS);
   if(-3==at)R Kc(an?kC(a)[an-1]:' ');//Vectors
@@ -409,7 +409,7 @@ Z K reshaper(K a, K b, I d, I f, I* p)
   I bt=b->t, bn=b->n;
   I v=kI(a)[d];
   I g=!v||a->n==d+1?1:0;//hit bottom?
-  I t= (g && bt<5)?-ABS(bt):0;// 2 3 4 0 #/: (_n;{x}) 
+  I t= (g && bt<5)?-ABS(bt):0;// 2 3 4 0 #/: (_n;{x})
   I n=-1==v?f:v;//f is missing factor
   K z=newK(t,n); U(z)
   if(!g)DO(n,kK(z)[i]=reshaper(a,b,d+1,f,p))
@@ -448,7 +448,7 @@ K take(K a, K b)
  else if(3==ABS(bt))DO(n,kC(z)[i]=bn?kC(b)[(i+k)%m]:' ')
  else if(2==ABS(bt))DO(n,kF(z)[i]=bn?kF(b)[(i+k)%m]:0.0)
  else if(1==ABS(bt))DO(n,kI(z)[i]=bn?kI(b)[(i+k)%m]:0)
- else if(0==    bt )DO(n,kK(z)[i]=bn?ci(kK(b)[(i+k)%m]):_n()) 
+ else if(0==    bt )DO(n,kK(z)[i]=bn?ci(kK(b)[(i+k)%m]):_n())
  else if(5<=    bt )DO(n,kK(z)[i]=ci(b))
  R demote(z);
 }
@@ -463,19 +463,19 @@ Z void shapeCheck(K a, K p, I d)
 { //Descend through list a marking shape p as -1 where it doesn't correspond
   I at=a->t, an=a->n;
   if(at>0 || an!=kI(p)[d]) kI(p)[d]=-1;//Mismatch or atom means p length too long
-  else if(at && d < p->n-1) kI(p)[d+1]=-1;//Another case of p being too long 
+  else if(at && d < p->n-1) kI(p)[d+1]=-1;//Another case of p being too long
   else if(!at && an && kI(p)[d]!=-1 && d < p->n-1) DO(an, shapeCheck(kK(a)[i],p,d+1))
 }
 Z I firstDepth(K x){R (!x->t&&x->n)?1+firstDepth(*kK(x)):x->t>0?0:1;}//[Internal Function]
 
 K shape(K a) //TODO: Thoroughly test this //TODO: oom
-{ 
+{
   K b=a, p=newK(-1, firstDepth(a));//Putative list. Mutable, Thrown away
   DO(p->n, kI(p)[i]=b->n; if(i<_i-1)b=*kK(b) )//Construct best-case shape
   shapeCheck(a,p,0);//Punch holes (-1) in shape-list where it fails
   I n=0; DO(p->n, if(kI(p)[i]==-1)break; n++)//See how far it made it
   K z=newK(-1,n);
-  DO(n, kI(z)[i]=kI(p)[i])//Copy the good part. 
+  DO(n, kI(z)[i]=kI(p)[i])//Copy the good part.
   cd(p);
   R z;//could instead shrink p into z
 }
@@ -491,7 +491,7 @@ K rotate(K a, K b)
   else if(-2==bt)DO(bn, kF(z)[i]=kF(b)[(i+r)%bn])
   else if(-1==bt)DO(bn, kI(z)[i]=kI(b)[(i+r)%bn])
   else if( 0==bt)DO(bn, kK(z)[i]=ci(kK(b)[(i+r)%bn]))
-  R z; 
+  R z;
 }
 
 K drop(K a, K b)
@@ -500,7 +500,7 @@ K drop(K a, K b)
 
   P(1!=at,IE)
   if(bt>0)R ci(b);//Drop always identity on atoms
-  
+
   I v=*kI(a);
   I zn=MAX(0,bn-ABS(v));
   K z=newK(bt,zn);
@@ -567,7 +567,7 @@ K where(K x)
   //DO(xn,if((y=kI(x)[i])<0)R DOE;zn+=y)
   DO(xn,if((y=kI(x)[i])<0)continue;zn+=y)//skip negatives instead of error
   K z=newK(-1,zn); U(z)
-  DO(xn, for(j=0;j<kI(x)[i];j++)kI(z)[t++]=i)//Handles a-> == +-1 
+  DO(xn, for(j=0;j<kI(x)[i];j++)kI(z)[t++]=i)//Handles a-> == +-1
   R z;
 }
 
@@ -604,7 +604,7 @@ K count(K x){R Ki(countI(x));}   //[sic] Should always be 1 for an atom (t of 5,
 K join(K x, K y) {      //TODO: 5,6?
   I xk=countI(x), yk=countI(y), zt=0;
   if(ABS(xt)==ABS(yt)) zt=-ABS(xt);  //K-Improvement?: ABS(at)=1or2 && ABS(bt)==1or2 should yield zt==-2
-  if(!xk) zt=-ABS(yt); 
+  if(!xk) zt=-ABS(yt);
   else if(!yk) zt=-ABS(xt);  //'else' is sic. In "K3.21 2006-02-01" right empty list takes precedence
   if(zt < -4) zt=0;
   I zn=xk+yk;

@@ -18,7 +18,7 @@ K dp(K*z,K(*f)(K,K),K x,K y) //dyad promote
    x=promote(x); y=promote(y);
    M(x,y,*z)
    DO((*z)->n, if(!(kK(*z)[i]=f(kK(x)[i%xn],kK(y)[i%y->n]))){cd(*z);*z=ME;break;}) //TODO: optimization: remove these modulo % operations
-   cd(x);cd(y); 
+   cd(x);cd(y);
    R 0;
 }
 
@@ -34,7 +34,7 @@ K equals(K a, K b)
   I zn=at>0?bn:an;
   K z=newK(t,zn); //oom
 #define EQ(x, y) (x) == (y)
-  if     (2==AT && 2==BT) { SCALAR_EXPR_FUN(FC, kI(z), kF(a), kF(b), ?0:1)     
+  if     (2==AT && 2==BT) { SCALAR_EXPR_FUN(FC, kI(z), kF(a), kF(b), ?0:1)
          DO(zn, if(kF(a)[i]!=kF(a)[i] && kF(b)[i]!=kF(b)[i]) kI(z)[i]=1)}
   else if(2==AT && 1==BT) SCALAR_EXPR_FUN(FC_FI, kI(z), kF(a), kI(b), ?0:1)
   else if(1==AT && 2==BT) SCALAR_EXPR_FUN(FC_IF, kI(z), kI(a), kF(b), ?0:1)
@@ -57,14 +57,14 @@ I matchI(K a, K b)
   if(4==AT)DO(an, if(kS(a)[i]!=kS(b)[i]) R 0 )
   if(3==AT)DO(an, if(kC(a)[i]!=kC(b)[i]) R 0 )
   if(2==AT && 2==BT)DO(an, if(FC(kF(a)[i],kF(b)[i])) R 0 )
-  //if(2==AT && 1==BT)DO(an, if(FC(kF(a)[i],kI(b)[i])) R 0 ) 
+  //if(2==AT && 1==BT)DO(an, if(FC(kF(a)[i],kI(b)[i])) R 0 )
   //if(1==AT && 2==BT)DO(an, if(FC(kI(a)[i],kF(b)[i])) R 0 )
   if(1==AT && 1==BT)DO(an, if(kI(a)[i]!=kI(b)[i]) R 0 )
   if(0==AT || 5==AT)DO(an, if(!matchI(kK(a)[i],kK(b)[i]))R 0)//Dictionary keys are ordered sets
-  if(7==AT)  
+  if(7==AT)
   {
     if(a->n!=b->n) R 0;
-    
+
     switch(a->n)
     {
       CS(1,
@@ -85,7 +85,7 @@ K match(K a, K b){R Ki(matchI(a,b));}
 Z K lessmore(K a, K b, I x)
 {
   if(!x && 0!=b->t){K c=a;a=b;b=c;}
-     //NB: If primitives modify a but not b (or vice-versa. e.g. reuse of refcount 1 objects) 
+     //NB: If primitives modify a but not b (or vice-versa. e.g. reuse of refcount 1 objects)
      //this should be reviewed. in q it can effect dicts (borror). see backup for unfactored ver.
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   if(at <=0 && bt <= 0 && an != bn) R LE;
@@ -104,9 +104,9 @@ Z K lessmore(K a, K b, I x)
    a=promote(a); b=promote(b); //copy-pasted from dp()
    M(a,b,z);
    DO(zn, if(!(kK(z)[i]=lessmore(kK(a)[i%an],kK(b)[i%b->n],x))){cd(z);z=ME;break;})
-   cd(a);cd(b); 
+   cd(a);cd(b);
   }
-  else 
+  else
   {
 #define GT(x, y) (x) > (y)
     if     (2==AT && 2==BT)  SCALAR_EXPR_FUN(FC, h, kF(a), kF(b), >0)
@@ -117,7 +117,7 @@ Z K lessmore(K a, K b, I x)
     else if(4==AT && 4==BT) {SCALAR_EXPR_FUN(SC, h, kS(a), kS(b), >0)}
 #undef GT
   }
-  
+
   R z;
 }
 

@@ -11,7 +11,7 @@ K find(K a, K b)
 {
   I at=a->t, an=a->n, bt=b->t;
   P(at>0,DOE)
-  if(-4==at && 4==bt)DO(an, if(kS(a)[i]==*kS(b))R Ki(i)) 
+  if(-4==at && 4==bt)DO(an, if(kS(a)[i]==*kS(b))R Ki(i))
   if(-3==at && 3==bt)DO(an, if(kC(a)[i]==*kC(b))R Ki(i))
   if(-2==at && 2==bt)DO(an, if(!FC(kF(a)[i],*kF(b)))R Ki(i))
   if(-2==at && 1==bt){F fb=I2F(*kI(b));DO(an, if(!FC(kF(a)[i],fb))R Ki(i));}
@@ -25,7 +25,7 @@ K find(K a, K b)
 }
 
 Z F num_ex(K a, F x)//f-> monadic, numeric in&out
-{ 
+{
   F y=0;
   K b,g;
   P(!(b=Kf(x)),FN) //err
@@ -146,6 +146,6 @@ K sample(K x,K y)
 K what(K x, K y)
 {
   if(7==xt)R what_triadic(x,y,0);
-  if(1==xt) R atomI(y)?qrand(x,y):sample(x,y); 
+  if(1==xt) R atomI(y)?qrand(x,y):sample(x,y);
   R find(x,y);
 }

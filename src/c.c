@@ -9,7 +9,7 @@ I fLoad=0;
 S sp(S k);
 K*denameD(K*d,S t,I create);
 Z K filexist(S s);
-Z K backslash_b(S s,I n); 
+Z K backslash_b(S s,I n);
 Z K backslash_d(S s,I n,K*dict);
 Z K backslash_e(S s,I n);
 Z K backslash_s(S s);
@@ -36,7 +36,7 @@ void boilerplate()
   prompt(0);
 }
 
-//Q. What if a script is \loaded (via remote call) while the terminal is waiting with an open PDA for matching parentheses/quote marks? 
+//Q. What if a script is \loaded (via remote call) while the terminal is waiting with an open PDA for matching parentheses/quote marks?
 //A. In K3.2 the call blocks until the command-line input is not in an intermediate state
 //Q. What if remote calls are sent to the console while the console is still processing the scripts (while[1;`0:"busy "]) given as command line arguments?
 //A. In K3.2 the call blocks until the processing finishes or is interrupted
@@ -79,7 +79,7 @@ K load(S s)
   K r;
   fLoad=1;fCmplt=0; old_=d_;
   if(!filexist(s)){O("%s: file not found\n",s);r=_n();GC;}
-  if(scrLim>124){O("limit\n");r=kerr("stack");GC;} scrLim++;  
+  if(scrLim>124){O("limit\n");r=kerr("stack");GC;} scrLim++;
   FILE*f=loadf(s);
   if(!f){O("%s.k: file not found\n",s);r=FE;GC;}
   lines(f); if(fclose(f)){r=FE;GC;} scrLim--;
@@ -117,12 +117,12 @@ K backslash(S s, I n, K*dict)
       "\\_        reserved word help\n"
       "\\.        assignment/amend, function, control flow help\n"
       "\\b [s|t]  show/set break mode (stop|trace|none)\n"
-      "\\d [d|^]  change k directory (^=previous)\n" 
+      "\\d [d|^]  change k directory (^=previous)\n"
       "\\e [n]    show/set error flag (0=off,1=on,2=exit)\n"
       "\\l f      load script f or f.k\n"
       "\\p [n]    show/set print precision (0=full)\n"
-      "\\r [s]    show/set random seed (0=random)\n" 
-      "\\s f      step script f or f.k\n" 
+      "\\r [s]    show/set random seed (0=random)\n"
+      "\\s f      step script f or f.k\n"
       "\\t [n]    show/set timer interval in msec (0=disable)\n"
       "          calls niladic .m.ts\n"
       "\\t e      measure runtime of some k expression\n"
@@ -229,9 +229,9 @@ K backslash(S s, I n, K*dict)
               "a[]:1 sets all the entries of a to 1\n"
               "a[0]:1 sets the 0th entry of a to 1\n"
               "a[0;1]+:2 increments the 0th entry's 1st entry by 2\n"
-              ".[a;();+;1] returns a+1 but does not affect a on the K Tree\n" 
+              ".[a;();+;1] returns a+1 but does not affect a on the K Tree\n"
               ".[`a;();+;1] updates a in place, returns `a\n"
-              "\nAmend Equivalence\n" 
+              "\nAmend Equivalence\n"
               "@[a;b;c;d] is .[a;,b;c;d]\n"
               "a:1        is .[`a;();:;1]\n"
               "a+:1       is .[`a;();+;1]\n"
@@ -264,7 +264,7 @@ K backslash(S s, I n, K*dict)
               "(Note: the K epoch is 2035-01-01T00:00:00)\n"
               "_T       [current UTC Julian day count]+[fraction complete]\n"
               "_a       arguments\n"
-              "_c       message source address\n"      
+              "_c       message source address\n"
               "_d       K-Tree path / current working dictionary\n"
               "_f       anonymous reference to current function\n"
               "_h       host name\n"
@@ -386,7 +386,7 @@ K backslash(S s, I n, K*dict)
                "6: dyadic   write raw byte string `f 6: \"\\01\\02\\03\"\n"
                "6: monadic  read raw byte string  6: `f\n"
                "\nNetwork\n"
-               "Start k listening for IPC on port 1234  ./k -i 1234\n" 
+               "Start k listening for IPC on port 1234  ./k -i 1234\n"
                "3: monadic  open handle    h: 3:(`\"192.168.1.101\";1234) \n"
                "3: monadic  close handle   3: h \n"
                "            exec .m.c expression\n"
@@ -405,7 +405,7 @@ K backslash(S s, I n, K*dict)
                "In all cases `f can instead be (`f;start;length)\n"
                "Read fixed-width fields: \"cbsijfd IFCSDTZMm\" (\" \" is ignore)\n"
                "(types;widths)0:`f    (\"IFC\";3 5 4)0:`f  /read rows like \"20 30.1 golf\\n\" \n"
-               "(types;widths)1:`f \n" 
+               "(types;widths)1:`f \n"
                "\"c\" 1:`f for c in \"cid\", read bytes/ints/doubles\n"
                "Load delimited text file (no column names):\n"
                "(types;delim)0:`f    \n"
@@ -461,7 +461,7 @@ Z K backslash_d(S s,I n,K*dict) {
     if(strlen(d_)==2) {d_=(S)sp(""); R _n();}
     if(strlen(d_)>3){ I c=0,i=0; for(i=0;i<strlen(d_);i++)if(d_[i]=='.')c=i; strcpy(z,d_); z[c]='\0'; d_=(S)sp(z); R _n(); } }
   if(n==5 && s[3]=='.' && s[4]=='k') { d_=(S)sp(".k"); R _n();}
-  if(n==5 && s[3]=='.' && s[4]!='k') {O("absolute backslash-d should begin with .k\n"); R _n();} 
+  if(n==5 && s[3]=='.' && s[4]!='k') {O("absolute backslash-d should begin with .k\n"); R _n();}
   if(isalpha(s[3])){ denameD(dict,s+3,1); strcpy(z,d_); strcat(z,"."); strcat(z,s+3); d_=(S)sp(z); R _n(); }
   if(n>=6 && s[3]=='.' && s[4]=='k' && s[5]=='.'){denameD(&KTREE,s+3,1); d_=(S)sp(s+3); R _n();}
   if(s[3]=='.'){denameD(&KTREE,s+3,1); d_=(S)sp(s+3); R _n();}

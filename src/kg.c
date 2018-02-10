@@ -60,7 +60,7 @@ I KC(K a, K b)//List Compare (K Compare)
 {
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   I A=ABS(at);
-  
+
   if(at<bt)R -1;
   if(at>bt)R  1;
   if(3!=A){//since K2.6 lexicographic sorting of -3
@@ -75,7 +75,7 @@ I KC(K a, K b)//List Compare (K Compare)
   else if(4==A)DO(an, u=SC(kS(a)[i],kS(b)[i]); if(u) R u)
   else if(3==A)DO(MIN(an,bn)+1, c=kC(a)[i]; d=kC(b)[i]; if(c<d)R -1;if(c>d) R 1)
   else if(2==A)DO(an, u=FC(kF(a)[i],kF(b)[i]); if(u)R u)
-  else if(1==A)DO(an, u=kI(a)[i]; v=kI(b)[i]; if(u<v)R -1;if(u>v) R 1)  
+  else if(1==A)DO(an, u=kI(a)[i]; v=kI(b)[i]; if(u<v)R -1;if(u>v) R 1)
   else if(0==A)DO(an, u=KC(kK(a)[i],kK(b)[i]); if(u) R u)
   if(3==A&&an!=bn)R an<bn?-1:1;
   R 0;
@@ -87,7 +87,7 @@ K distributionGrade(K a, I r, uI u, uI v)//u,v: precomputed min,max
   I n=a->n, b=v-u+1, *c;
   K d=newK(-1,b);U(d)
   c=kI(d); //assumes # slots are set to 0
-  K s=newK(-1,n);  
+  K s=newK(-1,n);
   if(!s)GC;
   DO(n,c[kU(a)[i]-u]++)
   if(!r) DO(b-1,c[i+1]+=c[i])      //0==r: grade up
@@ -101,7 +101,7 @@ K charGrade(K a, I r)
 {//Variation on Knuth Algorithm 5.2D Distribution counting
   I n=a->n,c[1+UCHAR_MAX]; //assumes # slots are set to 0
   memset(c,0,(1+UCHAR_MAX)*sizeof(I));
-  K s=newK(-1,n);  
+  K s=newK(-1,n);
   DO(n,c[(UC)kC(a)[i]]++)
   if(!r) DO(UCHAR_MAX,c[i+1]+=c[i])      //0==r: grade up
   //else DO(UCHAR_MAX,c[_i-i-2]+=c[_i-i-1])//1==r: grade down
@@ -111,7 +111,7 @@ K charGrade(K a, I r)
 }
 Z I mergerComparer(K a, I r, I i, I j)//Could unroll this
 {
-  I t=a->t; 
+  I t=a->t;
   //-3 has its own sort, won't be merged
   if     (-4==t && 0==r &&  1>SC(kS(a)[i],kS(a)[j])) R 1;
   else if(-4==t && 1==r && -1<SC(kS(a)[i],kS(a)[j])) R 1;
@@ -119,8 +119,8 @@ Z I mergerComparer(K a, I r, I i, I j)//Could unroll this
   else if(-2==t && 1==r && -1<FC(kF(a)[i],kF(a)[j])) R 1;
   else if(-1==t && 0==r &&    kI(a)[i] <= kI(a)[j] ) R 1;
   else if(-1==t && 1==r &&    kI(a)[i] >= kI(a)[j] ) R 1;
-  else if( 0==t && 0==r &&  1>KC(kK(a)[i],kK(a)[j])) R 1; 
-  else if( 0==t && 1==r && -1<KC(kK(a)[i],kK(a)[j])) R 1; 
+  else if( 0==t && 0==r &&  1>KC(kK(a)[i],kK(a)[j])) R 1;
+  else if( 0==t && 1==r && -1<KC(kK(a)[i],kK(a)[j])) R 1;
   R 0;
 }
 Z void merger(K a, I r, K x, K y, I s, I t, I m)
@@ -150,7 +150,7 @@ Z void insertGrade(K a,I r,K x,K y,I s,I t)
 }
 Z void doMergeGrade(K a, I r, K x, K y, I s, I t)
 {
-  if(s >= t) R; //Faster: another sort when small |t-s| 
+  if(s >= t) R; //Faster: another sort when small |t-s|
   I m=s+(t-s)/2; //sic
   if(m-s<IGT)insertGrade(a,r,x,y,s,m);
   else doMergeGrade(a,r,x,y,s,m);
@@ -173,7 +173,7 @@ K mergeGrade(K a, I r)
   K x=0,y=0;I n=a->n;
   if(gt)O("mergeGrade");
   if(0==a->t){
-    if((x=strGrade(a,r)))R x; 
+    if((x=strGrade(a,r)))R x;
   }
   x=newK(-1,n);//Indices
   y=newK(-1,n);//Temporary storage

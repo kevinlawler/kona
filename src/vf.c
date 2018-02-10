@@ -10,7 +10,7 @@ Z I parseNI(S s,I n);
 
 S CSK(K x){ R !x?0:4==xt?*kS(x):3==ABS(xt)?kC(x):0;}//non-allocating CSTRING from K. assumes +4,+-3 types are null-terminated
 
-Z K formKsCS(S s) 
+Z K formKsCS(S s)
 {
   //Could remove this function. It's equivalent to Ks(sp(s))
   S t=sp(s);
@@ -26,7 +26,7 @@ K formKiCS(S s) //  0 $ "123\000456\000" is 123 ('\0' char)
   I r=IN;
 
   I w=parseNI(s,strlen(s));
-  if(w) r=NI[w]; 
+  if(w) r=NI[w];
   else if(*s)
   {
     r=strtoll(s,&p,10);
@@ -44,7 +44,7 @@ K formKfCS(S s) // 0.0 $ "123\000456\000" is 123 ('\0' char)
   F r=FN;
 
   I w=parseNI(s,strlen(s));
-  if(w) r=ni[w]; 
+  if(w) r=ni[w];
   else if(*s)
   {
     r=strtod(s,&p);
@@ -76,24 +76,24 @@ Z K formatS(S x)
   R z;
 }
 Z K formatF(F x, I y, I c)
-{ 
+{
   Z C buf[32];
   int k=y;
-  S b= 0==c?"%.*g":1==c?"%.*f":"%.*e";// %#.*g ?? 
+  S b= 0==c?"%.*g":1==c?"%.*f":"%.*e";// %#.*g ??
   sprintf(buf,b,k,x);I n=strlen(buf);
   K z=newK(-3,n);
   if(z)memcpy(kC(z),buf,n);
   R z;
 }
 Z K formatI(I x)
-{ 
+{
   Z C buf[72];
   sprintf(buf,"%lld",x);I n=strlen(buf);
   K z=newK(-3,n);
   if(z)memcpy(kC(z),buf,n);
   R z;
 }
-K format(K a) 
+K format(K a)
 {
   I at=a->t, an=a->n;
   K z;
@@ -155,7 +155,7 @@ K dollar(K a, K b) //form/format_dyadic
   {
     K c;
     U(c=format(b))
-    I m=*kI(a); 
+    I m=*kI(a);
     z=newK(-3,ABS(m));M(c,z)
     if(z->n < c->n) DO(z->n, kC(z)[i]='*')//K3.2
     else
@@ -163,7 +163,7 @@ K dollar(K a, K b) //form/format_dyadic
       I k=m>0?m-c->n:0;
       DO(z->n,kC(z)[i]=' ');
       DO(c->n,kC(z)[i+k]=kC(c)[i])
-    } 
+    }
     cd(c);
     R z;
   }

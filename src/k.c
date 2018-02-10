@@ -25,7 +25,7 @@ extern I listener;
 #endif
 
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
-extern K kerr(cS s){ if(strcmp(s,"undescribed"))fer=2; R snprintf(errmsg,256,"%s",s),(K)0; } 
+extern K kerr(cS s){ if(strcmp(s,"undescribed"))fer=2; R snprintf(errmsg,256,"%s",s),(K)0; }
 
 Z K XN(S s,I n);
 
@@ -47,10 +47,10 @@ C PPON=1;
 I maX(I a,I b){R a>b?a:b;}
 I miN(I a,I b){R a<b?a:b;}
 
-K X(S s){kerr("undescribed"); fnci=0; R XN(s,strlen(s));}  
+K X(S s){kerr("undescribed"); fnci=0; R XN(s,strlen(s));}
 Z K XN(S s,I n){  //asserts ex(x) has first-line U(x)
   S newS=recur(s);
-  if(newS) {K r=ex(wd(newS,strlen(newS))); free(newS); R r;} 
+  if(newS) {K r=ex(wd(newS,strlen(newS))); free(newS); R r;}
   else  R ex(wd(s,n));
 }
 K KX(K x){R XN(CSK(x),xn);}  //assumes 3==ABS(xt)
@@ -67,13 +67,13 @@ F FF(F f){F F;R modf(f,&F);}//Floating-Point Fractional Part
 I simpleString(S a) //0 on any symbol's string that requires quotes, eg `"a - b!"
 {
   I n=strlen(a);
-  if(n && isdigit(*a))R 0; //cannot begin with a number 
+  if(n && isdigit(*a))R 0; //cannot begin with a number
   if(1==n && *a=='.') R 0; //cannot consist only of "."
   if(n>1 &&  a[n-1] == '.' && a[n-2] == '.') R 0;          //cannot end in two dots
   DO(n, if(!isalnum(a[i]) && a[i]!='_' && a[i]!='.') R 0)  //These rules are taken from parse() - anything that would fail to tokenize
   DO(n-1, if(a[i]=='.' && isdigit(a[i+1])) R 0)            //number cannot follow dot
   DO(n-2, if(a[i]=='.' && a[i+1]=='.' && a[i+2]=='.') R 0) //cannot have three dots
-  R 1; 
+  R 1;
 }
 
 K end(){R 0;}
@@ -107,18 +107,18 @@ C adverbsChar(V p){R ((L)p>=DT_ADVERB_OFFSET)?ac[((L)p-DT_ADVERB_OFFSET)%3]:'\0'
 L charsAdverb(C c) {R charpos(ac,c);}
 
 I sva(V p) //simpleVerbArity: Use boundaries of arrays to determine verb class in O(1) constant time
-{ 
+{
   UI q=(UI)p;
   if(q<DT_SIZE)R DT[q].arity;
   R 0;
 
 }
 I adverbClass(V p) //0: not an adverb, 1: / \ ', 2: /: \: ':
-{ 
+{
   UI q=(UI)p;
   if (q<DT_SIZE) R DT[q].adverbClass;
   R 0;
-} 
+}
 
 I kdefClass(I n){R n==98||n==101||n==107||n==108||n==111||n==112||n==113||n==114||n==115||n==117||n==121||n==123;}
 
@@ -137,12 +137,12 @@ I valence(V p)
 
   //Remember, valence is computed independently of the number of items stored in the conjunction, e.g. +[1;2;3;4;;;] works but +[1;2;3] fails (?)
   V*w=kW(v);
-  I t= v->n; 
+  I t= v->n;
 
   K b=kV(v)[CONJ];
   I c=0;
   if(b){ DO(b->n,if(kK(b)[i])c++)  R b->n-c; } //Valence becomes 'set' for @[;;] or @[;;;] after first projection
-  
+
   if(1==t)
   {
     i=kVC(v)->n-1;
@@ -158,8 +158,8 @@ I valence(V p)
       s=sva(q);
       if(s && !specialValence(q)) R s - ((i-2-j >= 0)?1:0); // |+\ or +\   (leaves out |@\ and @\ ...or not...or intentional...?)
 
-      if(j<i-2 ) R valence(q)-1; //eg  f:...0(0|+)\ (the zero binds on the left) 
-      else 
+      if(j<i-2 ) R valence(q)-1; //eg  f:...0(0|+)\ (the zero binds on the left)
+      else
       {
         R valence(q);
         //if(*kW(v)==q) R valence(q);
@@ -173,7 +173,7 @@ I valence(V p)
   }
   if(2==t) R (L)w[0]; //could we have determined these types implicitly... ?
   if(3==t) R ((K)kV(v)[PARAMS])->n;
-  
+
   R 0;
 }
 
@@ -189,7 +189,7 @@ Z int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: m
   va_start (args, s);
   if(!u) vprintf (s, args); //stdout
   else //5: monadic
-  { 
+  {
     I n=vsnprintf(b,512,s,args);
     if(!kapn(u,b,n)){} //todo: err handling
   }
@@ -200,7 +200,7 @@ Z int splitprint(V u, const char *s, ...)  //print for either stdout or for 5: m
 #define O_(...) splitprint(u,__VA_ARGS__)
 void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
 { //Only pass a bounded (<512?) number of chars at a time to O_ (ie don't use "%s",long_string )
-  if(!a)R; //0==NULL internal K. NB: Lowercase _n is a valid K of type 6. 
+  if(!a)R; //0==NULL internal K. NB: Lowercase _n is a valid K of type 6.
 
   I t=a->t;//Has to go below null check
 
@@ -212,7 +212,7 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   //TODO: separate lines ("aaa";"bbb") but same line ("aaa";"bbb";"c")
   //K3.2 "c",,"aa"  --> prints one line not two
 
-  I m=0;K s;//Exceptions, e.g. ("abc",0 1 2) yields ("a";"b";"c";0;1;2) 
+  I m=0;K s;//Exceptions, e.g. ("abc",0 1 2) yields ("a";"b";"c";0;1;2)
   //s!=0 check is being nice here and letting bracket [] K with NULLS act as non-degenerate K
   if(0==t && !b)DO(a->n, s=kK(a)[i]; if(s && s->t <=0 && (s->n || -3==s->t)){m=1;break;} if(s && s->t==5){m=1;break;})//Set m?
 
@@ -220,17 +220,17 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   if(enclose)O_(b?"[":"(");
 
   I f;F g;
-  
+
   I pmax = 500;//limit output on long lists. could be improved. would be better as a global variable with <= 0 indicating disabled
   #define CPMAX {if(!u && i>pmax){O_("...");break;}}
 
   if(0==t) DO(a->n, CPMAX printAtDepth(u,kK(a)[i],d+1,i*m,0,0);O_(i<_i-1?m?"\n":";":""))
   if(1==ABS(t)){
-    if(!a->n) O_("!0");    
+    if(!a->n) O_("!0");
     else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O_("0N"):f==-II?O_("-0I"):f==II?O_("0I"):O_("%lld",f); if(i<_i-1)O_(" "))}
-  if(2==ABS(t)){ 
-    if(!a->n) O_("0#0.0"); 
-    else 
+  if(2==ABS(t)){
+    if(!a->n) O_("0#0.0");
+    else
       DO(a->n, CPMAX g=kF(a)[i];
         isnan(g)?O_("0n"):g==-FI?O_("-0i"):g==FI?O_("0i"):O_("%.*g",(int)PP,g);
         if(i<_i-1)O_(" ");
@@ -238,24 +238,24 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   if(3==ABS(t)) {
     O_("\""); DO(a->n, CPMAX UC c=kC(a)[i];
     if(isprint(c)&&(!isescape(c)))O_("%c",c);
-    else 
-      if(isescape(c)) 
+    else
+      if(isescape(c))
         SW(c){CS('"',O_("\\\""));CS('\\',O_("\\\\"));CS('\b',O_("\\b"));CS('\n',O_("\\n"));CS('\r',O_("\\r"));CS('\t',O_("\\t"));}
       else O_("\\%.3o",c) ) O_("\""); }
-  if(4==ABS(t)){ 
-    if(!a->n) O_("0#`");  
-    else { 
+  if(4==ABS(t)){
+    if(!a->n) O_("0#`");
+    else {
       I ss=0,sl;S str;
-      DO(a->n, CPMAX 
-               str=kS(a)[i]; 
+      DO(a->n, CPMAX
+               str=kS(a)[i];
                if((L)str<-2e9 || DT_SIZE<(L)str) {   // the (L)str<-2e9 reqd by Cygwin
-                 sl=strlen(str); ss=simpleString(str); O_("`"); if(!ss) O_("\""); DO2(sl,O_("%c", str[j] )) 
+                 sl=strlen(str); ss=simpleString(str); O_("`"); if(!ss) O_("\""); DO2(sl,O_("%c", str[j] ))
                  if(!ss) O_("\"");
                  O_(i<_i-1?" ":""); }
                else if(-4==t) {
                  if((L)str<0)O("\n%p ",str);
-                 else { 
-                   O("%p ",str); 
+                 else {
+                   O("%p ",str);
                    if(!str)O(" ");
                    else if(i<a->n && kS(a)[i+1]<(S)DT_SIZE)O("\n"); }
                  if((L)str<0) {
@@ -285,10 +285,10 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
     else if(2==a->n){ R;} //TODO cfunc
     else if(3==a->n)
     {
-      O_("{%s}", kC(kV(a)[CODE])); 
+      O_("{%s}", kC(kV(a)[CODE]));
     }
     if(kV(a)[CONJ]){printAtDepth(u,kV(a)[CONJ],d+1,0,0,1);}
-  } 
+  }
   if(enclose)O_(b?"]":")");
 }
 
@@ -313,14 +313,14 @@ K plus_scan(K x, K y)
 {
   //Optimized scan forces you to pre-determine output type for (x,y), in contrast to optimized over
 
-  P(x && xt != 1 && xt != 2, 0) 
+  P(x && xt != 1 && xt != 2, 0)
   P(yn<2 || !yt || ABS(yt) > 2 , 0)
 
   I t = -ABS(yt); if(x) t = -MAX(ABS(xt),ABS(t));
   I n = y->n + (x?1:0);
 
   K z;
-  
+
   if(!x && 1==rc(y) && (yt==t || sizeof(I)==sizeof(F))) z=ci(y); //reuse vector you know will be discarded
   else z=newK(t,n);
   U(z)
@@ -363,7 +363,7 @@ K times_over(K x,K y)
   K z,r;
   SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
   {
-    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=accF*kF(y)[i+1]) z=Kf(accF)) //CS order matters for empty list () 
+    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=accF*kF(y)[i+1]) z=Kf(accF)) //CS order matters for empty list ()
     CD:  if(yn)accI=*kI(y);DO(y->n-1, accI=accI*kI(y)[i+1]) z=Ki(accI); //CS 1
   }
   U(z)
@@ -378,7 +378,7 @@ K max_or_over(K x,K y)
   K z,r;
   SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
   {
-    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=MAX(accF,kF(y)[i+1])) z=Kf(accF)) //CS order matters for empty list () 
+    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=MAX(accF,kF(y)[i+1])) z=Kf(accF)) //CS order matters for empty list ()
     CD:  if(yn)accI=*kI(y);DO(y->n-1, accI=MAX(accI,kI(y)[i+1])) z=Ki(accI); //CS 1
   }
   U(z)
@@ -393,7 +393,7 @@ K min_and_over(K x,K y)
   K z,r;
   SW(ABS(yt)) //May want to consider casting y->t==1 to F's when x && x->t is F
   {
-    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=MIN(accF,kF(y)[i+1])) z=Kf(accF)) //CS order matters for empty list () 
+    CS(2,if(yn)accF=*kF(y);DO(y->n-1, accF=MIN(accF,kF(y)[i+1])) z=Kf(accF)) //CS order matters for empty list ()
     CD:  if(yn)accI=*kI(y);DO(y->n-1, accI=MIN(accI,kI(y)[i+1])) z=Ki(accI); //CS 1
   }
   U(z)
@@ -472,19 +472,19 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 2, dot,".",{0}},
   {0, 1, colon_monadic,":",{0}},
   {0, 2, colon_dyadic,":",{0}},
-  {0, 1, _0m,"0:",{0}}, 
-  {0, 2, _0d,"0:",{0}}, 
-  {0, 1, _1m,"1:",{0}}, 
-  {0, 2, _1d,"1:",{0}}, 
-  {0, 1, _2m,"2:",{0}}, 
-  {0, 2, _2d,"2:",{0}}, 
-  {0, 1, _3m,"3:",{0}}, 
-  {0, 2, _3d,"3:",{0}}, 
-  {0, 1, _4m,"4:",{0}}, 
-  {0, 2, _4d,"4:",{0}}, 
-  {0, 1, _5m,"5:",{0}}, 
-  {0, 2, _5d,"5:",{0}}, 
-  {0, 1, _6m,"6:",{0}}, 
+  {0, 1, _0m,"0:",{0}},
+  {0, 2, _0d,"0:",{0}},
+  {0, 1, _1m,"1:",{0}},
+  {0, 2, _1d,"1:",{0}},
+  {0, 1, _2m,"2:",{0}},
+  {0, 2, _2d,"2:",{0}},
+  {0, 1, _3m,"3:",{0}},
+  {0, 2, _3d,"3:",{0}},
+  {0, 1, _4m,"4:",{0}},
+  {0, 2, _4d,"4:",{0}},
+  {0, 1, _5m,"5:",{0}},
+  {0, 2, _5d,"5:",{0}},
+  {0, 1, _6m,"6:",{0}},
   {0, 2, _6d,"6:",{0}},  //do not add 7+ here. go to bottom. keep paired as before
   {0, 1, _acos,"_acos",{0}},
   {0, 1, _asin,"_asin",{0}},
@@ -558,9 +558,8 @@ V krec[1000000];
 void finally()
 {
   nfinish();
-#ifdef DEBUG   
-  tf(SYMBOLS); cd(KTREE); cd(KFIXED); 
+#ifdef DEBUG
+  tf(SYMBOLS); cd(KTREE); cd(KFIXED);
   //valgrind --leak-check=full --show-reachable=yes /tmp/a.out
 #endif
 }
-

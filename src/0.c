@@ -139,7 +139,7 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
     f=open(m,O_WRONLY); P(f<0,DOE)
     if(3==ABS(t)){S msg=kC(b); if(write(f, msg, strlen(msg)+1)==-1) R WE;}
     else if(0==t){S msg; DO(n, if(ABS(kK(b)[i]->t)!=3) R DOE; msg=kC(kK(b)[i]); if(write(f, msg, strlen(msg)+1)==-1) R WE;)}
-    else {I r=close(f); if(r)R FE; R DOE;} 
+    else {I r=close(f); if(r)R FE; R DOE;}
     I r=close(f); if(r)R FE; R _n(); }
 
   if(3==ABS(t))s=n;
@@ -950,7 +950,7 @@ K _4d_(S srvr,S port,K y) {
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
   if((rv=getaddrinfo(srvr, port, &hints, &result))){O("getaddrinfo failed with error: %d\n", rv); R DOE; }
-  I sockfd;  
+  I sockfd;
   for(ptr=result; ptr != NULL ;ptr=ptr->ai_next)
     if(INVALID_SOCKET==(sockfd=socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol)))continue;
     else if(-1==connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)){neterrno=WSAGetLastError(); r=closesocket(sockfd); if(r)R FE; continue;}
@@ -1044,7 +1044,7 @@ K _5d_(K x,K y,I dosync) {
 
   #ifdef WIN32
   size_t pread(int __fd,void* __buf,size_t __nbyte,off_t __off);
-  #endif  
+  #endif
   I g;
   g=pread(f,&ft,sizeof(ft),2*sizeof(I)); if(!g)show(kerr("pread"));
   g=pread(f,&fn,sizeof(ft),2*sizeof(I)+sizeof(ft)); if(!g)show(kerr("pread"));
