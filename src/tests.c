@@ -35,9 +35,9 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a); fer=fer1=fom=fbr=0; if(cls){cd(cls);cls=0;}
+  K x = X(a); fer=fer1=fom=fbr=fll=fdc=0; if(cls){cd(cls);cls=0;}
   // fprintf(stderr,"testing: %s\n",b);
-  K y = X(b); fer=fer1=fom=fbr=0; if(cls){cd(cls);cls=0;}
+  K y = X(b); fer=fer1=fom=fbr=fll=fdc=0; if(cls){cd(cls);cls=0;}
   I m=matchI(x,y);
 
   if(!m)
@@ -838,7 +838,7 @@ Z I tests01()
   //For ' and // use TC_("string","string")
   //TC(skip,1,1) //How to skip a test that used to look like TC(1,1)
   //First argument is everything before the first exposed comma. Second argument is everything after.
-  TC(sizeofS:sizeof(S),sizeofI:sizeof(I))
+  // TC(sizeofS:sizeof(S),sizeofI:sizeof(I))     //not a valid test, sizeof(S) is not a K expression.
   TC(1,1)
   TC(1 1, 1 1)
   TC(1 1,1,1)
