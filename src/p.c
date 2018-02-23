@@ -283,36 +283,37 @@ enum mark_members{MARK_UNMARKED,MARK_IGNORE,MARK_BRACKET,MARK_END,MARK_PAREN,MAR
 Z I overcount(I*m,I n) {I c=0,p=0;DO(n, if( WORD_START(m[i]) && !(m[i]==p && GREEDY_START(p))){p=m[i];c++;}) R c; }
 
 Z I syntaxChk(S s) {
-  if(s[0]=='\t') R 1;
+  //O("s: %s\n",s);
+  if(s[0]=='\t' || s[0]=='\014') R 5;
   I n=strlen(s);
   if(n==1) {
-    if(s[0]=='\'') R 1;
+    if(s[0]=='\'') R 10;
     else R 0; }
   I i,j,k=0;
   for(i=0;i<n;++i) if(s[i]!=' ')break;    //1st non-blank (if it exists)
   if(i>=n-1)R 0;
   for(j=i+1;j<n;++j) if(s[j]!=' ')break;  //2nd non-blank (if it exists)
   if(s[i]=='\\' && s[j]=='\\') R 0;
-  if((s[i]=='\'' && s[j]!='\"') || j==n) R 1;
+  if((s[i]=='\'' && s[j]!='\"') || j==n) R 20;
   for(i=0;i<n;++i) {
     if(s[i]=='\"')break;
-    if(i>1 &&  (s[i]=='\013' || s[i]=='\014' || (s[i]=='\'' && s[i-1]==';') || (i>1 && s[i]=='\'' && s[i-2]=='\\')))R 1; }
-  for(i=0;i<n;++i) if(i>1 && s[i]=='\"' && s[i-1]=='`' && s[i-2]=='@') R 1;
-  if(n>1 && s[n-1]=='\'' && s[n-2]==':') R 1;
+    if(((i>0 &&  (s[i]=='\013' || s[i]=='\014' || (s[i]=='\'' && s[i-1]==';'))) || (i>1 && s[i]=='\'' && s[i-2]=='\\')))R 30; }
+  for(i=0;i<n;++i) if(i>1 && s[i]=='\"' && s[i-1]=='`' && s[i-2]=='@') R 40;
+  if(n>1 && s[n-1]=='\'' && s[n-2]==':') R 50;
   if(n>1){for(i=1;i<n;++i){
     if(s[i]=='\"') break;
-    if(s[i]==',' && (s[i-1]=='\\' || s[i-1]=='_')) R 1;
-    if(s[i]=='?' && (s[i-1]=='-' || s[i-1]=='\\')) R 1; }}
+    if(s[i]==',' && (s[i-1]=='\\' || s[i-1]=='_')) R 60;
+    if(s[i]=='?' && (s[i-1]=='-' || s[i-1]=='\\')) R 70; }}
   if(n>2){for(i=2;i<n;++i){
-    if(s[i]=='\\' && s[i-1]==':' && (s[i-2]!='/' && s[i-2]!='\\')) R 1;
-    if(s[i]=='/' && (s[i-1]=='+' || s[i-1]=='\'' || s[i-1]=='>' || s[i-1]=='%' || s[i-1]=='*' || s[i-1]=='?' || s[i-1]=='&' || s[i-1]=='\\') && s[i-2]=='/') R 1;
-    if(s[i]=='/' && s[i-1]=='/' && s[i-2]=='-') R 1;
-    if(s[i]=='_' && s[i-1]==',' && s[i-2]=='~') R 1;
-    if(s[i]=='/' && s[i-1]=='#' && s[i-2]=='0') R 1;
-    if(s[i]=='$' && s[i-1]==',' && s[i-2]=='$') R 1;}}
-  if(n>3){for(i=2;i<n;++i){if(s[i]=='/' && s[i-1]=='/' && s[i-2]=='/') R 1;}}
-  if(n>3){for(i=2;i<n-1;++i){if(s[i]=='/' && s[i-1]==':' && s[i-2]=='/' && s[i+1]!=':') R 1;}}
-  if(n>5 && s[n-1]==':' && s[n-2]!=':' && s[n-3]==':') R 1;
+    if(s[i]=='\\' && s[i-1]==':' && (s[i-2]!='/' && s[i-2]!='\\')) R 80;
+    if(s[i]=='/' && (s[i-1]=='+' || s[i-1]=='\'' || s[i-1]=='>' || s[i-1]=='%' || s[i-1]=='*' || s[i-1]=='?' || s[i-1]=='&' || s[i-1]=='\\') && s[i-2]=='/') R 90;
+    if(s[i]=='/' && s[i-1]=='/' && s[i-2]=='-') R 100;
+    if(s[i]=='_' && s[i-1]==',' && s[i-2]=='~') R 110;
+    if(s[i]=='/' && s[i-1]=='#' && s[i-2]=='0') R 120;
+    if(s[i]=='$' && s[i-1]==',' && s[i-2]=='$') R 130;}}
+  if(n>3){for(i=2;i<n;++i){if(s[i]=='/' && s[i-1]=='/' && s[i-2]=='/') R 140;}}
+  if(n>3){for(i=2;i<n-1;++i){if(s[i]=='/' && s[i-1]==':' && s[i-2]=='/' && s[i+1]!=':') R 150;}}
+  if(n>5 && s[n-1]==':' && s[n-2]!=':' && s[n-3]==':') R 160;
   R k; }
 
 I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
@@ -329,6 +330,7 @@ K wd_(S s, int n, K*dict, K func) //parse: s input string, n length ;
 {
   if(!s) R 0;
   if(strstr(s,":\\t")) { show(kerr("\\t  syntax")); R 0; }
+  //I z=0; if((z=syntaxChk(s))) {O("%lld\n",z); R SYE;}
   if(syntaxChk(s)) R SYE;
   if('\\'==s[0] && fbs){fbs=0; R backslash(s,n,dict);}
 
