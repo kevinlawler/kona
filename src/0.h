@@ -21,6 +21,7 @@ K Kv();
 K rrep(V v,V aft,I *b,I y,I s);
 extern V vd[];
 extern V vm[];
+extern I fbr;
 I sva(V p);
 I rep(K x,I y);
 I wrep(K x,V v,I y);

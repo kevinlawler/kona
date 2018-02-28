@@ -67,7 +67,8 @@ Z V freopen_stdin() {
 
 K _0m(K a) {
   I t=a->t; P(4!=t && 3!=ABS(t), TE)
-  I b=0,s=0; S v=0; K z=0; S m; if(3==ABS(t))m=CSK(a);
+  I b=0,s=0; S v=0; K z=0; S m; fbr=0;
+  if(3==ABS(t))m=CSK(a);
 
   struct stat sb; I ff=0;
   if(3==ABS(t) && strcmp(m,"/dev/fd/0") && strcmp(m,"/dev/stdin") ){
