@@ -245,6 +245,7 @@ K at_ref(K *p, K b, K c, K y) // @[`a;0 1;+;10 20]
     DO(atomI(b)?1:n,
       K args=newK(0,argc);U(args)//Cheating 0-type w/ NULLs
       S u = kS(b)[i%bn];
+      if(!strlen(u))R DOE;
       kK(args)[0]= ci(*lookupEVOrCreate(p,u)); // ... mm/o? tricky
       if(argc > 1) kK(args)[1] = atomI(b)?ci(y):itemAtIndex(y,i%yn);
       K r = specialAmendDot(c,args);
