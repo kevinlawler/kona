@@ -825,7 +825,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
   if(offsetColon==w[0] && (UI)w[1]>DT_SIZE && (UI)w[2]>DT_SIZE && fwh==0)
     {fer=1; if(f)*i=n; else *i=-1; K tmp=*(K*)*(w+1); R ci(tmp); }
   //if(in(*w,adverbs)) R NYI;//Adverb at beginning of snippet eg '1 2 3 or ;':1 2 3; or 4;\1+1;4
-  if( DT_ADVERB_OFFSET<=(L)*w && (L)*w<DT_VERB_OFFSET && offsetScan!=(L)*(w+1)) {
+  if( DT_ADVERB_OFFSET<=(L)*w && (L)*w<DT_VERB_OFFSET && offsetScan!=(L)*(w+1) && NULL!=*(w+1)) {
     if(offsetScan==(L)*w) {
       if(0==strcmp(fBreak,"n")) R ex2(w+1,k);
       if(0==strcmp(fBreak,"t")) R ex2(w+1,k);
