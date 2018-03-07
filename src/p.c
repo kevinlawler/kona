@@ -282,8 +282,7 @@ enum mark_members{MARK_UNMARKED,MARK_IGNORE,MARK_BRACKET,MARK_END,MARK_PAREN,MAR
 //Corrected soon after. No sense in duplicating logic here: let the word-converter decide the true count
 Z I overcount(I*m,I n) {I c=0,p=0;DO(n, if( WORD_START(m[i]) && !(m[i]==p && GREEDY_START(p))){p=m[i];c++;}) R c; }
 
-Z I syntaxChk(S s) {
-  //O("s: %s\n",s);
+Z I syntaxChk(S s) {              //TODO: refactor the syntax check as a single pass
   if(s[0]=='\t' || s[0]=='\014') R 5;
   I n=strlen(s);
   if(n==1) {
@@ -313,6 +312,7 @@ Z I syntaxChk(S s) {
     if(s[i]=='/' && s[i-1]=='#' && s[i-2]=='0') R 120;
     if(s[i]=='\\' && s[i-1]=='\\' && s[i-2]=='<') R 123;
     if(s[i]=='$' && s[i-1]==',' && s[i-2]=='$') R 130;
+    if(s[i]==')' && s[i-1]=='\\' && s[i-2]=='(') R 135;
     if(s[i]=='/' && s[i-1]=='/' && s[i-2]=='/') R 140;}}
   if(n>3){for(i=2;i<n;++i){
     if((isalpha(s[i]) || s[i]=='`') && s[i-1]==':' && s[i-2]==':' && s[i-3]==':') R 141;}}
