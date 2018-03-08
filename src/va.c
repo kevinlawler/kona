@@ -234,7 +234,7 @@ K floor_ceil(K a, F(*g)(F))
 {
   I at=a->t, an=a->n;
   F(*h)(F)=g==ceil?floor:ceil;
-  P(2 <ABS(at),TE)
+  P(2<ABS(at) || (0==at && 7==kK(a)[0]->t),TE)
   if(1==ABS(at))R ci(a);
 
   //TODO: oom
