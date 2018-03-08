@@ -67,9 +67,9 @@ K _kclone(K a)//Deep copy -- eliminate where possible
   R z;
 }
 
-K collapse(K x) //oom
-{
+K collapse(K x) {          //oom
   if(xt==1 && xn==1) R x;
+  if(xt<0 && xn==1){xt=ABS(xt); R x;}
   K z;
   if(1==xn){ z=ci(*kK(x)); cd(x);}
   else z=demote(x);
