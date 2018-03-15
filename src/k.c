@@ -25,7 +25,7 @@ extern I listener;
 #endif
 
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
-extern K kerr(cS s){ if(strcmp(s,"undescribed"))fer=2; R snprintf(errmsg,256,"%s",s),(K)0; }
+extern K kerr(cS s){ if(strcmp(s,"(nil)"))fer=2; R snprintf(errmsg,256,"%s",s),(K)0; }
 
 Z K XN(S s,I n);
 
@@ -47,7 +47,7 @@ C PPON=1;
 I maX(I a,I b){R a>b?a:b;}
 I miN(I a,I b){R a<b?a:b;}
 
-K X(S s){kerr("undescribed"); fnci=0; R XN(s,strlen(s));}
+K X(S s){kerr("(nil)"); fnci=0; R XN(s,strlen(s));}
 Z K XN(S s,I n){  //asserts ex(x) has first-line U(x)
   S newS=recur(s);
   if(newS) {K r=ex(wd(newS,strlen(newS))); free(newS); R r;}

@@ -77,7 +77,7 @@ I test()
   O("Test pass rate: %.4f, Total: %lld, Passed: %lld, Skipped: %lld, Failed: %lld, Time: %fs\n", rate,tests,passed,skipped,failed,testtime);
   I r=1==rate;
   O("%s\n", ts(r));
-  testtime=0; lineB=0; kerr("undescribed");
+  testtime=0; lineB=0; kerr("(nil)");
   R r;
 }
 

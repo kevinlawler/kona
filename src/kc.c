@@ -153,7 +153,7 @@ I kinit() {       //oom (return bad)
   offsetSSR   = (V)DT_OFFSET(_ssr);
   offset3m    = (V)DT_OFFSET(_3m);
 
-  kerr("undescribed");
+  kerr("(nil)");
   SYMBOLS=newN(); //Initialize intern pool
   seedPRNG(-271828/*randomBits()*/);
   NIL=Kn();
@@ -236,7 +236,7 @@ Z void trim(S s) {
 
 I check() {      //in suspended execution mode: allows checking of state at time of error
   I ofCheck=fCheck;
-  kerr("undescribed"); prompt(++fCheck); S a=0;  I n=0;  PDA q=0;
+  kerr("(nil)"); prompt(++fCheck); S a=0;  I n=0;  PDA q=0;
   for(;;) {
     line(stdin, &a, &n, &q);
     if(fCheck==ofCheck)GC; }
@@ -293,14 +293,14 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
 
-  if(o && fam && !strcmp(errmsg,"undescribed"))show(k);
+  if(o && fam && !strcmp(errmsg,"(nil)"))show(k);
 
   cd(k);
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
   if(!strcmp(errmsg,"value"));
-  else if(strcmp(errmsg,"undescribed") && fer!=-1) { oerr(); I ctl=0;
+  else if(strcmp(errmsg,"(nil)") && fer!=-1) { oerr(); I ctl=0;
     if(fError){
       if(2==fError)exit(1);
       if(lineA){
@@ -330,7 +330,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
               O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
               O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
-  kerr("undescribed"); fll=fer=fer1=fnci=fom=0; fnc=lineA=lineB=0; if(cls){cd(cls);cls=0;}
+  kerr("(nil)"); fll=fer=fer1=fnci=fom=0; fnc=lineA=lineB=0; if(cls){cd(cls);cls=0;}
   R c; }
 
 I tmr_ival=0;
