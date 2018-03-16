@@ -232,6 +232,7 @@ K max_or(K a, K b)
 
 K floor_ceil(K a, F(*g)(F))
 {
+  if(strcmp(errmsg,"(nil)"))R (K)0;
   I at=a->t, an=a->n;
   F(*h)(F)=g==ceil?floor:ceil;
   P(2<ABS(at) || (0==at && 7==kK(a)[0]->t),TE)
