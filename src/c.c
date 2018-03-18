@@ -431,7 +431,7 @@ K backslash(S s, I n, K*dict)
       CS('v',R backslash_v(s,n,dict))
       CS('w',R backslash_w(s)) //used,allocated,mapped. lfop: Linux & 'ps' use /proc/self/stat or /proc/<MY_PID>/stat
     }
-    R _n();
+    R DOE;
   }
 
   // \kr \cd  ?
