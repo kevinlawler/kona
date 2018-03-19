@@ -209,17 +209,17 @@ Z I mark_number(S s,I n,I i,I*m)
 }
 
 Z I mark_adverb(S s,I n,I i,I*m){
+  if(m[i]) R 0;
   C c=s[i];
   if(i==0) {
     if( c=='\'' || c=='\\' ) R 1;
-    else R 0; }
-  else {
-    if(m[i]) R 0;
-    else {
-      if( s[i-1]!=' ' && (c=='/' || c=='\\' || c=='\'') ) {
-        if( i<n-1 && s[i+1]==':') R 2;
-        else R 1; }
-      else R 0; } }
+    R 0; }
+  if(!strcmp(s,";\\\\")) R 1;
+  if(c=='\\' && s[i-1]==';') R 0;
+  if( s[i-1]!=' ' && (c=='/' || c=='\\' || c=='\'') ) {
+    if( i<n-1 && s[i+1]==':') R 2;
+    R 1; }
+  R 0;
 }
 
 Z I mark_verb(S s,I n,I i,I*m)
@@ -236,7 +236,7 @@ Z I mark_verb(S s,I n,I i,I*m)
   if('_'==s[i]) while(i+c<n && isalpha(s[i+1+c]))c++;
   if(c>1)R 1+c;
 
-  if( s[i]=='\\' && (s[i-1]==' ' || s[i+1]==')' )) R 1;
+  if( s[i]=='\\' && (s[i-1]==' ' || s[i-1]==';' )) R 1;
 
   c=0; //primitive verbs + - includes verb ":"
   if(isCharVerb(s[i])){c++;if(0)EAT_SPACES}
