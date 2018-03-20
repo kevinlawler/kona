@@ -209,7 +209,6 @@ Z I mark_number(S s,I n,I i,I*m)
 }
 
 Z I mark_adverb(S s,I n,I i,I*m){
-  //O("mark_adverb  s:%s  i:%lld  m[i]:%lld\n",s,i,m[i]);
   if(m[i]) R 0;
   C c=s[i];
   if(i==0) {
@@ -227,21 +226,15 @@ Z I mark_adverb(S s,I n,I i,I*m){
 
 Z I mark_verb(S s,I n,I i,I*m)
 {
-  //O("s:%s  i:%lld  m[i]:%lld\n",s,i,m[i]);
   I c=0;
-
   //case: numbered verb "0:  "  (NB: monadic-indicator can be used later: (4::)[{x}] -> 7)
   while(i+c<n-1 && -MARK_NUMBER==m[i] && MARK_NUMBER==m[++c+i]);
   if(c&&':'==s[i+c]){c++;if(0)EAT_SPACES;R c;}
-
   if(m[i])R 0;
-
   c=0; //case: reserved verb _bin _bd _ssr
   if('_'==s[i]) while(i+c<n && isalpha(s[i+1+c]))c++;
   if(c>1)R 1+c;
-
   if( s[i]=='\\' && (s[i-1]==' ' || s[i-1]==';' || s[i-1]=='(')) R 1;
-
   c=0; //primitive verbs + - includes verb ":"
   if(isCharVerb(s[i])){c++;if(0)EAT_SPACES}
   R c;
