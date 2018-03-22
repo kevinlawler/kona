@@ -563,6 +563,7 @@ K where(K x)
 {
   P(!xn,newK(-1,0))
   P(1!=ABS(xt),IE)
+  P(kI(x)[0]==II,IE)
   I zn=0,y,j,t=0;
   //DO(xn,if((y=kI(x)[i])<0)R DOE;zn+=y)
   DO(xn,if((y=kI(x)[i])<0)continue;zn+=y)//skip negatives instead of error

@@ -560,7 +560,7 @@ Z I tests02()
 
   TC(6 7 8, (21>+/)(2+)/!3)
   TC((1;"wsfull"),@[.:;"0I#0";:])
-  TC((1;"wsfull"),@[.:;"&0I";:])
+  TC((1;"int"),@[.:;"&0I";:])
   #if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
   TC((1;"limit"),@[.:;"!0I";:])
   #else
