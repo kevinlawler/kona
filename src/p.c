@@ -294,7 +294,6 @@ Z I syntaxChk(S s) {              //TODO: refactor the syntax check as a single 
   for(i=0;i<n;++i) {
     if(s[i]=='\"')break;
     if(((i>0 &&  (s[i]=='\013' || s[i]=='\014' || (s[i]=='\'' && s[i-1]==';'))) || (i>1 && s[i]=='\'' && s[i-2]=='\\')))R 30; }
-  for(i=0;i<n;++i) if(i>1 && s[i]=='\"' && s[i-1]=='`' && s[i-2]=='@') R 40;
   if(n>1 && s[n-1]=='\'' && s[n-2]==':') R 50;
   if(n>1){for(i=1;i<n;++i){
     if(s[i]=='\"') break;
