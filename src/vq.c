@@ -145,6 +145,7 @@ K sample(K x,K y)
 
 K what(K x, K y)
 {
+  P(1==xt,DOE)
   if(7==xt)R what_triadic(x,y,0);
   if(1==xt) R atomI(y)?qrand(x,y):sample(x,y);
   R find(x,y);
