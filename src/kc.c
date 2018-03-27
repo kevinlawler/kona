@@ -76,18 +76,20 @@ Z void multihomeini(S*x)
 }
 
 I args(int n,S*v) {
-  K a,k; I c,len; U(KONA_ARGS=newK(0, n))
+  K a,k; I c,len,b=1; U(KONA_ARGS=newK(0, n))
   DO(n, len=strlen(v[i]);
         if(!(a=newK(-3, len))){cd(KONA_ARGS);R 0;}
         strncpy(kC(a),v[i],len);
         kK(KONA_ARGS)[i]=a )
-  while(-1!=(c=getopt(n,v,":h:i:e:x:")))SW(c) {
+  while(-1!=(c=getopt(n,v,":b:h:i:e:x:")))SW(c) {
     CS('h',  if(IPC_PORT)O("-i accepted, cannot also have -h\n"); else HTTP_PORT=optarg;)
     CS('i',  if(HTTP_PORT)O("-h accepted, cannot also have -i\n"); else {IPC_PORT=optarg;*kI(KONA_PORT)=atol(IPC_PORT);})
+    CS('b',  b=0;)
     CS('e',  cd(X(optarg)); exit(0) )
     CS('x',  k=X(optarg); printAtDepth(0,k,0,0,0,0); O("\n"); cd(k); exit(0) )
     CSR(':', )
     CS('?',  O("%c\nabort",optopt); exit(0)) }
+  if(b)boilerplate();
   multihomeini(IPC_PORT?&IPC_PORT:&HTTP_PORT);
   S h=getenv("KINIT");if(h) load(h);
   while(optind < n) load(v[optind++]);

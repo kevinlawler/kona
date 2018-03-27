@@ -32,8 +32,7 @@ void boilerplate()
   #ifndef __MINGW32__
     if(!isatty(STDOUT) || !isatty(STDIN)) R;		//kluge:  isatty() fails using mingw-10.0 with msys2
   #endif
-  O("K Console - Enter \\ for help\n\n");
-  prompt(0);
+  O("kona      \\ for help. \\\\ to exit.\n\n");
 }
 
 //Q. What if a script is \loaded (via remote call) while the terminal is waiting with an open PDA for matching parentheses/quote marks?
@@ -49,7 +48,8 @@ Z K filexist(S s){
   FILE*f;C b[PATH_MAX+1];S p;I n=0;
   strcpy(b,s);
 recheck:
-  f=fopen(b,"r"); if(f){p=b;GC;}
+  if(strstr(b,".k")){
+    f=fopen(b,"r"); if(f){p=b;GC;}}
   strcat(b,".k");
   f=fopen(b,"r"); if(f){p=b;GC;}
   if(!n){

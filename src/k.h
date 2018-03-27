@@ -27,6 +27,7 @@ K _i();
 void printAtDepth(V u,K a,I d,I x,I vdep,I b);
 K kapn(K *a,V v,I n);
 I args(int n,S *v);
+I prompt(I n);
 I VA(V p);
 I valence(V p);
 I adverbClass(V p);
