@@ -588,7 +588,7 @@ K vf_ex(V q, K g)
         DO(tree->n, if(!(kK(tree)[i]=newK(0,3))){cd(tree); stk--; GC;}) //shallow dict copy -- dictionary entry pool?
         DO(tree->n, DO2(3,  kK(DI(tree,i))[j] = ci(kK((i<p->n?DI(p,i):DI(s,i-p->n)))[j])))//shallow copy
         kV(f)[CACHE_TREE]=tree; }
-      if(fsf && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE]){
+      if(fsf && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE] && !strstr((S)kS(kK(prnt)[CODE])," _mul ") ){
         K j0=dot_monadic(kV(prnt)[LOCALS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
         K j2=join(ci(j0),j1); cd(j0); cd(kV(prnt)[CACHE_TREE]); kV(prnt)[CACHE_TREE]=dot_monadic(j2);
         cd(j0); cd(j1); cd(j2); tree=kV(prnt)[CACHE_TREE]; cd(kV(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; }
@@ -969,7 +969,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n) {
         K j0=dot_monadic(kV(t3)[PARAMS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
         K j2=join(ci(j0),j1); cd(j0); cd(kK(t3)[CACHE_TREE]); kV(t3)[CACHE_TREE]=dot_monadic(j2); cd(j0); cd(j1); cd(j2);
-        if(kK(prnt)[CACHE_TREE]->n && !strstr((S)kS(kK(prnt)[CODE])," _mul ")) fsf=1; }
+        if(kK(prnt)[CACHE_TREE]->n) fsf=1; }
       if(prnt)cd(prnt);
       prnt=ci(t3); }
 
