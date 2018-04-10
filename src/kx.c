@@ -153,7 +153,7 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
 
 Z K overMonad(K a, V *p, K b)
 {
-  K u=b,c=0;I flag=0;
+  K u=b,c=0;I flag=0; fsf=0;
 
   I useN=0,n=0,useB=0;
   if(a) {if(1==a->t){useN=1; n=*kI(a);} else if(7==a->t || 6==a->t){useB=1;}}
@@ -588,7 +588,7 @@ K vf_ex(V q, K g)
         DO(tree->n, if(!(kK(tree)[i]=newK(0,3))){cd(tree); stk--; GC;}) //shallow dict copy -- dictionary entry pool?
         DO(tree->n, DO2(3,  kK(DI(tree,i))[j] = ci(kK((i<p->n?DI(p,i):DI(s,i-p->n)))[j])))//shallow copy
         kV(f)[CACHE_TREE]=tree; }
-      if(fsf && prnt && kV(prnt)[LOCALS] && kV(prnt)[CACHE_TREE] && !strstr((S)kS(kK(prnt)[CODE])," _mul ") ){
+      if(fsf && prnt && kV(prnt)[LOCALS]){
         K j0=dot_monadic(kV(prnt)[LOCALS]); K j1=dot_monadic(kV(prnt)[CACHE_TREE]);
         K j2=join(ci(j0),j1); cd(j0); cd(kV(prnt)[CACHE_TREE]); kV(prnt)[CACHE_TREE]=dot_monadic(j2);
         cd(j0); cd(j1); cd(j2); tree=kV(prnt)[CACHE_TREE]; cd(kV(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; }
