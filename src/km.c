@@ -32,7 +32,7 @@ F mUsed=0.0, mAlloc=0.0, mMap=0.0, mMax=0.0;
 
 #if UINTPTR_MAX >= 0xffffffffffffffff //64 bit
 #define MAX_OBJECT_LENGTH (((unsigned long long)1) << 45) //for catching obviously incorrect allocations
-#else 
+#else
 #define MAX_OBJECT_LENGTH (II - 1) //for catching obviously incorrect allocations
 #endif
 Z I kexpander(K *p,I n);
@@ -45,7 +45,7 @@ V alloc(size_t sz) {
   V r=malloc(sz);if(!r){fputs("out of memory\n",stderr);exit(1);}
   R r; }
 
-I OOM_CD(I g, ...) //out-of-memory count-decrement 
+I OOM_CD(I g, ...) //out-of-memory count-decrement
 { va_list a; V v,o=(V)-1;
   va_start(a,g);while(o!=(v=va_arg(a,V)))if(!v)g=1; va_end(a);
   P(!g,1)//OK
@@ -66,7 +66,7 @@ K cd(K x)
 {
   #ifdef DEBUG
   if(x && rc(x) <=0 ) { er(Tried to cd() already freed item) dd(tests) dd((L)x) dd(rc(x)) dd(x->t) dd(x->n) show(x); }
-  #endif 
+  #endif
 
   P(!x,0)
   dc(x);
@@ -81,7 +81,7 @@ K cd(K x)
 
   #ifdef DEBUG
   DO(kreci, if(x==krec[i]){krec[i]=0; break; })
-  #endif 
+  #endif
 
   SW(xt)
   {
@@ -134,13 +134,14 @@ Z I nearPG(I i){ I k=((size_t)i)&(PG-1);R k?i+PG-k:i;}//up 0,8,...,8,16,16,...
 //Keyword "backingstore" in old k mailing list archives - extra KSWAP beyond regular swap space
 
 K newK(I t, I n)
-{ 
+{
   K z;
   if(n>0 && n>MAX_OBJECT_LENGTH)R ME;//coarse (ignores bytes per type). but sz can overflow
   I k=sz(t,n),r;
   U(z=kalloc(k,&r))
   //^^ relies on MAP_ANON being zero-filled for 0==t || 5==t (cd() the half-complete), 3==ABS(t) kC(z)[n]=0 (+-3 types emulate c-string)
   ic(slsz(z,r)); z->t=t; z->n=n;
+  if(t==6)z->n=0;
   #ifdef DEBUG
   krec[kreci++]=z;
   #endif
@@ -175,7 +176,7 @@ Z V unpool(I r)
   {
     U(z=amem(k,r))
     if(k<PG)
-    { 
+    {
       V y=z;
       while(y<(V)z+PG+-k){*(V*)y=y+k;y+=k;}
     }//Low lanes subdivide pages. no divide op
@@ -186,7 +187,7 @@ Z V unpool(I r)
   R z;
 }
 
-I cl2(I v) //optimized 64-bit ceil(log_2(I)) 
+I cl2(I v) //optimized 64-bit ceil(log_2(I))
 {
     if(!v)R -1;// no bits set
     I e = 0;
@@ -196,7 +197,7 @@ I cl2(I v) //optimized 64-bit ceil(log_2(I))
     #endif
     if(v & 0x00000000FFFF0000ULL){e+=16;v>>=16;}
     //short CL2_LUT[1<<16]; DO(1<<16,if(i) CL2_LUT[i]=log2(i));
-    //to use lookup table: e+=CL2_LUT[v] and comment out below. 
+    //to use lookup table: e+=CL2_LUT[v] and comment out below.
     if(v & 0x000000000000FF00ULL){e+=8; v>>=8; }
     if(v & 0x00000000000000F0ULL){e+=4; v>>=4; }
     if(v & 0x000000000000000CULL){e+=2; v>>=2; }
@@ -205,7 +206,7 @@ I cl2(I v) //optimized 64-bit ceil(log_2(I))
 }
 
 I lsz(I k){R k<=((I)1)<<KP_MIN?KP_MIN:cl2(k);} //pool lane from size. Ignore everywhere lanes < KP_MIN. MAX() was eliminated as an optimization
-I repool(V v,I r)//assert r < KP_MAX 
+I repool(V v,I r)//assert r < KP_MAX
 {
   I k=((I)1)<<r;
   memset(v,0,k);
@@ -214,7 +215,7 @@ I repool(V v,I r)//assert r < KP_MAX
   mUsed -= k;
   R 0;
 }
-Z I kexpander(K*p,I n) //expand only. 
+Z I kexpander(K*p,I n) //expand only.
 {
   K a=*p;I r = glsz(a);
   if(r>KP_MAX) //Large anonymous mmapped structure - (simulate mremap)
@@ -225,7 +226,7 @@ Z I kexpander(K*p,I n) //expand only.
     V*w=mremap(a,c,d,MREMAP_MAYMOVE);
     if(MAP_FAILED!=w) {
       mAlloc+=d-c;mUsed+=d-c;if(mUsed>mMax)mMax=mUsed; *p=(K)w;R 1;}
-#else  
+#else
     F m=f/(F)PG; I n=m, g=1; if(m>n) n++;
     DO(n, if(-1==msync((V)a+e+PG*i,1,MS_ASYNC)) {if(errno!=ENOMEM) {g=0; break;}}
           else {g=0; break;})
@@ -316,7 +317,7 @@ extern K kap(K*a,V v){ if(!a)R 0; R (0<(*a)->t)?kapn_(a,v,1):kap1_(a,v); }
 
 N newN(){R unpool(lsz(sizeof(Node)));}
 PDA newPDA(){PDA p=unpool(lsz(sizeof(Pda)));U(p) p->c=alloc(1); if(!p->c){ME;R 0;} R p;}
-I push(PDA p, C c){R appender(&p->c,&p->n,&c,1);} 
+I push(PDA p, C c){R appender(&p->c,&p->n,&c,1);}
 C    peek(PDA p){I n=p->n; R n?p->c[n-1]:0;}
 C     pop(PDA p){R p->n>0?p->c[--(p->n)]:0;}
 C  bottom(PDA p){R p->n>0?p->c[0]:0;}
@@ -325,9 +326,9 @@ void pdafree(PDA p){free(p->c); repool(p,lsz(sizeof(PDA)));}
 K Ki(I x){K z=newK(1,1);*kI(z)=x;R z;}
 K Kf(F x){K z=newK(2,1);*kF(z)=x;R z;}
 K Kc(C x){K z=newK(3,1);*kC(z)=x;R z;}
-K Ks(S x){U(x) K z=newK(4,1);*kS(z)=x;R z;}//KDB+ >= 2.4 tries interning [sp()]  by default when generating sym atoms 
+K Ks(S x){U(x) K z=newK(4,1);*kS(z)=x;R z;}//KDB+ >= 2.4 tries interning [sp()]  by default when generating sym atoms
 K Kd(   ){R   newK(5,0);}
-K Kn(   ){R   newK(6,1);}//Should n instead be 0? (Won't affect #:) in k3.2 yes  //In K3.2 _n->n is overridden for error messages. 
+K Kn(   ){R   newK(6,1);}//Should n instead be 0? (Won't affect #:) in k3.2 yes  //In K3.2 _n->n is overridden for error messages.
 K Kv(   ){K z=newK(7,TYPE_SEVEN_SIZE);U(z) z->n=1;kV(z)[CONTeXT]=d_; M(z,kV(z)[PARAMS]=Kd(),kV(z)[LOCALS]=Kd()) R z;} //z->n == 0-wd 1-wordfunc 2-cfunc 3-charfunc 4-:[] 5-if[] 6-while[] 7-do[]
 //Optimization: It's better if Kv() doesn't set PARAMS and LOCALS. Only charfuncs should set params
 
