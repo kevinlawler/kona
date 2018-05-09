@@ -350,7 +350,11 @@ K dv_ex(K a, V *p, K b)
   V *o = p-1;
 
   //Arity of V?A_1...A_n-1 for X V?A_1...A_n Y; 0 for X Y, X A Y
-  I k=adverbClass(*p)?adverbClass(*o)?1:valence(*o):valence(*p); //also t7 basic
+  I k=0; K w;
+  if(*p==(V)offsetScan && *o>(V)DT_SIZE){
+    w=*(K*)*o;
+    if(7==w->t && 3==kVC(w)->n && kV(kVC(w))[0]==(V)0x16 && kV(kVC(w))[1]==(V)offsetScan) k=1; }
+  if(k==0) k=adverbClass(*p)?adverbClass(*o)?1:valence(*o):valence(*p); //also t7 basic
 
   V adverb=*p; //TODO: Implement adverb "Error Reports" error checking from manual
 

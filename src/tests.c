@@ -290,6 +290,7 @@ Z I tests02()
   TC(120, fac:{[n] :[n=0;1;n*_f n-1]}; fac 5)     // issue 487
   TC(3, a:3;a)                                    // issue 502
   TC("abcdefghij"2 3, "cd")                       // issue 508
+  TC_(",1 1", "0(+\\)\\1 1")                      // issue 515
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
