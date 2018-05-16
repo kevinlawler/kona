@@ -327,17 +327,15 @@ K rotate_mod(K a, K b)
   R (b->t < 1)?rotate(a,b):mod(a,b);
 }
 
-static K enumerate_charvec(C *pth)
-{
+Z K enumerate_charvec(C *pth) {
   K z;
   I len=strlen(pth);
   K p=newK(-3,len+3);
-  strncpy(kC(p),"ls ", 3);
-  strncpy(kC(p)+3,pth,len);
+  C *s="ls ";
+  strncpy(kC(p),strcat(s,pth),len+3);
   z = popen_charvec(kC(p));
   cd(p);
-  R z;
-}
+  R z; }
 
 K enumerate(K a)
 {
