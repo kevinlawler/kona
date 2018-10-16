@@ -161,7 +161,7 @@ K backslash(S s, I n, K*dict)
                "/: eachright    2 #/: (\"alpha\";\"bravo\";\"charlie\")    take each right\n"
               "\\: eachleft     0 1 2 3 #\\: \"abc\"     take each left\n"
                "': eachpair     apply pairwise  -':1 3 4 8 10\n"
-               );
+               ); R _n();
       )
       CS('+', O(
               "Verbs +-*%%|&^!<>=~@?_,#$.:\n"
@@ -216,7 +216,7 @@ K backslash(S s, I n, K*dict)
               ". triadic  monadic amend. see \\. \n"
               ". tetradic dyadic amend. see \\. \n"
               ":          overloaded with many operations. \n"
-              );
+              ); R _n();
       )
       CS('.',
              O(
@@ -256,7 +256,7 @@ K backslash(S s, I n, K*dict)
               "\\ is trace when beginning an expression inside a function (todo)\n"
               ": is early return when beginning an expression inside a function\n"
               "' is signal (todo)\n"
-              );
+              ); R _n();
       )
       CS('_',
              O(
@@ -335,7 +335,7 @@ K backslash(S s, I n, K*dict)
               "\n"
               "Triadic Verbs:\n"
               "_ssr     string search & replace\n"
-              );
+              ); R _n();
       )
       CS('0',
              O("Datatypes  -4 -3 -2 -1 0 1 2 3 4 5 6 7\n"
@@ -371,7 +371,7 @@ K backslash(S s, I n, K*dict)
                "!d    keys\n"
                "d[`k] value at k\n"
                "d@`k  value at k\n"
-              );
+              ); R _n();
       )
       CS(':',
              O("I/O Verbs 0: 1: 2: 3: 4: 5: 6:\n"
@@ -413,7 +413,7 @@ K backslash(S s, I n, K*dict)
                "(types;,delim)0:`f   \n"
                "c 1-byte char, b 1-byte int, s 2-byte int, i 4-byte int, f 4-byte float,\n"
                "d 8-byte double, \" \" 1-byte skip, I int, F float, C string, S string (sym), DTZMm Y? \n"
-             );
+             ); R _n();
       )
       CS('`',R NYI)
       CS('a',R NYI)
@@ -431,7 +431,7 @@ K backslash(S s, I n, K*dict)
       CS('v',R backslash_v(s,n,dict))
       CS('w',R backslash_w(s)) //used,allocated,mapped. lfop: Linux & 'ps' use /proc/self/stat or /proc/<MY_PID>/stat
     }
-    R DOE;
+    O("domain error\n"); R _n();
   }
 
   // \kr \cd  ?
