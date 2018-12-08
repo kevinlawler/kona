@@ -295,7 +295,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
 
-  if(o && fam && k->t!=-1)show(k);
+  if(o && fam && !strcmp(errmsg,"(nil)"))show(k);
 
   cd(k);
  cleanup:
