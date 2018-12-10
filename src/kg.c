@@ -58,7 +58,7 @@ I FC(F a, F b)//Floating-Point Compare
 
 I KC(K a, K b)//List Compare (K Compare)
 {
-  if(b==NULL)R (I)TE;
+  if(b==NULL){feci=1; R (I)TE;}
   I at=a->t, an=a->n, bt=b->t, bn=b->n;
   I A=ABS(at);
 

@@ -26,6 +26,8 @@ extern void win_usleep(unsigned int); //buggy TDMGCC64 usleep()
 ;    // Need semicolon, probably missing from <pthread.h>.
 #endif
 
+I feci=0; //Flag error cast as integer
+
 K KONA_GSET=0,KONA_IDX=0;
 
 Z I randomBits();
@@ -253,7 +255,7 @@ I lines(FILE*f) {
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
 I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
-  S s=0; I b=0,c=0,m=0; K k; F d; fbr=fer=0; fam=1;
+  S s=0; I b=0,c=0,m=0; K k; F d; fbr=fer=feci=0; fam=1;
 
   //kluge:  isatty() fails using mingw-10.0 with msys2
   #ifndef __MINGW32__
@@ -295,7 +297,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
 
-  if(o && fam)show(k);
+  if(o && fam && !feci)show(k);
 
   cd(k);
  cleanup:
@@ -332,7 +334,7 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
               O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
               O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
-  kerr("(nil)"); fll=fer=fer1=fnci=fom=0; fnc=lineA=lineB=0; if(cls){cd(cls);cls=0;}
+  kerr("(nil)"); fll=fer=fer1=fnci=fom=feci=0; fnc=lineA=lineB=0; if(cls){cd(cls);cls=0;}
   R c; }
 
 I tmr_ival=0;
