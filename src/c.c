@@ -33,6 +33,7 @@ void boilerplate()
     if(!isatty(STDOUT) || !isatty(STDIN)) R;		//kluge:  isatty() fails using mingw-10.0 with msys2
   #endif
   O("kona      \\ for help. \\\\ to exit.\n\n");
+  prompt(0);
 }
 
 //Q. What if a script is \loaded (via remote call) while the terminal is waiting with an open PDA for matching parentheses/quote marks?
