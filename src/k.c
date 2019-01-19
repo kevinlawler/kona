@@ -205,7 +205,6 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
   I t=a->t;//Has to go below null check
 
   if(x)DO(d,O_(" "))
-  if(!u && d>19){O_("...");R;}//too deep for stdout
   if(5==t){O_(".");d+=1; t=0;}
   if(t<=0 && a->n==1)O_(",");
 
@@ -221,22 +220,19 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
 
   I f;F g;
 
-  I pmax = 500;//limit output on long lists. could be improved. would be better as a global variable with <= 0 indicating disabled
-  #define CPMAX {if(!u && i>pmax){O_("...");break;}}
-
-  if(0==t) DO(a->n, CPMAX printAtDepth(u,kK(a)[i],d+1,i*m,0,0);O_(i<_i-1?m?"\n":";":""))
+  if(0==t) DO(a->n, printAtDepth(u,kK(a)[i],d+1,i*m,0,0);O_(i<_i-1?m?"\n":";":""))
   if(1==ABS(t)){
     if(!a->n) O_("!0");
-    else DO(a->n, CPMAX f=kI(a)[i]; f==IN?O_("0N"):f==-II?O_("-0I"):f==II?O_("0I"):O_("%lld",f); if(i<_i-1)O_(" "))}
+    else DO(a->n, f=kI(a)[i]; f==IN?O_("0N"):f==-II?O_("-0I"):f==II?O_("0I"):O_("%lld",f); if(i<_i-1)O_(" "))}
   if(2==ABS(t)){
     if(!a->n) O_("0#0.0");
     else
-      DO(a->n, CPMAX g=kF(a)[i];
+      DO(a->n, g=kF(a)[i];
         isnan(g)?O_("0n"):g==-FI?O_("-0i"):g==FI?O_("0i"):O_("%.*g",(int)PP,g);
         if(i<_i-1)O_(" ");
         else if(needspt0(g))O_(".0"))}
   if(3==ABS(t)) {
-    O_("\""); DO(a->n, CPMAX UC c=kC(a)[i];
+    O_("\""); DO(a->n, UC c=kC(a)[i];
     if(isprint(c)&&(!isescape(c)))O_("%c",c);
     else
       if(isescape(c))
@@ -246,8 +242,7 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
     if(!a->n) O_("0#`");
     else {
       I ss=0,sl;S str;
-      DO(a->n, CPMAX
-               str=kS(a)[i];
+      DO(a->n, str=kS(a)[i];
                if((L)str<-2e9 || DT_SIZE<(L)str) {   // the (L)str<-2e9 reqd by Cygwin
                  sl=strlen(str); ss=simpleString(str); O_("`"); if(!ss) O_("\""); DO2(sl,O_("%c", str[j] ))
                  if(!ss) O_("\"");
