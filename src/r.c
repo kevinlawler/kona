@@ -89,7 +89,7 @@ Z S rangematch(S p,C t,S r);
 #define __dvl   "{x@&(#y)=y?/:x}"
 #define __gtime "{(_dj _ x % 86400; 100 _sv 24 60 60 _vsx x ! 86400)}"
 #define __hat   "{:[(1~4:x)|(2~4:x); _f[!x;y];:[@y;_f[x;,y]; x _dvl y]]}"
-#define __in    "{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}"
+#define __In    "{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}"
 #define __inv   "{((2##*x)#1,&#*x)_lsq x}"
 #define __lin   "{{:[@y;x~y;:[~-2=4:y;1;~x~0n;1;0n=+/y];(#y)>y?x;0]}[;y]'x}"
 #define __mul   "{x _dot\\:y}"
@@ -104,7 +104,7 @@ S_DYAD(dvl,  __dvl)
 // 151013AP S_DYAD(di,   "{:[@x;._f[. x;(!x)?/:y];x@&@[(#x)#1;y;:;0]]}")
 S_DYAD(di,   __di)
 S_DYAD(dv,   __dv)
-S_DYAD(in,   __in)
+S_DYAD(in,   __In)
 // 151012AP S_DYAD(lin,  "{_in[;y]/:x}")
 //S_DYAD(lin,  "{_in[;y]'x}")
 S_DYAD(lin,  __lin)
@@ -116,7 +116,7 @@ S_TRIAD(ssr, __ssr) //missing a few things
 
 K kdef(I n) {
   SW(n){CS(98,R X(__gtime))  CS(101,R X(__inv))  CS(107,R X(__binl))  CS(108,R X(__di))    CS(111,R X(__dv))   CS(112, R X(__dvl))
-        CS(113,R X(__hat))   CS(114,R X(__in))   CS(115, R X(__lin))  CS(117, R X(__mul))  CS(121, R X(__sv))  CS(123, R X(__ssr)) }
+        CS(113,R X(__hat))   CS(114,R X(__In))   CS(115, R X(__lin))  CS(117, R X(__mul))  CS(121, R X(__sv))  CS(123, R X(__ssr)) }
   R (K)0; }
 
 #define W(x)      x
@@ -748,15 +748,15 @@ Z void svdcmp(F **a, I m, I n, F *w, F **v, F *t)
 }
 
 #ifdef WIN32
-I setenv(cS name, cS value, I overwrite)
+int setenv (const char *__string, const char *__value, int __overwrite)
 {
     I errcode = 0;
-    if(!overwrite) {
+    if(!__overwrite) {
         size_t envsize = 0;
-        errcode = getenv_s(&envsize, NULL, 0, name);
+        errcode = getenv_s(&envsize, NULL, 0, __string);
         if(errcode || envsize) R errcode;
     }
-    R _putenv_s(name, value);
+    R _putenv_s(__string, __value);
 }
 #endif
 

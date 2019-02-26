@@ -7,7 +7,7 @@ DEVFLAGS = -O0 -g3 -DDEBUG -Wall
 OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
 # Win-64
-ifeq (mingw64_nt-10.0,$(OS))
+ifeq (msys_nt-10.0,$(OS))
 CC=gcc -DWIN32=1
 PRODFLAGS += -D_FILE_OFFSET_BITS=64
 LDFLAGS = -lws2_32 -static -lpthread

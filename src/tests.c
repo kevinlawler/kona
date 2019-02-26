@@ -645,7 +645,9 @@ Z I tests02()
   TC(1 0, ("a.c";"bc") _sm "*.[ch]")
   TC_("0 1", "($`one;$`two) _sm $`two")
   TC_("0 1", "`one `two  _sm $`two")
+#ifndef WIN32
   TC_("$`xxx", "`hostname _setenv $`xxx; _getenv `hostname")
+#endif
   TC(".k", ."\\d a"; ."\\d .k"; $_d)  // check for memory leaks
   TC(1 2, a:.((`b;1);(`c;2)); `a[`b`c])
   TC(3, a:1; \\b:2; c:3) // check: \b n
@@ -1081,15 +1083,9 @@ Z I testsBook()
   TC("   abcd",  7$`abcd)
   TC("   2.35", 7.2 $ 2.345)
   TC(" 714.00", 7.2 $ 714)
-#ifdef WIN32
-  TC("1.2e-034", $ 1.2e-34)
-  TC("2.35e+000" , -9.2 $ 2.345)
-  TC("7.14e+002" , -9.2 $ 714)
-#else
   TC("1.2e-34", $ 1.2e-34)
   TC("2.35e+00 " , -9.2 $ 2.345)
   TC("7.14e+02 " , -9.2 $ 714)
-#endif
   TC(27, 0$"27")
   TC(3.4, 0.0$"3.4")
   TC(27.0 , 0.0$"27")

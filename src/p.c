@@ -7,7 +7,7 @@
 
 S lineA;
 S lineB;
-__thread I fdc=1;   // Flag denameD create
+I fdc=1;            // Flag denameD create
 I fll=0;            //flag line length
 
 #if 0

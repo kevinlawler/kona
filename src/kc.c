@@ -121,7 +121,6 @@ I kinit() {       //oom (return bad)
   #ifndef WIN32
   PG = sysconf(_SC_PAGE_SIZE);
   #else
-  _fmode = O_BINARY;
   SYSTEM_INFO si; GetSystemInfo(&si); PG = si.dwPageSize;
   #endif
 
@@ -495,7 +494,7 @@ void *socket_thread(void *arg) {
   if (!p) { fprintf(stderr, "server: failed to bind\n"); exit(2); }
   freeaddrinfo(result);
 
-  if(SOCKET_ERROR==listen(listener, 10)){O("listen() failed with error: %ld\n", WSAGetLastError()); exit(3);}
+  if(SOCKET_ERROR==listen(listener, 10)){O("listen() failed with error: %d\n", WSAGetLastError()); exit(3);}
   else FD_SET(listener, &master);
 
   SOCKET SockSet[FD_SETSIZE];
@@ -511,7 +510,7 @@ void *socket_thread(void *arg) {
     if(FD_ISSET(listener, &read_fds)) {
       addrlen = sizeof remoteaddr;
       SockSet[nxt] = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
-      if(INVALID_SOCKET==SockSet[nxt]){O("accept() failed with %ld\n",WSAGetLastError()); exit(4);}
+      if(INVALID_SOCKET==SockSet[nxt]){O("accept() failed with %d\n",WSAGetLastError()); exit(4);}
       else {
         wipe_tape(nxt);
         FD_SET(SockSet[nxt], &master); nfd++;

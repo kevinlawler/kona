@@ -876,11 +876,6 @@ Z K _3d_(K x,K y) {
   //I n; //DO(10, if ((n = send(sockfd, buf, -1 + sizeof buf, 0)) == -1) { perror("send error"); R DOE; } else hi(OK))
 }
 
-#ifdef WIN32
-#define  popen    _popen
-#define  pclose   _pclose
-#endif
-
 K popen_charvec(S cmd) {
   FILE *f; K z,l; S s=0; I n=0;
   f=popen(cmd,"r"); P(!f,_n())
@@ -956,7 +951,7 @@ K _4d_(S srvr,S port,K y) {
     if(INVALID_SOCKET==(sockfd=socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol)))continue;
     else if(-1==connect(sockfd,ptr->ai_addr,ptr->ai_addrlen)){neterrno=WSAGetLastError(); r=closesocket(sockfd); if(r)R FE; continue;}
     else break;
-  if(!ptr){fprintf(stderr, "conn: failed to connect (lld%s)\n",neterrno); freeaddrinfo(result); R DOE;}
+  if(!ptr){fprintf(stderr, "conn: failed to connect (%lld)\n",neterrno); freeaddrinfo(result); R DOE;}
   I n=strlen(kC(y)); C msg[n+5]; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
   if(send(sockfd, msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); r=closesocket(sockfd); if(r)R FE; freeaddrinfo(result); R WE;}
@@ -1044,7 +1039,7 @@ K _5d_(K x,K y,I dosync) {
   I ft,fn;
 
   #ifdef WIN32
-  size_t pread(int __fd,void* __buf,size_t __nbyte,off_t __off);
+  ssize_t pread (int __fd, void *__buf, size_t __nbytes, off_t __offset);
   #endif
   I g;
   g=pread(f,&ft,sizeof(ft),2*sizeof(I)); if(!g)show(kerr("pread"));
@@ -1210,7 +1205,7 @@ K _3m(K x) {
   // loop through all the results and connect to the first we can
   for(p = servinfo; p != NULL; p = p->ai_next)
     if(INVALID_SOCKET==(sockfd=socket(p->ai_family,p->ai_socktype,p->ai_protocol))){
-      O("client socket(): %ld\n", WSAGetLastError()); continue; }
+      O("client socket(): %d\n", WSAGetLastError()); continue; }
     else if(-1==connect(sockfd, p->ai_addr, p->ai_addrlen)){
       O("client connect(): %d\n", WSAGetLastError());
       rv=closesocket(sockfd); if(rv)R FE; continue; }
