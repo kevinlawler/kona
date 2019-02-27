@@ -95,8 +95,8 @@ I getdelim(S *s,size_t*n, I d, FILE *f)//target, current capacity, delimiter, fi
 #endif
 
 #ifdef WIN32
-ssize_t getline (char **s, size_t *n, FILE *f){ R getdelim(s,n,'\n',f);}
-ssize_t getdelim (char **s, size_t *n, int d, FILE *f){   //target, current capacity, delimiter, file
+ssize_t getline (S *s, size_t *n, FILE *f){ R getdelim(s,n,'\n',f);}
+ssize_t getdelim (S *s, size_t *n, int d, FILE *f){   //target, current capacity, delimiter, file
 #if 0 
   // this code is MSVC runtime version specific
   char *q; I w=0;

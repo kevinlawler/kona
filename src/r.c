@@ -748,7 +748,7 @@ Z void svdcmp(F **a, I m, I n, F *w, F **v, F *t)
 }
 
 #ifdef WIN32
-int setenv (const char *__string, const char *__value, int __overwrite)
+int setenv (cS __string, cS __value, int __overwrite)
 {
     I errcode = 0;
     if(!__overwrite) {
