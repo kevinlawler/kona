@@ -82,7 +82,11 @@ K _0m(K a) {
       j=256; K y=0;
       for(i=0;i<256;i++){
         if(i>j){buf[j]='\0'; break;}
+        #ifndef WIN32
+        if(buf[i]=='\n')j=i; }
+        #else
         if(buf[i]=='\r'||buf[i]=='\n')j=i; }
+        #endif
       I n=strlen(buf); y=newK(n<2?3:-3,n);
       memcpy(kC(y),&buf,n); kap(&z,&y); cd(y); }
     GC; }
@@ -107,10 +111,17 @@ K _0m(K a) {
   I c=s?1:0,d=0,e;
   DO(s, if('\n'==v[i] && i < s-1)c++) //1st run: count \n
   K k; z=newK(0,c); if(!z) GC;
+  #ifndef WIN32
+  DO(s, if('\n'!=v[i])kK(z)[d]=(V)1+(L)kK(z)[d]; else d++) //2nd run: count lengths (cheat & use pointers' space)
+  DO(c,e=(L)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
+  e=0;
+  DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=1+k->n;) //3rd run: populate
+  #else
   DO(s, if('\n'!=v[i]&&'\r'!=v[i])kK(z)[d]=(V)1+(L)kK(z)[d]; else if('\n'==v[i])d++) //2nd run: count lengths (cheat & use pointers' space)
   DO(c,e=(L)kK(z)[i]; k=newK(-3,e); if(!k){cd(z);z=0;GC;}  kK(z)[i]=k)
   e=0;
   DO(c, k=kK(z)[i]; memcpy(kC(k),v+e,k->n); e+=k->n; if('\r'==v[e])e++;if('\n'==v[e])e++) //3rd run: populate
+  #endif
 
 cleanup:
   if(v){if(b)free(v);else {I r=munmap(v,s); if(r)R UE;} }
@@ -239,8 +250,13 @@ Z K _0d_read(K a,K b) {     //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 
   S m;
   I u=0,y,p=0;
   for(;u<=fn-w;u+=t+1,t=0) {    //u marks start of sometimes valid row
+    #ifndef WIN32
+    while(u+t<fn && '\n'!=v[u+t])t++;
+    if(t==w-1 && '\n'==v[u+t]) {
+    #else
     while(u+t<fn && ('\r'!=v[u+t]&&'\n'!=v[u+t]))t++;
     if(t==w-1 && ('\r'==v[u+t]||'\n'==v[u+t])) {
+    #endif
       y=u; e=x=0; K q=0;        //read row
       DO(cn, x=kI(d)[i];
              k=kK(z)[e++];
@@ -290,8 +306,13 @@ Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;
 
   S m; I u=0,t=0,p=0,n=0,h=0; C*tok; C y[2]; y[0]=w; K k;
   for(;u<=fn;u+=t+1,t=0) {
+    #ifndef WIN32
+    while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=(L)NULL)t++;
+    if(v[u+t]=='\n' || v[u+t]==(L)NULL) {
+    #else
     while(u+t<=fn && ('\r'!=v[u+t]&&'\n'!=v[u+t]) && v[u+t]!=(L)NULL)t++;
     if((v[u+t]=='\r'||v[u+t]=='\n') || v[u+t]==(L)NULL) {
+    #endif
       K q=0; e=h=0;
       m=strdupn(v+u,t);
       if(!m) R 0;
@@ -353,8 +374,13 @@ Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings  
 
   S m; I u=0,t=0,p=0,n=0,h=0; C*tok; C y[2]; y[0]=w; K k;
   for(;u<=fn;u+=t+1,t=0) {
+    #ifndef WIN32
+    while(u+t<=fn && '\n'!=v[u+t] && v[u+t]!=(L)NULL)t++;
+    if(0==n++ && (v[u+t]=='\n' || v[u+t]==(L)NULL)) {
+    #else
     while(u+t<=fn && ('\r'!=v[u+t]&&'\n'!=v[u+t]) && v[u+t]!=(L)NULL)t++;
     if(0==n++ && (v[u+t]=='\n' || v[u+t]=='\r' || v[u+t]==(L)NULL)) {
+    #endif
       e=h=0;
       m=strdupn(v+u,t); if(!m) R 0;
       if(m[0]!=(L)NULL){
@@ -369,7 +395,11 @@ Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings  
             if(kC(c)[h++]==' ') e--;
             else kS(kK(z)[0])[p++]=sp(tok); } } }
       free(m); p=0; }
+    #ifndef WIN32
+    if(n>1 && (v[u+t]=='\n' || v[u+t]==(L)NULL)) {
+    #else
     if(n>1 && (v[u+t]=='\n' || v[u+t]=='\r' || v[u+t]==(L)NULL)) {
+    #endif
       K q=0; e=h=0;
       m=strdupn(v+u,t); if(!m) R 0;
       if(m[0]!=(L)NULL){
