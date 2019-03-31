@@ -37,7 +37,7 @@ volatile sig_atomic_t interrupted=0;
 I scrLim=0;           //script load limit
 I fCheck=0;
 I fCmplt=0;
-I fbr=0;              //flag brace or bracket
+I fbr=0;              //flag for brace, bracket, or paren
 I fbs=0;              //backslash flag
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}

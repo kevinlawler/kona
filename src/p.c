@@ -480,7 +480,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
   switch(-M)
   {
     CS(MARK_CONDITIONAL, z=offsetColon)//dummy value
-    CS(MARK_PAREN  ,  z=wd_(s+k+1,r-2,dict,func); if(!z)R (L)PE;) //oom. currently z->t==7 z->n==0.
+    CS(MARK_PAREN  ,  fbr=1;
+                      z=wd_(s+k+1,r-2,dict,func); if(!z)R (L)PE;) //oom. currently z->t==7 z->n==0.
                      //Execution will know this is paren (for rev order) because of its depth
     CS(MARK_BRACKET,
                       fbr=1;
