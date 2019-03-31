@@ -41,6 +41,45 @@ __thread I frg=0;    // Flag reset globals
          I fom=0;    // Flag overMonad (curried)
          I fam=1;    // Flag amend: 1=OK to print response
 
+         I calf=-1;  // counter for alf
+         C* alf="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; // for recursive member display in sd_()
+         I sdc=10;   // sd counter for levels (prvents runaway sd)
+         I sdf=1;
+
+K sd_(K x,I f) {
+  V *v; I ff;
+  if(f<sdc)ff=f; else ff=sdc;
+  // O("CODE in x\n"); dc(kW(x)); O("\n");
+  if(!f || calf>5){O("\n"); R 0;}
+  if(x) {
+    if(!bk(x)) {
+      if(xt==4)O("     %p %p  %lld %lld %lld   ",	kK(x),*kK(x),x->_c>>8,xt,xn);
+      else     O("     %p            %lld %lld %lld   ",kK(x),       x->_c>>8,xt,xn);
+      if((xt==0 || xt==5) && xn)O("\n");
+      if(xt!=6)show(x); else O("\n"); }
+    else {O(" is ; or \\n\n"); R x; } }
+  else {O("     "); show(x); O("\n"); R x;}
+  if(f<2)R 0;
+  SW(xt) {
+    CS(7, calf++;
+       if(calf<ff){
+         O("     %c0:        %s\n",alf[calf],kS(x)[CONTeXT]);
+         O("     %c1:        %p\n",alf[calf],kV(x)[DEPTH]); }
+       DO(-2+TYPE_SEVEN_SIZE,
+          if(calf<ff){
+            O("     %c%lld:   ",alf[calf],2+i);
+            sd_(kV(x)[2+i],3);})
+       calf--; )
+    CS(-4,  if(f>2){
+            v=(kV(x));
+            I ii; for(ii=0;v[ii];ii++){O("     .2%c[%lld]: %p",alf[calf],ii,v[ii]); if(v[ii]>(V)DT_SIZE) {O(" %p",*(K*)v[ii]); sd_(*(K*)v[ii],9);} else O("\n"); }
+      } )
+    CSR(5,)
+    CS( 0, DO(xn, if(calf<ff) sd_(     kK(x)[xn-i-1],2);)) }
+  R 0; }
+
+K sd(K x){R sd_(x,sdf);}     //Shows the details of a K-structure. Useful in debugging.
+
 Z K cjoin(K x,K y) {
   P(3!=xt,TE)
   if(3==ABS(yt))R ci(y);
