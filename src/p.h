@@ -1,6 +1,7 @@
 L charsAdverb(C c);
 extern V adverbs[];
 extern I fbr;
+extern I fbk;
 extern I fbs;
 extern I feci;
 V alloc(size_t sz);

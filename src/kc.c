@@ -39,6 +39,7 @@ I fCheck=0;
 I fCmplt=0;
 I fbr=0;              //brace flag
 I fbs=0;              //backslash flag
+I fbk=0;              //bracket flag
 
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
 
@@ -254,7 +255,7 @@ I lines(FILE*f) {
     //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
 I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
-  S s=0; I b=0,c=0,m=0,o=1; K k; F d; fbr=fer=feci=0; fam=1;
+  S s=0; I b=0,c=0,m=0,o=1; K k; F d; fbr=fbk=fer=feci=0; fam=1;
 
   if(-1==(c=getline_(&s,&m,f))) GC;
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
