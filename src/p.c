@@ -483,7 +483,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
     CS(MARK_PAREN  ,  z=wd_(s+k+1,r-2,dict,func); if(!z)R (L)PE;) //oom. currently z->t==7 z->n==0.
                      //Execution will know this is paren (for rev order) because of its depth
     CS(MARK_BRACKET,
-                      fbk=1;
+                      fbr=1;
                       if(!*d || bk(p[-1])){
                         if(func && !k) R r; //Ignore function params. k because no {[a;b][c;d]}
                         else R (L)PE;}  // [1;2] on a line by itself
@@ -675,7 +675,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         if(fll>0)fdc=0;
                         //I i;for(i=k;i<strlen(s);i++)if(s[i]==':'|| (fbr && (s[i]=='x'||s[i]=='y'||s[i]=='z'))){fdc=1;break;}
                         I i;for(i=k;i<strlen(s);i++){
-                               if(!fbr && !fbk && s[i]==';')break;
+                               if(!fbr && s[i]==';')break;
                                else if(s[i]==':'|| (fbr && (s[i]=='x'||s[i]=='y'||s[i]=='z'))){fdc=1;break;}}
                         z=inKtree(dict,u,0);
                         if((!fdc)&&!z){L err=(L)VLE;

@@ -23,7 +23,6 @@ extern I test_print;
 extern S lineB;
 extern I fom;
 extern I fbr;
-extern I fbk;
 extern I fll;
 extern I fdc;
 extern __thread K cls;
