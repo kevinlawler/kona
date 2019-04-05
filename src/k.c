@@ -289,7 +289,7 @@ void printAtDepth(V u, K a, I d, I x, I vdep, I b) //u {0=stdout or K* charvec }
 
 K show(K a)
 {
-  printAtDepth(0,a,0,0,0,0);
+  printAtDepth(0,a,0,0,0,1);
   if(a && a->t!=6)O("\n");
   R a;
 }
