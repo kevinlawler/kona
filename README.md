@@ -5,13 +5,15 @@
 What is Kona?
 -------------
 
-Kona is the open-source implementation of the K programming language. K is a synthesis of APL and LISP. Although many of the capabilities come from APL, the fundamental data construct is quite different. In APL the construct is a multi-dimensional matrix-like array, where the dimension of the array can range from 0 to some maximum (often 9). In K, like LISP, the fundamental data construct is a list.  Also, like LISP, the K language is ASCII-based, so you don't need a special keyboard.
+Kona is the open-source implementation of the k programming language. k is a synthesis of APL and LISP. Although many of the capabilities come from APL, the fundamental data construct is quite different. In APL the construct is a multi-dimensional matrix-like array, where the dimension of the array can range from 0 to some maximum (often 9). In k, like LISP, the fundamental data construct is a list.  Also, like LISP, the k language is ASCII-based, so you don't need a special keyboard.
 
-For many people, K was the preferred APL dialect. When it was available, it tended to be popular with investment bankers, the performance obsessed, and analysts dealing with lots of data. It is a demanding language.
+For many people, k was the preferred APL dialect. When it was available, it tended to be popular with investment bankers, the performance obsessed, and analysts dealing with lots of data. It is a demanding language.
 
-K was originally designed by Arthur Whitney and [Kx Systems](http://kx.com/). Praise for K should be taken to refer to Kx's K. Kx sells a popular database called KDB+. People can and do create networked trading platforms in hours. If your business needs production support, you can [evaluate KDB+ prior to purchasing from Kx](http://kx.com/software-download.php), or possibly speak with Kx consulting partner [First Derivatives](http://www.firstderivatives.com/).  The 32-bit version of KDB+ is available for free.
+k was originally designed by Arthur Whitney and [Kx Systems](http://kx.com/). Praise for k should be taken to refer to Kx's k. Kx sells a popular database called KDB+. People can and do create networked trading platforms in hours. If your business needs production support, you can [evaluate KDB+ prior to purchasing from Kx](http://kx.com/software-download.php), or possibly speak with Kx consulting partner [First Derivatives](http://www.firstderivatives.com/).  The 32-bit version of KDB+ is available for free.
 
-Kx's KDB+ uses the Q language, and is built on top of K4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of K3. Earlier, Kx sold K2 as its primary product. Before K2, UBS had a 5-year exclusive license to K1. To the confusion of all, these terms are used interchangeably. Kx's K3, K2 and K1 are basically no longer available. While you get K4 with KDB+, K4 is proprietary to Kx and no documentation is available. Kona is a reimplementation that targets K3 but includes features inferred from K4 or implemented elsewhere. Kona is unaffiliated with Kx.
+Kx's KDB+ uses the Q language, and is built on top of k4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of k3. Earlier, Kx sold k2 as its primary product. Before k2, UBS had a 5-year exclusive license to k1. To the confusion of all, these terms are used interchangeably. Kx's k3, k2 and k1 are basically no longer available. While you get k4 with KDB+, k4 is proprietary to Kx and no documentation is available. Kona is a reimplementation that targets k3. Kona is unaffiliated with Kx.
+
+You can get a free evaluation copy of k7 (Shakti k) at https://shakti.com/tutorial/
 
 Mailing Lists
 -------------
