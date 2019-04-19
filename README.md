@@ -5,7 +5,7 @@
 What is Kona?
 -------------
 
-Kona is the open-source implementation of the k programming language. k is a synthesis of APL and LISP. Although many of the capabilities come from APL, the fundamental data construct is quite different. In APL the construct is a multi-dimensional matrix-like array, where the dimension of the array can range from 0 to some maximum (often 9). In k, like LISP, the fundamental data construct is a list.  Also, like LISP, the k language is ASCII-based, so you don't need a special keyboard.
+Kona is the open-source implementation of the k3 programming language. k is a synthesis of APL and LISP. Although many of the capabilities come from APL, the fundamental data construct is quite different. In APL the construct is a multi-dimensional matrix-like array, where the dimension of the array can range from 0 to some maximum (often 9). In k, like LISP, the fundamental data construct is a list.  Also, like LISP, the k language is ASCII-based, so you don't need a special keyboard.
 
 For many people, k was the preferred APL dialect. When it was available, it tended to be popular with investment bankers, the performance obsessed, and analysts dealing with lots of data. It is a demanding language.
 
