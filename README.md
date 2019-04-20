@@ -57,5 +57,3 @@ Further Information
 
 
 You can find further information about Kona at [the wiki](https://github.com/kevinlawler/kona/wiki).
-
-
