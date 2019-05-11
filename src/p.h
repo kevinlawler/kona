@@ -3,6 +3,7 @@ extern V adverbs[];
 extern I fbr;
 extern I fbs;
 extern I feci;
+extern K sd_(K x,I f);
 V alloc(size_t sz);
 L charsVerb(C c);
 I SC(S a,S b);

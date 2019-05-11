@@ -45,9 +45,7 @@ __thread I frg=0;    // Flag reset globals
          C* alf="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; // for recursive member display in sd_()
          I sdc=1;    // sd counter for levels (prvents runaway sd_.) Typically set in the range 1 thru 9.  Not set in sd_ due to recursion.
 
-K sd_(K x,I f) {
-  V *v;
-  if(calf>sdc){O("\n"); R 0;}
+K sd_(K x,I f) { V *v;
   if(x) {
     if(!bk(x)) {
       if(xt==4)O("     %p %p %p  %lld %lld %lld   ",    x,kK(x),*kK(x),x->_c>>8,xt,xn);
@@ -57,16 +55,14 @@ K sd_(K x,I f) {
   else {O("     "); show(x); O("\n"); R x;}
   if(f==0)R 0;
   SW(xt) {
-    CS(7, calf++;
-       if(calf<sdc){ O("     %c0:        %s\n",alf[calf],kS(x)[CONTeXT]); O("     %c1:        %p\n",alf[calf],kV(x)[DEPTH]); }
-       DO(-2+TYPE_SEVEN_SIZE,
-          if(calf<sdc){ O("     %c%lld:   ",alf[calf],2+i); sd_(kV(x)[2+i],3);})
+    CS(7, calf++; O("     %c0:        %s\n",alf[calf],kS(x)[CONTeXT]); O("     %c1:        %p\n",alf[calf],kV(x)[DEPTH]);
+       DO(-2+TYPE_SEVEN_SIZE, O("     %c%lld:   ",alf[calf],2+i); O(" %p",&kV(x)[2+i]); sd_(kV(x)[2+i],3);)
        calf--; )
     CS(-4,  if(f>2){ v=(kV(x)); if(v[0]<(V)0x5000000) R 0; //stop, if have string of interned symbols
-                     I ii; for(ii=0;v[ii];ii++){ O("     .2%c[%lld]: %p",alf[calf],ii,v[ii]);
-                                                 if(v[ii]>(V)DT_SIZE){ O(" %p",*(K*)v[ii]); sd_(*(K*)v[ii],9);} else O("\n"); } } )
+            I ii; for(ii=0;v[ii];ii++){ O("     .2%c[%lld]: %p",alf[calf],ii,v[ii]);
+                                        if(v[ii]>(V)DT_SIZE)sd_(*(K*)v[ii],9); else O("\n"); } } )
     CSR(5,)
-    CS( 0, DO(xn, if(calf<sdc) sd_(     kK(x)[xn-i-1],2);)) }
+    CS( 0, DO(xn, O(" %p",&kK(x)[xn-i-1]); sd_(kK(x)[xn-i-1],2); )) }
   R 0; }
 
 K sd(K x){R sd_(x,0);}     //Shows the details of a K-structure. Useful in debugging.
