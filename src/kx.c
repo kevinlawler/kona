@@ -43,7 +43,6 @@ __thread I frg=0;    // Flag reset globals
 
          I calf=-1;  // counter for alf
          C* alf="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; // for recursive member display in sd_()
-         I sdc=1;    // sd counter for levels (prvents runaway sd_.) Typically set in the range 1 thru 9.  Not set in sd_ due to recursion.
 
 K sd_(K x,I f) { V *v;
   if(x) {
@@ -55,7 +54,8 @@ K sd_(K x,I f) { V *v;
   else {O("     "); show(x); O("\n"); R x;}
   if(f==0)R 0;
   SW(xt) {
-    CS(7, calf++; O("     %c0:        %s\n",alf[calf],kS(x)[CONTeXT]); O("     %c1:        %p\n",alf[calf],kV(x)[DEPTH]);
+    CS(7, calf++; O("     %c0:    %p     %s\n",alf[calf],&kS(x)[CONTeXT],kS(x)[CONTeXT]);
+       O("     %c1:    %p     %p\n",alf[calf],&kV(x)[DEPTH],kV(x)[DEPTH]);
        DO(-2+TYPE_SEVEN_SIZE, O("     %c%lld:   ",alf[calf],2+i); O(" %p",&kV(x)[2+i]); sd_(kV(x)[2+i],3);)
        calf--; )
     CS(-4,  if(f>2){ v=(kV(x)); if(v[0]<(V)0x5000000) R 0; //stop, if have string of interned symbols

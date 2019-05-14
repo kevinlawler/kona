@@ -18,7 +18,7 @@ K *lookupEVOrCreate(K *p,S k);
 I atomI(K a);
 K at_ref(K *p,K b,K c,K y);
 I args(int n,S *v);
-K specialAmendDot(K c,K args);
+extern K specialAmendDot(K c,K args);
 I countI(K a);
 K vf_ex(V q,K g);
 K dot(K a,K b);
