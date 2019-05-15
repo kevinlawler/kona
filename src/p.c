@@ -325,15 +325,15 @@ I mark(I*m,I k,I t){DO(k, m[i]=i?t:-t) R k;}
 //      this rule doesn't apply to function argument lists, eg: f:{  [a] 1} is ok. however f: {\n\n  [a;b;d]  1+1} not ok
 //      so the check probably has to do with whether some useful symbol occurred on the line already
 //other errors: syntax error
-K wd(S s, int n){lineA=s; fdc=0;R wd_(s,n,denameD(&KTREE,d_,1),0);}
-K wd_(S s, int n, K*dict, K func) //parse: s input string, n length ;
+K wd(S s, int n){lineA=s; fdc=0;R wd_(s,n,*denameD(&KTREE,d_,1),0);}
+K wd_(S s, int n, K dict, K func) //parse: s input string, n length ;
                                 //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
 {
   if(!s) R 0;
   if(strstr(s,":\\t")) { show(kerr("\\t  syntax")); R 0; }
   //I z=0; if((z=syntaxChk(s))) {O("%lld\n",z); R SYE;}
   if(syntaxChk(s)) R SYE;
-  if('\\'==s[0] && fbs){fbs=0; R backslash(s,n,dict);}
+  if('\\'==s[0] && fbs){fbs=0; R backslash(s,n,&dict);}
 
   PDA p=0;
   K km=newK(-1,1+n); U(km) I *m = kI(km);//marks
@@ -461,7 +461,7 @@ K* inKtree(K*d, S t, I create) {
 }
 
 //TODO: capture - oom all
-I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
+I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K dict,K func)
   //IN string, string length, pos in string, markings;
   //OUT words, current #words; IN locals-storage, names-storage, charfunc/NULL
 {
@@ -581,7 +581,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                       if(state) //Bracketed parameters exist and are well-formed
                       {
                         S a=strchr(s+k+1,'['); S b=strchr(a,']');
-                        j=wd_(a+1,b-a-1,zdict,z); //Grab only params. This must create entries in *zdict
+                        j=wd_(a+1,b-a-1,*zdict,z); //Grab only params. This must create entries in *zdict
                         M(z,j) //not g
                         cd(j);
                       }
@@ -589,7 +589,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                       {
                         K t=Kd();
                         M(z,t)
-                        j=wd_(s+k+1,r-2,&t,0); //Grab all local names
+                        j=wd_(s+k+1,r-2,t,0); //Grab all local names
                         M(z,t,j);
                         I n=0;
                         DO(3, if(DE(t,IFP[2-i])){n=3-i;break;})
@@ -597,7 +597,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         cd(t); cd(j);
                       }
 
-                      j=wd_(s+k+1,r-2,ydict,z);
+                      j=wd_(s+k+1,r-2,*ydict,z);
                       M(z,j)
                       cd(j);
 
@@ -655,20 +655,20 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         else z=((K(*)())vn_[charpos(n_s,u[1])])();
                       else if(func)
                       {
-                        if(dict==(K*)kV(func)+PARAMS)
+                        if(&dict==(K*)kV(func)+PARAMS)
                         {
                           V q=newEntry(u);
                           U(q)
-                          M(q,kap(dict,&q))
+                          M(q,kap(&dict,&q))
                           z=EV(q);
                           cd(q);
                         }
-                        else if((q=DE(*dict,u))) z=EVP(q); //If func has its local, use it
+                        else if((q=DE(dict,u))) z=EVP(q); //If func has its local, use it
                         //else if(':'==s[k+r] && ':'==s[k+r+1] && -MARK_VERB==m[k+r+1])
                         //  {m[k+r]=MARK_NAME; r++; z=denameS(kV(func)[CONTeXT],u);} //m[]=  probably superfluous
                         else if(-MARK_VERB==m[k+r] && ':'==s[k+r+1] && -MARK_VERB==m[k+r+1])
                           {if(':'==s[k+r])r++; z=denameS(kV(func)[CONTeXT],u,1);}
-                        else if(dict==(K*)kV(func)+LOCALS && ':'==s[k+r] && -MARK_VERB==m[k+r]) z=denameD(dict,u,1);
+                        else if(dict==*((K*)kV(func)+LOCALS) && ':'==s[k+r] && -MARK_VERB==m[k+r]) z=denameD(&dict,u,1);
                           //K3.2:  a+:1 format applies to context-globals not locals
                         else z=denameS(kV(func)[CONTeXT],u,0);//Otherwise check the context (refactor with above?)
                       }
@@ -678,13 +678,13 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                         I i;for(i=k;i<strlen(s);i++){
                                if(!fbr && s[i]==';')break;
                                else if(s[i]==':'|| (fbr && (s[i]=='x'||s[i]=='y'||s[i]=='z'))){fdc=1;break;}}
-                        z=inKtree(dict,u,0);
+                        z=inKtree(&dict,u,0);
                         if((!fdc)&&!z){L err=(L)VLE;
                            #ifndef DEBUG
                            oerr(); O("%s\n%c\n",u,'^');
                            #endif
                            R err;}
-                        z=denameD(dict,u,fll&&fdc); }
+                        z=denameD(&dict,u,fll&&fdc); }
       )
     CS(MARK_VERB   ,  // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){z=(V)0x7c; break;}   //trace or scan
