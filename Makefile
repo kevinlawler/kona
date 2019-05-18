@@ -86,6 +86,13 @@ LDFLAGS += -lsocket
 PRODFLAGS += -fast
 endif
 
+ifeq (haiku,$(OS))
+OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
+      src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
+      src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
+LDFLAGS = -lm -lnetwork
+endif
+
 # k_test versions of OBJS
 OBJS_T= $(shell echo ${OBJS} | sed -e "s/\.o/.t.o/g")
 
@@ -164,6 +171,10 @@ src/*.o: src/incs.h src/ts.h Makefile src/k.h
 endif
 
 ifeq (sunos,$(OS))
+src/*.o: src/incs.h src/ts.h Makefile src/k.h
+endif
+
+ifeq (haiku,$(OS))
 src/*.o: src/incs.h src/ts.h Makefile src/k.h
 endif
 
