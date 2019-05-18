@@ -1,3 +1,7 @@
+#if !defined(WIN32)
+#include <sys/select.h>
+#endif
+
 ;
 extern K KFIXED;
 K cd(K a);
