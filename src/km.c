@@ -142,6 +142,7 @@ K newK(I t, I n)
   //^^ relies on MAP_ANON being zero-filled for 0==t || 5==t (cd() the half-complete), 3==ABS(t) kC(z)[n]=0 (+-3 types emulate c-string)
   ic(slsz(z,r)); z->t=t; z->n=n;
   if(t==6)z->n=0;
+  if(z->_c==0)z->_c=257;
   #ifdef DEBUG
   krec[kreci++]=z;
   #endif
