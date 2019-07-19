@@ -19,7 +19,7 @@ Mailing Lists
 -------------
 [kona-user](https://groups.google.com/forum/#!forum/kona-user) is about using the Kona programming language.
 
-[konda-dev](https://groups.google.com/forum/#!forum/kona-dev) is about developing the Kona language itself.
+[kona-dev](https://groups.google.com/forum/#!forum/kona-dev) is about developing the Kona language itself.
 
 Installation
 ------------
