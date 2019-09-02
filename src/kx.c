@@ -49,23 +49,24 @@ K sd_(K x,I f) { V *v;
     if(!bk(x)) {
       if(xt==4)O("     %p %p %p  %lld-%lld %lld %lld   ",    x,kK(x),*kK(x),x->_c>>8,(x->_c<<56)>>56,xt,xn);
       else     O("     %p %p            %lld-%lld %lld %lld   ",x,kK(x),x->_c>>8,(x->_c<<56)>>56,xt,xn);
-      if(xt!=6)show(x); else O("\n"); }
+      if(f>0 && ((xt==0) || (xt==5)))O("\n");
+      if(xt!=6 && f>0)show(x);  else O("\n"); }
     else {O(" is ; or \\n\n"); R x; } }
   else {O("     "); show(x); O("\n"); R x;}
-  if(f==0)R 0;
+  if(f<2)R 0;
   SW(xt) {
     CS(7, calf++; O("     %c0:    %p     %s\n",alf[calf],&kS(x)[CONTeXT],kS(x)[CONTeXT]);
        O("     %c1:    %p     %p\n",alf[calf],&kV(x)[DEPTH],kV(x)[DEPTH]);
        DO(-2+TYPE_SEVEN_SIZE, O("     %c%lld:   ",alf[calf],2+i); O(" %p",&kV(x)[2+i]); sd_(kV(x)[2+i],3);)
        calf--; )
-    CS(-4,  if(f>2){ v=(kV(x)); if(v[0]<(V)0x5000000) R 0; //stop, if have string of interned symbols
+    CS(-4,  if(f>-1){ v=(kV(x)); if((v[0]>(V)0x10) & (v[0]<(V)0x5000000)) R 0; //stop, if have string of interned symbols
             I ii; for(ii=0;v[ii];ii++){ O("     .2%c[%lld]: %p",alf[calf],ii,v[ii]);
-                                        if(v[ii]>(V)DT_SIZE)sd_(*(K*)v[ii],9); else O("\n"); } } )
+                                        if(v[ii]>(V)DT_SIZE)sd_(*(K*)v[ii],1); else O("\n"); } } )
     CSR(5,)
-    CS( 0, DO(xn, O(" %p",&kK(x)[xn-i-1]); sd_(kK(x)[xn-i-1],2); )) }
+    CS( 0, DO(xn, O(" %p",&kK(x)[xn-i-1]); sd_(kK(x)[i],2); )) }
   R 0; }
 
-K sd(K x){R sd_(x,0);}     //Shows the details of a K-structure. Useful in debugging.
+K sd(K x){R sd_(x,1);}     //Shows the details of a K-structure. Useful in debugging.
 
 Z K cjoin(K x,K y) {
   P(3!=xt,TE)
@@ -640,7 +641,7 @@ K vf_ex(V q, K g)
         K fc = kclone(f); //clone the function to pass for _f
         cd(kV(fc)[CONJ]); kV(fc)[CONJ]=0;
          kV(fc)[DEPTH]++;
-         I tt=0; DO(o->n, if(kC(o)[i]=='{')tt=1;)
+         I tt=0; DO(o->n, if(kC(o)[i]=='{'){ tt=1; break; })
          if(tt || kC(o)[0]=='[') fw=wd_(kC(o),o->n,&tree,fc);
          else { tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
          kV(f)[CACHE_WD]=fw; cd(fc); }
