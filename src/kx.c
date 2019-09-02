@@ -473,6 +473,7 @@ K dv_ex(K a, V *p, K b)
 //K3.2 Bug - {b:1_,/";a",/:$a:!x; "{[",b,"]a3}[" ,(1_,/";",/:$a ),"]" } 67890  --> Sometimes works, sometimes stack error, sometimes crash
 K vf_ex(V q, K g)
 {
+  K tc=0;
   if (interrupted) {interrupted=0; R BE;}
 
   //V w=(*(V*)q);
@@ -638,7 +639,11 @@ K vf_ex(V q, K g)
         if(t) cd(kV(f)[CACHE_WD]);
         K fc = kclone(f); //clone the function to pass for _f
         cd(kV(fc)[CONJ]); kV(fc)[CONJ]=0;
-        kV(fc)[DEPTH]++; fw=wd_(kC(o),o->n,&tree,fc); kV(f)[CACHE_WD]=fw; cd(fc); }
+         kV(fc)[DEPTH]++;
+         I tt=0; DO(o->n, if(kC(o)[i]=='{')tt=1;)
+         if(tt || kC(o)[0]=='[') fw=wd_(kC(o),o->n,&tree,fc);
+         else { tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
+         kV(f)[CACHE_WD]=fw; cd(fc); }
 
       #ifdef DEBUG
       if(stk1>5) {cd(g); kerr("stack"); R _n();}
@@ -684,7 +689,7 @@ K vf_ex(V q, K g)
       cd(kK(z)[CACHE_TREE]); kK(z)[CACHE_TREE]=dot_monadic(j2); cd(x); cd(xe); cd(j0); cd(j2); encp=1; } }
 
 cleanup:
-  cd(g);
+  cd(g); cd(tc);
   R z;
 }
 

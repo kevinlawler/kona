@@ -293,6 +293,7 @@ Z I tests02()
   TC_(",1 1", "0(+\\)\\1 1")                      // issue 515
   TC(+[a+2;a:3],8)                                // issue 538
   TC((a;a:2), 2 2)                                // issue 538
+  TC("F",tk:("F";"G");call:{nm:*tk; tk::1 _ tk;if[nm~"G"; :0];call();nm};call())   // issue 521
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
@@ -657,7 +658,7 @@ Z I tests02()
   TC(skip, 5 6, a[5 6])            // value error
   TC(skip, 5, a 5)                 // value error
   TC(skip, 5 6, a 5 6)             // value error
-  TC(a:{a[x]}; a 5, )
+  TC(skip, a:{a[x]}; a 5, )        // stack error
   TC(4 3 2 1 0, r:{:[x;x,_f[x-1];0]}; r[4])
   TC(4 3 2 1 0, r:{:[x;x,r[x-1];0]}; r[4])
   TC(1, `a.1)   //issue #290
