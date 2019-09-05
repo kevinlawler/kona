@@ -932,7 +932,7 @@ Z void execute(S *argvP, I fWait) {
   else {
     if(fWait) { while (wait((int*)&status) != pid)  ; } } }
 
-K _4d_(S srvr,S port,K y){
+K _4d_(S srvr,S port,K y) {
   struct addrinfo hints, *servinfo, *p; int rv,sockfd; S errstr; I r;
   memset(&hints,0,sizeof hints); hints.ai_family=AF_UNSPEC; hints.ai_socktype=SOCK_STREAM;
   if((rv=getaddrinfo(srvr,port,&hints,&servinfo))){fprintf(stderr,"conn: %s\n",gai_strerror(rv)); R DOE;}
@@ -944,11 +944,19 @@ K _4d_(S srvr,S port,K y){
   I n=strlen(kC(y)); C msg[n+5]; I i=0; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
   if(write(sockfd, &msg, strlen(msg))==-1){r=close(sockfd); if(r)R FE; R WE;}
-  C buf[20000]; n=read(sockfd,&buf,20000); r=close(sockfd); if(r)R FE;
-  K z=newK(n==1?3:-3,n); memcpy(kC(z),&buf,n);
-  freeaddrinfo(servinfo);
-  if(n==0)R _n();
-  else R z; }
+  C buf[20000]; I size=30000; S data = malloc(size); I n1=1; n=0;
+  do {
+        n1=read(sockfd,&buf,20000);
+        if(n1 == 0) break;
+        if(n1<0){O("errno: %d\n",errno); R 0;}
+        if( (n+n1) > (size-1) ) { size += 20000; data = realloc(data,size); }
+        for(i=0; i<n1+1; ++i) data[n+i]=buf[i];
+        n += n1;
+  } while(n1);
+  r=close(sockfd); if(r)R FE;
+  K z=newK(n==1?3:-3,n); memcpy(kC(z),data,n);
+  freeaddrinfo(servinfo); free(data);
+  R(n)?z:_n(); }
 
 #else
 
@@ -985,9 +993,18 @@ K _4d_(S srvr,S port,K y) {
   I n=strlen(kC(y)); C msg[n+5]; for(i=0;i<n+1;i++){msg[i]=kC(y)[i];}
   msg[n]='\r'; msg[n+1]='\n'; msg[n+2]='\r'; msg[n+3]='\n'; msg[n+4]='\0';
   if(send(sockfd, msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); r=closesocket(sockfd); if(r)R FE; freeaddrinfo(result); R WE;}
-  C buf[20000]; n=recv(sockfd,buf,20000,0); r=closesocket(sockfd); if(r)R FE;
-  K z=newK(n==1?3:-3,n); memcpy(kC(z),buf,n);
-  freeaddrinfo(result);
+  C buf[20000]; I size=30000; S data = malloc(size); I n1=1; n=0;
+  do {
+        n1=recv(sockfd,&buf,20000,0);
+        if(n1 == 0) break;
+        if(n1<0){O("errno: %d\n",errno); R 0;}
+        if( (n+n1) > (size-1) ) { size += 20000; data = realloc(data,size); }
+        for(i=0; i<n1+1; ++i) data[n+i]=buf[i];
+        n += n1;
+  } while(n1);
+  r=closesocket(sockfd); if(r)R FE;
+  K z=newK(n==1?3:-3,n); memcpy(kC(z),data,n);
+  freeaddrinfo(result); free(data);
   R(n)?z:_n(); }
 
 #endif
