@@ -293,7 +293,10 @@ Z K each2(K a, V *p, K b) {
       if(prnt)prnt0=ci(prnt);
       if(grnt)grnt0=ci(grnt);
       DO(bn,
-        if(f)d=dv_ex(a,p-1,kK(b)[i]);
+        if(f)
+        { if(a && a->n>1) d=dv_ex(kK(a)[i],p-1,kK(b)[i]);
+          else  d=dv_ex(a,p-1,kK(b)[i]);
+        }
         else {
           if(prnt0){cd(prnt);prnt=ci(prnt0);} if(grnt0){cd(grnt);grnt=ci(grnt0);}
           d=dv_ex(0,p-1,kK(b)[i]);}
