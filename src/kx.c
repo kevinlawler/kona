@@ -285,7 +285,7 @@ Z K each2(K a, V *p, K b) {
   if(bt > 0) R dv_ex(0,p-1,b);
   else {
     K z = newK(0,bn),d=0; U(z)
-    K g; I f=*p==(V)offsetEach && (*(p-1)==(V)offsetOver || *(p-1)==(V)offsetScan) && *(p-2)<(V)DT_SIZE;
+    K g; I f=*p==(V)offsetEach && (*(p-1)==(V)offsetEach || *(p-1)==(V)offsetOver || *(p-1)==(V)offsetScan) && *(p-2)<(V)DT_SIZE;
     if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt));
       if(f)d=dv_ex(a,p-1,g); else d=dv_ex(0,p-1,g);
       cd(g); M(d,z) kK(z)[i]=d)
