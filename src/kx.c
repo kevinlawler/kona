@@ -282,7 +282,7 @@ Z K scanMonad(K a, V *p, K b)
 
 Z K each2(K a, V *p, K b) {
   I bt=b->t, bn=b->n; K prnt0=0,grnt0=0;
-  if(bt > 0) R dv_ex(0,p-1,b);
+  if(bt > 0) R dv_ex(a,p-1,b);
   else {
     K z = newK(0,bn),d=0; U(z)
     K g; I f=*p==(V)offsetEach && (*(p-1)==(V)offsetEach || *(p-1)==(V)offsetOver || *(p-1)==(V)offsetScan) && *(p-2)<(V)DT_SIZE;
