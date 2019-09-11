@@ -281,10 +281,16 @@ Z K scanMonad(K a, V *p, K b)
 }
 
 Z K each2(K a, V *p, K b) {
-  I bt=b->t, bn=b->n; K prnt0=0,grnt0=0;
-  if(bt > 0) R dv_ex(a,p-1,b);
+  I bt=b->t, bn=b->n; K prnt0=0, grnt0=0, d=0;
+  if(bt > 0) { if(a && a->n>0)
+               { K z = newK(0,a->n); U(z)
+                 DO(a->n, d = dv_ex(kK(a)[i],p-1,b); M(d,z) kK(z)[i]=d )
+                 z=demote(z); if(z->t==1) z->t=-1; R z;
+               }
+               else { d = dv_ex(a,p-1,b); R d; }
+             }
   else {
-    K z = newK(0,bn),d=0; U(z)
+    K z = newK(0,bn); U(z)
     K g; I f=*p==(V)offsetEach && (*(p-1)==(V)offsetEach || *(p-1)==(V)offsetOver || *(p-1)==(V)offsetScan) && *(p-2)<(V)DT_SIZE;
     if(0 >bt) DO(bn, g=newK(ABS(bt),1); M(g,z) memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt));
       if(f)d=dv_ex(a,p-1,g); else d=dv_ex(0,p-1,g);
