@@ -220,22 +220,16 @@ S recur(S s) {
     else R NULL; }
   else R NULL; }
 
-Z void trim(S s){    //remove leading blanks
-  I i,j;
+Z void trim(S s)    //remove leading blanks (and extra instances of "each")
+{ I i,j,k=0;
   for(i=0;i<strlen(s);++i) { if(s[i]!=' ') break; }
-  if(i){ for(j=0;j<1+strlen(s);++j) {s[j]=s[j+i];} } }
-
-/*
-Z void trim(S s) {
-  // initial version of trim: also removed duplicate blanks (caused problems with quoted strings)
-  // it was an attempt to avoid segfaults in corner cases when manipulating input line with recur()
-  I b=0,c=0,d=0,f=0;
-  for(f=0;f<1+strlen(s);f++){if(s[f]!=' ') break;}
-  for(d=f;d<1+strlen(s);d++){
-    if(s[d]!=' '){s[c]=s[d]; c++; b=0;}
-    else if(!b) {s[c]=s[d]; c++; b=1;}
-    if(c>2 && (s[c-1]==':' || s[c-1]=='{') && s[c-2]==' ' && s[c-3]!='/'){s[c-2]=s[c-1]; c--;} } }
-*/
+  s[0]=s[i];   if(s[0]==*"'")k++;
+  s[1]=s[i+1]; if(s[1]==*"'")k++;
+  for( j=2; j<1+strlen(s); j++ )
+  { if(s[j+i] != *"'") { s[j]=s[j+i]; k=0; }
+    else { if(k==2) { while( s[j+i]==*"'" && i<strlen(s) ) i++;
+                      s[j]=s[j+i]; k=0; }
+           else {  k++; s[j]=s[j+i]; } } } }
 
 I check() {      //in suspended execution mode: allows checking of state at time of error
   I ofCheck=fCheck;
