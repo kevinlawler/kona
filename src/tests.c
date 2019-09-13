@@ -295,6 +295,7 @@ Z I tests02()
   TC((a;a:2), 2 2)                                // issue 538
   TC("F",tk:("F";"G");call:{nm:*tk; tk::1 _ tk;if[nm~"G"; :0];call();nm};call())   // issue 521
   TC(1, (40000<#x) & &/ "</html>" = -7 # x: `"google.com"`http 4:"GET /") // issue 523
+  TC(1, (a)=a:12 )                                // issue 551
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
