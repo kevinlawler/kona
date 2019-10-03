@@ -467,7 +467,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
 {
   if(fll && fll!=n)fll=-1;
   V z=0,*p=w+*d; *p=0;
-  I r=1,v=0,y=0,a,b=0,c;S u="",e;K g;I l;
+  I r=1,v=0,y=0,a,b=0,c,l,frc=0;S u="",e;K g,h=0,hh=0;
 
   if(k>=n || !CAPTURE_START(m[k])) R r;
   I M=m[k];
@@ -654,7 +654,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                           // see "getrusage" or http://stackoverflow.com/questions/53827/checking-available-stack-size-in-c
                         else z=((K(*)())vn_[charpos(n_s,u[1])])();
                       else if(func)
-                      {
+                      { h=*denameS(".k",u,0);
+                        if(7==h->t) hh=match( (K)kV(h)[CODE] , (K)kV(func)[CODE] );
                         if(dict==(K*)kV(func)+PARAMS)
                         {
                           V q=newEntry(u);
@@ -670,6 +671,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
                           {if(':'==s[k+r])r++; z=denameS(kV(func)[CONTeXT],u,1);}
                         else if(dict==(K*)kV(func)+LOCALS && ':'==s[k+r] && -MARK_VERB==m[k+r]) z=denameD(dict,u,1);
                           //K3.2:  a+:1 format applies to context-globals not locals
+                        else if(7==h->t && *kI(hh)) { z=ci(func); frc=1; }
                         else z=denameS(kV(func)[CONTeXT],u,0);//Otherwise check the context (refactor with above?)
                       }
                       else {
@@ -762,9 +764,10 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
 
   if(!z){} //TODO: handle null z, which can happen
 
+  //if('_'==*u || frc)O("YES\n"); else O("NO\n");
   switch(-M) //Things that need to be stored locally
   {
-    CSR(MARK_NAME   , if('_'!=*u)break;)   //Fall-through
+    CSR(MARK_NAME   , if('_'!=*u && !frc)break;)   //Fall-through
     CSR(MARK_PAREN  ,)
     CSR(MARK_BRACKET,)
     CSR(MARK_BRACE  ,)
@@ -773,6 +776,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)
     CS (MARK_SYMBOL , z=newE(LS,z); P(!z,(L)ME) kap(locals,&z); cd(z); z=EVP(z) ) //oom
   }
 
+  cd(hh);
   *p=z;
   ++*d;
 

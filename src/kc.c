@@ -195,31 +195,6 @@ Z I nodeCount_(N n) {
   R 1+l+r; }
 Z I nodeCount(N n) { R nodeCount_(n)-1; }
 
-S recur(S s) {
-  I sl=strlen(s); I f=0,i,j,k,p,q,t,c=1;
-  for(i=1;i<sl-1;i++){if(s[i]==':' && s[i+1]=='{' && (isalnum(s[i-1]) || s[i-1]==' '))
-    {f=1; break;} } //find begin :{ which is i
-  if(!f) R NULL;
-  for(j=i-1;j>=0;j--){ if(!isalnum(s[j])) break; } //find begin-name, which is j+1
-  if(isdigit(s[j+1])) R NULL;
-  for(k=i+2;k<sl;k++){ if(s[k]=='{')c++; if(s[k]=='}')c--; if(!c)break; } //find end-} which is k
-  I n=1+(i-1)-(j+1); char nm[n+1]; strncpy(nm, s+i-n, n); nm[n]='\0'; //n is strlen(nm)
-  I m=k-i-2; char st[m+1]; strncpy(st, s+i+2, m); st[m]='\0'; //m:strlen(st), st:string within outer braces
-  f=0; for(p=0;p<strlen(st);p++)if(st[p]=='{'){f=1; break;}  //check for inner braces
-  if(f){for(q=strlen(st)-1;q>0;q--)if(st[q]=='}')break; for(t=p+1;t<q;t++)st[t]=' ';}  //blank out inner brace
-  S rem=strstr(st,nm);  //remainder of st beginning with nm (if it exists)
-  if(rem && ('['==*(rem+strlen(nm)) ||' '==*(rem+strlen(nm)))) {
-    I offset=rem-st; C prior=*(s+i+2+offset-1); S res;  //prior is character before rem in s
-    if('_'!=prior && !isalnum(prior) && '"'!=prior) {
-      res=alloc(1+sl+(2-n)); I ii,beg=k-strlen(rem);
-      for(ii=0;ii<beg;ii++){res[ii]=s[ii];}
-      res[beg]='_'; res[beg+1]='f';
-      for(ii=n;ii<strlen(rem);ii++){res[beg+ii+2-n]=rem[ii];}
-      for(ii=k;ii<sl+1;ii++){res[ii+2-n]=s[ii];}
-      R res;}
-    else R NULL; }
-  else R NULL; }
-
 Z void trim(S s)    //remove leading blanks (and extra instances of "each")
 { I i,j,k=0;
   for(i=0;i<strlen(s);++i) { if(s[i]!=' ') break; }
@@ -266,7 +241,6 @@ I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
 
   trim(*a); //remove leading blanks
-  S newA=recur(*a); if(newA){ free(*a); *a=newA; }  //check & fix 'Named Recursion' (issue #288)
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if((*a)[0]=='\\')fbs=1; else fbs=0;
 

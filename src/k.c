@@ -48,11 +48,7 @@ I maX(I a,I b){R a>b?a:b;}
 I miN(I a,I b){R a<b?a:b;}
 
 K X(S s){kerr("(nil)"); fnci=0; R XN(s,strlen(s));}
-Z K XN(S s,I n){  //asserts ex(x) has first-line U(x)
-  S newS=recur(s);
-  if(newS) {K r=ex(wd(newS,strlen(newS))); free(newS); R r;}
-  else  R ex(wd(s,n));
-}
+Z K XN(S s,I n){ R ex(wd(s,n)); }  //asserts ex(x) has first-line U(x)
 K KX(K x){R XN(CSK(x),xn);}  //assumes 3==ABS(xt)
 
 //TODO: open() can set errno, everywhere

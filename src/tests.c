@@ -287,7 +287,9 @@ Z I tests02()
   TC(=/!0, 1)                                     // issue 475
   TC(=/1 2 3, 0)                                  // issue 475
   TC(120, fac:{[n] :[n=0;1;n*fac n-1]}; fac 5)    // issue 487
+  TC(120, fac:{[n] :[n=0;1;n*fac[n-1]]}; fac 5)   // issue 487
   TC(120, fac:{[n] :[n=0;1;n*_f n-1]}; fac 5)     // issue 487
+  TC(120, fac:{[n] :[n=0;1;n*_f[n-1]]}; fac 5)    // issue 487
   TC(3, a:3;a)                                    // issue 502
   TC("abcdefghij"2 3, "cd")                       // issue 508
   TC_(",1 1", "0(+\\)\\1 1")                      // issue 515
@@ -298,6 +300,7 @@ Z I tests02()
   TC(1, (a)=a:12 )                                // issue 551
   TC( _n, {a}0 )                                  // issue 540
   TC( 0, {a x}0 )                                 // issue 540
+  TC( 0, f:{:[x>0;2*f[x-1];1]}; g:f; f:{0}; g 4 ) // issue 537
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
@@ -695,6 +698,8 @@ Z I tests02()
   TC_("'\"abc\"", "\"abc\"")              //issue #367
   TC(6, fac:{:[x>1;x*fac[x-1];1]}; fac 3) //issue #373 (valgrind leaks)
   TC(6, fac:{:[x>1;x*fac x-1;1]}; fac 3)  //issue #373 (valgrind leaks)
+  TC(6, fac:{:[x>1;x*_f[x-1];1]}; fac 3)  //issue #373 (valgrind leaks)
+  TC(6, fac:{:[x>1;x*_f x-1;1]}; fac 3)   //issue #373 (valgrind leaks)
   TC(2, 1 2 3 . (,1))
   TC(1, (-0i) = -0I)                      // nan and inf handling
   TC(1, 0n = 0N)
