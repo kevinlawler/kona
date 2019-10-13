@@ -83,9 +83,10 @@ I test()
 
 Z I testsIO()
 {
-  return 0;
+  R 0;
   //binary - 1: 2:
   TC(1,t:`testfile00; a:(1;1.0;"c";`d;1 2;3.0 4.0;"ef";`g`h;();(1;`z)); t 1: a;  &/ a ~/: (1:t;2:t)) //leaves a file
+  TC(1, (40000<#x) & &/ "</html>" = -7 # x: `"google.com"`http 4:"GET /") // issue 523 (partial fetch from network connection)
 }
 
 Z I tests02()
@@ -296,7 +297,6 @@ Z I tests02()
   TC(+[a+2;a:3],8)                                // issue 538
   TC((a;a:2), 2 2)                                // issue 538
   TC("F",tk:("F";"G");call:{nm:*tk; tk::1 _ tk;if[nm~"G"; :0];call();nm};call())   // issue 521
-  TC(1, (40000<#x) & &/ "</html>" = -7 # x: `"google.com"`http 4:"GET /") // issue 523
   TC(1, (a)=a:12 )                                // issue 551
   TC( _n, {a}0 )                                  // issue 540
   TC( 0, {a x}0 )                                 // issue 540
