@@ -300,8 +300,9 @@ K wd_(S s, int n, K*dict, K func) //parse: s input string, n length;
   //(eg imagine 1+1 is not 0=t,4=n VVV0 but 0=t,6=n VVV000)
   //        ^^^ padded overcount bad already (for O(1) valence calc)
   //"reall0c" kw down to size
-  if(oc>c && lsz(sz(0,1+oc)) > lsz(sz(0,1+c))) //TODO: better if possible: fix overcount() to be exact count: could just be adding != -MARK_BRACKET. dd() differences
-                                               //if(oc-c){test_print=1; dd(oc-c); if(tests>110)exit(0);}
+  if(oc>c && lsz(sz(0,1+oc)) > lsz(sz(0,1+c)))
+    //TODO: better if possible: fix overcount() to be exact count: could just be adding != -MARK_BRACKET. dd() differences
+    //if(oc-c){test_print=1; dd(oc-c); if(tests>110)exit(0);}
   { K kw2=newK(-4,1+c); //trim because we cut corners using overcount()
     M(v,kw,kw2) memcpy(kK(kw2),kK(kw),sizeof(V)*c); cd(kw); kw=kw2; }   //-4 special trick: don't recursively cd() contents
   kV(v)[CODE]=kw; // return what we just built
@@ -427,7 +428,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                              // it's OK to let the parent free the objects (it may not be)
                              //  probably best to simply implement realloc-shrink for anonymous mmap
                           K temp=DI(*locals,(*locals)->n-1); //This is a replacement for above.
-                                                             //It can be optimized(?) since it leaves an empty dict entry on *locals
+                                                       //It can be optimized(?) since it leaves an empty dict entry on *locals
                           if(temp)
                           { cd(kK(temp)[1]);
                             kK(temp)[1]=0; }

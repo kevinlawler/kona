@@ -116,7 +116,8 @@ K overDyad(K a, V *p, K b)
   if(a&&*o==offsetJoin&&!b->t&&!b->n) R 0<a->t?enlist(a):ci(a);
   if(b->t==0) while(i<b->n && !kK(b)[i]->t){++i;}
   if(*o!=offsetJoin || (*o==offsetJoin && i==b->n))    //only a partial fix for join-over (where all elts of b are lists)
-  { if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_over)) k=f(a,b); } //k==0 just means not handled.  //Errors are not set to come from alt_funcs
+  { if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_over)) k=f(a,b); } //k==0 just means not handled.
+                                                                //Errors are not set to come from alt_funcs
   P(k,k)  K g=0,u=0,v=0,z=0;
   K y=a?v=join(u=enlist(a),b):b; //oom u (TODO: need to unroll to 'x f/y' and 'f/y' to optimize?)
   if(yt>0){ z=ci(y); GC; }
@@ -143,13 +144,16 @@ K overDyad(K a, V *p, K b)
 Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
 { V *o=p-1; K(*f)(K,K);
   K k=0;
-  if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_scan)) k=f(a,b);   //k==0 just means not handled. Errors are not set to come from alt_funcs
+  if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_scan)) k=f(a,b);   //k==0 just means not handled.
+                                                              //Errors are not set to come from alt_funcs
   P(k,k)
   if(!a  &&  !(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)  &&  3==(*(K*)*o)->t) R csplit(*(K*)*o,b);
   K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u);   //oom
   if(yt>0 || yn==0) R y;
   K z=newK(0,yn),c,d,g; kK(z)[0]=first(y);
-  if(0>yt) DO(yn-1, d=kK(z)[i]; g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); cd(g); U(c) kK(z)[i+1]=c)   //TODO: err/mmo  cd(y) - oom-g
+  if(0>yt)
+    DO(yn-1, d=kK(z)[i]; g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); cd(g); U(c) kK(z)[i+1]=c)
+       //TODO: err/mmo  cd(y) - oom-g
   if(0==yt) DO(yn-1, d=kK(z)[i]; c=dv_ex(d,p-1,kK(y)[i+1]); U(c) kK(z)[i+1]=c  )   //TODO: err/mmo  cd(y)
   cd(y);
   //This was to fix (there may be a better refactoring):  11+\1 -> 12 (1 K) but  11+\1 2 -> 11 12 14 (3 K)
@@ -267,7 +271,8 @@ Z K eachright2(K a, V *p, K b)
   if(bt > 0) R dv_ex(a,p-1,b);
   K z=newK(0,bn), d;
   K g;
-  if(0 >bt) DO(bn, g=newK(ABS(bt),1); memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(a,p-1,g); cd(g); U(d) kK(z)[i]=d) //TODO: err/mmo oom-g
+  if(0 >bt) DO(bn, g=newK(ABS(bt),1); memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(a,p-1,g); cd(g); U(d) kK(z)[i]=d)
+    //TODO: err/mmo oom-g
   if(0==bt) DO(bn, d=dv_ex(a,p-1,kK(b)[i]); U(d) kK(z)[i]=d)
   R demote(z); }
 
@@ -277,13 +282,15 @@ Z K eachleft2(K a, V *p, K b)
   if(at > 0) R dv_ex(a,p-1,b);
   K z = newK(0,an),d;
   K g;
-  if(0 >at) DO(an, g=newK(ABS(at),1); memcpy(g->k,((V)a->k)+i*bp(at),bp(at)); d=dv_ex(g,p-1,b); cd(g); U(d) kK(z)[i]=d) //TODO: err/mmo oom-g
+  if(0 >at) DO(an, g=newK(ABS(at),1); memcpy(g->k,((V)a->k)+i*bp(at),bp(at)); d=dv_ex(g,p-1,b); cd(g); U(d) kK(z)[i]=d)
+    //TODO: err/mmo oom-g
   if(0==at) DO(an, d=dv_ex(kK(a)[i],p-1,b); U(d) kK(z)[i]=d) //TODO: err/mmo
   R demote(z); }
 
 Z K eachpair2(K a, V *p, K b)  //2==k necessary?
 { V *o=p-1; K (*f)(K,K), k=0;
-  if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_eachpair)) k=f(a,b); //k==0 just means not handled. Errors are not set to come from alt_funcs
+  if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_eachpair)) k=f(a,b);
+    //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)  I bt=b->t, bn=b->n;
   if(bt >  0) R dv_ex(a,p-1,b);
   if(bt <= 0)
@@ -291,7 +298,10 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
     else if(bn == 0 &&  a) R newK(0,0); //TODO: memory manage/ optimize in join with null ptr ?
     else if(bn < 2) R newK(0,0); }      //TODO: this newK and the above.....does empty list type depend on input?
   K z=newK(0,bn-1),d=0; U(z)  K g,h;
-  if(0 >bt) DO(bn-1, h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(i)*bp(bt),bp(bt)); memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h); cd(g);cd(h);U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
+  if(0 >bt)
+    DO(bn-1, h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(i)*bp(bt),bp(bt));
+             memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h);
+             cd(g); cd(h); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
   if(0==bt) DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
   z=demote(z);
   if(a){ K u,v,f,d; f=first(b);M(f); d=dv_ex(a,p-1,f); u=enlist(d); M(u,z)  v=join(u,z); cd(u); cd(z); cd(f); cd(d); R v; }
@@ -339,7 +349,8 @@ K dv_ex(K a, V *p, K b)
   if((UI)adverb==offsetEachpair) R eachpair2(a, p, b);
   I gn=0;
   if(valence(*p)>=2 && a && b) gn=2;
-  else if(a){ V q[4]; q[0]=&a; q[1]=(V)1; q[2]=&b; q[3]=(V)0; K u=ex0(&q[0],0,2); q[0]=(V)*p; q[1]=(V)0; K v=ex0(&q[0],u,1); cd(u); R v; }   //issue #296
+  else if(a)
+    { V q[4]; q[0]=&a; q[1]=(V)1; q[2]=&b; q[3]=(V)0; K u=ex0(&q[0],0,2); q[0]=(V)*p; q[1]=(V)0; K v=ex0(&q[0],u,1); cd(u); R v; }
   else if(b) gn=1;
   K g=newK(0,gn); U(g);
   if(gn>1) kK(g)[1]=b;
@@ -380,12 +391,14 @@ K dv_ex(K a, V *p, K b)
 //  X7   assigned variables wholly local: {b} (global/context) vs. {b:2} (local)
 //  X8   projection {}[1;;3] --- 7-{1,2,3} types. Verb projections come for free
 //   9   proper sub-functions (hint is the non-null f passed to wd_(). Inherit/copy active dict to kV()[LOCAL] )
-//       Arthur: "subfunctions are just projections, eg  c:{[f;g]{f g x}} composition d:{[f;g]{[f;g;x]f g x}[f;g]} composition c[-:;%:] 3 ; d[-:;%:] 3
+//       Arthur: "subfunctions are just projections,
+//       eg  c:{[f;g]{f g x}} composition d:{[f;g]{[f;g;x]f g x}[f;g]} composition c[-:;%:] 3 ; d[-:;%:] 3
 //  X10  {  :x  } early return
 //  X11  Reusably compiled
 
 //For -7 (7-0) CONJ is unexecuted brackets. For 7-{1,2,3} it's 0-type with NULLs
-//K3.2 Bug - {b:1_,/";a",/:$a:!x; "{[",b,"]a3}[" ,(1_,/";",/:$a ),"]" } 67890  --> Sometimes works, sometimes stack error, sometimes crash
+//K3.2 Bug - {b:1_,/";a",/:$a:!x; "{[",b,"]a3}[" ,(1_,/";",/:$a ),"]" } 67890
+//     --> Sometimes works, sometimes stack error, sometimes crash
 
 K vf_ex(V q, K g)
 { K tc=0;
@@ -406,7 +419,8 @@ K vf_ex(V q, K g)
   if( ((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>n && !(!n && 1>=gn))) || (ee && kV(g)[0] && kV(g)[1]) )
   { if(kK(g)[0]==NULL){ VE; GC; }
     if(3!=kK(g)[0]->t || 1==(*(K*)q)->n || kK(g)[1]==NULL)
-    { if(g->t==0 && gn==2  &&  kK(*(K*)q)[CODE]->t==-4  &&  (V)kS(kK(*(K*)q)[CODE])[0]>(V)DT_SIZE  &&  (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 )  //issue #277
+    { if(g->t==0 && gn==2  &&  kK(*(K*)q)[CODE]->t==-4  &&  (V)kS(kK(*(K*)q)[CODE])[0]>(V)DT_SIZE  &&
+      (*(K*)kS(kK(*(K*)q)[CODE])[0])->t==7 )
       { V w[2]; w[0]=(V)kS(kK(*(K*)q)[CODE])[0]; w[1]=(V)offsetOver;
         z=overMonad(kK(g)[0], &w[1], kK(g)[1]); GC; }
       else { VE; GC; } }
@@ -443,7 +457,8 @@ K vf_ex(V q, K g)
   if(ft!=7){ z=g?dot(f,g):f; GC; }  //TODO: check this for !a and for dict. ternary is superfluous since g nonzero?
   I t=f->n;
   if(-1==n) n=valence(f);  //don't compute twice
-  //Projecting simple verbs works. The ex 7-type wrapper will catch simple verbs and they will make it back here. (except in above 2==k && a && !b case?)
+  //Projecting simple verbs works.
+  //The ex 7-type wrapper will catch simple verbs and they will make it back here. (except in above 2==k && a && !b case?)
   K o=kV(f)[CODE],p=kV(f)[PARAMS],s=kV(f)[LOCALS],r=kV(f)[CONJ];
   I special= 1==t && !r && (offsetAt==*kW(f) || offsetDot==*kW(f) || offsetWhat==*kW(f)); //_ssr is not special (not overloaded)
   if(o->t!=-3)
@@ -452,7 +467,8 @@ K vf_ex(V q, K g)
     if(2==n && 1==adverbClass(*u)) n=gn; }    //   / \ '  but maybe should exclude '
   if(kK(*(K*)q)[CODE]->n==3 && offsetWhat==(V)kV(kK(*(K*)q)[CODE])[1]){ z=what(*(K*)kV(kK(*(K*)q)[CODE])[0],*(K*)kV(g)); GC; }
   if(n && (argc<gn || (gn<n && (!special||gn<=1) ))) //Project. Move this ahead of verbs when finished
-  { z=kclone(f); //Is this an opportunity to capture an under-referenced function? Consider if it could be in use as part of assignment, etc.
+  { z=kclone(f);
+    //Is this an opportunity to capture an under-referenced function? Consider if it could be in use as part of assignment, etc.
     if(!z) GC;
     I ae=0; K*m=(K*)kV(z)+CONJ;
     if(special && gn!=4)n=2; // .'"98" cases. allows a:.[+] then a 2 3  (. is forced 2-adic & not .[;;;]) is this a kluge?
@@ -461,7 +477,9 @@ K vf_ex(V q, K g)
     if(!*m){cd(z);GC;}
     K *q=kK(*m);
     DO((*m)->n, if(!q[i] && j<gn) q[i]=ci(kK(g)[j++]))
-    if(ae){ V w[5]; w[0]=(V)kS(kK(z)[CODE])[0]; w[1]=(V)offsetAt; w[2]=(V)offsetEach; w[3]=(V)kK(kK(z)[CONJ]); w[4]=0; K zz=ex2(&w[0],0); cd(g); cd(z); R zz; }
+    if(ae)
+      { V w[5]; w[0]=(V)kS(kK(z)[CODE])[0]; w[1]=(V)offsetAt; w[2]=(V)offsetEach; w[3]=(V)kK(kK(z)[CONJ]); w[4]=0;
+        K zz=ex2(&w[0],0); cd(g); cd(z); R zz; }
     GC; }//K3.2 Projection {[a;b;c]}[;1][1;] returns self. Indicates different (7-0 style?) method
   V v;K tree;
   SW(t)
