@@ -152,8 +152,9 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
   if(yt>0 || yn==0) R y;
   K z=newK(0,yn),c,d,g; kK(z)[0]=first(y);
   if(0>yt)
-    DO(yn-1, d=kK(z)[i]; g=newK(ABS(yt),1); memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); cd(g); U(c) kK(z)[i+1]=c)
-       //TODO: err/mmo  cd(y) - oom-g
+    DO(yn-1, d=kK(z)[i]; g=newK(ABS(yt),1);
+             memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); cd(g); U(c) kK(z)[i+1]=c)
+             //TODO: err/mmo  cd(y) - oom-g
   if(0==yt) DO(yn-1, d=kK(z)[i]; c=dv_ex(d,p-1,kK(y)[i+1]); U(c) kK(z)[i+1]=c  )   //TODO: err/mmo  cd(y)
   cd(y);
   //This was to fix (there may be a better refactoring):  11+\1 -> 12 (1 K) but  11+\1 2 -> 11 12 14 (3 K)
@@ -862,7 +863,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   //TODO: Catch 0-returned-errors here and below
   if(!sva(v[0]) && (i || 2==sva(v[1])))   //na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
   { t2=ex2(v+2+i,k);
-    if(fer>0 && strcmp(errmsg,"(nil)")) R t2;   //these cannot be placed into single function call b/c order of eval is unspecified
+    if(fer>0 && strcmp(errmsg,"(nil)")) R t2;  //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
     if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3)
     { if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n)
