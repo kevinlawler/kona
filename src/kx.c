@@ -351,7 +351,8 @@ K dv_ex(K a, V *p, K b)
   I gn=0;
   if(valence(*p)>=2 && a && b) gn=2;
   else if(a)
-    { V q[4]; q[0]=&a; q[1]=(V)1; q[2]=&b; q[3]=(V)0; K u=ex0(&q[0],0,2); q[0]=(V)*p; q[1]=(V)0; K v=ex0(&q[0],u,1); cd(u); R v; }
+    { V q[4]; q[0]=&a; q[1]=(V)1; q[2]=&b; q[3]=(V)0;
+      K u=ex0(&q[0],0,2); q[0]=(V)*p; q[1]=(V)0; K v=ex0(&q[0],u,1); cd(u); R v; }
   else if(b) gn=1;
   K g=newK(0,gn); U(g);
   if(gn>1) kK(g)[1]=b;
@@ -799,7 +800,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
 { K t0,t2,t3,e,u; I i=0;
   //TODO: is this messed up ......we can't index like this for (|-+) ?? what about 0-NULL []
   //ci(k) was R 0; ...  put this here for f/[x;y;z]
-  if(!v || !*v) R k?(1==k->n)?ci(kK(k)[0]):ci(k):(K)(L)DT_END_OFFSET; //? '1 + _n' -> domain err, '1 +' -> 1+ . but '4: . ""' -> 6
+  if(!v || !*v) R k?(1==k->n)?ci(kK(k)[0]):ci(k):(K)(L)DT_END_OFFSET;
+    //? '1 + _n' -> domain err, '1 +' -> 1+ . but '4: . ""' -> 6
   if(bk(*v)) R *v;  // ; case
   if(!v[1] && !k)
   { K z=ex_(*v,1);  // n case
@@ -820,8 +822,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         prnt=ci(z); }
       else {cd(z); R prnt;} }
     R z; }
-  if(!v[1] && sva(*v)) R vf_ex(*v,k);   //TODO: (,/:) and (,\:) both valence 2
-                                        //TODO: brackets may also appear as:    +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
+  if(!v[1] && sva(*v)) R vf_ex(*v,k); //TODO: (,/:) and (,\:) both valence 2
+                                      //TODO: brackets may also appear as:    +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
   if(bk(v[1]))
   { K z= ex_(*v,1);
     if(fer==2 && !fCheck) R (K)0;
@@ -863,7 +865,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   //TODO: Catch 0-returned-errors here and below
   if(!sva(v[0]) && (i || 2==sva(v[1])))   //na+. or nv. case  (n noun, a adverb, + means regex one+ and . means regex anything )
   { t2=ex2(v+2+i,k);
-    if(fer>0 && strcmp(errmsg,"(nil)")) R t2;  //these cannot be placed into single function call b/c order of eval is unspecified
+    if(fer>0 && strcmp(errmsg,"(nil)")) R t2;
+    //these cannot be placed into single function call b/c order of eval is unspecified
     t3=ex_(v[1],1);
     if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3)
     { if(prnt && kV(prnt)[CACHE_TREE] && kV(prnt)[CACHE_WD] && !kK(t3)[LOCALS]->n)
