@@ -539,7 +539,8 @@ K vf_ex(V q, K g)
     { ff=1; DO(kK(z)[PARAMS]->n, if(!strcmp(*kS(kK(kK(kK(z)[PARAMS])[i])[0]),"y")){ff=0; break; } ) }
     if(ff)
     { K d=kK(kK(KTREE)[0])[1]; K y=0;
-      if(6!=d->t && !(5==d->t && 6==kK(kK(d)[0])[1]->t))  DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"y")){y=kclone(kK(d)[i]); break; } )
+      if(6!=d->t && !(5==d->t && 6==kK(kK(d)[0])[1]->t))
+        DO(d->n, if(!strcmp(*kS(kK(kK(d)[i])[0]),"y")){y=kclone(kK(d)[i]); break; } )
       else R NYI;
       if(y)
       { K p=kK(g)[0]; cd(kK(y)[1]); kK(y)[1]=kclone(p); K ye=enlist(y);
@@ -588,8 +589,9 @@ K ex(K a)   //Input is (usually, but not always) 7-0 type from wd()
   prnt=0;
   R z; }
 
-Z K ex0(V*v,K k,I r)   //r: {0,1,2}->{code, (code), [code]}.   Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
-{ I n=0, e=1, i,a,b;
+Z K ex0(V*v,K k,I r)   //r: {0,1,2}->{code, (code), [code]}.
+{ //Reverse execution/return multiple (paren not function or script) "list notation"  {4,5,6,7} -> {:,if,while,do}
+  I n=0, e=1, i,a,b;
   while(v[n]) if(bk(v[n++])) e++;
   b=e>1; K z=0,x;
   SW(r)
@@ -658,13 +660,15 @@ Z K ex0(V*v,K k,I r)   //r: {0,1,2}->{code, (code), [code]}.   Reverse execution
         DO(k->n, if(!kK(k)[i])prj=1 )
         if(!prj) { x=bv_ex(q,k); cd(z); R x; } }        // could be the _n() <-> ;;; replacement above
       cd(t);
-      if(z->t==7  &&  z->n==1  &&  kK(kK(z)[CODE])[0]==offsetSSR  &&  k->t==0  &&  k->n==3  &&  ABS(kK(k)[2]->t)==-3) { kK(k)[2]=enlist(kK(k)[2]); cd(x); }
+      if(z->t==7  &&  z->n==1  &&  kK(kK(z)[CODE])[0]==offsetSSR  &&  k->t==0  &&  k->n==3  &&  ABS(kK(k)[2]->t)==-3)
+      { kK(k)[2]=enlist(kK(k)[2]); cd(x); }
       x=vf_ex(&z,k); cd(z); z=x; } }                                       //copy/paste
   R z; }
 
 Z K bv_ex(V*p,K k)
 { V q=*p; K x; I n=0;   //assert 0!=k->n    assert k==b->n (otherwise, projection/VE, which shouldn't reach here)
-  if(!adverbClass(*p) && valence(*p)<3){ if(k->n<2)R VE;  R dv_ex(kK(k)[0],p,kK(k)[1]); }   //This may contribute to bv_ex subtriadic problems
+  if(!adverbClass(*p) && valence(*p)<3){ if(k->n<2)R VE;  R dv_ex(kK(k)[0],p,kK(k)[1]); }
+     //This may contribute to bv_ex subtriadic problems
   if(offsetOver==(L)q)
   { DO(k->n-1, x=kK(k)[i+1];
                if(!x->n)R ci(*kK(k));
@@ -718,8 +722,9 @@ Z K bv_ex(V*p,K k)
   if(offsetEachpair==(L)q) R NYI;   //todo: is this reachable?
   R vf_ex(*p,k); }
 
-K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default to ex2 (full pieces in between semicolons/newlines)
-{ if(offsetColon==w[0] && (UI)w[1]>DT_SIZE && (UI)w[2]>DT_SIZE && fwh==0)
+K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types,
+{                         //default to ex2 (full pieces in between semicolons/newlines)
+  if(offsetColon==w[0] && (UI)w[1]>DT_SIZE && (UI)w[2]>DT_SIZE && fwh==0)
   { fer=1;
     if(f)*i=n;
     else *i=-1;
@@ -751,14 +756,16 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types, default
   //K3.2 crash bug: ."1",123456#"+"
   // build a 7type1 from the words if they end in a verb or adverb
   //Note: A returned +7type1 can never have a bk (; or \n) in it
-  //? May be able to grab verb list by ignoring colon (: assignment) and whatever immediately precedes it ?  (K3.2  1+|+a:-+ is 1+|+-+ )
+  //? May be able to grab verb list by ignoring colon (: assignment) and whatever immediately precedes it ?
+  //  (K3.2  1+|+a:-+ is 1+|+-+ )
   //grab things like 1+/ from the middle of wordlists eg (;1+/;)
   K a=Kv(),kb=newK(-4,1+c); M(a,kb)
   V *b=(V*)kK(kb);
   b[c]=0;   //sic (why sic?)
   DO(c, I j=c-i-1; //counting down
         b[j]=w[j];
-        if(VA(b[j])) continue; //partially copy pasted from clone(). This pattern occurs here, in clone(), at the end of capture(), and in capture's BRACKET handler
+        if(VA(b[j])) continue; //partially copy pasted from clone().
+                               //This pattern occurs here, in clone(), at the end of capture(), and in capture's BRACKET handler
         K r=ex_(w[j],1); //oom
         V q=newE(LS,r); //oom
         kap((K*) kV(a)+LOCALS,&q);//oom
@@ -783,7 +790,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         if(encp==0) kV(z)[CACHE_TREE]=dot_monadic(j2);
         if(encp==1) kV(z)[CACHE_TREE]=dot_monadic(j1);
         cd(j0); cd(j1); cd(j2); cd(kK(prnt)[CACHE_WD]); kV(prnt)[CACHE_WD]=0; }
-      if(prnt && kV(prnt)[CODE]  &&  kK(prnt)[CODE]->t==-3  &&  kC(kK(prnt)[CODE])[0]=="{"[0]  &&  kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0]  &&  strchr(kC(kK(prnt)[CODE]),"y"[0]))
+      if(prnt && kV(prnt)[CODE]  &&  kK(prnt)[CODE]->t==-3  &&  kC(kK(prnt)[CODE])[0]=="{"[0]  &&
+         kC(kK(prnt)[CODE])[kK(prnt)[CODE]->n-1]=="}"[0]  &&  strchr(kC(kK(prnt)[CODE]),"y"[0]))
       { if(encf) cd(encf);
         encf=ci(prnt); }
       if(encp!=2 || !prnt)
@@ -793,12 +801,14 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
         prnt=ci(z); }
       else {cd(z); R prnt;} }
     R z; }
-  if(!v[1] && sva(*v)) R vf_ex(*v,k);   //TODO: (,/:) and (,\:) both valence 2    TODO: brackets may also appear as:     +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
+  if(!v[1] && sva(*v)) R vf_ex(*v,k);   //TODO: (,/:) and (,\:) both valence 2
+                                        //TODO: brackets may also appear as:    +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
   if(bk(v[1]))
   { K z= ex_(*v,1);
     if(fer==2 && !fCheck) R (K)0;
     if(prnt && z && z->t==7)
-    { if(kV(prnt)[PARAMS]  &&  !kK(prnt)[PARAMS]->n  &&  kV(z)[LOCALS]  &&  !kK(z)[LOCALS]->n  &&  kV(prnt)[LOCALS]  &&  kK(prnt)[LOCALS]->n)
+    { if(kV(prnt)[PARAMS]  &&  !kK(prnt)[PARAMS]->n  &&
+      kV(z)[LOCALS]  &&  !kK(z)[LOCALS]->n  &&  kV(prnt)[LOCALS]  &&  kK(prnt)[LOCALS]->n)
       { kV(z)[CACHE_TREE]=kclone(kK(prnt)[CACHE_TREE]); if(prnt)cd(prnt); prnt=ci(z); }
       else if(kV(prnt)[LOCALS] && kK(prnt)[LOCALS]->n && kV(z)[PARAMS] && kK(z)[PARAMS]->n)
       { if (kV(prnt)[CACHE_TREE])
@@ -844,7 +854,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       if(prnt) cd(prnt);
       prnt=ci(t3); }
     //if(v[1]!=t3) if(!VA(t3)) show(t3);//for use with below
-    u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;   Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
+    u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;
+            //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3; t0=ex_(*v,1);
     if(fer>0 && strcmp(errmsg,"(nil)")){ cd(t2); R(t0); }
     if(t0>(K)DT_SIZE && t0->t==7 && t0->n==3)
@@ -855,7 +866,8 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       if(prnt) cd(prnt);
       prnt=ci(t0); }
     if(!prnt && t0->t==7 && t0->n==3) prnt=ci(t0);
-    if(*(v+1+i)==offsetDot && t0->t==7 && t0->n==1 && kK(kK(t0)[CODE])[1]==(V)offsetEach){ K p=kV(t0)[CODE]; I i=p->n-2;  V*q=(V*) kK(p)+i; e=bv_ex(q,t2); }
+    if(*(v+1+i)==offsetDot && t0->t==7 && t0->n==1 && kK(kK(t0)[CODE])[1]==(V)offsetEach)
+    { K p=kV(t0)[CODE]; I i=p->n-2;  V*q=(V*) kK(p)+i; e=bv_ex(q,t2); }
     else{e= dv_ex(t0,v+1+i,t2); v[1]=u;}
     cd(t0); cd(t2);
     if(!VA(t3)) cd(t3);

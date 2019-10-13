@@ -105,7 +105,8 @@ Z I mark_name(S s,I n,I i,I*m)
 Z I mark_number(S s,I n,I i,I*m)
 { I c=0;
   if(m[i]) R 0;
-  if(i && '-'==s[i] && !isspace(s[i-1])) switch(ABS(m[i-1])){ case MARK_BRACKET:case MARK_PAREN:case MARK_SYMBOL:case MARK_NAME:case MARK_NUMBER:R 0; }
+  if(i && '-'==s[i] && !isspace(s[i-1]))
+    switch(ABS(m[i-1])){ case MARK_BRACKET:case MARK_PAREN:case MARK_SYMBOL:case MARK_NAME:case MARK_NUMBER:R 0; }
   if('-'==s[i])
   { if(i<n-2 && '.'==s[i+1] && isdigit(s[i+2])) c++;
     else if(i<n-1 && isdigit(s[i+1])) c++;
@@ -122,7 +123,8 @@ Z I mark_number(S s,I n,I i,I*m)
     else R 0; }  //parse error ?? here or in a parent? think this will be caught by something else
   EAT_DIGITS
   //[-]?0[NIni] //This implementation lets you do unusual things like 0n.1.1 -> 0n 0.1 0.1
-  if(i+c<n && ((1==c&&'0'==s[i]) || (2==c && '-'==s[i] && '0'==s[i+1])) && stringHasChar("NIni",s[i+c]) && (i+c ==n-1 || !isalpha(s[i+c+1]))) c++;
+  if(i+c<n && ((1==c&&'0'==s[i]) || (2==c && '-'==s[i] && '0'==s[i+1])) &&
+     stringHasChar("NIni",s[i+c]) && (i+c ==n-1 || !isalpha(s[i+c+1]))) c++;
   if(c) EAT_SPACES
   R c; }
 
@@ -220,7 +222,9 @@ Z I syntaxChk(S s)   //TODO: refactor the syntax check as a single pass
   if(n>2)
   { for(i=2;i<n;++i)
     { if(s[i]=='\\' && s[i-1]==':' && (s[i-2]!='/' && s[i-2]!='\\')) R 80;
-      if(s[i]=='/' && (s[i-1]=='+' || s[i-1]=='\'' || s[i-1]=='>' || s[i-1]=='%' || s[i-1]=='*' || s[i-1]=='?' || s[i-1]=='&' || s[i-1]=='\\') && s[i-2]=='/') R 90;
+      if(s[i]=='/' &&
+        (s[i-1]=='+' || s[i-1]=='\'' || s[i-1]=='>' || s[i-1]=='%' || s[i-1]=='*' || s[i-1]=='?' || s[i-1]=='&' || s[i-1]=='\\') &&
+         s[i-2]=='/') R 90;
       if(s[i]=='/' && s[i-1]=='/' && s[i-2]=='-') R 100;
       if(s[i]=='_' && s[i-1]==',' && s[i-2]=='~') R 110;
       if(s[i]=='/' && s[i-1]=='#' && s[i-2]=='0') R 120;
@@ -249,8 +253,9 @@ I mark(I*m,I k,I t){ DO(k, m[i]=i?t:-t) R k; }
 
 K wd(S s, int n){ lineA=s; fdc=0; R wd_(s,n,denameD(&KTREE,d_,1),0); }
 
-K wd_(S s, int n, K*dict, K func) //parse: s input string, n length;   //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
-{ if(!s) R 0;
+K wd_(S s, int n, K*dict, K func) //parse: s input string, n length;
+{ //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
+  if(!s) R 0;
   if(strstr(s,":\\t")) { show(kerr("\\t  syntax")); R 0; }
   //I z=0; if((z=syntaxChk(s))) {O("%lld\n",z); R SYE;}
   if(syntaxChk(s)) R SYE;
@@ -274,8 +279,9 @@ K wd_(S s, int n, K*dict, K func) //parse: s input string, n length;   //assumes
   marker(mark_ignore,MARK_IGNORE)// get leftover spaces, anything else we want to ignore
   DO(n, if(m[i]==MARK_UNMARKED){ cd(v);cd(km); R PE; })
   //DO(n,if(m[i]>0 && (!i || m[i]!=ABS(m[i-1]) )){cd(v);cd(km); R PE;})  //this is true but unnecessary. we handle "_db_bd 1"
-  //TODO: check here to see if any _A+ listed that don't exist ("reserved error") free m etc. reserved error probably bubbles from "dename"
-  //TODO: technically .k._a  (a valid global name e.g. no sym quotes) throws a value error then parse error here (we marked it weird)
+  //TODO: check here to see if any _A+ listed that don't exist ("reserved error") free m etc.
+  //      reserved error probably bubbles from "dename"
+  //TODO: technically .k._a  (a valid global name e.g. no sym quotes) throws a value error then parse error (we marked it weird)
   //(one nice thing about being restrictive here (_verb and -0.0: number verbs) is future versions are backwards compatible)
   I y=0; //consolidate - removes non-word spaces/comments/etc
   K ks2=newK(-3,n);
@@ -290,7 +296,8 @@ K wd_(S s, int n, K*dict, K func) //parse: s input string, n length;   //assumes
   else fll=-1;
   DO(y, i+=-1+(j=capture(s2,y,i,m,w,&c,(K*)kV(v)+LOCALS,dict,func)); if(!j){ M(0,v,km,ks2,kw) })
   cd(km); cd(ks2);
-  //wrong: Suppressed this for now (wastes at most n/2 space) -- may need to reenable if padded oc bad (eg imagine 1+1 is not 0=t,4=n VVV0 but 0=t,6=n VVV000)
+  //wrong: Suppressed this for now (wastes at most n/2 space) -- may need to reenable if padded oc bad
+  //(eg imagine 1+1 is not 0=t,4=n VVV0 but 0=t,6=n VVV000)
   //        ^^^ padded overcount bad already (for O(1) valence calc)
   //"reall0c" kw down to size
   if(oc>c && lsz(sz(0,1+oc)) > lsz(sz(0,1+c))) //TODO: better if possible: fix overcount() to be exact count: could just be adding != -MARK_BRACKET. dd() differences
@@ -367,7 +374,8 @@ K* inKtree(K*d, S t, I create)
   R inKtreeR('.'==*t||!*t?&KTREE:d,t,create); }
 
 I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oom all
-{ //IN string, string length, pos in string, markings;   //OUT words, current #words; IN locals-storage, names-storage, charfunc/NULL
+{ //IN string, string length, pos in string, markings;
+  //OUT words, current #words; IN locals-storage, names-storage, charfunc/NULL
   if(fll && fll!=n)fll=-1;
   V z=0,*p=w+*d; I r=1,v=0,y=0,a,b=0,c,l,frc=0; S u="",e; K g,h=0,hh=0;
   if(k>=n || !CAPTURE_START(m[k])) R r;
@@ -399,12 +407,14 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                           CS('f',b=5)
                           CS('e',b=6)
                           CS('o',b=7) }  //: if while do
-                        //if(b!=6&&!bk(*zp)){cd(g);cd(z); feci=1; R (I)PE;} //check that at least one ; is present | commented on trial basis
+                        //if(b!=6&&!bk(*zp)){cd(g);cd(z); feci=1; R (I)PE;}
+                        //check that at least one ; is present | commented on trial basis
                         ((K)z)->n=b; cd(g); goto grabdone; }
                       DO(a+1, o[i]=p[-1-a+i])
                       o[a+1]=0; K *f=p[-1-a];
                       if(!sva(f))
-                      { if(MARK_ADVERB==ABS(m[k-1-a]) || MARK_ADVERB==ABS(m[k-a])) { }   //do nothing for '[] and ':[]  (and sort of / /: \ \: ... but they don't reach here)
+                      { if(MARK_ADVERB==ABS(m[k-1-a]) || MARK_ADVERB==ABS(m[k-a])) { }
+                           //do nothing for '[] and ':[]  (and sort of / /: \ \: ... but they don't reach here)
                         else if(MARK_NAME != ABS(m[k-1-a]))
                         { // Has form na*[] and not va*[] so move n from the parent to the LOCAL on this BRACKET.
                           // NAME special storage case
@@ -416,7 +426,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                              // the line can be left out without ill effects assuming
                              // it's OK to let the parent free the objects (it may not be)
                              //  probably best to simply implement realloc-shrink for anonymous mmap
-                          K temp=DI(*locals,(*locals)->n-1); //This is a replacement for above.   //It can be optimized(?) since it leaves an empty dict entry on *locals
+                          K temp=DI(*locals,(*locals)->n-1); //This is a replacement for above.
+                                                             //It can be optimized(?) since it leaves an empty dict entry on *locals
                           if(temp)
                           { cd(kK(temp)[1]);
                             kK(temp)[1]=0; }
@@ -448,7 +459,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                         DO(3, if(DE(t,IFP[2-i])){ n=3-i; break; })
                         DO(n, denameD(zdict,IFP[i],1)) //TODO: oom
                         cd(t); cd(j); }
-                      j=wd_(s+k+1,r-2,ydict,z); M(z,j)  cd(j); )   //For subfunctions: (subfunction arg list overrides)   //if(func) *zdict = merge self, parent (in what way?)
+                      j=wd_(s+k+1,r-2,ydict,z); M(z,j)  cd(j); )   //For subfunctions: (subfunction arg list overrides)
+                                                                   //if(func) *zdict = merge self, parent (in what way?)
     CS(MARK_NUMBER,   r=v; // 0 1 -2.3e-4 6. .7 -8 9E0
                       a=1; DO(r, if(stringHasChar(".Eein",s[k+i])){ a=2; break; } )
                       z=newK(1==y?a:-a,y); U(z)
@@ -537,17 +549,18 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                       I modifier_colon = k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r];
                       if(k-i > 0) if(is_colon && MARK_VERB == ABS(m[k-i-1])) i++;
                       if(k-i > 0) if(MARK_BRACKET ==  ABS(m[k-i-1])) while(m[k-i] != -MARK_BRACKET) i++;
-                      if(k-i > 0) if(MARK_NAME == ABS(m[k-i-1])) name_bracket_assign = 1; //(no adverb, assigning to non-names, etc)
+                      if(k-i > 0) if(MARK_NAME == ABS(m[k-i-1])) name_bracket_assign = 1; //(no adverb, assign to non-names, etc)
                       if(!is_colon && !(k+1<n && ':'==s[k+1] && -MARK_VERB==m[k+1] )) name_bracket_assign=0;
                       //  Handles this case at least (0 0)[0]:1  (works but not proven correct/the right thing to do)
                       if(i && is_colon && !modifier_colon && !name_bracket_assign) R (L)PE;
                       I y_present= k+r+1<n && !(s[k+r+1] == ':' && -MARK_VERB==m[k+r+1]) && MARK_END != ABS(m[k+r+1]);
                       //MARK_END may end up being redundant here?
                       a = (!*d || MARK_END==ABS(m[k-1]) || MARK_ADVERB==ABS(m[k-1]) || MARK_VERB==ABS(m[k-1]))
-                          && !( k+r >= n || -MARK_END==m[k+r] || -MARK_ADVERB==m[k+r] || -MARK_BRACKET==m[k+r] )?1:2;  //indicate arity
+                          && !( k+r >= n || -MARK_END==m[k+r] || -MARK_ADVERB==m[k+r] || -MARK_BRACKET==m[k+r] )?1:2;  //arity
                       if(is_colon && !modifier_colon)
                       { a=2;
-                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R (L)PE; }    // +:: or 4:: :  or a _abs:  (trailing dyadic :)
+                        if(k> 0 && -MARK_END!=m[k-1] && !s[k+1] && !name_bracket_assign) R (L)PE; }
+                        // +:: or 4:: :  or a _abs:  (trailing dyadic :)
                       else if(name_bracket_assign) a=y_present?2:1;
                       else if(modifier_colon){ m[k+r]*=-1; r++; a=1; grab=1; } //grab monad ':' sign
                       i=0;
