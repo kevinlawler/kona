@@ -45,32 +45,29 @@ __thread I frg=0;    // Flag reset globals
          C* alf="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; // for recursive member display in sd_()
 
 K sd_(K x,I f)
-{ V *v;
-  if(x)
+{ if(x)
   { if(!bk(x))
     { if(xt==4)O("     %p %p %p  %lld-%lld %lld %lld   ",    x,kK(x),*kK(x),x->_c>>8,(x->_c<<56)>>56,xt,xn);
       else     O("     %p %p            %lld-%lld %lld %lld   ",x,kK(x),x->_c>>8,(x->_c<<56)>>56,xt,xn);
       if(f>0 && ((xt==0) || (xt==5))) O("\n");
-      if(xt!=6 && f>0) show(x);
-      else O("\n"); }
-    else {O(" is ; or \\n\n"); R x; } }
+      if(xt!=6 && f>0)show(x); else O("\n"); }
+    else { O(" is ; or \\n\n"); R x; } }
   else { O("     "); show(x); O("\n"); R x; }
   if(f<2) R 0;
   SW(xt)
   { CS( 7, calf++; O("     %c0:    %p     %s\n",alf[calf],&kS(x)[CONTeXT],kS(x)[CONTeXT]);
            O("     %c1:    %p     %p\n",alf[calf],&kV(x)[DEPTH],kV(x)[DEPTH]);
-           DO(-2+TYPE_SEVEN_SIZE, O("     %c%lld:   ",alf[calf],2+i); O(" %p",&kV(x)[2+i]); sd_(kV(x)[2+i],3);)
+           DO(-2+TYPE_SEVEN_SIZE, O("     %c%lld:   ",alf[calf],2+i); O(" %p",&kV(x)[2+i]); sd_(kV(x)[2+i],3); )
            calf--; )
-    CS(-4, if(f>-1)
-           { v=(kV(x));
+    CS(-4, if(1)       //(f>-1)
+           { V* v=(kV(x));
              if((v[0]>(V)0x10) & (v[0]<(V)0x5000000)) R 0; //stop, if have string of interned symbols
-             I ii;
-             for(ii=0;v[ii];ii++)
-             { O("     .2%c[%lld]: %p",alf[calf],ii,v[ii]);
-               if(v[ii]>(V)DT_SIZE) sd_(*(K*)v[ii],1);
-               else O("\n"); } } )
+             I ii; for(ii=0;v[ii];ii++)
+                   { O("     .2%c[%lld]: %p",alf[calf],ii,v[ii]);
+                     if(v[ii]>(V)DT_SIZE){ if(calf<1)sd_(*(K*)v[ii],2); else sd_(*(K*)v[ii],1); }
+                     else O("\n"); } } )
     CSR(5,)
-    CS( 0, DO(xn, O(" %p",&kK(x)[xn-i-1]); sd_(kK(x)[i],2); ) ) }
+    CS( 0, DO(xn, O(" %p",&kK(x)[xn-i-1]); sd_(kK(x)[i],2);) ) }
   R 0; }
 
 K sd(K x) { R sd_(x,1); }     //Shows the details of a K-structure. Useful in debugging.
@@ -99,7 +96,7 @@ Z K csplit(K x,K y)       //scan 2x
     p0=j; p1=n; zn++;
     if(i<yn&&delim==s[i]) i++; }
   if(yn&&delim==s[yn-1]) zn++;
-  if(!zn) R newK(0,0);
+  if(!zn)R newK(0,0);
   else if(1==zn)
   { if(yn==p1) R enlist(y);
     K z=newK(-3,p1);M(z); memcpy(kC(z),s+p0,p1); y=enlist(z);cd(z); R y; }
@@ -145,9 +142,10 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
 { V *o=p-1; K(*f)(K,K);
   K k=0;
   if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_scan)) k=f(a,b);   //k==0 just means not handled.
-                                                              //Errors are not set to come from alt_funcs
+    //Errors are not set to come from alt_funcs
   P(k,k)
   if(!a  &&  !(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)  &&  3==(*(K*)*o)->t) R csplit(*(K*)*o,b);
+    //note:   !(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)   <==>  f is NOT a function
   K u=0; K y=a?join(u=enlist(a),b):ci(b); cd(u);   //oom
   if(yt>0 || yn==0) R y;
   K z=newK(0,yn),c,d,g; kK(z)[0]=first(y);
@@ -157,7 +155,7 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
              //TODO: err/mmo  cd(y) - oom-g
   if(0==yt) DO(yn-1, d=kK(z)[i]; c=dv_ex(d,p-1,kK(y)[i+1]); U(c) kK(z)[i+1]=c  )   //TODO: err/mmo  cd(y)
   cd(y);
-  //This was to fix (there may be a better refactoring):  11+\1 -> 12 (1 K) but  11+\1 2 -> 11 12 14 (3 K)
+  //Next line  was to fix (there may be a better refactoring):  11+\1 -> 12 (1 K) but  11+\1 2 -> 11 12 14 (3 K)
   if(a&&atomI(b)){ y=z; M(z,u=Ki(1)) M(y,u,z=drop(u,z)) cd(y); cd(u); }
   R collapse(z); }
 
@@ -244,15 +242,12 @@ Z K each2(K a, V *p, K b)
       DO(bn, g=newK(ABS(bt),1);
              M(g,z)
              memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt));
-             if(f)d=dv_ex(a,p-1,g);
-             else d=dv_ex(0,p-1,g);
+             if(f)d=dv_ex(a,p-1,g); else d=dv_ex(0,p-1,g);
              cd(g); M(d,z) kK(z)[i]=d )
     if(0==bt)
     { if(prnt) prnt0=ci(prnt);
       if(grnt) grnt0=ci(grnt);
-      DO(bn, if(f)
-             { if(a && a->n>1) d=dv_ex(kK(a)[i],p-1,kK(b)[i]);
-               else  d=dv_ex(a,p-1,kK(b)[i]); }
+      DO(bn, if(f){ if(a && a->n>1) d=dv_ex(kK(a)[i],p-1,kK(b)[i]); else  d=dv_ex(a,p-1,kK(b)[i]); }
              else
              { if(prnt0){cd(prnt);prnt=ci(prnt0);}
                if(grnt0){cd(grnt);grnt=ci(grnt0);}
@@ -440,8 +435,7 @@ K vf_ex(V q, K g)
   if(2==k && a && b)
   { fnc=DT[(L)q].text;
     if(fnci<127){fncp[fnci]=q; fnci++;}
-    if(cls && a->t==6) z=((K(*)(K,K))DT[(L)q].func)(cls,b);
-    else z=((K(*)(K,K))DT[(L)q].func)(a,b);
+    if(cls && a->t==6)z=((K(*)(K,K))DT[(L)q].func)(cls,b); else z=((K(*)(K,K))DT[(L)q].func)(a,b);
     GC; }
   //? (+).1 -> err ; {[a;b]a+b} 1 -> err
   if(2==k && !a) { VE; GC; }  //Reachable? Projection?
@@ -491,8 +485,7 @@ K vf_ex(V q, K g)
           if(!m)GC;
           K *q=kK(m);
           DO(m->n, q[i]=ci(kK(r)[i]); if(!q[i] && j<gn) q[i]=ci(kK(g)[j++]) )
-          if(prj){ V*w=&kW(f)[1]; z=bv_ex(w,m); }
-          else z=ex2(kW(f),m);
+          if(prj){ V*w=&kW(f)[1]; z=bv_ex(w,m); } else z=ex2(kW(f),m);
           cd(m); )
     CS(2, //Executing a dynamically loaded library function from 2:
           v=kW(f)[1];
@@ -531,8 +524,7 @@ K vf_ex(V q, K g)
             cd(kV(fc)[CONJ]); kV(fc)[CONJ]=0;
             kV(fc)[DEPTH]++;
             I tt=0; DO(o->n, if(kC(o)[i]=='{') { tt=1; break; } )
-            if(tt || kC(o)[0]=='[') fw=wd_(kC(o),o->n,&tree,fc);
-            else { tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
+            if(tt || kC(o)[0]=='[') fw=wd_(kC(o),o->n,&tree,fc); else { tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
             kV(f)[CACHE_WD]=fw; cd(fc); }
           #ifdef DEBUG
             if(stk1>5) { cd(g); kerr("stack"); R _n(); }
@@ -755,9 +747,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types,
     { if(0==strcmp(fBreak,"n")) R ex2(w+1,k);
       if(0==strcmp(fBreak,"t")) R ex2(w+1,k);
       if(0==strcmp(fBreak,"s")) { fer=1; R ex2(w+1,k); } }
-  else if((V)offsetEach==*w)
-  { if(3==ABS((*(K*)(w)[1])->t)) R ci(*(K*)(w)[1]);
-    else R _n(); }
+  else if((V)offsetEach==*w){ if(3==ABS((*(K*)(w)[1])->t)) R ci(*(K*)(w)[1]); else R _n(); }
   else  R NYI; }
   I c=0;
   while(w[c] && !bk(w[c]))

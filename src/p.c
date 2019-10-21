@@ -5,14 +5,10 @@
 #include "v.h"
 #include "vf.h"
 
-S lineA;
-S lineB;
-I fdc=1;            // Flag denameD create
-I fll=0;            //flag line length
-
 //Parser
 
 Z I formed_group(C c){ S s="\n \\/\"";R charpos(s,c); } //could be table-lookup instead
+
 S formed_dfa =
   // n_\/"*  newline,quote,space,\,/,else (formed_group)
   "023451"   //0 OK-NEWLINE
@@ -29,9 +25,12 @@ S formed_dfa =
 
 S  left = "([{";
 S right = ")]}";
-Z C flop(C c){ R c=='('?')':c=='['?']':c=='{'?'}':c; }
+S lineA;
+S lineB;
+I fdc=1;      // Flag denameD create
+I fll=0;      //flag line length
 
-//0123456789:;<=>?@ABCDEFGHIJKLM
+Z C flop(C c){ R c=='('?')':c=='['?']':c=='{'?'}':c; }
 
 I parsedepth(PDA p){ R p?p->n+(STATE_QUOTE(p)?1:0):0; }
 
@@ -112,9 +111,7 @@ Z I mark_number(S s,I n,I i,I*m)
     else if(i<n-1 && isdigit(s[i+1])) c++;
     else R 0; }
   EAT_DIGITS
-  if(i+c<n && '.'==s[i+c])
-  { if(c || (i+c<n-1 && isdigit(s[i+c+1]))) c++;
-    else R 0; }
+  if(i+c<n && '.'==s[i+c]){ if(c || (i+c<n-1 && isdigit(s[i+c+1])))c++; else R 0; }
   EAT_DIGITS
   if(i+c<n && 'e'==tolower(s[i+c]))   //Technically in K3.2: 4e5 4e-5 4E5 work but 4E-5 doesn't
   { if(!c)R 0;
@@ -243,7 +240,9 @@ Z I syntaxChk(S s)   //TODO: refactor the syntax check as a single pass
   R k; }
 
 I mark(I*m,I k,I t){ DO(k, m[i]=i?t:-t) R k; }
+
 #define marker(a,b) DO(n, i+=maX(0,-1+mark(m+i,a(s,n,i,m),b )))
+
 //Some parse error cases missing...but it seems OK/preferable to ignore them e.g.  _t.a or 'a.....' (floor t.a or a. ...)
 //K3.2: whitespace between ANY_TOKEN and adverb fails
 //K3.2: if brackets [] not flush with token to left, parse error "0 1 2[0]" ok but "0 1 2 [1]" not ok
@@ -292,8 +291,7 @@ K wd_(S s, int n, K*dict, K func) //parse: s input string, n length;
   I oc=overcount(m,n);
   K kw=newK(-4,1+oc); M(v,km,ks2,kw) V*w=(V*)kK(kw);//words. Assumes terminal extra NULL
   I c=0,j=0;
-  if(!fll) fll=strlen(s2);
-  else fll=-1;
+  if(!fll)fll=strlen(s2); else fll=-1;
   DO(y, i+=-1+(j=capture(s2,y,i,m,w,&c,(K*)kV(v)+LOCALS,dict,func)); if(!j){ M(0,v,km,ks2,kw) })
   cd(km); cd(ks2);
   //wrong: Suppressed this for now (wastes at most n/2 space) -- may need to reenable if padded oc bad
@@ -364,8 +362,7 @@ Z K* inKtreeR(K*p,S t,I create)
   //and LOC should have the potential to return 0 (indicating other errors as well, e.g. out of memory)
   P(!(6==a || 5==a),(K*)TE)
   K e=0;
-  if(create){ e=lookupEntryOrCreate(p,k); P(!e,(K*)ME) }
-  else{ K a=*p; if(5==a->t)e=DE(a,k); P(!e,(K*)0) }
+  if(create){ e=lookupEntryOrCreate(p,k); P(!e,(K*)ME) } else{ K a=*p; if(5==a->t)e=DE(a,k); P(!e,(K*)0) }
   if('.'==*t && (!t[1] || '.'==t[1])){ t++; p=EAP(e); }    //attribute dict
   else p=EVP(e); //value
   R inKtreeR(p,t,create); }
@@ -470,8 +467,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                             while(m[l+k+i]==MARK_NUMBER)l++;
                             if(!(u=strdupn(s+k+i,l))){cd(z);R (L)ME;}
                             g=1==a?formKiCS(u):formKfCS(u); free(u); M(z,g)
-                            if(1==a) kI(z)[b++]=*kI(g);
-                            else     kF(z)[b++]=*kF(g);
+                            if(1==a) kI(z)[b++]=*kI(g); else kF(z)[b++]=*kF(g);
                             cd(g); ) )
     CS(MARK_QUOTE,    // "\b\n\r\t\"\o\oo\ooo\\"  ;  we may rely on completeness here (bounds checking)
                       a=unescaped_size(s+k+1,r-2);
@@ -480,7 +476,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
     CS(MARK_SYMBOL,   //handle `a`"b-\777\n\0"`c ```d.ef
                       r=v;
                       z=newK(1==y?4:-4,y); //oom
-                      DO(r, if(m[k+i]>=0)continue;
+                      DO(r, if(m[k+i]>=0) continue;
                             for(a=0;m[k+i+1+a]>0;a++) ;
                             u=alloc(1+a); //oom  you can return 0 but catch above?
                             c='"'==s[k+i+1]?2:0; u[unescaped_fill(u,s+k+i+1+c/2,a-c)]=0;
