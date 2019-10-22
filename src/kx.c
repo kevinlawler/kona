@@ -108,9 +108,9 @@ Z K csplit(K x,K y)       //scan 2x
          if(j<yn&&delim==s[j]) j++; )
   R z; }
 
-//TODO: for derived verbs like +/ you can add the sub-pieces in parallel
 K overDyad(K a, V *p, K b)
-{ V *o=p-1; K (*f)(K,K), k=0; I i=0;
+{ //TODO: for derived verbs like +/ you can add the sub-pieces in parallel
+  V *o=p-1; K (*f)(K,K), k=0; I i=0;
   if(a&&*o==offsetJoin&&!b->t&&!b->n) R 0<a->t?enlist(a):ci(a);
   if(b->t==0) while(i<b->n && !kK(b)[i]->t){++i;}
   if(*o!=offsetJoin || (*o==offsetJoin && i==b->n))    //only a partial fix for join-over (where all elts of b are lists)
@@ -737,7 +737,7 @@ Z K bv_ex(V*p,K k)
   R vf_ex(*p,k); }
 
 K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types,
-{                         //default to ex2 (full pieces in between semicolons/newlines)
+{ //default to ex2 (full pieces in between semicolons/newlines)
   if(offsetColon==w[0] && (UI)w[1]>DT_SIZE && (UI)w[2]>DT_SIZE && fwh==0)
   { fer=1;
     if(f)*i=n;
@@ -815,7 +815,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       else {cd(z); R prnt;} }
     R z; }
   if(!v[1] && sva(*v)) R vf_ex(*v,k); //TODO: (,/:) and (,\:) both valence 2
-                                      //TODO: brackets may also appear as:    +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
+     //TODO: brackets may also appear as:    +/\/\[]    {x}/\/\[]    a/\/\[]    (!200)\\[10;20]
   if(bk(v[1]))
   { K z= ex_(*v,1);
     if(fer==2 && !fCheck) R (K)0;
@@ -869,7 +869,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       prnt=ci(t3); }
     //if(v[1]!=t3) if(!VA(t3)) show(t3);//for use with below
     u=v[1]; //This u thing fixes repeated use of 7-1 subparen like f:|/0(0|+)\;f a;f b;
-            //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
+       //Not thread-safe. Adding ex_ result to LOCALS on 7-1 is probably better. See below
     v[1]=VA(t3)?t3:(V)&t3; t0=ex_(*v,1);
     if(fer>0 && strcmp(errmsg,"(nil)")){ cd(t2); R(t0); }
     if(t0>(K)DT_SIZE && t0->t==7 && t0->n==3)
