@@ -40,6 +40,7 @@ __thread I frg=0;    // Flag reset globals
          I fnci=0;   // indicator of next function pointer position
          I fom=0;    // Flag overMonad (curried)
          I fam=1;    // Flag amend: 1=OK to print response
+         I ft3=0;    // Flag if t3<(K)DT_SIZE
 
          I calf=-1;  // counter for alf
          C* alf="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; // for recursive member display in sd_()
@@ -263,7 +264,8 @@ Z K each2(K a, V *p, K b)
     R z; } }
 
 Z K eachright2(K a, V *p, K b)
-{ I bt=b->t, bn=b->n;
+{ if(ft3 && !a) R VE;
+  I bt=b->t, bn=b->n;
   if(bt > 0) R dv_ex(a,p-1,b);
   K z=newK(0,bn), d;
   K g;
@@ -787,7 +789,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types,
   R a; }
 
 Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: conjunction?
-{ K t0,t2,t3,e,u; I i=0;
+{ K t0,t2,t3,e,u; I i=0; ft3=0;
   //TODO: is this messed up ......we can't index like this for (|-+) ?? what about 0-NULL []
   //ci(k) was R 0; ...  put this here for f/[x;y;z]
   if(!v || !*v) R k?(1==k->n)?ci(kK(k)[0]):ci(k):(K)(L)DT_END_OFFSET;
@@ -888,7 +890,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   i=0;
   while(adverbClass(v[1+i])) i++; //ALT'Y: i=adverbClass(b)?i+1:0;
   t2=ex2(v+1+i,k); //oom. these cannot be placed into single function call b/c order of eval is unspecified
-  t3=ex_(*v,1);
+  t3=ex_(*v,1); if(t3<(K)DT_SIZE)ft3=1;
   if(t3>(K)DT_SIZE && t3->t==7 && t3->n==3)
   { if(kV(t3)==kV(grnt))
     { if(cls) cd(cls);

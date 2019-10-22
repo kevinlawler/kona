@@ -127,7 +127,7 @@ Z I tests02()
   TC((,,0),=,1)
   TC((,0;,1),=1 2)
   TC((,0;,1),=2 1)
-  TC((2#,(,0;,1)), =:/:(1 2;2 1)) //Nice extension to K3.2, which errs on both =/: and =:/:
+  //TC((2#,(,0;,1)), =:/:(1 2;2 1)) //Nice extension to K3.2, which errs on both =/: and =:/:
 
   //Projections
   TC((1;"valence"),@[.:;"{x}[1;]";:])
@@ -421,7 +421,7 @@ Z I tests02()
   TC(5:(+),   (,"+"))
   TC(5:(|/), "|/")
   TC(5:(_acos;_tanh;_abs;_size;_bin;_vsx;_ssr;_vs), "(_acos;_tanh;_abs;_size;_bin;_vsx;_ssr;_vs)")
-  TC_("a:.'(+;-);a@\\:1 2", "3 -1")
+  //TC_("a:.'(+;-);a@\\:1 2", "3 -1")
 
   TC(3 3#!0, (0 0 0;0 0 0; 0 0 0))
   TC(3 3#0#0.0, (0 0 0.0;0 0 0.0; 0 0 0.0))
@@ -885,7 +885,7 @@ Z I tests01()
   TC(30,  ((10 20;30 40);50)[0][1][0])
   TC(10 20 30, m:(1 2 3;10 20 30;100 200 300); m[1;])
   TC(2 20 200, m:(1 2 3;10 20 30;100 200 300); m[;1])
-  TC((0 1;1 2 3) , a:(!a)+!:/:2+!a:4; a[0 1;]) //Extension: !:/:2+!4 works. K3.2 valence err for !, !:, or (!:)
+  //TC((0 1;1 2 3) , a:(!a)+!:/:2+!a:4; a[0 1;]) //Extension: !:/:2+!4 works. K3.2 valence err for !, !:, or (!:)
   TC(a:2 2 2#1+!10, a[0 1;;0 1])
   TC(2 , # (+;+))
   TC(7, 4:(`a 1 \\ ))
@@ -1290,8 +1290,8 @@ Z I testsBook()
 
   TC_("#:'(1;,1;1 2;1 2 3)","1 1 2 3")
   TC_("skip", "#'(1;1 2)"  "(#[1;];#[1 2;])")  //This is true, and will pass, but set to skip until projections are actually compared correctly
-  TC_("a:(#'3 4 6)[0]; a 9", "9 9 9")
-  TC_(".'\"98\"", ".'\"98\"") // .'"98" was causing crash bug. now projects
+  //TC_("a:(#'3 4 6)[0]; a 9", "9 9 9")        //This test produces valence error in k2.8
+  //TC_(".'\"98\"", ".'\"98\"") // .'"98" was causing crash bug. now projects
 
   TC(1, 4 _in 1 7 2 4 6 3)
   TC(0, 4 3 _in 1 7 2 4 6 3)
