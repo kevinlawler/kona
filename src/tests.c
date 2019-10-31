@@ -301,6 +301,7 @@ Z I tests02()
   TC( _n, {a}0 )                                  // issue 540
   TC( 0, {a x}0 )                                 // issue 540
   TC( 0, f:{:[x>0;2*f[x-1];1]}; g:f; f:{0}; g 4 ) // issue 537
+  TC( {p[`a]:1;do[1;p[`b]:2];p}[], .((`a;1;);(`b;2;)) )    // issue 555
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
