@@ -526,7 +526,7 @@ K vf_ex(V q, K g)
             cd(kV(fc)[CONJ]); kV(fc)[CONJ]=0;
             kV(fc)[DEPTH]++;
             I tt=0; DO(o->n, if(kC(o)[i]=='{') { tt=1; break; } )
-            if(tt || kC(o)[0]=='[') fw=wd_(kC(o),o->n,&tree,fc); else { tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
+            if(1 || tt || kC(o)[0]=='[') fw=wd_(kC(o),o->n,&tree,fc); else { tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
             kV(f)[CACHE_WD]=fw; cd(fc); }
           #ifdef DEBUG
             if(stk1>5) { cd(g); kerr("stack"); R _n(); }
