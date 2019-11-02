@@ -348,7 +348,7 @@ Z I param_validate(S s,I n) // Works on ([]) and {[]} but pass inside exclusive 
   while(s<u && 4 > p) p=param_dfa[r*p+param_gp(*s++)]-'0';
   R 4==p?1:2; }   //State-4 yield 1 (pass, good parameters), otherwise yield 2 (fail, bad paramters)
 
-Z K* inKtreeR(K*p,S t,I create)
+Z K *inKtreeR(K*p,S t,I create)
 { if(!*t) R p;
   if('.'==*t) t++;
   I c=0,a=(*p)->t;
@@ -486,7 +486,6 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                       u=sp(e); //converting to sp() probably unnecessary
                       free(e);
                       P(!u,(L)ME) //you can return 0 but catch above?
-                      //k3.2 knows whether NAME is set for assignment or not.  "b.c" value/parse error but "b.c:3" ok
                       K q;
                       //      it uses the non-path-creating form of dename
                       if(2==r && '_'==*u && stringHasChar(n_s,u[1]))
@@ -524,7 +523,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                         oerr(); O("%s\n%c\n",u,'^');
                         #endif
                         R err; }
-                        z=denameD(dict,u,fll&&fdc); } )
+                      z=denameD(dict,u,fll&&fdc); } )
     CS(MARK_VERB,     // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){ z=(V)0x7c; break; }   //trace or scan
                       if(s[k]==':' && s[strlen(s)-1]!=':' && lineB && lineB[strlen(lineB)-1]!=']' && lineB[0]!=')')

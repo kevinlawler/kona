@@ -777,7 +777,7 @@ K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types,
   DO(c, I j=c-i-1; //counting down
         b[j]=w[j];
         if(VA(b[j])) continue; //partially copy pasted from clone().
-                               //This pattern occurs here, in clone(), at the end of capture(), and in capture's BRACKET handler
+          //This pattern occurs here, in clone(), at the end of capture(), and in capture's BRACKET handler
         K r=ex_(w[j],1); //oom
         V q=newE(LS,r); //oom
         kap((K*) kV(a)+LOCALS,&q);//oom
