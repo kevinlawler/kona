@@ -525,8 +525,10 @@ K vf_ex(V q, K g)
             K fc = kclone(f); //clone the function to pass for _f
             cd(kV(fc)[CONJ]); kV(fc)[CONJ]=0;
             kV(fc)[DEPTH]++;
-            I tt=0; DO(o->n, if(kC(o)[i]=='{') { tt=1; break; } )
-            I ttt=0; DO(o->n-1, if(kC(o)[i]=='{' && kC(o)[i+1]==':') { ttt=1; break; } )
+            I tt=0; I ttt=0; I i=0; for(i=0;i<(o->n)-3;++i)
+            { if(kC(o)[i]=='{')
+              { tt=1;
+                if(kC(o)[i+1]==':'){ ttt=1; break; } } }
             if(!ttt && (!grnt || tt || kC(o)[0]=='[')) fw=wd_(kC(o),o->n,&tree,fc);
             else{ tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
             kV(f)[CACHE_WD]=fw; cd(fc); }

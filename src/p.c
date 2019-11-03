@@ -23,7 +23,7 @@ S formed_dfa =
 #define STATE_COMMENT(x) ((x->s) == 4)
 #define STATE_QUOTE(x)   ((x->s) >= 5)
 
-S  left = "([{";
+S left  = "([{";
 S right = ")]}";
 S lineA;
 S lineB;
@@ -348,7 +348,7 @@ Z I param_validate(S s,I n) // Works on ([]) and {[]} but pass inside exclusive 
   while(s<u && 4 > p) p=param_dfa[r*p+param_gp(*s++)]-'0';
   R 4==p?1:2; }   //State-4 yield 1 (pass, good parameters), otherwise yield 2 (fail, bad paramters)
 
-Z K *inKtreeR(K*p,S t,I create)
+Z K*inKtreeR(K*p,S t,I create)
 { if(!*t) R p;
   if('.'==*t) t++;
   I c=0,a=(*p)->t;
@@ -367,7 +367,7 @@ Z K *inKtreeR(K*p,S t,I create)
   else p=EVP(e); //value
   R inKtreeR(p,t,create); }
 
-K* inKtree(K*d, S t, I create)
+K*inKtree(K*d, S t, I create)
 { if(!simpleString(t)) R 0; //some kind of error
   R inKtreeR('.'==*t||!*t?&KTREE:d,t,create); }
 
