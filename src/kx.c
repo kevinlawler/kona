@@ -533,7 +533,7 @@ K vf_ex(V q, K g)
             else{ tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
             kV(f)[CACHE_WD]=fw; cd(fc); }
           #ifdef DEBUG
-            if(stk1>5) { cd(g); kerr("stack"); R _n(); }
+            if(stk1>1e3) { cd(g); kerr("stack"); R _n(); }
           #else
             if(stk1>1e3) { cd(g); kerr("stack"); R _n(); }
           #endif
