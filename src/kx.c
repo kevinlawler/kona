@@ -532,11 +532,7 @@ K vf_ex(V q, K g)
             if(!ttt && (!grnt || tt || kC(o)[0]=='[')) fw=wd_(kC(o),o->n,&tree,fc);
             else{ tc=kclone(tree); fw=wd_(kC(o),o->n,&tc,fc); }
             kV(f)[CACHE_WD]=fw; cd(fc); }
-          #ifdef DEBUG
-            if(stk1>1e3) { cd(g); kerr("stack"); R _n(); }
-          #else
-            if(stk1>1e3) { cd(g); kerr("stack"); R _n(); }
-          #endif
+          if(stk1>1e3) { cd(g); kerr("stack"); R _n(); }
           ci(fw); stk1++; z=ex(fw); stk1--;
           DO(p->n, e=EVP(DI(tree,i)); cd(*e); *e=0; )
           stk--; ) }
