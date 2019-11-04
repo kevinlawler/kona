@@ -304,6 +304,7 @@ Z I tests02()
   TC( {p[`a]:1;do[1;p[`b]:2];p}[], .((`a;1;);(`b;2;)) )    // issue 555
   TC_( "1 1", "ds:{-':x}; a: 1 2 3; ds a; ds a" ) // issue 554
   TC( 2, g:{a:x; {:[x=0; a:x; g(0)]}a; a}; g 2 )  // issue 549
+  TC( 7, c:0; f:{c+:1;:[x;:[y;f[x-1;f[x;y-1]];f[x-1;1]];y+1]}; f[2;2] )    // Ackerman's function
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
