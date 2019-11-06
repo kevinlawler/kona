@@ -133,7 +133,7 @@ K at_verb(K a, K b) {    //[Internal Function]
     P(5!=at,TE)
     z=newK(0,bn);
     DO(bn, kK(z)[i]=ci(lookup(a,kS(b)[i])))
-    z=collapse(z); }
+    if(!(bt<0 && bn==1))z=collapse(z); }
   else if(6==bt) {
     if(0>=at)z=ci(a);
     else if(5==at){z=newK(0,an); DO(an, kK(z)[i]=ci(EV(DI(a,i)))) z=collapse(z);} //TODO: untested
