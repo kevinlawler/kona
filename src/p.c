@@ -526,11 +526,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                       z=denameD(dict,u,fll&&fdc); } )
     CS(MARK_VERB,     // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){ z=(V)0x7c; break; }   //trace or scan
-                      if(s[k]==':' && s[strlen(s)-1]!=':' && lineB && lineB[strlen(lineB)-1]!=']' && lineB[0]!=')')
-                      { I i=0;
-                        for(i=k-1;i>0;i--)
-                        { if(s[i]!=' ')
-                          { c=s[i];break; } } }
+                      if(s[k]==':' && k==0 && strlen(s)>1 && s[k+1]!=':'){ z=(V)0x7d; break; }
                       if('_'==s[k] && r > 1)
                       { if(k+r<n && ':'==s[k+r] && -MARK_VERB==m[k+r]) R (L)PE;
                         u=strdupn(s+k,r); P(!u,(L)PE)  L i; i=DT_SPECIAL_VERB_OFFSET;

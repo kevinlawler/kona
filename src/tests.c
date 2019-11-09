@@ -306,6 +306,8 @@ Z I tests02()
   TC( 2, g:{a:x; {:[x=0; a:x; g(0)]}a; a}; g 2 )  // issue 549
   TC( 9, c:0; f:{c+:1;:[x;:[y;f[x-1;f[x;y-1]];f[x-1;1]];y+1]}; f[2;3] )    // Ackerman's function
   TC(  1,  (.((`a;1);(`b;2)))(`a) )               // issue 560
+  TC( 5, :+[2]3 )                                 // issue 558
+  TC( 2, :+2 )                                    // issue 558
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
