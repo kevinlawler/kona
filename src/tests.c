@@ -308,6 +308,7 @@ Z I tests02()
   TC(  1,  (.((`a;1);(`b;2)))(`a) )               // issue 560
   TC( 5, :+[2]3 )                                 // issue 558
   TC( 2, :+2 )                                    // issue 558
+  TC( 5, f:{ if[x;:+[x]y]; y }; f[2;3] )          // issue 558
 
   //Error trap: {[a;b][c;d] a+b} -> parse error ; { {[a][b] }} -> parse error
   TC(.[*; (3;4); :], (0;12) )
