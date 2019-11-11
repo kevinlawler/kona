@@ -394,7 +394,9 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                       a=0;
                       while(a < -1+*d && adverbClass(p[-1-a])) a++;
                       //could perhaps put [] directly on () or {} 7 instead of making new g provided 0==a.
-                      g=Kv(); K ko=newK(-4,a+2); M(g,ko)  g->n=0; kV(g)[CODE]=ko; V *o=kW(g); z=wd_(s+k+1,r-2,dict,func);
+                      g=Kv(); K ko=newK(-4,a+2); M(g,ko)  g->n=0; kV(g)[CODE]=ko; V *o=kW(g);
+                      if((s+k+1)[0]=='x' && (s+k+1)[1]==';')fbr=0;
+                      z=wd_(s+k+1,r-2,dict,func);
                       if(!z){ cd(g); R (L)PE; }
                       //g o z   oom: you can return 0 but catch above?
                       if(MARK_CONDITIONAL==ABS(m[k-1]))
