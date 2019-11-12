@@ -17,7 +17,7 @@ K dp(K*z,K(*f)(K,K),K x,K y) //dyad promote
 {
    x=promote(x); y=promote(y);
    M(x,y,*z)
-   DO((*z)->n, if(!(kK(*z)[i]=f(kK(x)[i%xn],kK(y)[i%y->n]))){cd(*z);*z=ME;break;}) //TODO: optimization: remove these modulo % operations
+   DO((*z)->n, if(!(kK(*z)[i]=f(kK(x)[i%xn],kK(y)[i%y->n]))){cd(*z);*z=TE;break;}) //TODO: optimization: remove these modulo % operations
    cd(x);cd(y);
    R 0;
 }
