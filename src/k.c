@@ -83,6 +83,7 @@ K tr_st(K x){   //trace_stop
   R ci(x); }
 K rtrn(K x) {fer=1; R ci(x);}
 K eachright(){R 0;} K eachleft(){R 0;} K eachpair(){R 0;}
+K resume(K x){R 0;}
 
 C vc[]="+-*%|&^!<>=~@?_,#$.:";// was "!#$%&*+,-.<=>?@^_|~:";
 
@@ -530,6 +531,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {0, 1, rtrn,":",{0}},     //return
   {0, 2, _vs,"_vs",{0}},    //k3 version
   {0, 1, _hash,"_hash",{0}},
+  {0, 1, resume,":",{0}},
   //^^Add new rows here^^
   {-1,-1,TABLE_END,0,{0}}   //sentinel
 };
