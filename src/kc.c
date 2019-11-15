@@ -43,13 +43,13 @@ I fbs=0;              //backslash flag
 I prompt(I n){DO(n,O(">")) O("  ");fflush(stdout);R 0;}
 
 I wds(K* a,FILE*f){R wds_(a,f,0);}
-I wds_(K*a,FILE*f,I l) {
-  S s=0,t=0;  I b=0,c=0,m=0,n=0,v=0;  K z=0; PDA p=0;
+I wds_(K*a,FILE*f,I l)
+{ S s=0,t=0;  I b=0,c=0,m=0,n=0,v=0;  K z=0; PDA p=0;
   I o=isatty(STDIN)&&f==stdin;
   if(-1==(c=getline_(&s,&n,f)))GC;
   appender(&t,&m,s,n);
-  while(1==(v=complete(t,m,&p,0))) {
-    b=parsedepth(p);
+  while(1==(v=complete(t,m,&p,0)))
+  { b=parsedepth(p);
     if(o)prompt(b+l);
     if(-1==(c=getline_(&s,&n,f)))GC;
     appender(&t,&m,s,n); }
@@ -57,8 +57,7 @@ I wds_(K*a,FILE*f,I l) {
   z=newK(-3,m-1);
   strncpy(kC(z),t,m-1);
  cleanup:
-  free(s);
-  free(t);
+  free(s); free(t);
   if(p)pdafree(p);
   if((v||c==-1)&&z){cd(z); *a=0;}
   else *a=z;
@@ -67,25 +66,25 @@ I wds_(K*a,FILE*f,I l) {
 K KONA_ARGS; //saved values from argv[1:]
 
 Z void multihomeini(S*x)
-{
-  Z C port[64+1];
+{ Z C port[64+1];
   S s=*x;if(!s)R;
   S p=strchr(s,':');if(!p)R;
   strcpy(port,p+1);
   HOST_IFACE=spn(s,p-s);*x=port;
   K h=Ks(HOST_IFACE);
-  cd(KONA_CLIENT);KONA_CLIENT=_host(h);cd(h);
-}
+  cd(KONA_CLIENT);KONA_CLIENT=_host(h);cd(h); }
 
-I args(int n,S*v) {
-  K a,k; I c,len,b=1; U(KONA_ARGS=newK(0, n))
+I args(int n,S*v)
+{ K a,k; I c,len,b=1; U(KONA_ARGS=newK(0, n))
   DO(n, len=strlen(v[i]);
         if(!(a=newK(-3, len))){cd(KONA_ARGS);R 0;}
         strncpy(kC(a),v[i],len);
         kK(KONA_ARGS)[i]=a )
-  while(-1!=(c=getopt(n,v,":b:h:i:e:x:")))SW(c) {
-    CS('h',  if(IPC_PORT)O("-i accepted, cannot also have -h\n"); else HTTP_PORT=optarg;)
-    CS('i',  if(HTTP_PORT)O("-h accepted, cannot also have -i\n"); else {IPC_PORT=optarg;*kI(KONA_PORT)=atol(IPC_PORT);})
+  while(-1!=(c=getopt(n,v,":b:h:i:e:x:")))SW(c)
+  { CS('h',  if(IPC_PORT)O("-i accepted, cannot also have -h\n");
+             else HTTP_PORT=optarg; )
+    CS('i',  if(HTTP_PORT)O("-h accepted, cannot also have -i\n");
+             else{ IPC_PORT=optarg;*kI(KONA_PORT)=atol(IPC_PORT); } )
     CS('b',  b=0;)
     CS('e',  cd(X(optarg)); exit(0) )
     CS('x',  k=X(optarg); printAtDepth(0,k,0,0,0,0); O("\n"); cd(k); exit(0) )
@@ -93,7 +92,8 @@ I args(int n,S*v) {
     CS('?',  O("%c\nabort",optopt); exit(0)) }
   if(b)boilerplate();
   multihomeini(IPC_PORT?&IPC_PORT:&HTTP_PORT);
-  S h=getenv("KINIT");if(h) load(h);
+  S h=getenv("KINIT");
+  if(h) load(h);
   while(optind < n) load(v[optind++]);
   R 0; }
 
@@ -103,19 +103,17 @@ pthread_mutex_t execute_mutex;
 
 C khome[PATH_MAX+1];
 Z void khinit()
-{
-  I n;S h;
+{ I n;S h;
   khome[0]=0;
-  if((h=getenv("KHOME"))){
-    n=strlen(h);if(n+1>PATH_MAX)R;//doesn't fit
-    strcpy(khome,h);strcpy(khome+n,"/");
-  }else if((h=getenv("HOME"))){
-    n=strlen(h);if(n+3>PATH_MAX)R;
-    strcpy(khome,h);strcpy(khome+n,"/k/");
-  }
-}
+  if((h=getenv("KHOME")))
+  { n=strlen(h);if(n+1>PATH_MAX)R;//doesn't fit
+    strcpy(khome,h);strcpy(khome+n,"/"); }
+  else if((h=getenv("HOME")))
+       { n=strlen(h);if(n+3>PATH_MAX)R;
+         strcpy(khome,h);strcpy(khome+n,"/k/"); } }
 
-I kinit() {       //oom (return bad)
+I kinit()
+{ //oom (return bad)
   atexit(finally);
 
   #ifndef WIN32
@@ -180,15 +178,15 @@ I kinit() {       //oom (return bad)
   khinit();
   R 0; }
 
-Z I randomBits(){
-  I s;I f=open("/dev/urandom",0);
+Z I randomBits()
+{ I s;I f=open("/dev/urandom",0);
   I r=read(f,&s,sizeof(s)); if(!r)show(kerr("read"));
   r=close(f); if(r)show(kerr("file")); R s; }
 
 void seedPRNG(I s){SEED=s?s:randomBits(); init_genrand64(SEED);}
 
-Z I nodeCount_(N n) {
-  I l=0, r=0;
+Z I nodeCount_(N n)
+{ I l=0, r=0;
   if(n->k){ if(strlen((S)n->k)) O("%s ",(S)n->k); else O("(nil) "); }
   if(n->c[0]) l += nodeCount_(n->c[0]);
   if(n->c[1]) r += nodeCount_(n->c[1]);
@@ -206,120 +204,111 @@ Z void trim(S s)    //remove leading blanks (and extra instances of "each")
                       s[j]=s[j+i]; k=0; }
            else {  k++; s[j]=s[j+i]; } } } }
 
-I check() {      //in suspended execution mode: allows checking of state at time of error
+I check()
+{ //in suspended execution mode: allows checking of state at time of error
   I ofCheck=fCheck;
   kerr("(nil)"); prompt(++fCheck); S a=0;  I n=0;  PDA q=0;
   for(;;) {
     line(stdin, &a, &n, &q);
-    if(fCheck==ofCheck)GC; }
-  O("\n");
-cleanup:
-  fCheck=ofCheck;
-  R 0; }
+    if(fCheck==ofCheck) R 0; } }
 
 Z I fln=0;
-I lines(FILE*f) {
-  S a=0;I n=0;PDA p=0; fln=1; while(-1!=line(f,&a,&n,&p)){fln=0;} R 0;}
-    //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
+I lines(FILE*f)
+{ S a=0;I n=0;PDA p=0; fln=1; while(-1!=line(f,&a,&n,&p)){fln=0;} R 0;}
+  //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
-I line(FILE*f, S*a, I*n, PDA*p) {  //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
+I line(FILE*f, S*a, I*n, PDA*p)
+{ //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   S s=0; I b=0,c=0,m=0,o=1; K k; F d; fbr=fer=feci=0; fam=1;
-
   if(-1==(c=getline_(&s,&m,f))) GC;
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
-  if(s[0]=='\\' && s[1]=='\n') {
-    if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
+  if(s[0]=='\\' && s[1]=='\n')
+  { if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
   appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
   b=parsedepth(*p);
-  if(v==3) { show(kerr("nest")); GC; }
-  if(v==2) { show(kerr("unmatched")); b=0; GC; }
-  if(v==1) { fCmplt=1; goto done; }         //generally incomplete
+  if(v==3){ show(kerr("nest")); GC; }
+  if(v==2){ show(kerr("unmatched")); b=0; GC; }
+  if(v==1){ fCmplt=1; goto done; }         //generally incomplete
   if(v==0) fCmplt=0;
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
-
   trim(*a); //remove leading blanks
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
-  if((*a)[0]=='\\')fbs=1; else fbs=0;
-
-  if(pthread_mutex_lock(&execute_mutex)){
-    perror("Lock mutex in line()"); abort();}
-
+  if((*a)[0]=='\\')fbs=1;
+  else fbs=0;
+  if(pthread_mutex_lock(&execute_mutex)){ perror("Lock mutex in line()"); abort(); }
   RTIME(d,k=ex(wd(*a,*n)))
-
-  if(pthread_mutex_unlock(&execute_mutex)){
-    perror("Unlock mutex in line()"); abort();}
-
+  if(pthread_mutex_unlock(&execute_mutex)){ perror("Unlock mutex in line()"); abort(); }
   #ifdef DEBUG
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
-
   if(o && fam && !feci)show(k);
-
   cd(k);
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
-  if(!strcmp(errmsg,"value"));
-  else if(strcmp(errmsg,"(nil)") && fer!=-1) { oerr(); I ctl=0;
-    if(fError){
-      if(2==fError)exit(1);
-      if(lineA){
-        if(fnc){ I cnt=0,i;
+  if(strcmp(errmsg,"(nil)") && fer!=-1)
+  { oerr(); I ctl=0;
+    if(fError)
+    { if(2==fError)exit(1);
+      if(lineA)
+      { if(fnc)
+        { I cnt=0,i;
           if(strlen(fnc)==1)for(i=0;i<strlen(lineA);i++) { if(lineA[i]==*fnc) cnt++; }
-          else for(i=0;i<strlen(lineA)-1;i++) {if(lineA[i]==fnc[0]) if(lineA[i+1]==fnc[1]) {ptr=&lineA[i]; cnt++;}}
-          if(cnt==1) { ctl=1; O("%s\n",lineA); if(!ptr)ptr=strchr(lineA,*fnc); DO(ptr-lineA,O(" ")) O("^\n"); }
-          if(cnt>1 && fnci && fnci<127) { I num=0;
+          else for(i=0;i<strlen(lineA)-1;i++)
+          { if(lineA[i]==fnc[0]) if(lineA[i+1]==fnc[1]){ ptr=&lineA[i]; cnt++; } }
+          if(cnt==1)
+          { ctl=1; O("%s\n",lineA);
+            if(!ptr)ptr=strchr(lineA,*fnc);
+            DO(ptr-lineA,O(" ")) O("^\n"); }
+          if(cnt>1 && fnci && fnci<127)
+          { I num=0;
             for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
-            O("%s\n",lineA); O("at execution instance %lld of \"%s\"\n",num,fnc); }}}
-      if(lineB && !ctl && strcmp(lineA,lineB)) {
-        if(fnc) { I cnt=0,i; O("%s\n",lineB);
+            O("%s\n",lineA); O("at execution instance %lld of \"%s\"\n",num,fnc); } } }
+      if(lineB && !ctl && strcmp(lineA,lineB))
+      { if(fnc)
+        { I cnt=0,i; O("%s\n",lineB);
           for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
           if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }
-          if(cnt>1 && fnci && fnci<127) { I num=0;
+          if(cnt>1 && fnci && fnci<127)
+          { I num=0;
             for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
-            O("at execution instance %lld of %s\n",num,fnc); }}}
-      if(lineA || lineB)  check();          //enter suspended execution mode for checking
-      if(!lineA && !lineB) O("%s\n",*a); }}
+            O("at execution instance %lld of %s\n",num,fnc); } } }
+      if(lineA || lineB) check();          //enter suspended execution mode for checking
+      if(!lineA && !lineB) O("%s\n",*a); } }
   if(*p)pdafree(*p);
-  *p=0;
-  free(*a);*a=0;*n=0;
-  free(s);s=0;
+  *p=0; free(*a); *a=0; *n=0; free(s); s=0;
  done:
-  if(fWksp) { O("used now : %lld (%lld %lld)\n",(I)mUsed,(I)mAlloc,(I)mMap);
-              O("max used : %lld\n",(I)mMax);
-              O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
-              O("count    : %lld\n",cnt); fWksp=0; }
+  if(fWksp)
+  { O("used now : %lld (%lld %lld)\n",(I)mUsed,(I)mAlloc,(I)mMap);
+    O("max used : %lld\n",(I)mMax);
+    O("symbols  : "); I cnt=nodeCount(SYMBOLS); O("\n");
+    O("count    : %lld\n",cnt); fWksp=0; }
   if(o && !fLoad)prompt(b+fCheck);
-  kerr("(nil)"); fll=fer=fer1=fnci=fom=feci=0; fnc=lineA=lineB=0; if(cls){cd(cls);cls=0;}
+  kerr("(nil)"); fll=fer=fer1=fnci=fom=feci=0; fnc=lineA=lineB=0; if(cls){ cd(cls); cls=0; }
   R c; }
 
 I tmr_ival=0;
 V timer_thread(V arg)
-{
-  for(;;){
-    if(tmr_ival){
-      K a=_n(),h=*denameS(".",".m.ts",0),z=0;
-      if(6!=h->t){
-        if(pthread_mutex_lock(&execute_mutex)){
-          perror("Lock mutex in timer_thread())"); abort();}
-        z=at(h,a);
-        if(pthread_mutex_unlock(&execute_mutex)){
-          perror("Unlock mutex in timer_thread())"); abort();}
-      }
-      if(z)cd(z);
-      cd(a);
-    }
+{ for(;;)
+  { if(tmr_ival){
+     K a=_n(),h=*denameS(".",".m.ts",0),z=0;
+     if(6!=h->t)
+     { if(pthread_mutex_lock(&execute_mutex))
+       { perror("Lock mutex in timer_thread())"); abort();}
+         z=at(h,a);
+         if(pthread_mutex_unlock(&execute_mutex)) { perror("Unlock mutex in timer_thread())"); abort(); } }
+       if(z)cd(z);
+       cd(a); }
 #ifdef WIN32
     win_usleep(tmr_ival?1000*tmr_ival:10000);
 #else
     usleep(tmr_ival?1000*tmr_ival:10000);
 #endif
   }
-  R 0;
-}
+  R 0; }
 
 #ifndef WIN32
 
