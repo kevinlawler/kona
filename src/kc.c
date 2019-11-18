@@ -276,8 +276,7 @@ I line(FILE*f, S*a, I*n, PDA*p)
           { I num=0;
             for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
             O("at execution instance %lld of %s\n",num,fnc); } } }
-      if(lineA || lineB) check();          //enter suspended execution mode for checking
-      if(!lineA && !lineB) O("%s\n",*a); } }
+      if(lineA || lineB) check(); } }      //enter suspended execution mode for checking
   if(*p)pdafree(*p);
   *p=0; free(*a); *a=0; *n=0; free(s); s=0;
  done:
