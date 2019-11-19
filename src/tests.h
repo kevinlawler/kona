@@ -27,6 +27,7 @@ extern I fll;
 extern I fdc;
 extern __thread K cls;
 extern I feci;
+extern C cdp[];
 I tc(S a,S b);
 I tp(I x);
 S ts(I x);

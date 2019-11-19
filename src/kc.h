@@ -1,5 +1,6 @@
 void init_genrand64(unsigned long long seed);
 extern I SEED;
+extern C cdp[];
 V alloc(size_t sz);
 K _dot_t();
 K newE(S s,K k);

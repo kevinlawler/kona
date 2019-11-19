@@ -41,6 +41,7 @@ __thread I frg=0;    // Flag reset globals
          I fom=0;    // Flag overMonad (curried)
          I fam=1;    // Flag amend: 1=OK to print response
          I ft3=0;    // Flag if t3<(K)DT_SIZE
+         C cdp[]="aaaaaaaaaa";    // Code Pointer
 
          I calf=-1;  // counter for alf
          C* alf="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; // for recursive member display in sd_()
@@ -593,8 +594,17 @@ K ex(K a)   //Input is (usually, but not always) 7-0 type from wd()
   if(a->t==7 && kVC(a)>(K)DT_SIZE && 7==kVC(a)->t && 6==kVC(a)->n) fwh=1;
   if(a->t==7)
   { if(prnt==0)
-    { if(kV(kK(a)[CODE])[1]==offsetColon && kV(kK(a)[CODE])[2]!=offset3m) fam=0;
-      if(kK(a)[CODE]->n>3){ I i=3; while(kV(kK(a)[CODE])[i]) if(kI(kK(a)[CODE])[i++]==0x1)fam=1; } } }
+    { if(kW(a)[1]==offsetColon && kW(a)[2]!=offset3m) fam=0;
+      if(kVC(a)->n>3)
+      { I i=3;
+        while(kW(a)[i]) if(kW(a)[i++]==(V)0x1)fam=1;
+        if(!fCheck && i>2)
+        { I j,k=0;
+          for(j=i-1; j>0 && k<10; j--)
+            if(kW(a)[j]<(V)DT_SIZE && kW(a)[j]>(V)1)
+            { cdp[k]=(C)*DT[(I)kW(a)[j]].text;
+              //O("i: %lld    cdp: %s\n",i,cdp);
+              k++; } } } } }
   else fam=1;
   K z=ex_(&a,0); cd(a);
   if(fer==1) fer=fer1=0;

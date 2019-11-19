@@ -35,9 +35,9 @@ I tc(S a, S b) //test comparison .  R 0,1,2
   kreci=0;
 
   KTREE=Kd();
-  K x = X(a); fer=fer1=fom=fbr=fll=fdc=feci=0; if(cls){cd(cls);cls=0;}
+  K x = X(a); fer=fer1=fom=fbr=fll=fdc=feci=0; if(cls){cd(cls);cls=0;}  I i=0; for(i=0;i<10;i++)cdp[i]='a';
   // fprintf(stderr,"testing: %s\n",b);
-  K y = X(b); fer=fer1=fom=fbr=fll=fdc=feci=0; if(cls){cd(cls);cls=0;}
+  K y = X(b); fer=fer1=fom=fbr=fll=fdc=feci=0; if(cls){cd(cls);cls=0;}  for(i=0;i<10;i++)cdp[i]='a';
   I m=matchI(x,y);
 
   if(!m)

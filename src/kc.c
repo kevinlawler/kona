@@ -222,11 +222,18 @@ I line(FILE*f, S*a, I*n, PDA*p)
   S s=0; I b=0,c=0,m=0,o=1; K k; F d; fbr=fer=feci=0; fam=1;
   if(-1==(c=getline_(&s,&m,f))) GC;
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
+  if(fCheck && s[0]==':')
+  { I i; for(i=0; i<strlen(lineA); i++)if(lineA[i]==cdp[1])break;
+    appender(a,n,lineA,i+1);
+    appender(a,n,s+1,strlen(s)-2);
+    RTIME(d,k=ex(wd(*a,*n)))
+    goto next; }
   if(s[0]=='\\' && s[1]=='\n')
   { if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
-  appender(a,n,s,c);         //"strcat"(a,s)
+  if(s[0]=='\\' && s[1]=='\\')exit(0);
+  if(!fCheck)appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
   b=parsedepth(*p);
   if(v==3){ show(kerr("nest")); GC; }
@@ -244,8 +251,9 @@ I line(FILE*f, S*a, I*n, PDA*p)
   #ifdef DEBUG
     if(o&&k)O("Elapsed: %.7f\n",d);
   #endif
-  if(o && fam && !feci)show(k);
+  next: if(o && fam && !feci)show(k);
   cd(k);
+  if(fCheck){ fCheck=0; goto done; }
  cleanup:
   if(fCheck && (strlen(s)==0 || s[strlen(s)-1]<0)) exit(0);
   S ptr=0;
@@ -276,7 +284,7 @@ I line(FILE*f, S*a, I*n, PDA*p)
           { I num=0;
             for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
             O("at execution instance %lld of %s\n",num,fnc); } } }
-      if(lineA || lineB) check(); } }      //enter suspended execution mode for checking
+      if(lineA || lineB) check(); } }         //enter suspended execution mode for checking
   if(*p)pdafree(*p);
   *p=0; free(*a); *a=0; *n=0; free(s); s=0;
  done:
