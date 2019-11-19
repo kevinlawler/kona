@@ -233,7 +233,7 @@ I line(FILE*f, S*a, I*n, PDA*p)
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
   if(s[0]=='\\' && s[1]=='\\')exit(0);
-  if(!fCheck)appender(a,n,s,c);         //"strcat"(a,s)
+  appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
   b=parsedepth(*p);
   if(v==3){ show(kerr("nest")); GC; }

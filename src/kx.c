@@ -603,7 +603,6 @@ K ex(K a)   //Input is (usually, but not always) 7-0 type from wd()
           for(j=i-1; j>0 && k<10; j--)
             if(kW(a)[j]<(V)DT_SIZE && kW(a)[j]>(V)1)
             { cdp[k]=(C)*DT[(I)kW(a)[j]].text;
-              //O("i: %lld    cdp: %s\n",i,cdp);
               k++; } } } } }
   else fam=1;
   K z=ex_(&a,0); cd(a);
