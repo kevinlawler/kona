@@ -226,7 +226,7 @@ I line(FILE*f, S*a, I*n, PDA*p)
     { prompt(b+fCheck);
       if(-1==(c=getline_(&s,&m,f))) GC; } }
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
-  if(fCheck && s[0]==':')
+  if(fCheck && s[0]==':' && lineA)
   { I i; for(i=0; i<strlen(lineA); i++)if(lineA[i]==cdp[1])break;
     appender(a,n,lineA,i+1);
     appender(a,n,s+1,strlen(s)-2);
