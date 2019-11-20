@@ -221,6 +221,10 @@ I line(FILE*f, S*a, I*n, PDA*p)
 { //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
   S s=0; I b=0,c=0,m=0,o=1; K k; F d; fbr=fer=feci=0; fam=1;
   if(-1==(c=getline_(&s,&m,f))) GC;
+  if(fCheck && 1==strlen(s) && s[0]=='\n')
+  { while(1==strlen(s) && s[0]=='\n')
+    { O(">");
+      if(-1==(c=getline_(&s,&m,f))) GC; } }
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
   if(fCheck && s[0]==':')
   { I i; for(i=0; i<strlen(lineA); i++)if(lineA[i]==cdp[1])break;
