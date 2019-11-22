@@ -229,12 +229,13 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
       if(-1==(c=getline_(&s,&m,f))) GC; } }
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
   if(fCheck && s[0]==':' && (lineA || flc))
-  { I i;
+  { I i,j;
     if(*a)
     { for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[1])break;
       *n=0; appender(a,n,lineC,i+1); }
     else
-    { for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[1])break;
+    { for(j=0; j<10; j++)if(cdp[j]==*fnc)break;
+      for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[j+1])break;
       appender(a,n,lineC,i+1); }
     appender(a,n,s+1,strlen(s)-2);
     RTIME(d,k=ex(wd(*a,*n)))
@@ -414,6 +415,7 @@ I attend() {  //K3.2 uses fcntl somewhere
     for(i = 0; i <= fdmax; i++)
       if (FD_ISSET(i, &read_fds)) {
         if(i==STDIN) {
+          flc=fCheck=ofCheck=0;
           nbytes=line(stdin,&a,&n,&q);
           fln=0;
           if(nbytes<=0){
@@ -524,6 +526,7 @@ I attend() {
   for(;;) {   // main loop for Windows stdin
     scrLim = 0;
     for(;;) {
+      flc=fCheck=ofCheck=0;
       if (-1==line(stdin, &a, &n, &q)) exit(0);
       } }
   R 0; }
