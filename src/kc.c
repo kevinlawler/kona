@@ -36,9 +36,12 @@ I oerr(){R O("%s %s\n",errmsg,"error");}
 volatile sig_atomic_t interrupted=0;
 I scrLim=0;           //script load limit
 I fCheck=0;
+I ofCheck=0;
 I fCmplt=0;
 I fbr=0;              //flag for brace, bracket, or paren
 I fbs=0;              //backslash flag
+I flc=0;
+C lineC[100];
 
 I prompt(I n){ DO(n,O(">"))  O("  "); fflush(stdout); R 0; }
 
@@ -208,8 +211,8 @@ I check()
 { //in suspended execution mode: allows checking of state at time of error
   I ofCheck=fCheck;
   kerr("(nil)"); prompt(++fCheck); S a=0;  I n=0;  PDA q=0;
-  for(;;) {
-    line(stdin, &a, &n, &q);
+  for(;;)
+  { line(stdin, &a, &n, &q);
     if(fCheck==ofCheck) R 0; } }
 
 Z I fln=0;
@@ -217,18 +220,22 @@ I lines(FILE*f)
 { S a=0;I n=0;PDA p=0; fln=1; while(-1!=line(f,&a,&n,&p)){fln=0;} R 0;}
   //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
-I line(FILE*f, S*a, I*n, PDA*p)
-{ //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
-  S s=0; I b=0,c=0,m=0,o=1,q=1; K k; F d; fbr=fer=feci=0; fam=1;
+I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
+{  S s=0; I b=0,c=0,m=0,o=1,q=1; K k; F d; fbr=fer=feci=0; fam=1;
   if(-1==(c=getline_(&s,&m,f))) GC;
   if(fCheck && 1==strlen(s) && s[0]=='\n')
   { while(1==strlen(s) && s[0]=='\n')
     { prompt(b+fCheck);
       if(-1==(c=getline_(&s,&m,f))) GC; } }
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
-  if(fCheck && s[0]==':' && lineA)
-  { I i; for(i=0; i<strlen(lineA); i++)if(lineA[i]==cdp[1])break;
-    appender(a,n,lineA,i+1);
+  if(fCheck && s[0]==':' && (lineA || flc))
+  { I i;
+    if(*a)
+    { for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[1])break;
+      *n=0; appender(a,n,lineC,i+1); }
+    else
+    { for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[1])break;
+      appender(a,n,lineC,i+1); }
     appender(a,n,s+1,strlen(s)-2);
     RTIME(d,k=ex(wd(*a,*n)))
     fCheck=0; q=0;
@@ -238,6 +245,7 @@ I line(FILE*f, S*a, I*n, PDA*p)
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
   if(s[0]=='\\' && s[1]=='\\')exit(0);
+  if(flc)*n=0;
   appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
   b=parsedepth(*p);
@@ -290,7 +298,11 @@ I line(FILE*f, S*a, I*n, PDA*p)
           { I num=0;
             for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
             O("at execution instance %lld of %s\n",num,fnc); } } }
-      if(lineA || lineB) check(); } }         //enter suspended execution mode for checking
+      if(lineA || lineB)
+      { if(!flc)
+        { I i=0; for(i=0; i<1+strlen(*a); i++)lineC[i]=(*a)[i];
+          flc=1; }
+        check(); } } }    //enter suspended execution mode for checking
   if(*p)pdafree(*p);
   *p=0; free(*a); *a=0; *n=0; free(s); s=0;
  done:
