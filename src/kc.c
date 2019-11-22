@@ -42,6 +42,7 @@ I fbr=0;              //flag for brace, bracket, or paren
 I fbs=0;              //backslash flag
 I flc=0;
 C lineC[100];
+Z C ofnc[]=" ";
 
 I prompt(I n){ DO(n,O(">"))  O("  "); fflush(stdout); R 0; }
 
@@ -210,6 +211,7 @@ Z void trim(S s)    //remove leading blanks (and extra instances of "each")
 I check()
 { //in suspended execution mode: allows checking of state at time of error
   I ofCheck=fCheck;
+  if(fnc)*ofnc=*fnc;
   kerr("(nil)"); prompt(++fCheck); S a=0;  I n=0;  PDA q=0;
   for(;;)
   { line(stdin, &a, &n, &q);
@@ -221,7 +223,7 @@ I lines(FILE*f)
   //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
 I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
-{  S s=0; I b=0,c=0,m=0,o=1,q=1; K k; F d; fbr=fer=feci=0; fam=1;
+{ S s=0; I b=0,c=0,m=0,o=1,q=1; K k; F d; fbr=fer=feci=0; fam=1;
   if(-1==(c=getline_(&s,&m,f))) GC;
   if(fCheck && 1==strlen(s) && s[0]=='\n')
   { while(1==strlen(s) && s[0]=='\n')
@@ -231,7 +233,8 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
   if(fCheck && s[0]==':' && (lineA || flc))
   { I i,j;
     if(*a)
-    { for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[1])break;
+    { for(j=0; j<10; j++)if(cdp[j]==*ofnc)break;
+      for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[j+1])break;
       *n=0; appender(a,n,lineC,i+1); }
     else
     { for(j=0; j<10; j++)if(cdp[j]==*fnc)break;
