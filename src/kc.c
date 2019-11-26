@@ -26,22 +26,20 @@ extern void win_usleep(unsigned int); //buggy TDMGCC64 usleep()
 ;    // Need semicolon, probably missing from <pthread.h>.
 #endif
 
-I feci=0; //Flag error cast as integer
-
 K KONA_GSET=0,KONA_IDX=0;
 
-Z I randomBits();
-I oerr(){R O("%s %s\n",errmsg,"error");}
-
 volatile sig_atomic_t interrupted=0;
-I scrLim=0;           //script load limit
-I fCheck=0;
-I ofCheck=0;
-I fCmplt=0;
-I fbr=0;              //flag for brace, bracket, or paren
-I fbs=0;              //backslash flag
-I flc=0;
-C lineC[100];
+Z I randomBits();
+  I oerr(){R O("%s %s\n",errmsg,"error");}
+I feci=0;           //Flag error cast as integer
+  I scrLim=0;       //script load limit
+  I fCheck=0;
+Z I ofCheck=0;
+  I fCmplt=0;
+  I fbr=0;          //flag for brace, bracket, or paren
+  I fbs=0;          //backslash flag
+Z I flc=0;
+Z C lineC[100];
 Z C ofnc[]=" ";
 
 I prompt(I n){ DO(n,O(">"))  O("  "); fflush(stdout); R 0; }
@@ -239,7 +237,7 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
     else
     { for(j=0; j<10; j++)if(cdp[j]==*fnc)break;
       for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[j+1])break;
-      appender(a,n,lineC,i+1); }
+      if(cdp[1]!='a')appender(a,n,lineC,i+1); }
     appender(a,n,s+1,strlen(s)-2);
     RTIME(d,k=ex(wd(*a,*n)))
     fCheck=0; q=0;
