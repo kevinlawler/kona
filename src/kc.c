@@ -41,6 +41,7 @@ Z I ofCheck=0;
 Z I flc=0;
 Z C lineC[100];
 Z C ofnc[]=" ";
+Z I ocr=0;          //which occurance
 
 I prompt(I n){ DO(n,O(">"))  O("  "); fflush(stdout); R 0; }
 
@@ -229,15 +230,24 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
       if(-1==(c=getline_(&s,&m,f))) GC; } }
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
   if(fCheck && s[0]==':' && (lineA || flc))
-  { I i,j;
+  { I i,j,jj;
     if(*a)
     { for(j=0; j<10; j++)if(cdp[j]==*ofnc)break;
       for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[j+1])break;
       *n=0; appender(a,n,lineC,i+1); }
     else
-    { for(j=0; j<10; j++)if(cdp[j]==*fnc)break;
-      for(i=0; i<strlen(lineC); i++)if(lineC[i]==cdp[j+1])break;
-      if(cdp[1]!='a')appender(a,n,lineC,i+1); }
+    { I cfnc=0; for(i=0; i<strlen(lineC); i++)if(lineC[i]==*fnc)cfnc++;
+      I cprm=0; for(i=0; cdp[i]!='a'; i++)cprm++;
+      if(cfnc!=ocr && !(cfnc==ocr && cdp[cprm-1]==*fnc))        //else throw away complete lineC
+      { I cfl=0,cfc=0;                         //cfl = count of *fnc in lineC, cfc= count in cdp
+        for(i=strlen(lineC)-1; i>0; i--)
+        { if(lineC[i]==*fnc)cfl++;
+          if(cfl==ocr)break; }                 //have loc of ocr in lineC, need loc of next primitive
+        for(j=0; j<10; j++)
+        { if(cdp[j]==*fnc)cfc++;
+          if(cfc==ocr)break; }                 //next primitive to be executed is cdp[j+1]
+        for(jj=i-1; jj>0; jj--) if(lineC[jj]==cdp[j+1])break;
+        appender(a,n,lineC,jj+1); } }
     appender(a,n,s+1,strlen(s)-2);
     RTIME(d,k=ex(wd(*a,*n)))
     fCheck=0; q=0;
@@ -288,18 +298,18 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
             if(!ptr)ptr=strchr(lineA,*fnc);
             DO(ptr-lineA,O(" ")) O("^\n"); }
           if(cnt>1 && fnci && fnci<127)
-          { I num=0;
-            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
-            O("%s\n",lineA); O("at execution instance %lld of \"%s\"\n",num,fnc); } } }
+          { ocr=0;
+            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])ocr++; }
+            O("%s\n",lineA); O("at execution instance %lld of \"%s\"\n",ocr,fnc); } } }
       if(lineB && !ctl && strcmp(lineA,lineB))
       { if(fnc)
         { I cnt=0,i; O("%s\n",lineB);
           for(i=0;i<strlen(lineB);i++) { if(lineB[i]==*fnc) cnt++; }
           if(cnt==1) { S ptr=strchr(lineB,*fnc); DO(ptr-lineB,O(" ")) O("^\n"); }
           if(cnt>1 && fnci && fnci<127)
-          { I num=0;
-            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])num++; }
-            O("at execution instance %lld of %s\n",num,fnc); } } }
+          { ocr=0;
+            for(i=0;i<fnci;i++) { if(fncp[i]==fncp[fnci-1])ocr++; }
+            O("at execution instance %lld of %s\n",ocr,fnc); } } }
       if(lineA || lineB)
       { if(!flc)
         { I i=0; for(i=0; i<1+strlen(*a); i++)lineC[i]=(*a)[i];
