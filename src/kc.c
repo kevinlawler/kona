@@ -98,6 +98,7 @@ I args(int n,S*v)
   S h=getenv("KINIT");
   if(h) load(h);
   while(optind < n) load(v[optind++]);
+  prompt(0);
   R 0; }
 
 K KFIXED;

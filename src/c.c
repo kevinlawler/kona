@@ -30,11 +30,9 @@ S fBreak = "t";
 void boilerplate()
 {
   #ifndef __MINGW32__
-    if(!isatty(STDOUT) || !isatty(STDIN)) R;		//kluge:  isatty() fails using mingw-10.0 with msys2
+  if(!isatty(STDOUT) || !isatty(STDIN)) R;		//kluge:  isatty() fails using mingw-10.0 with msys2
   #endif
-  O("kona      \\ for help. \\\\ to exit.\n\n");
-  prompt(0);
-}
+  O("kona      \\ for help. \\\\ to exit.\n\n"); }
 
 //Q. What if a script is \loaded (via remote call) while the terminal is waiting with an open PDA for matching parentheses/quote marks?
 //A. In K3.2 the call blocks until the command-line input is not in an intermediate state
