@@ -512,7 +512,7 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                         else if(dict==(K*)kV(func)+LOCALS && ':'==s[k+r] && -MARK_VERB==m[k+r]) z=denameD(dict,u,1);
                         //K3.2:  a+:1 format applies to context-globals not locals
                         else if(7==h->t && *kI(hh)) { z=ci(func); frc=1; }
-                        else z=denameS(kV(func)[CONTeXT],u,1); }   //Otherwise check the context (refactor with above?)
+                        else z=denameS(kV(func)[CONTeXT],u,strstr(s,"do[")!=NULL); }//Otherwise check context (refactor w above?)
                       else
                       { if(fll>0) fdc=0;
                         I i;
