@@ -5,9 +5,9 @@
 #include "k.h"
 #include "ks.h"
 
-Z I ns=0,sd=0;
+Z I ns=0,sdd=0;
 // Z S sdup(S s){R strdupn(s,strlen(s));} //using this because "strdup" uses [used] dynamically linked malloc which fails with our static free
-Z S sdupI(S s){I k;S d=alloc(NSLOTS*sizeof(I)+(k=strlen(s))+1);if(!d)R 0;ns++;sd=1;d+=NSLOTS*sizeof(I);d[k]=0;R memcpy(d,s,k);}
+Z S sdupI(S s){I k;S d=alloc(NSLOTS*sizeof(I)+(k=strlen(s))+1);if(!d)R 0;ns++;sdd=1;d+=NSLOTS*sizeof(I);d[k]=0;R memcpy(d,s,k);}
 S strdupn (S s,I k) {S d=alloc(k+1);if(!d)R 0;d[k]=0;R memcpy(d,s,k);} // mm/o  (note: this can overallocate)
 //I SC0N(S a,S b,I n) {I x=memcmp(a,b,n); R x<0?-1:x>0?1:a[n]?1:0; }// non-standard way to compare aaa\0 vs aaa
 I strlenn(S s,I k){S t=memchr(s,'\0',k); R t?t-s:k;}

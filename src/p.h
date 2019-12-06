@@ -4,6 +4,8 @@ extern I fbr;
 extern I fbs;
 extern I feci;
 extern K sd_(K x,I f);
+extern K stopDict;
+extern I fStop;
 V alloc(size_t sz);
 L charsVerb(C c);
 I SC(S a,S b);

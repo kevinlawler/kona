@@ -520,13 +520,14 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                         { if(!fbr && s[i]==';') break;
                           else if(s[i]==':'|| (fbr && (s[i]=='x'||s[i]=='y'||s[i]=='z'))){ fdc=1; break; } }
                       z=inKtree(dict,u,0);
+                      if(fStop && !z) z=denameD(&stopDict,u,0);
                       if((!fdc)&&!z)
                       { L err=(L)VLE;
                         #ifndef DEBUG
                         oerr(); O("%s\n%c\n",u,'^');
                         #endif
                         R err; }
-                      z=denameD(dict,u,fll&&fdc); } )
+                      if((!fStop) && !z) z=denameD(dict,u,fll&&fdc); } )
     CS(MARK_VERB,     // "+" "4:" "_bin"  ;  grab "+:", "4::"
                       if(s[k]=='\\'){ z=(V)0x7c; break; }   //trace or scan
                       if(s[k]==':' && ((k==0 && strlen(s)>1 && s[k+1]!=':') ||

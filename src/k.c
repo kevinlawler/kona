@@ -24,6 +24,9 @@
 extern I listener;
 #endif
 
+K stopDict=0;
+I fStop=0;
+
 C errmsg[256]; //TODO: pthread_getspecific (not __thread) thread-local storage (different for mac os x)
 extern K kerr(cS s){ if(strcmp(s,"(nil)"))fer=2; R snprintf(errmsg,256,"%s",s),(K)0; }
 
@@ -79,7 +82,11 @@ C ac[] = "/\\'";
 K over(){R 0;} K scan(){R 0;} K each(){R 0;}
 K tr_st(K x){   //trace_stop
   if(0==strcmp(fBreak,"t"))show(x);
-  if(0==strcmp(fBreak,"s")){O("stop\n"); O("%s\n",lineA); check();}
+  if(0==strcmp(fBreak,"s"))
+  { O("stop\n"); O("%s\n",lineA);
+    stopDict=ci(kV(prnt)[7]); fStop=1;
+    check();
+    cd(stopDict); stopDict=0; fStop=0; }
   R ci(x); }
 K rtrn(K x) {fer=1; R ci(x);}
 K eachright(){R 0;} K eachleft(){R 0;} K eachpair(){R 0;}
