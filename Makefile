@@ -50,15 +50,7 @@ OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
 LDFLAGS = -lm -ldl
 endif
 
-ifeq (freebsd,$(OS))
-CFLAGS += -pthread
-LDFLAGS = -lm
-OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
-      src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
-      src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
-endif
-
-ifeq (openbsd,$(OS))
+ifeq (bsd,$(OS))
 CFLAGS += -pthread
 LDFLAGS = -lm
 OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
@@ -158,11 +150,7 @@ ifeq (linux,$(OS))
 src/*.o: src/incs.h src/ts.h Makefile src/k.h
 endif
 
-ifeq (freebsd,$(OS))
-src/*.o: src/incs.h src/ts.h Makefile src/k.h
-endif
-
-ifeq (openbsd,$(OS))
+ifeq (bsd,$(OS))
 src/*.o: src/incs.h src/ts.h Makefile src/k.h
 endif
 
