@@ -50,15 +50,7 @@ OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
 LDFLAGS = -lm -ldl
 endif
 
-ifeq (freebsd,$(OS))
-CFLAGS += -pthread
-LDFLAGS = -lm
-OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
-      src/k.o src/kc.o src/kx.o src/kg.o src/km.o src/kn.o src/ko.o src/ks.o \
-      src/v.o src/va.o src/vc.o src/vd.o src/vf.o src/vg.o src/vq.o
-endif
-
-ifeq (openbsd,$(OS))
+ifeq (bsd,$(OS))
 CFLAGS += -pthread
 LDFLAGS = -lm
 OBJS= src/0.o src/bswap.o src/c.o src/getline.o src/mt.o src/p.o src/r.o \
@@ -118,8 +110,14 @@ k_dyn: CFLAGS += $(PRODFLAGS)
 k_dyn: src/kbuild.h $(OBJS)
 	$(CC) ${CFLAGS} $(OBJS) -rdynamic -o $@ $(LDFLAGS)
 
+DATE_FMT = +%Y-%m-%d
+ifdef SOURCE_DATE_EPOCH
+	BUILD_DATE := $(shell date -u -d "@$(SOURCE_DATE_EPOCH)" "$(DATE_FMT)" 2>/dev/null || date -u -r "$(SOURCE_DATE_EPOCH)" "$(DATE_FMT)" 2>/dev/null || date -u "$(DATE_FMT)")
+else
+	BUILD_DATE := $(shell date "$(DATE_FMT)")
+endif
 src/kbuild.h:
-	echo "#define KBUILD_DATE \"`date +%Y-%m-%d`\"" >$@
+	echo "#define KBUILD_DATE" $(BUILD_DATE) >$@
 
 test: k_test
 
@@ -158,11 +156,7 @@ ifeq (linux,$(OS))
 src/*.o: src/incs.h src/ts.h Makefile src/k.h
 endif
 
-ifeq (freebsd,$(OS))
-src/*.o: src/incs.h src/ts.h Makefile src/k.h
-endif
-
-ifeq (openbsd,$(OS))
+ifeq (bsd,$(OS))
 src/*.o: src/incs.h src/ts.h Makefile src/k.h
 endif
 
