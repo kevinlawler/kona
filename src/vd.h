@@ -6,7 +6,8 @@ K kcloneI(K a,const char*f,int n);
 #define kclone(a) kcloneI(a,__FILE__,__LINE__)
 extern S d_;
 extern I fbs;
-K *denameS(S dir_string,S t,I create);
+extern K*inKtree(K*d, S t, I create);
+extern K *denameS(S dir_string,S t,I create);
 extern C errmsg[256];
 I isColonDyadic(K x);
 K dot_tetradic(K a,K b,K c,K y);
