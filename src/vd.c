@@ -119,7 +119,7 @@ K dot(K a, K b) //NB: b can be a cheating 0-type with NULLs .. ?
   //if(4==a->t)a=retrieveByHandle(a);
 
   if(4==a->t && 4==b->t)
-  { S s=(char*)malloc(2+strlen(*kS(a))+strlen(*kS(b)));
+  { S s=(S)malloc(2+strlen(*kS(a))+strlen(*kS(b)));
     s=strcpy(s,*kS(a)); strcat(s,"."); strcat(s,*kS(b));
     R *inKtree(&kK((kK(KTREE))[0])[1],s,0); }
   if(7==a->t) R vf_ex(&a,b); //Verb: "Apply" //TODO: my guess is this fails everywhere vf_ex does (derived verbs?) (|+) . (0;1) ???
