@@ -406,15 +406,18 @@ K vf_ex(V q, K g)
   if(!g) R 0; //??? R w converted to type7...or ?
   K z=0; U(g=promote(g))  I gn=g->n,k=sva(q),n=-1,j=0;
   if(!k&&!(*(V*)q)){ cd(g); R 0; }   // (2="2") 2 err
-  if(q>(V)DT_SIZE)
-  { K h=(K)(*(V*)q);
-    if(h->t==7 && h->n==1 && kK(h)[CODE] && (UI)kK(kK(h)[CODE])[0]>DT_SIZE)
-    { if(kK(h)[CODE]->n==3 && (*(K*)(kS(kK(h)[CODE])[0]))->t==0 ) { z=dot(*(K*)(kS(kK(h)[CODE])[0]),g); GC; }
-      if((UI)kK(kK(h)[CODE])[1]==0x3a && g->t==0 ){ z=dot( *(K*)(kS(kK(h)[CODE])[0]), kK(g)[0] ); GC; } } }
   n=valence(q); I ee=0;
   if(q>(V)DT_SIZE)
-  { K e=*(K*)q;
-    if(e->t==7 && e->n==1 && (V)kS(kK(e)[CODE])[0]>(V)DT_SIZE && (*(K*)kS(kK(e)[CODE])[0])->t==7){ n=2; ee=1; } }
+  { K h=*(K*)q;
+    if(h->t==7)
+    { if(h->n==1)
+      { if(kK(h)[CODE] && (UI)kK(kK(h)[CODE])[0]>DT_SIZE)
+        { if(kK(h)[CODE]->n==3 && (*(K*)(kS(kK(h)[CODE])[0]))->t==0 ) { z=dot(*(K*)(kS(kK(h)[CODE])[0]),g); GC; }
+          if((UI)kK(kK(h)[CODE])[1]==0x3a && g->t==0 ){ z=dot( *(K*)(kS(kK(h)[CODE])[0]), kK(g)[0] ); GC; } }
+        if((V)kS(kK(h)[CODE])[0]>(V)DT_SIZE && (*(K*)kS(kK(h)[CODE])[0])->t==7){ n=2; ee=1; } }
+      if(-4==(kK(h)[2])->t && 2==(kK(h)[2])->n && kV(kK(h)[2])[0]==(V)0x3a && 0==g->t )
+      { if(NULL==kV(g)[0]){ z=ci(*(K*)q); kV(z)[5]=(V)ci(g); GC; }
+        if(6==kK(g)[0]->t){ z=ci(*(K*)q); kV(z)[5]=(V)ci(kK(z)[4]); kK(z)[2][0]=kK(z)[2][1]; ci(kK(z)[2]); GC; } } } }
   if(ee && !kV(g)[0] && kV(g)[1]) fom=1;
   if( ((k || (*(K*)q)->t==7) && ( ((UI)q<DT_SIZE || (*(V*)q))  && gn>n && !(!n && 1>=gn))) || (ee && kV(g)[0] && kV(g)[1]) )
   { if(kK(g)[0]==NULL){ VE; GC; }
