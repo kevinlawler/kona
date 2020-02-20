@@ -413,9 +413,9 @@ I attend() {  //K3.2 uses fcntl somewhere
     FD_SET(listener, &master);
     fdmax = listener; }
 
-  pthread_t thread;
-  if(pthread_create(&thread, NULL, timer_thread, NULL)){
-    perror("Create timer thread"); abort(); }
+  //pthread_t thread;
+  //if(pthread_create(&thread, NULL, timer_thread, NULL)){
+  //  perror("Create timer thread"); abort(); }
 
   fln=1;
   for(;;) { // main loop

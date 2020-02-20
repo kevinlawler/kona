@@ -91,6 +91,7 @@ Z I testsIO()
 
 Z I tests02()
 {
+  TC( 1, d:.((`a;0);(`b;1)); `d .`b )             // issue 571  ... workaround
   TC(`b,(`a`b)[1])
   TC(2, {1+1} 0)
   TC(2, {a:1;a+a} _n )
@@ -313,7 +314,7 @@ Z I tests02()
   TC( -1, 4: (.((`a;1);(`b;2)))(,`a) )            // issue 561
   TC_( "1 2", "(1 2 1)\\1" )                      // issue 572
   TC_( "12 6 3", "0 1 1 3 2 5 3 7 4 9 5 11 6\\ 12" )       // issue 572
-  TC( 1, d:.((`a;0);(`b;1)); `d .`b )             // issue 571
+  //TC( 1, d:.((`a;0);(`b;1)); `d .`b )             // issue 571
   TC( .[;;;;], .[;;;;] )                          // issue 543  testing for leaks
   TC( .[], .[] )                                  // issue 543  testing for leaks
 
