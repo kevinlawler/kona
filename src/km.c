@@ -173,7 +173,7 @@ Z V unpool(I r)
   V*z;
   V*L=((V*)KP)+r;
   I k= ((I)1)<<r;
-  if(!*L)
+  if(!*L || (V)0x106==*L)
   {
     U(z=amem(k,r))
     if(k<PG)
