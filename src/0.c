@@ -995,7 +995,7 @@ K _4d_(S srvr,S port,K y) {
   if(send(sockfd, msg, strlen(msg), 0)==-1){O("errno:%d\n",errno); r=closesocket(sockfd); if(r)R FE; freeaddrinfo(result); R WE;}
   C buf[20000]; I size=30000; S data = malloc(size); I n1=1; n=0;
   do {
-        n1=recv(sockfd,&buf,20000,0);
+        n1=recv(sockfd,(S)&buf,20000,0);
         if(n1 == 0) break;
         if(n1<0){O("errno: %d\n",errno); R 0;}
         if( (n+n1) > (size-1) ) { size += 20000; data = realloc(data,size); }
