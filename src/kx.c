@@ -63,7 +63,11 @@ K sd_(K x,I f)
            calf--; )
     CS(-4, if(1)       //(f>-1)
            { V* v=(kV(x));
+             #ifdef __APPLE__
+             R 0;
+             #else
              if((v[0]>(V)0x10) & (v[0]<(V)0x5000000)) R 0; //stop, if have string of interned symbols
+             #endif
              I ii; for(ii=0;v[ii];ii++)
                    { O("     .2%c[%lld]: %p",alf[calf],ii,v[ii]);
                      if(v[ii]>(V)DT_SIZE){ if(calf<1)sd_(*(K*)v[ii],2); else sd_(*(K*)v[ii],1); }
