@@ -166,7 +166,7 @@ Z K _0d_write(K a,K b) {     //assumes a->t in {3,-3,4}
       if(3==ABS(k->t)) r=write(f,kC(k),k->n);
       r=write(f,"\n",1); if(r==-1)show(WE);)}
   else {                                                              //write to mmap'd file
-    if(m[0])f=open(m,O_RDWR|O_CREAT|O_TRUNC,07777);
+    if(m[0])f=open(m,O_RDWR|O_CREAT|O_TRUNC,0664);
     P(f<0,DOE)
     P(ftruncate(f,s),SE)
     //below is from Advanced Programming in the Unix Environment ... kept because windows might need them
