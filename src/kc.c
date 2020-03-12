@@ -257,7 +257,7 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
   { if(!fCheck&&fLoad) { c=-1; GC; }   //escape file load
     if(fCheck) { fCheck--;R 0; }   //escape suspended execution with single backslash
     if(*a) GC; }                    //escape continue with single backslash
-  if(s[0]=='\\' && s[1]=='\\')exit(0);
+  if(s[0]=='\\' && s[1]=='\\' && 2==strlen(s))exit(0);
   if(flc)*n=0;
   appender(a,n,s,c);         //"strcat"(a,s)
   I v=complete(*a,*n,p,0);   //will allocate if p is null
