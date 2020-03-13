@@ -467,6 +467,7 @@ Z K backslash_d(S s,I n,K*dict) {
   R NYI; }
 
 Z K backslash_v(S s,I n,K*dict) {
+  if(n>2 && s[2]=='\r')R SYE;
   C z[256]; z[0]='\0';
   if(2==n) strcpy(z,d_);
   if(4==n && s[3]==*"^") {
