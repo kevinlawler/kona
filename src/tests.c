@@ -248,7 +248,7 @@ Z I tests02()
   TC_( "(2 0;2 1)", "for:{[n;f]f\'!n}; {[i]for[i]{[j]i,j}}2" )                 //issue #388
   TC_( "(();,1 0;(2 0;2 1))", "for:{[n;f]f\'!n}; for[3]{[i]for[i]{[j]i,j}}" )  //issue #388
   TC(21.8, c: 1 4 3 0.5 -2; mdev:{x-(+/x)%#x}; fo:{+/ _sqr mdev x}; fo c)      //issue #390
-  TC(2.0, mi:{:[x!2;(x-1)%2; _ ((x-1),x)%2.0]}; {mi x}5; {mi x}5)              //issue #391
+  TC(2, mi:{:[x!2;(x-1)%2; _ ((x-1),x)%2.0]}; {mi x}5; {mi x}5)              //issue #391
   TC(1, m:{:[x!2; 1; 2]}; {m x}5; {m x}5)                                      //issue #391
   TC(1, m:{:[x; 1; 2]}; {m x}5; {m x}5)                                        //issue #391
   TC(1, m:{:[x; 1; 2]}; {m 3}5; {m 3}5)                                        //issue #391
@@ -1205,7 +1205,7 @@ Z I testsBook()
   TC(0.0, %%0)
   TC(0i, %0)
   TC(1, 0i>3.13)  // test for issue #230
-  TC(0n, 0%0)
+  TC(0N, 0%0)
   TC(2 4 1 3, |3 1 4 2)
   TC(m:(8 1 6;3 5 7;4 9 2); |m , (4 9 2;3 5 7;8 1 6))
   TC(`three, *|`one`two`three)
@@ -1425,7 +1425,7 @@ Z I testsBook()
   TC("efgh" ,("abcd";"efgh")/1)
   TC("b" ,("abcd";"efgh")/0 1)
   TC("g" ,("abcd";"efgh")/1 2)
-  TC(0.0, (%[;2])/9999)
+  TC(0, (%[;2])/9999)
   TC(0.0, (%[;2.0])/9999.0)
   TC("AAA", {:[3=#x;x;(1+#x)#x]}/"A")    //issue #303
   TC(-:/1, -1)                           //issue #380

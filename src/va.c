@@ -188,19 +188,19 @@ K divide(K a, K b)//NB: Integral values promoted to float
 {
   SCALAR_INIT(2)
   //if(1==zt*zt)zt*=2;//don't do because I%I is now I
-  if(zt==1)zt=2;
+  //if(zt==1)zt=2;
   K z=newK(zt,zn);U(z)
 
   F u,d,y=FI;//nUmerator, Denominator, infinitY
   //TODO:nulls;is it necessary to check for inf? IEEE may handle it already everywhere
   //TODO: ensure that 1/inf==0 and 1/-inf ==0
 
-//  I s,t,w=II;
-//  if(1==ABS(at) && 1==ABS(bt))//save I from being cast to F for greater accuracy
-//  { if (an==bn)      { DO(zn,s= kI(a)[i];t=kI(b)[i];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
-//    else if (an==1)  { DO(zn,s= kI(a)[0];t=kI(b)[i];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
-//    else /* bn==1 */ { DO(zn,s= kI(a)[i];t=kI(b)[0];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
-//    R z; }
+  I s,t,w=II;
+  if(1==ABS(at) && 1==ABS(bt))//save I from being cast to F for greater accuracy
+  { if (an==bn)      { DO(zn,s= kI(a)[i];t=kI(b)[i];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
+    else if (an==1)  { DO(zn,s= kI(a)[0];t=kI(b)[i];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
+    else /* bn==1 */ { DO(zn,s= kI(a)[i];t=kI(b)[0];kI(z)[i]=!t?!s?IN:s>0?w:-w:s/t)}
+    R z; }
 
   #define FDIVIDE kF(z)[i]=!d?!u?FN:u>0?y:-y:u/d //0/0=FN, 1/0=oo, -1/0=-oo, 1/2=0.5
   SCALAR_EXPR(FDIVIDE,divide,u,d)
