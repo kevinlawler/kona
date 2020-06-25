@@ -198,7 +198,6 @@ K backslash(S s, I n, K*dict)
               "? monadic  unique. distinct elts from a list \n"
               "? dyadic   draw. n?m yields n numbers < m \n"
               "? dyadic   deal. -n?m yields n ints < m without replacement\n"
-              "? dyadic   sample. n?y yields n random elements from list y (-n for no replacement)\n"
               "? dyadic   find. x?y yields index of y in list x (or #x)\n"
               "? dyadic   invert. {x^2} ? 2 yields sqrt(2) \n"
               "? triadic  invert-guess. secant method with clues ?[{2^x};17;4]\n"
