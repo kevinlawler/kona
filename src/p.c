@@ -237,7 +237,7 @@ Z I syntaxChk(S s)   //TODO: refactor the syntax check as a single pass
   if(n>3)
   { for(i=2;i<n-1;++i)
     { if(s[i]=='/' && s[i-1]==':' && s[i-2]=='/' && s[i+1]!=':') R 150; } }
-  if(n>5 && s[n-1]==':' && s[n-2]!=':' && s[n-3]==':') R 160;
+  // if(n>5 && s[n-1]==':' && s[n-2]!=':' && s[n-3]==':') R 160;  //commented out to fix issue #590 syntax error
   R k; }
 
 I mark(I*m,I k,I t){ DO(k, m[i]=i?t:-t) R k; }
