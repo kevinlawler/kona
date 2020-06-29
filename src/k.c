@@ -420,7 +420,7 @@ TR DT[] =  //Dispatch table is append-only. Reorder/delete/insert breaks backwar
   {1, 0, over,"/",{0}},
   {1, 0, scan,"\\",{0}},
   {1, 0, each,"'",{0}},
-  {2, 2, eachright,"/:",{0}},
+  {2, 0, eachright,"/:",{0}},
   {2, 0, eachleft,"\\:",{0}},
   {2, 0, eachpair,"':",{0}},
   {0, 0, 0,0,{0}},
