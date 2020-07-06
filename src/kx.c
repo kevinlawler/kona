@@ -887,7 +887,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       if(prnt) cd(prnt);
       prnt=ci(t0); }
     if(!prnt && t0->t==7 && t0->n==3) prnt=ci(t0);
-    if(*(v+1+i)==offsetDot && t0->t==7 && t0->n==1 && kK(kK(t0)[CODE])[1]==(V)offsetEach)
+    if(*(v+1+i)==offsetDot && t0->t==7 && t0->n==1 && (kK(kK(t0)[CODE])[1]==(V)offsetEach || kK(kK(t0)[CODE])[1]==(V)offsetEachright || kK(kK(t0)[CODE])[1]==(V)offsetEachleft) )
     { K p=kV(t0)[CODE]; I i=p->n-2;  V*q=(V*) kK(p)+i; e=bv_ex(q,t2); }
     else{ e= dv_ex(t0,v+1+i,t2); v[1]=u; }
     cd(t0); cd(t2);
