@@ -327,6 +327,7 @@ K dv_ex(K a, V *p, K b)
   //if(k>2 && !(adverbClass(*p) && !VA(*o)))k=2;
   if(k>2) k=2;
   if(*p==(V)offsetEach && k!=2 && a && b && a->t>0 && a->t<5 && b->t>0 && b->t<5) k=2;
+  if(*p==(V)offsetEach && k==1 && a && b && a->t==-1 &&  b->t==-1) k=2;
   if(2==k || (k==0 && (UI)adverb==offsetScan && (0==(*(K*)p[-1])->t || 3==(*(K*)p[-1])->t)))
   { if ((UI)adverb == offsetOver) R overDyad(a, p, b);
     if ((UI)adverb == offsetScan) R scanDyad(a, p, b);
