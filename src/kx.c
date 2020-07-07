@@ -295,7 +295,7 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
   if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_eachpair)) k=f(a,b);
     //k==0 just means not handled. Errors are not set to come from alt_funcs
   P(k,k)  I bt=b->t, bn=b->n;
-  if(bt >  0) R dv_ex(a,p-1,b);
+  if(bt>0) { K u,v; u=enlist(a); M(u,b)  v=join(u,b); cd(u); R v; }
   if(bt <= 0)
   { if     (bn == 0 && !a) R LE;
     else if(bn == 0 &&  a) R newK(0,0); //TODO: memory manage/ optimize in join with null ptr ?
