@@ -299,14 +299,12 @@ K show(K a)
 }
 
 K minus_eachpair(K x, K y)
-{
-  P(yn<2 || !yt || ABS(yt) > 2, 0)
+{ P(yn<2 || !yt || ABS(yt) > 2, 0)
   K z = newK(yt,yn-1);
   if     (-2==yt) DO(yn-1, kF(z)[i]=kF(y)[i+1]-kF(y)[i])
   else if(-1==yt) DO(yn-1, kI(z)[i]=kI(y)[i+1]-kI(y)[i])
-  if(x){K u,v,f,d; f=first(y);d=minus(x,f); u=enlist(d); M(u,z) v=join(u,z); cd(u);cd(z);cd(f);cd(d); R v; }
-  R z;
-}
+  if(x){K u,v; u=enlist(x); M(u,z) v=join(u,z); cd(u);cd(z); R v; }
+  R z; }
 
 K plus_scan(K x, K y)
 {
