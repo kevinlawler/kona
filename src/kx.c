@@ -307,7 +307,7 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
              cd(g); cd(h); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
   if(0==bt) DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
   z=demote(z);
-  if(a){ K u,v,f,d; f=first(b);M(f); d=dv_ex(a,p-1,f); u=enlist(d); M(u,z)  v=join(u,z); cd(u); cd(z); cd(f); cd(d); R v; }
+  if(a){ K u,v; u=enlist(a); M(u,z)  v=join(u,z); cd(u); cd(z); R v; }
   R z; }
 
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type
