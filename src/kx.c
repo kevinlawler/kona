@@ -749,7 +749,7 @@ Z K bv_ex(V*p,K k)
     else z=demote(z); R z; }
   if(offsetEachright==(L)q) { P(k->n!=2,VE) K a=kK(k)[0],b=kK(k)[1]; R eachright2(a,p,b); }
   if(offsetEachleft==(L)q) { P(k->n!=2,VE) K a=kK(k)[0],b=kK(k)[1]; R eachleft2(a,p,b); }
-  if(offsetEachpair==(L)q) R NYI;   //todo: is this reachable?
+  if(offsetEachpair==(L)q) { P(k->n!=2,VE) K a=kK(k)[0],b=kK(k)[1]; R eachpair2(a,p,b); }
   R vf_ex(*p,k); }
 
 K ex1(V*w,K k,I*i,I n,I f)//convert verb pieces (eg 1+/) to seven-types,
@@ -887,7 +887,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
       if(prnt) cd(prnt);
       prnt=ci(t0); }
     if(!prnt && t0->t==7 && t0->n==3) prnt=ci(t0);
-    if(*(v+1+i)==offsetDot && t0->t==7 && t0->n==1 && (kK(kK(t0)[CODE])[1]==(V)offsetEach || kK(kK(t0)[CODE])[1]==(V)offsetEachright || kK(kK(t0)[CODE])[1]==(V)offsetEachleft) )
+    if(*(v+1+i)==offsetDot && t0->t==7 && t0->n==1 && (kK(kK(t0)[CODE])[1]==(V)offsetEach || kK(kK(t0)[CODE])[1]==(V)offsetEachright || kK(kK(t0)[CODE])[1]==(V)offsetEachleft || kK(kK(t0)[CODE])[1]==(V)offsetEachpair) )
     { K p=kV(t0)[CODE]; I i=p->n-2;  V*q=(V*) kK(p)+i; e=bv_ex(q,t2); }
     else{ e= dv_ex(t0,v+1+i,t2); v[1]=u; }
     cd(t0); cd(t2);
