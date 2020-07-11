@@ -336,7 +336,7 @@ Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;
               CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
               CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
               CS('S', kS(k)[p]=sp(tok);) } }
-          if(q && rc(q)<1000000 && rc(q)>0)cd(q); } }
+          if(q && rc(q)<1000000 && rc(q)>0 && q->n<100000000000000)cd(q); } }
       free(m); }
     p++; }
 
