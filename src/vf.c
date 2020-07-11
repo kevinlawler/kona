@@ -52,7 +52,7 @@ K formKfCS(S s) // 0.0 $ "123\000456\000" is 123 ('\0' char)
     q=*p;
     if(isnan(r))r=-FI; //'r==FN' does not work
   }
-  P(q && !isblank(q),DOE)
+  P(q && !isblank(q),(K)0)
   R Kf(r); //oom
 }
 
