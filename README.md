@@ -30,9 +30,15 @@ You can find an executable version of Kona [here](https://github.com/kevinlawler
 (Apolgies that the Windows executable has not beeen updated for a long time.  My msys2 environment on Windows is not working properly.)
 Download k.exe.  Use Windows "Explorer" to move k.exe from the "Download" directory to another directory ... or not.  Double click on k.exe in "Explorer" to start a Kona session.  Alternatively, start a "cmd" console window, navigate to the directory containing k.exe, and key in "k".
 
+**macOS**
+
+If you have [Homebrew](https://brew.sh) installed, you can install Kona using `brew`:
+
+    brew install kona
+
 **Build from source**
 
-For OSX, Linux, BSD, Cygwin and Android:
+For macOS, Linux, BSD, Cygwin and Android:
 Navigate to the directory you want to install Kona, then type:
 
     git clone https://github.com/kevinlawler/kona.git
