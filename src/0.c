@@ -317,7 +317,7 @@ Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;
       m=strdupn(v+u,t);
       if(!m) R 0;
       if(m[0]!=(L)NULL){
-        tok=strtok(m,y);
+        tok=strsep(&m,y);
         k=kK(z)[e++];
         switch(kC(c)[h++]) {
           CS(' ', e--)
@@ -327,7 +327,7 @@ Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;
           CS('S', kS(k)[p]=sp(tok);) }
         if(q && rc(q)<10000 && rc(q)>0)cd(q);
         while(tok != NULL) {
-          tok=strtok(NULL,y);
+          tok=strsep(&m,y);
           if(tok!=NULL) {
             k=kK(z)[e++];
             switch(kC(c)[h++]) {
