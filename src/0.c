@@ -384,12 +384,12 @@ Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings  
       e=h=0;
       m=strdupn(v+u,t); if(!m) R 0;
       if(m[0]!=(L)NULL){
-        tok=strtok(m,y);
+        tok=strsep(&m,y);
         k=kK(z)[e++];
         if(kC(c)[h++]==' ') e--;
         else kS(kK(z)[0])[p++]=sp(tok);
         while(tok != NULL){
-          tok=strtok(NULL,y);
+          tok=strsep(&m,y);
           if(tok!=NULL) {
             k=kK(z)[e++];
             if(kC(c)[h++]==' ') e--;
@@ -403,24 +403,24 @@ Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings  
       K q=0; e=h=0;
       m=strdupn(v+u,t); if(!m) R 0;
       if(m[0]!=(L)NULL){
-        tok=strtok(m,y);
+        tok=strsep(&m,y);
         k=kK(kK(z)[1])[e++];
         switch(kC(c)[h++]) {
           CS(' ', e--)
           CS('I', q=formKiCS(tok); kI(k)[p]=q?*kI(q):IN;)
           CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
-          CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
+          CS('C', q=newK(-3,n=strlen(tok)); if(!n)n++; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
           CS('S', kS(k)[p]=sp(tok);) }
         if(q && rc(q)<10000 && rc(q)>0) cd(q);
         while(tok != NULL){
-          tok=strtok(NULL,y);
+          tok=strsep(&m,y);
           if(tok!=NULL) {
             k=kK(kK(z)[1])[e++];
             switch(kC(c)[h++]) {
               CS(' ', e--)
               CS('I', q=formKiCS(tok); kI(k)[p]=q?*kI(q):IN;)
               CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
-              CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
+              CS('C', q=newK(-3,n=strlen(tok)); if(!n)n++; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
               CS('S', kS(k)[p]=sp(tok);) } }
           if(q && rc(q)<10000 && rc(q)>0)cd(q); } }
       free(m); p++; } }
