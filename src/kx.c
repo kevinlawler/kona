@@ -604,7 +604,7 @@ K ex(K a)   //Input is (usually, but not always) 7-0 type from wd()
     { if(kW(a)[1]==offsetColon && kW(a)[2]!=offset3m) fam=0;
       if(kVC(a)->n>3)
       { I i=3;
-        while(kW(a)[i]) if(kW(a)[i++]==(V)0x1)fam=1;
+        while(kW(a)[i]) {if(kW(a)[i++]==(V)0x1)fam=1; if(kW(a)[i-1]==offsetColon && kW(a)[i]!=offset3m)fam=0;}
         if(!fCheck && i>2)
         { I j,k=0;
           for(j=i-1; j>0 && k<10; j--)
