@@ -13,5 +13,5 @@ I getdelim(S *s,size_t * __restrict__ n,I d,FILE *f);
 #endif
 
 #if WIN32
-ssize_t getdelim (S *, size_t *, int, FILE *);
+size_t getdelim (S *, size_t *, int, FILE *);
 #endif

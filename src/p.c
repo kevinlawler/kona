@@ -565,8 +565,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                       { z=(V)(DT_VERB_OFFSET+2*charsVerb(s[k])+(1==a?0:1));
                         if(z==(V)0x3d && s[k]!=':')z=(V)0x7c; }
                       else
-                      { j=(V)atol(s+k); i=DT_SPECIAL_VERB_OFFSET;
-                        while(i < DT_SIZE && (!DT[i].text || (L)j != atol(DT[i].text)))i++;
+                      { long jj=atol(s+k); i=DT_SPECIAL_VERB_OFFSET;
+                        while(i < DT_SIZE && (!DT[i].text || jj != atol(DT[i].text)))i++;
                         if(i<DT_SIZE){z=(V)(i+(1==a?0:1));}
                         else R (L)PE; } )    //no matching 0: 1: style verb. (if exists, we also allow eg 123: and -2: )
                       //Assignment is not supported for nested bracket: a[][][] +: 1  <--- parse error

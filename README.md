@@ -27,7 +27,6 @@ Installation
 **Windows**
 
 You can find an executable version of Kona [here](https://github.com/kevinlawler/kona/releases).
-(Apolgies that the Windows executable has not beeen updated for a long time.  My msys2 environment on Windows is not working properly.)
 Download k.exe.  Use Windows "Explorer" to move k.exe from the "Download" directory to another directory ... or not.  Double click on k.exe in "Explorer" to start a Kona session.  Alternatively, start a "cmd" console window, navigate to the directory containing k.exe, and key in "k".
 
 **macOS**

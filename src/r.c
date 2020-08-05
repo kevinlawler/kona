@@ -50,19 +50,6 @@ int getenv_s(size_t*n,S buf,size_t nelt,cS v)
   R 0;
 }
 #endif
-#ifndef _putenv_s
-int _putenv_s(cS nm,cS v)
-{
-  if(!nm||!v)R EINVAL;
-  size_t req=strlen(nm)+strlen(v)+2;
-  S buf=(S)alloc(req);
-  if(!buf)R ENOMEM;
-  sprintf(buf,"%s=%s",nm,v);
-  int r=putenv(buf);
-  free(buf);
-  R r;
-}
-#endif
 #endif
 
 //Reserved verbs/functions (_verb)
