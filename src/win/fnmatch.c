@@ -57,11 +57,6 @@ Boston, MA 02111-1307, USA.  */
 
 #if defined (_LIBC) || !defined (__GNU_LIBRARY__)
 
-
-#if !defined(__GNU_LIBRARY__) && !defined(STDC_HEADERS)
-extern int errno;
-#endif
-
 /* Match STRING against the filename pattern PATTERN, returning zero if
    it matches, nonzero if not.  */
 int
