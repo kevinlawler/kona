@@ -156,7 +156,6 @@ K backslash(S s, I n, K*dict)
               "\\  split        \",\"\\\"a,b\"\n"
                "'  each         \"abc\" ,' \"def\"    join each  \n"
                "'  each         !:' 2 3 4    enumerate each  \n"
-               "/: eachright    #:/:(2;2 2;2 2 2)    count each right\n"
                "/: eachright    2 #/: (\"alpha\";\"bravo\";\"charlie\")    take each right\n"
               "\\: eachleft     0 1 2 3 #\\: \"abc\"     take each left\n"
                "': eachpair     apply pairwise  -':1 3 4 8 10\n"
