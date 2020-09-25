@@ -13,7 +13,7 @@ k was originally designed by Arthur Whitney and [Kx Systems](http://kx.com/). Pr
 
 Kx's KDB+ uses the Q language, and is built on top of k4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of k3. Earlier, Kx sold k2 as its primary product. Before k2, UBS had a 5-year exclusive license to k1. To the confusion of all, these terms are used interchangeably. Kx's k3, k2 and k1 are basically no longer available. While you get k4 with KDB+, k4 is proprietary to Kx and no documentation is available. Kona is a reimplementation that targets k3 (which stopped being available about 20 years ago). Kona is unaffiliated with Kx.
 
-The latest reincarnation is shakti.  To get perspective on the progression see https://shakti.com/database-software-history/
+To get perspective on the progression to the latest reincarnation see https://shakti.com/database-software-history/
 
 Mailing Lists
 -------------
