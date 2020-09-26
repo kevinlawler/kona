@@ -294,8 +294,9 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
 { V *o=p-1; K (*f)(K,K), k=0;
   if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_eachpair)) k=f(a,b);
     //k==0 just means not handled. Errors are not set to come from alt_funcs
+  //f=DT[(L)*p]; k=f(b,b);
   P(k,k)  I bt=b->t, bn=b->n;
-  if(bt>0) { K u,v; u=enlist(a); M(u,b)  v=join(u,b); cd(u); R v; }
+  if(a && bt>0 && bn>1) { K u,v; u=enlist(a); M(u,b)  v=join(u,b); cd(u); R v; }
   if(bt <= 0)
   { if     (bn == 0 && !a) R LE;
     else if(bn == 0 &&  a) R newK(0,0); //TODO: memory manage/ optimize in join with null ptr ?
@@ -307,7 +308,9 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
              cd(g); cd(h); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
   if(0==bt) DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
   z=demote(z);
-  if(a){ K u,v; u=enlist(a); M(u,z)  v=join(u,z); cd(u); cd(z); R v; }
+  if(a)
+  { if(bn==1) {cd(z); R ci(a);}
+    K u,v; u=enlist(a); M(u,z)  v=join(u,z); cd(u); cd(z); R v; }
   R z; }
 
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type
