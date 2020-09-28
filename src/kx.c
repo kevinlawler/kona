@@ -294,7 +294,6 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
 { V *o=p-1; K (*f)(K,K), k=0;
   if(VA(*o) && (f=DT[(L)*o].alt_funcs.verb_eachpair)) k=f(a,b);
     //k==0 just means not handled. Errors are not set to come from alt_funcs
-  //f=DT[(L)*p]; k=f(b,b);
   P(k,k)  I bt=b->t, bn=b->n;
   if(a && bt>0 && bn>1) { K u,v; u=enlist(a); M(u,b)  v=join(u,b); cd(u); R v; }
   if(bt <= 0)
@@ -311,6 +310,7 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
   if(a)
   { if(bn==1) {cd(z); R ci(a);}
     K u,v; u=enlist(a); M(u,z)  v=join(u,z); cd(u); cd(z); R v; }
+  else if(z->t == 1) {K u; u=enlist(z); cd(z); R u;}
   R z; }
 
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type
