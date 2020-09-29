@@ -306,6 +306,9 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
              memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h);
              cd(g); cd(h); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
   if(0==bt) DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
+  if(bt==1 && !a)
+  { h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(0)*bp(bt),bp(bt));
+    memcpy(g->k,((V)b->k)+(0)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h); cd(g); cd(h); cd(z); U(d) kK(z)[0]=d; R d; }
   z=demote(z);
   if(a)
   { if(bn==1) {cd(z); R ci(a);}
