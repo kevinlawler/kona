@@ -301,12 +301,12 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
     else if(bn == 0 &&  a) R newK(0,0); //TODO: memory manage/ optimize in join with null ptr ?
     else if(bn < 2) R newK(0,0); }      //TODO: this newK and the above.....does empty list type depend on input?
   K z=newK(0,bn-1),d=0; U(z)  K g,h;
-  if(0 >bt)
+  if(bt<0)
     DO(bn-1, h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(i)*bp(bt),bp(bt));
              memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h);
              cd(g); cd(h); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
-  if(0==bt) DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
-  if(bt==1 && !a)
+  if(bt==0) DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
+  if(bt>0 && !a)
   { h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(0)*bp(bt),bp(bt));
     memcpy(g->k,((V)b->k)+(0)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h); cd(g); cd(h); cd(z); U(d) kK(z)[0]=d; R d; }
   z=demote(z);
