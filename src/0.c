@@ -468,8 +468,7 @@ Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings  
               CS('I', q=formKiCS(tok); kI(k)[p]=q?*kI(q):IN;)
               CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
               CS('C', q=newK(-3,n=strlen(tok)); if(!n)n++; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
-              CS('S', kS(k)[p]=sp(tok);) } }
-          if(q && rc(q)<10000 && rc(q)>0)cd(q); } }
+              CS('S', kS(k)[p]=sp(tok);) } } } }
       free(m); p++; } }
 
 cleanup:
