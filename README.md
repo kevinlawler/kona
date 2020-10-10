@@ -15,7 +15,7 @@ Kx's KDB+ uses the Q language, and is built on top of k4. Kx used to sell a data
 
 To get perspective on the progression to the latest reincarnation see https://shakti.com/database-software-history/
 
-A note on the unusual style of C code:  It attempts to replicate the style of Arthur Whitney.  A striking original example is contained in file https://github.com/tavmem/buddy/blob/master/a/b.c. There are 2 versions of the buddy memory allocation system. The first is in 11 lines in Whitney's style. The second is in well documented traditional C (almost 750 lines).
+A note on the unusual style of C code:  It attempts to replicate the style of Arthur Whitney.  A striking original example is contained in file https://github.com/tavmem/buddy/blob/master/a/b.c. There are 2 versions of the buddy memory allocation system. The first is in 11 lines written by Whitney. The second is in well documented traditional C (almost 750 lines).
 
 Mailing Lists
 -------------
