@@ -590,7 +590,8 @@ K vf_ex(V q, K g)
 
 Z V ex_(V a, I r)   //Expand wd()->7-0 types, expand and evaluate brackets.   Could probably fold ex0 into ex_
 { K x,y=0,z,tmp;
-  if(VA(a)){if(sva(a)); R a;}  //the useless statement "if(sva(a));" eliminates a Fedora compiler warning
+  if(VA(a)){ if(sva(a))  //the useless statement "if(sva(a));" eliminates a Fedora compiler warning
+             ; R a; }    //putting the semicolon on a separate line eliminates a MacBook Pro compiler warning
   if(!(x=*(K*)a) || 7!=xt || (0<xn && xn<4)) R ci(x); //assert xn>=4 -> conditionals or similar
   r=xn<4?r:xn;   //suggests maybe r should be stored on 7type itself
   if(kV(x)[CONJ])
