@@ -315,7 +315,6 @@ Z K _0d_read(K a,K b) {     //K3.2 windows crash bug: (s;w) 0: (`f;0;1) where 1 
                   //oom m; q is ok because formKfCS unusual
                CS('C', q=newK(-3,x);     if(!q)R 0; memcpy(kC(q),v+y,x); kK(k)[p]=q; q=0;) //oom q
                CS('S', m=strdupn(v+y,x); if(!m)R 0; kS(k)[p]=sp(m); free(m);) }            //oom m
-             if(q && rc(q)<10000)cd(q);
              y+=x; )
       p++; } }
 
@@ -372,7 +371,6 @@ Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;
           CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
           CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
           CS('S', kS(k)[p]=sp(tok);) }
-        if(q && rc(q)<10000 && rc(q)>0)cd(q);
         while(tok != NULL) {
           tok=strsep(&m,y);
           if(tok!=NULL) {
@@ -382,8 +380,7 @@ Z K _0d_rdDsv(K a,K b) {    // read delim-sep-val-file (no column headings)  (s;
               CS('I', q=formKiCS(tok); kI(k)[p]=q?*kI(q):IN;)
               CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
               CS('C', q=newK(-3,n=strlen(tok)); if(!q)R 0; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
-              CS('S', kS(k)[p]=sp(tok);) } }
-          if(q && rc(q)<10000 && rc(q)>0)cd(q); } }
+              CS('S', kS(k)[p]=sp(tok);) } } } }
       free(m); }
     p++; }
 
@@ -458,7 +455,6 @@ Z K _0d_rdDsvWc(K a,K b) {     // read delim-sep-val-file-with-columm-headings  
           CS('F', q=formKfCS(tok); kF(k)[p]=q?*kF(q):FN;)
           CS('C', q=newK(-3,n=strlen(tok)); if(!n)n++; memcpy(kC(q),tok,n); kK(k)[p]=q; q=0;)
           CS('S', kS(k)[p]=sp(tok);) }
-        if(q && rc(q)<10000 && rc(q)>0) cd(q);
         while(tok != NULL){
           tok=strsep(&m,y);
           if(tok!=NULL) {
