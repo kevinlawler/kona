@@ -7,7 +7,7 @@ May 25, 2013
 Introduction
 ------------
 Use of this API allows you to mix kona and C code. There are
-two uses for this API: 
+two uses for this API:
 
 a) when the kona library is linked with some C code to make a
   standalone application that can use K as an embedded language.
@@ -20,13 +20,13 @@ counting to ensure that objects don't get released before
 their use has been finished or they stick around after their
 use is finished. In the first case the application will crash.
 In the second case the application may get a memory leak and
-overtime run out of memory.
+over time run out of memory.
 
 
 Glossary
 --------
 
-atom 	a scalar K object
+atom	a scalar K object
 list	a K list
 object	an atom or list
 
@@ -46,7 +46,7 @@ a) Using K as an embedded language: link with the kona library
 
    cc -I/usr/local/include mycode.c -L/usr/local/lib -lkona
 
-   The API must be initializd by calling ksk("", 0) and ensuring
+   The API must be initialized by calling ksk("", 0) and ensuring
    it doesn't return an errror.
 
 b) Calling C code from K: Compile the C code as a shared library
@@ -80,7 +80,7 @@ or modified through macros described below.
 A k object can be of the following types (the first column
 shows the value in t field).
 
-value 	Name
+value	Name
 -4	symbol list
 -3	char list
 -2	float list
@@ -163,7 +163,7 @@ K KK(K)
 Generator functions
 -------------------
 
-These function return new objects. The returned value has a
+These functions return new objects. The returned value has a
 ref count of 1. These objects may be passed to K functions,
 stored in K or C data structures etc.
 
@@ -174,8 +174,8 @@ K gf(F)
 K gi(I)
 K gs(S)
 K gn()
-    gc() create an atom from a char,gf() from a float, gi()
-    from an integer, gs() from an interned string and gn ceate
+    gc() creates an atom from a char, gf() from a float, gi()
+    from an integer, gs() from an interned string and gn() creates
     a null atom.
 
     Examples:
@@ -245,7 +245,7 @@ I cd(K)
 
 K ci(K)
     increment reference count. When the C code is handed a
-    k object that it wants to save, it should use ci() it.
+    k object that it wants to save, it should use ci().
 
 K from C
 --------
@@ -273,7 +273,7 @@ sdf(I s,I(*fn)())		[NYI]
     Register a callback function for the given socket s.  The
     first arg when positive records an accept callback.  When
     negative records a read callback. These functions are
-    called from k main loop. 
+    called from k main loop.
 
 scd(I s)			[NYI]
     Close the socket. This also tells the k main loop to
@@ -287,7 +287,7 @@ I dj(I j)
     julian day 0 maps to 20350101
 
 I jd(I d)
-    given a date in the form yyyymmdd return julians days.
+    given a date in the form yyyymmdd return julian days.
 
 
 Socket functions
@@ -296,4 +296,4 @@ Socket functions
 General Notes
 -------------
 
-When the C code finishes the use of a k object, 
+When the C code finishes the use of a k object,
