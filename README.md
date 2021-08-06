@@ -14,6 +14,7 @@ k was originally designed by Arthur Whitney and [Kx Systems](http://kx.com/). Pr
 Kx's KDB+ uses the Q language, and is built on top of k4. Kx used to sell a database called KDB, which used the KSQL language, and was built on top of k3. Earlier, Kx sold k2 as its primary product. Before k2, UBS had a 5-year exclusive license to k1. To the confusion of all, these terms are used interchangeably. Kx's k3, k2 and k1 are basically no longer available. While you get k4 with KDB+, k4 is proprietary to Kx and no documentation is available. Kona is a reimplementation that targets k3 (which stopped being available about 20 years ago). Kona is unaffiliated with Kx.
 
 To get perspective on the progression to the latest reincarnation see https://shakti.com/database-software-history/
+(Oops ... looks like this page is no longer available)
 
 A note on the unusual style of C code:  It attempts to replicate the style of Arthur Whitney.  A striking original example is contained in file https://github.com/tavmem/buddy/blob/master/a/b.c. There are 2 versions of the buddy memory allocation system. The first is in 11 lines written by Whitney. The second is in well documented traditional C (almost 750 lines).
 
