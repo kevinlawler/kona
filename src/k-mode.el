@@ -35,10 +35,18 @@
 
 (require 'comint)
 
-(defvar k-program-name "k" "k executable name.")
+(defgroup k nil "K language editing mode."
+  :group 'languages
+  :prefix "k-")
 
-(defvar k-prompt-string "  "
-  "String printed by interpreter to represent a ready prompt.")
+(defcustom k-program-name "k" "k executable name."
+  :group 'k
+  :type 'file)
+
+(defcustom k-prompt-string "  "
+  "String printed by interpreter to represent a ready prompt."
+  :group 'k
+  :type 'string)
 
 (defvar k-process nil "Current k comint process, if any.")
 
