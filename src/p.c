@@ -497,7 +497,8 @@ I capture(S s,I n,I k,I*m,V*w,I*d,K*locals,K*dict,K func)   //TODO: capture - oo
                           // see "getrusage" or http://stackoverflow.com/questions/53827/checking-available-stack-size-in-c
                         else z=((K(*)())vn_[charpos(n_s,u[1])])();
                       else if(func)
-                      { h=*denameS(".k",u,0);
+                      { if((s[0]=='_') && s[1]!='n')R 0;
+                        h=*denameS(".k",u,0);
                         if(7==h->t) hh=match( (K)kV(h)[CODE] , (K)kV(func)[CODE] );
                         if(dict==(K*)kV(func)+PARAMS)
                         { V q=newEntry(u);
