@@ -35,10 +35,18 @@
 
 (require 'comint)
 
-(defvar k-program-name "k" "k executable name.")
+(defgroup k nil "K language editing mode."
+  :group 'languages
+  :prefix "k-")
 
-(defvar k-prompt-string "  "
-  "String printed by interpreter to represent a ready prompt.")
+(defcustom k-program-name "k" "k executable name."
+  :group 'k
+  :type 'file)
+
+(defcustom k-prompt-string "  "
+  "String printed by interpreter to represent a ready prompt."
+  :group 'k
+  :type 'string)
 
 (defvar k-process nil "Current k comint process, if any.")
 
@@ -122,10 +130,10 @@
 ;; * other corner cases?
 
 (defun k-font-lock-keyword-maker ()
-  '(("^\\(/\\) \\([^\n]*\\)$" 
+  '(("^\\(/\\) \\([^\n]*\\)$"
      (1 'k-comment-delimeter-face)
      (2 'k-comment-face))
-    (" \\(/\\) \\([^\n]*\\)$" 
+    (" \\(/\\) \\([^\n]*\\)$"
      (1 'k-comment-delimeter-face)
      (2 'k-comment-face))
     ("[/\\']:?" . 'k-adverb-face)
@@ -136,7 +144,7 @@
     ("[a-zA-Z][a-zA-Z0-9]*:" . 'k-variable-binding-face)
     ("[a-zA-Z][a-zA-Z0-9]*" . 'k-variable-face)
     ("-?[0-9]+\\(\\.?[0-9]*\\)?\\([eE][+-]?[0-9]+\\)?" . 'k-number-face)
-    ("\\(`\\)\\([a-zA-Z][a-zA-Z0-9_]*\\)" 
+    ("\\(`\\)\\([a-zA-Z][a-zA-Z0-9_]*\\)"
      (1 'k-builtin-face)
      (2 'k-symbol-face))
     ("[!#$%&*+,.;<=>?@^_|~-:]:?" . 'k-verb-face)
@@ -216,7 +224,7 @@ Universal argument switches to it in another window."
         (kbuf (k-proc-buffer)))
     (when (and kproc s)
       (comint-send-string kproc s))))
-            
+
 (defun k-buffer-is-visible ()
   "Check if the k process buffer is currently visible."
   (let ((b (k-proc-buffer)))
