@@ -230,7 +230,7 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
     { prompt(b+fCheck);
       if(-1==(c=getline_(&s,&m,f))) GC; } }
   if(fln&&(s[0]=='#' && s[1]=='!')) GC;
-  if(fCheck && s[0]==':' && (lineA || flc))
+  if(fCheck && s[0]==':' && (strstr(s,"`\"")==NULL) && (lineA || flc))
   { I i,j,jj;
     if(*a)
     { for(j=0; j<10; j++)if(cdp[j]==*ofnc)break;
