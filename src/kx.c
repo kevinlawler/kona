@@ -175,39 +175,39 @@ Z K overMonad(K a, V *p, K b)
     DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); if(f && b==c)cd(c); f=1; U(u=c))
     c=c?c:ci(b); }
   else if(useB) // b f/x
-  { I t;
-    do{ K*aa=&a; K g=dv_ex(0,(V)&aa,u); U(g)  t=(g->t==1 && *kI(g)); cd(g);
-        if(!t) break;
-        c=dv_ex(0,p-1,u);
-        if(b!=u)cd(u);
-        U(u=c) } while(1);
-    c=c?c:ci(b); }
-  else   // f/x
-  { V*o=p-1;
-    if(*o==(V)offsetOver)
-      while(1)
-      { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
-        if(u!=b) cd(u);
-        if(flag) break;
-        u=c?c:u; U(c=dv_ex(0,p-1,u))
-        if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; }
-    else if(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)  //f is a function
-    { while(1)
-      { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
-        if(flag)break;
-        if(u!=b) cd(u);
-        u=c?c:u; U(c=dv_ex(0,o,u))
-        if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; }
-    cd(c); R u; }
-    else    //f is data
-    { a=*(K*)*o;
-      if(3==a->t) R cjoin(a,b);
-      while(1)   // f/x
-      { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
-        if(u!=b) cd(u);
-        if(flag) break;
-        u=c?c:u; U(c=dv_ex(0,o,u))
-        if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; } } }
+       { I t;
+         do{ K*aa=&a; K g=dv_ex(0,(V)&aa,u); U(g)  t=(g->t==1 && *kI(g)); cd(g);
+             if(!t) break;
+             c=dv_ex(0,p-1,u);
+             if(b!=u)cd(u);
+             U(u=c) } while(1);
+         c=c?c:ci(b); }
+       else   // f/x
+       { V*o=p-1;
+         if(*o==(V)offsetOver)
+           while(1)
+           { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
+             if(u!=b) cd(u);
+             if(flag) break;
+             u=c?c:u; U(c=dv_ex(0,p-1,u))
+             if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; }
+         else if(*o<(V)DT_SIZE || 7==(*(K*)*o)->t)  //f is a function
+              { while(1)
+                { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
+                  if(flag)break;
+                  if(u!=b) cd(u);
+                  u=c?c:u; U(c=dv_ex(0,o,u))
+                  if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; }
+                cd(c); R u; }
+              else    //f is data
+              { a=*(K*)*o;
+                if(3==a->t) R cjoin(a,b);
+                while(1)   // f/x
+                { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
+                  if(u!=b) cd(u);
+                  if(flag) break;
+                  u=c?c:u; U(c=dv_ex(0,o,u))
+                  if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; } } }
   R c; }
 
 Z K scanMonad(K a, V *p, K b)
