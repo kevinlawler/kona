@@ -106,7 +106,8 @@ K read_tape(I i, I j, I type) {   // type in {0,1} -> {select loop, 4: resp read
     else nbytes=recv(j,bz,128,0);
     if(nbytes<=0){
       if (nbytes==0)O("server: socket %lld hung up\n", j);
-      else perror("recv"); GC;}
+      else perror("recv");
+      GC; }
     K h=*denameS(".",".m.h",0);
     if(6==h->t){send(j,bx,nbytes,0); bx[0]='\0'; close_tape(i,j); R (K)0;}  //echo back only if .m.h does not exist
     else {

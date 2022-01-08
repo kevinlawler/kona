@@ -590,8 +590,7 @@ K vf_ex(V q, K g)
 
 Z V ex_(V a, I r)   //Expand wd()->7-0 types, expand and evaluate brackets.   Could probably fold ex0 into ex_
 { K x,y=0,z,tmp;
-  if(VA(a)){ if(sva(a))  //the useless statement "if(sva(a));" eliminates a Fedora compiler warning
-             ; R a; }    //putting the semicolon on a separate line eliminates a MacBook Pro compiler warning
+  if(VA(a)) R a;
   if(!(x=*(K*)a) || 7!=xt || (0<xn && xn<4)) R ci(x); //assert xn>=4 -> conditionals or similar
   r=xn<4?r:xn;   //suggests maybe r should be stored on 7type itself
   if(kV(x)[CONJ])
@@ -601,7 +600,8 @@ Z V ex_(V a, I r)   //Expand wd()->7-0 types, expand and evaluate brackets.   Co
     if(y->t==0 && y->n==0){ cd(y); y=_n(); }
     if(fer>0 && !fCheck) R y; }
   z=ex0(kW(x),y,r);   //eval wd()
-  cd(y); R z; }
+  cd(y);
+  R z; }
 
 K ex(K a)   //Input is (usually, but not always) 7-0 type from wd()
 { U(a);
@@ -611,7 +611,9 @@ K ex(K a)   //Input is (usually, but not always) 7-0 type from wd()
     { if(kW(a)[1]==offsetColon && kW(a)[2]!=offset3m) fam=0;
       if(kVC(a)->n>3)
       { I i=3;
-        while(kW(a)[i]) {if(kW(a)[i++]==(V)0x1)fam=1; if(kW(a)[i-1]==offsetColon && kW(a)[i]!=offset3m)fam=0;}
+        while(kW(a)[i])
+        { if(kW(a)[i++]==(V)0x1)fam=1;
+          if(kW(a)[i-1]==offsetColon && kW(a)[i]!=offset3m)fam=0; }
         if(!fCheck && i>2)
         { I j,k=0;
           for(j=i-1; j>0 && k<10; j--)
@@ -753,7 +755,8 @@ Z K bv_ex(V*p,K k)
           DO2( k->n, cd(kK(g)[j]); kK(g)[j]=0 ) )   //sic =0
     cd(g);
     if(c)z=collapse(z);
-    else z=demote(z); R z; }
+    else z=demote(z);
+    R z; }
   if(offsetEachright==(L)q) { P(k->n!=2,VE) K a=kK(k)[0],b=kK(k)[1]; R eachright2(a,p,b); }
   if(offsetEachleft==(L)q) { P(k->n!=2,VE) K a=kK(k)[0],b=kK(k)[1]; R eachleft2(a,p,b); }
   if(offsetEachpair==(L)q) { P(k->n!=2,VE) K a=kK(k)[0],b=kK(k)[1]; R eachpair2(a,p,b); }

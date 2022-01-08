@@ -215,7 +215,8 @@ void trst(){t0=clock();}
 void elapsed(S m){
   clock_t e=clock()-t0;
   I ms=(I)(1000.0*(double)e/CLOCKS_PER_SEC);
-  if(ms)O("%s %lld\n",m,ms);trst();}
+  if(ms)O("%s %lld\n",m,ms);
+  trst(); }
 #define N (65535)
 Z void dGU(uI*a,I r,I*x,I*y,I n,I*c,I d)
 {//Variation on Knuth Algorithm 5.2D Distribution counting
