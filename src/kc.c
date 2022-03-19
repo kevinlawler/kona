@@ -37,7 +37,6 @@ I feci=0;           //Flag error cast as integer
 Z I ofCheck=0;
   I fCmplt=0;
   I fbr=0;          //flag for brace, bracket, or paren
-  I fbs=0;          //backslash flag
 Z I flc=0;          //flag lineC
 Z C lineC[100];
 Z C ofnc[]=" ";
@@ -269,8 +268,6 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
   trim(*a); //remove leading blanks
   *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
-  if((*a)[0]=='\\')fbs=1;
-  else fbs=0;
   if(pthread_mutex_lock(&execute_mutex)){ perror("Lock mutex in line()"); abort(); }
   RTIME(d,k=ex(wd(*a,*n)))
   if(pthread_mutex_unlock(&execute_mutex)){ perror("Unlock mutex in line()"); abort(); }

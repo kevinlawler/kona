@@ -1,7 +1,6 @@
 L charsAdverb(C c);
 extern V adverbs[];
 extern I fbr;
-extern I fbs;
 extern I feci;
 extern K sd_(K x,I f);
 extern K stopDict;

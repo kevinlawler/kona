@@ -5,7 +5,6 @@ K make(K a);
 K kcloneI(K a,const char*f,int n);
 #define kclone(a) kcloneI(a,__FILE__,__LINE__)
 extern S d_;
-extern I fbs;
 extern K*inKtree(K*d, S t, I create);
 extern K *denameS(S dir_string,S t,I create);
 extern C errmsg[256];

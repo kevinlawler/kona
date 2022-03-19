@@ -334,7 +334,6 @@ Z K makeable(K a) //TODO: this has to be reworked. can't hang out raw in dot_mon
 K dot_monadic(K x) {
   P(xt==0 && x->n==1 && kK(x)[0]->t==-3,VE)
   if(3==ABS(xt)){
-    S s=kC(x); if(s[0]=='\\')fbs=1; else fbs=0;
     R KX(x); }
   if(4==xt)  {
     K *p = denameS(d_,*kS(x),0);

@@ -259,7 +259,8 @@ K wd_(S s, int n, K*dict, K func) //parse: s input string, n length;
   if(strstr(s,":\\t")) { show(kerr("\\t  syntax")); R 0; }
   //I z=0; if((z=syntaxChk(s))) {O("%lld\n",z); R SYE;}
   I z=syntaxChk(s); if(z==999)R NE; if(z) R SYE;
-  if('\\'==s[0] && fbs){ fbs=0; R backslash(s,n,dict); }
+  I i=0;while(i<n && isspace(s[i]))i++; if('\\'==s[i]) R backslash(s+i,n,dict);
+    //isspace lets \n through... odd but probably fine
   PDA p=0;
   K km=newK(-1,1+n); U(km) I *m = kI(km);//marks
   I e=complete(s,n,&p,m);
