@@ -196,6 +196,7 @@ Z I nodeCount_(N n)
   R 1+l+r; }
 Z I nodeCount(N n) { R nodeCount_(n)-1; }
 
+/*
 Z void trim(S s)    //remove leading blanks (and extra instances of "each")
 { I i,j,k=0;
   for(i=0;i<strlen(s);++i) { if(s[i]!=' ') break; }
@@ -206,6 +207,7 @@ Z void trim(S s)    //remove leading blanks (and extra instances of "each")
     else { if(k==2) { while( s[j+i]==*"'" && i<strlen(s) ) i++;
                       s[j]=s[j+i]; k=0; }
            else {  k++; s[j]=s[j+i]; } } } }
+*/
 
 I check()
 { //in suspended execution mode: allows checking of state at time of error
@@ -266,8 +268,8 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
   if(v==1){ fCmplt=1; goto done; }         //generally incomplete
   if(v==0) fCmplt=0;
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
-  trim(*a); //remove leading blanks
-  *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
+  //trim(*a); //remove leading blanks
+  //*n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if(pthread_mutex_lock(&execute_mutex)){ perror("Lock mutex in line()"); abort(); }
   RTIME(d,k=ex(wd(*a,*n)))
   if(pthread_mutex_unlock(&execute_mutex)){ perror("Unlock mutex in line()"); abort(); }
