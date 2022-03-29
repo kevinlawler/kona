@@ -534,7 +534,8 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
     S u;
     I length=r;
     I offset=v-fixed+(t>0?3:4)*sizeof(I);
-    I mod = offset&(PG-1); //offset must be a multiple of the pagesize
+    //I mod = offset&(PG-1); //offset must be a multiple of the pagesize
+    I mod = offset;
     length+=mod;
     offset-=mod;
 
