@@ -23,6 +23,8 @@ extern V vd[];
 extern V vm[];
 extern I fbr;
 extern I fll;
+extern K sd(K x);
+extern K sd_(K x,I f);
 I sva(V p);
 I rep(K x,I y);
 I wrep(K x,V v,I y);
