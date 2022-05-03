@@ -73,7 +73,7 @@ K sd_(K x,I f)
                      if(v[ii]>(V)DT_SIZE){ if(calf<1)sd_(*(K*)v[ii],2); else sd_(*(K*)v[ii],1); }
                      else O("\n"); } } )
     CSR(5,)
-    CS( 0, DO(xn, O(" %p",&kK(x)[xn-i-1]); sd_(kK(x)[i],2);) ) }
+    CS( 0, DO(xn, O(" %p",&kK(x)[i]); sd_(kK(x)[i],2);) ) }
   R 0; }
 
 K sd(K x) { R sd_(x,1); }     //Shows the details of a K-structure. Useful in debugging.
