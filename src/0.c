@@ -522,7 +522,7 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
 
   if(4==ABS(t) || 7==t || (1<=t && t<=3) || 6==t ) R _2m_r(v,aft,b); //These are read and not mapped
 
-  I r=4*sizeof(I); if(0!=t&&5!=t) r+=bp(t)*n+(-3==t)-(t>0)*sizeof(I);
+  I r=4*sizeof(I); if(0!=t&&5!=t) r+=bp(t)*n+(-3==t)-(t>0)*sizeof(I); if((r%8)>0)r+=8-(r%8);
 
   //0!=t&&5!=t <=> ((-3<=t&&t<=3)||6==t)
 
