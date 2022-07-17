@@ -608,14 +608,19 @@ I wrep(K x,V v,I y) {   //write representation. see rep(). y in {0,1}->{net, dis
 
   I r=0,s;
   if(0==t||5==t) DO(n, V point = d+r; I delta = wrep(kK(x)[i],point,y); r+=delta )
-  else if(-4==t) DO(n, s=1+strlen(kS(x)[i]); memcpy(d+r,kS(x)[i],s); r+=s )
-  else if( '\007'==t || '\010'==t) {   //TODO: write seven_types to disk
-                                       //TODO: calculate return length r optimally for seven_type since seven_type can nest
-    if(1==xn && 1==kVC(x)->n-1 && offsetColon==(V)kS(kK(x)[CODE])[0]){
-      K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon;}
-      //TODO: work for more than just unreserved monadic, dyadic verbs
-    else R (L)SYE; }
-  else {V s=ke(x); I b=n*bp(t)+(3==ABS(t)); if(t>0)d-=sizeof(I); if(4==t){s=*kS(x); b=1+strlen(*kS(x));} memcpy(d,s,b);}
+  else if(-4==t) { DO(n, s=1+strlen(kS(x)[i]); memcpy(d+r,kS(x)[i],s); r+=s )
+                   if((r%8)>0)r+=8-(r%8); }
+       else if( '\007'==t || '\010'==t)     //TODO: write seven_types to disk
+                                            //TODO: calculate return length r optimally for seven_type since seven_type can nest
+                { if(1==xn && 1==kVC(x)->n-1 && offsetColon==(V)kS(kK(x)[CODE])[0])
+                     { K k=*kW(x); I s=sva(k); w[m]=1==s?'\007':'\010';  w[1+m]=(L)offsetColon; }
+                       //TODO: work for more than just unreserved monadic, dyadic verbs
+                  else R (L)SYE; }
+            else { V s=ke(x); I b=n*bp(t)+(3==ABS(t));
+                   if(t>0)d-=sizeof(I);
+                   if(4==t){ s=*kS(x); b=1+strlen(*kS(x)); }
+                   if((b%8)>0)b=(8*(b/8)+(1+(b%8)));
+                   memcpy(d,s,b); }
   R e+r;
 }
 
@@ -633,8 +638,8 @@ I rep(K x,I y) {   //#bytes in certain net/disk representations
     CSR(0,) CS(5, DO(xn,r+=rep(kK(x)[i],y)))
     CSR('\007',) CS('\010', if(1==xn)
        ;  )  //TODO - seven_types on disk  (1==xn --> no size increase)
-    CS(-4, DO(n, r+=1+strlen(kS(x)[i])))
-    CS(-3, r+= (1+n)*sizeof(C))
+    CS(-4, DO(n, r+=1+strlen(kS(x)[i]))  if((r%8)>0) r+=8-(r%8); )
+    CS(-3, r+= (1+n)*sizeof(C); if((r%8)>0)r+=8-(r%8) )
     CS(-2, r+=     n*sizeof(F))
     CS(-1, r+=     n*sizeof(I))
     CS( 4, q=1+strlen(*kS(x)); if(q>=sizeof(I))r+=q-sizeof(I)) }  //without q check can cause trouble on 32-bit
@@ -692,7 +697,7 @@ K rrep(V v, V aft,I*b, I y, I x) { //why aft? maybe not the best? but invariant.
     CSR('\007',) CS('\010', f=newK(-4,2); M(z,f) kV(z)[CODE]=f; if(x)w[1+m]=bswapI(w[1+m]);*kK(f)=(V)(L)w[1+m]; r+=000000000000000;)
     CD: R NE; }  //unsupported type. was:  if(t<-4 || t>7 || n<0) R NE; //verbs actually have some weird types though. 8==\010, etc
 
-  *b+= MAX(r,(2+m)*sizeof(I));
+  *b+= MAX(r,(2+m)*sizeof(I)); *b=8*((*b/8)+((*b%8)>0));
   R z;
 }
 
