@@ -8,7 +8,7 @@ OS := $(shell uname -s | tr "[:upper:]" "[:lower:]")
 $(info OS="$(OS)")
 
 # Win-64
-ifeq (mingw64_nt-10.0-18363,$(OS))
+ifeq (mingw64_nt-10.0-22000,$(OS))
 CC=gcc -DWIN32=1
 PRODFLAGS += -D_FILE_OFFSET_BITS=64
 LDFLAGS = -lws2_32 -static -lpthread

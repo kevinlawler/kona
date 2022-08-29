@@ -539,7 +539,12 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
     length+=mod;
     offset-=mod;
 
-    if(MAP_FAILED==(u=mmap(0,length,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,offset))){R SE;}
+    struct stat buf;
+    if(fstat(f, &buf))R SE;
+    I size = buf.st_size;
+
+    if(MAP_FAILED==(u=mmap(0,size,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_NORESERVE,f,offset))){R SE;}
+
     mMap+=length;
     mUsed+=length;if(mUsed>mMax)mMax=mUsed;
 
