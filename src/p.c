@@ -206,7 +206,7 @@ Z I syntaxChk(S s)   //TODO: refactor the syntax check as a single pass
   for(j=i+1;j<n;++j) if(s[j]!=' ') break;   //2nd non-blank (if it exists)
   if(s[i]=='\\' && s[j]=='\\') R 0;
   if((s[i]=='\'' && s[j]!='\"') || j==n) R 20;
-  for(i=0;i<n-1;++i) if(s[i]=='\'' && s[i+1]=='+') R 25;
+  for(i=0;i<n-1;++i) if(s[i]=='\'' && (s[i+1]=='+' || s[i+1]=='>')) R 25;
   for(i=0;i<n;++i)
   { if(s[i]=='\"') break;
     if(((i>0 && (s[i]=='\013' || s[i]=='\014' || (s[i]=='\'' && s[i-1]==';'))) || (i>1 && s[i]=='\'' && s[i-2]=='\\'))) R 30; }
