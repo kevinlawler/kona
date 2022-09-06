@@ -252,14 +252,14 @@ I mark(I*m,I k,I t){ DO(k, m[i]=i?t:-t) R k; }
 //      so the check probably has to do with whether some useful symbol occurred on the line already
 //other errors: syntax error
 
-K wd(S s, int n){ lineA=s; fdc=0; R wd_(s,n,denameD(&KTREE,d_,1),0); }
+K wd(S s, int n)
+{ I z=syntaxChk(s); if(z==999)R NE; if(z) R SYE;
+  lineA=s; fdc=0; R wd_(s,n,denameD(&KTREE,d_,1),0); }
 
 K wd_(S s, int n, K*dict, K func) //parse: s input string, n length;
 { //assumes: s does not contain a }])([{ mismatch, s is a "complete" expression
   if(!s) R 0;
   if(strstr(s,":\\t")) { show(kerr("\\t  syntax")); R 0; }
-  //I z=0; if((z=syntaxChk(s))) {O("%lld\n",z); R SYE;}
-  I z=syntaxChk(s); if(z==999)R NE; if(z) R SYE;
   I i=0;while(i<n && isspace(s[i]))i++; if('\\'==s[i]) R backslash(s+i,n,dict);
     //isspace lets \n through... odd but probably fine
   PDA p=0;
