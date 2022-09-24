@@ -13,7 +13,7 @@
 extern volatile sig_atomic_t interrupted;
 
 Z K bv_ex(V *p,K k);
-K dv_ex(K a,V *p,K b);
+K dv_ex(K a,V *p,K b,V h);
 Z K ex0(V *v,K k,I r);
 Z K ex2(V *v,K k);
 Z V ex_(V a,I r);
@@ -131,11 +131,11 @@ K overDyad(K a, V *p, K b)
   if(0 >yt)
     DO(yn-1, d=c;
              if(!g) g=newK(ABS(yt),1);
-             memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g);
+             memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g,0);
              if(2==rc(g)){ cd(g); g=0; } cd(d);
              if(!c) GC;) //TODO: oom err/mmo unwind above - oom-g
   if(0==yt)
-    DO(yn-1, d=c; c=dv_ex(d,p-1,kK(y)[i+1]); cd(d);
+    DO(yn-1, d=c; c=dv_ex(d,p-1,kK(y)[i+1],0); cd(d);
              if(!c) GC; ) //TODO: err/mmo unwind above
   z=c;
   cleanup:
@@ -157,9 +157,9 @@ Z K scanDyad(K a, V *p, K b) //k4 has 1 +\ 2 3 yield 3 6 instead of 1 3 6
   K z=newK(0,yn),c,d,g; kK(z)[0]=first(y);
   if(0>yt)
     DO(yn-1, d=kK(z)[i]; g=newK(ABS(yt),1);
-             memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g); cd(g); U(c) kK(z)[i+1]=c)
+             memcpy(g->k,((V)y->k)+(i+1)*bp(yt),bp(yt)); c=dv_ex(d,p-1,g,0); cd(g); U(c) kK(z)[i+1]=c)
              //TODO: err/mmo  cd(y) - oom-g
-  if(0==yt) DO(yn-1, d=kK(z)[i]; c=dv_ex(d,p-1,kK(y)[i+1]); U(c) kK(z)[i+1]=c  )   //TODO: err/mmo  cd(y)
+  if(0==yt) DO(yn-1, d=kK(z)[i]; c=dv_ex(d,p-1,kK(y)[i+1],0); U(c) kK(z)[i+1]=c  )   //TODO: err/mmo  cd(y)
   cd(y);
   //Next line  was to fix (there may be a better refactoring):  11+\1 -> 12 (1 K) but  11+\1 2 -> 11 12 14 (3 K)
   if(a&&atomI(b)){ y=z; M(z,u=Ki(1)) M(y,u,z=drop(u,z)) cd(y); cd(u); }
@@ -172,13 +172,13 @@ Z K overMonad(K a, V *p, K b)
   P(n<0,IE)
   if(useN) //n f/x
   { I f=0;
-    DO(n, c=dv_ex(0,p-1,u); if(b!=u)cd(u); if(f && b==c)cd(c); f=1; U(u=c))
+    DO(n, c=dv_ex(0,p-1,u,0); if(b!=u)cd(u); if(f && b==c)cd(c); f=1; U(u=c))
     c=c?c:ci(b); }
   else if(useB) // b f/x
        { I t;
-         do{ K*aa=&a; K g=dv_ex(0,(V)&aa,u); U(g)  t=(g->t==1 && *kI(g)); cd(g);
+         do{ K*aa=&a; K g=dv_ex(0,(V)&aa,u,0); U(g)  t=(g->t==1 && *kI(g)); cd(g);
              if(!t) break;
-             c=dv_ex(0,p-1,u);
+             c=dv_ex(0,p-1,u,0);
              if(b!=u)cd(u);
              U(u=c) } while(1);
          c=c?c:ci(b); }
@@ -189,14 +189,14 @@ Z K overMonad(K a, V *p, K b)
            { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
              if(u!=b) cd(u);
              if(flag) break;
-             u=c?c:u; U(c=dv_ex(0,p-1,u))
+             u=c?c:u; U(c=dv_ex(0,p-1,u,0))
              if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; }
          else if(*o<(V)DT_SIZE || ((7==(*(K*)*o)->t) && 3==(*(K*)*o)->n))  //f is a function
               { while(1)
                 { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
                   if(flag)break;
                   if(u!=b) cd(u);
-                  u=c?c:u; U(c=dv_ex(0,o,u))
+                  u=c?c:u; U(c=dv_ex(0,o,u,0))
                   if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; }
                 cd(c); R u; }
               else    //f is data
@@ -206,7 +206,7 @@ Z K overMonad(K a, V *p, K b)
                 { if(matchI(b,c) || (u!=b && matchI(u,c))) flag=1;
                   if(u!=b) cd(u);
                   if(flag) break;
-                  u=c?c:u; U(c=dv_ex(0,o,u))
+                  u=c?c:u; U(c=dv_ex(0,o,u,0))
                   if(1==ABS(b->t) && 3==ABS(c->t)) flag=1; } } }
   R c; }
 
@@ -215,32 +215,32 @@ Z K scanMonad(K a, V *p, K b)
   U(u)  I useN=0,n=0,useB=0;
   if(a) {if(1 == a->t){useN=1; n=*kI(a);}else if(7==a->t)useB=1;}
   P(n < 0,IE) //mmo
-  if(useN) DO(n, U(d=last(u)) c=dv_ex(0,p-1,d); cd(d); U(c) U(v=enlist(c)) cd(c); u=join(w=u,v); cd(w); cd(v); U(u))
+  if(useN) DO(n, U(d=last(u)) c=dv_ex(0,p-1,d,0); cd(d); U(c) U(v=enlist(c)) cd(c); u=join(w=u,v); cd(w); cd(v); U(u))
   else if(useB)
   { I t;
-    do { U(d=last(u))  K*aa=&a; K g=dv_ex(0,(V)&aa,d); U(g)  t=(1==g->t && *kI(g)); cd(g);
+    do { U(d=last(u))  K*aa=&a; K g=dv_ex(0,(V)&aa,d,0); U(g)  t=(1==g->t && *kI(g)); cd(g);
          if(!t){cd(d); break;}
-         c=dv_ex(0,p-1,d); cd(d); U(c)  U(v=enlist(c))  cd(c); u=join(w=u,v); cd(w); cd(v); U(u) } while(1); }
+         c=dv_ex(0,p-1,d,0); cd(d); U(c)  U(v=enlist(c))  cd(c); u=join(w=u,v); cd(w); cd(v); U(u) } while(1); }
   else while(1)  //mm/o + error checking   eg if(!c) ...
   { U(d=last(u));
     if(matchI(b,c) || matchI(c,d)) flag=1;
     if(!flag && c){ u=join(v=u,w=enlist(c)); cd(v); cd(w); cd(d); d=c; }
     if(interrupted){ interrupted=0; R BE; }
     if(flag){ cd(c);cd(d); break; }
-    c=dv_ex(0,p-1,d); cd(d);
+    c=dv_ex(0,p-1,d,0); cd(d);
     if(!c){ cd(u); R c; } }
   R u; }
 
-Z K each2(K a, V *p, K b)
+Z K each2(K a, V *p, K b, V h)
 { I bt=b->t, bn=b->n; K prnt0=0, grnt0=0, d=0;
   if(bt > 0)
   { if(a && a->n>0)
     { K z = newK(0,a->n); U(z)
-      DO(a->n, d = dv_ex(kK(a)[i],p-1,b); M(d,z) kK(z)[i]=d)
+      DO(a->n, d = dv_ex(kK(a)[i],p-1,b,0); M(d,z) kK(z)[i]=d)
       z=demote(z);
       if(z->t==1) z->t=-1;
       R z; }
-    else { d=dv_ex(a,p-1,b); R d; } }
+    else { d=dv_ex(a,p-1,b,h); R d; } }
   else
   { K z=newK(0,bn); U(z)
     K g; I f=*p==(V)offsetEach && (*(p-1)==(V)offsetEach || *(p-1)==(V)offsetOver || *(p-1)==(V)offsetScan) && *(p-2)<(V)DT_SIZE;
@@ -248,16 +248,16 @@ Z K each2(K a, V *p, K b)
       DO(bn, g=newK(ABS(bt),1);
              M(g,z)
              memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt));
-             if(f)d=dv_ex(a,p-1,g); else d=dv_ex(0,p-1,g);
+             if(f)d=dv_ex(a,p-1,g,0); else {V h=&a; d=dv_ex(0,p-1,g,h);}
              cd(g); M(d,z) kK(z)[i]=d )
     if(0==bt)
     { if(prnt) prnt0=ci(prnt);
       if(grnt) grnt0=ci(grnt);
-      DO(bn, if(f){ if(a && a->n>1) d=dv_ex(kK(a)[i],p-1,kK(b)[i]); else  d=dv_ex(a,p-1,kK(b)[i]); }
+      DO(bn, if(f){ if(a && a->n>1) d=dv_ex(kK(a)[i],p-1,kK(b)[i],0); else  d=dv_ex(a,p-1,kK(b)[i],0); }
              else
              { if(prnt0){cd(prnt);prnt=ci(prnt0);}
                if(grnt0){cd(grnt);grnt=ci(grnt0);}
-               d=dv_ex(0,p-1,kK(b)[i]);}
+               d=dv_ex(0,p-1,kK(b)[i],0);}
                if(!d || !z)
                { if(prnt0) { cd(prnt0);prnt0=0; }
                  if(grnt0) { cd(grnt0);grnt0=0; } }
@@ -271,23 +271,23 @@ Z K each2(K a, V *p, K b)
 Z K eachright2(K a, V *p, K b)
 { if(ft3 && !a) R VE;
   I bt=b->t, bn=b->n;
-  if(bt > 0) R dv_ex(a,p-1,b);
+  if(bt > 0) R dv_ex(a,p-1,b,0);
   K z=newK(0,bn), d;
   K g;
-  if(0 >bt) DO(bn, g=newK(ABS(bt),1); memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(a,p-1,g); cd(g); U(d) kK(z)[i]=d)
+  if(0 >bt) DO(bn, g=newK(ABS(bt),1); memcpy(g->k,((V)b->k)+i*bp(bt),bp(bt)); d=dv_ex(a,p-1,g,0); cd(g); U(d) kK(z)[i]=d)
     //TODO: err/mmo oom-g
-  if(0==bt) DO(bn, d=dv_ex(a,p-1,kK(b)[i]); U(d) kK(z)[i]=d)
+  if(0==bt) DO(bn, d=dv_ex(a,p-1,kK(b)[i],0); U(d) kK(z)[i]=d)
   R demote(z); }
 
 Z K eachleft2(K a, V *p, K b)
 { if(!a) R VE;
   I at=a->t, an=a->n;
-  if(at > 0) R dv_ex(a,p-1,b);
+  if(at > 0) R dv_ex(a,p-1,b,0);
   K z = newK(0,an),d;
   K g;
-  if(0 >at) DO(an, g=newK(ABS(at),1); memcpy(g->k,((V)a->k)+i*bp(at),bp(at)); d=dv_ex(g,p-1,b); cd(g); U(d) kK(z)[i]=d)
+  if(0 >at) DO(an, g=newK(ABS(at),1); memcpy(g->k,((V)a->k)+i*bp(at),bp(at)); d=dv_ex(g,p-1,b,0); cd(g); U(d) kK(z)[i]=d)
     //TODO: err/mmo oom-g
-  if(0==at) DO(an, d=dv_ex(kK(a)[i],p-1,b); U(d) kK(z)[i]=d) //TODO: err/mmo
+  if(0==at) DO(an, d=dv_ex(kK(a)[i],p-1,b,0); U(d) kK(z)[i]=d) //TODO: err/mmo
   R demote(z); }
 
 Z K eachpair2(K a, V *p, K b)  //2==k necessary?
@@ -303,12 +303,12 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
   K z=newK(0,bn-1),d=0; U(z)  K g,h;
   if(bt<0)
     DO(bn-1, h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(i)*bp(bt),bp(bt));
-             memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h);
+             memcpy(g->k,((V)b->k)+(i+1)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h,0);
              cd(g); cd(h); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z) - oom-g-h
-  if(bt==0) DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i]); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
+  if(bt==0) DO(bn-1, d=dv_ex(kK(b)[i+1],p-1,kK(b)[i],0); U(d) kK(z)[i]=d) //TODO: err/mmo - cd(z)
   if(bt>0 && !a)
   { h=newK(ABS(bt),1); g=newK(ABS(bt),1); memcpy(h->k,((V)b->k)+(0)*bp(bt),bp(bt));
-    memcpy(g->k,((V)b->k)+(0)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h); cd(g); cd(h); cd(z); U(d) kK(z)[0]=d; R d; }
+    memcpy(g->k,((V)b->k)+(0)*bp(bt),bp(bt)); d=dv_ex(g,p-1,h,0); cd(g); cd(h); cd(z); U(d) kK(z)[0]=d; R d; }
   z=demote(z);
   if(a)
   { if(bn==1) {cd(z); R ci(a);}
@@ -318,7 +318,7 @@ Z K eachpair2(K a, V *p, K b)  //2==k necessary?
 
 //TODO: Try (?) and grow adverb results as vectors before devolving to 0-type
 //TODO: consider merging dv_ex with vf_ex
-K dv_ex(K a, V *p, K b)
+K dv_ex(K a, V *p, K b, V h)
 { if(!p || !*p) R 0; //TODO: ???
   U(b)  V *o=p-1;
   //Arity of V?A_1...A_n-1 for X V?A_1...A_n Y; 0 for X Y, X A Y
@@ -339,20 +339,20 @@ K dv_ex(K a, V *p, K b)
     if ((UI)adverb == offsetEach)
     { if(!a) adverb = (V)offsetEachright;
       else if(a->t <= 0 && b->t <= 0 && a->n != b->n) R LE;
-      else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b);
+      else if(a->t > 0 && b->t > 0) R dv_ex(a,p-1,b,0);
       else if (a->t > 0) adverb=(V)offsetEachright;
       else if(b->t > 0) adverb=(V)offsetEachleft;
       else        //a and b both lists/vectors of size an
       { a=promote(a); b=promote(b); M(a,b)
         K z=newK(0,a->n),k; M(z,a,b)
-        DO(a->n, k=dv_ex(kK(a)[i],p-1,kK(b)[i]); M(k,z,a,b) kK(z)[i]=k)
+        DO(a->n, k=dv_ex(kK(a)[i],p-1,kK(b)[i],0); M(k,z,a,b) kK(z)[i]=k)
         cd(a); cd(b); R demote(z); } } }
   else if(2>k)
   { if((UI)adverb==offsetOver)
     { if(!fom) R overMonad(a, p, b);
       else     R overMonad(kK(b)[0],p,kK(b)[1]); }
     if ((UI)adverb==offsetScan) R scanMonad(a, p, b);
-    if ((UI)adverb==offsetEach) R each2(a, p, b); }
+    if ((UI)adverb==offsetEach) R each2(a, p, b, h);}
   if((UI)adverb==offsetEachright) R eachright2(a, p, b);
   if((UI)adverb==offsetEachleft) R eachleft2(a, p, b);
   if((UI)adverb==offsetEachpair) R eachpair2(a, p, b);
@@ -378,7 +378,8 @@ K dv_ex(K a, V *p, K b)
     //        **** Next 2 lines removed to fix #432. They may be needed when returning to #244 and #247
     //  if(encp && (encp!=2 || (strchr(kC(kK(encf)[CODE]),"z"[0]))) && encp!=3 && DT_SIZE<(UI)*p)tmp=vf_ex(&encf,g);
     //  else
-    tmp=vf_ex(*p,g); stk--;
+    if(h && (*p>(V)DT_SIZE) && 0==(*(K*)*p)->n ) tmp=vf_ex(h,g); else tmp=vf_ex(*p,g);
+    stk--;
     if(grnt && !prnt)prnt=ci(grnt); }
   memset(kK(g),0,g->n*sizeof(K)); cd(g); //Special privileges here...don't ci() members beforehand
   R tmp; }
@@ -713,7 +714,7 @@ Z K ex0(V*v,K k,I r)   //r: {0,1,2}->{code, (code), [code]}.
 
 Z K bv_ex(V*p,K k)
 { V q=*p; K x; I n=0;   //assert 0!=k->n    assert k==b->n (otherwise, projection/VE, which shouldn't reach here)
-  if(!adverbClass(*p) && valence(*p)<3){ if(k->n<2)R VE;  R dv_ex(kK(k)[0],p,kK(k)[1]); }
+  if(!adverbClass(*p) && valence(*p)<3){ if(k->n<2)R VE;  R dv_ex(kK(k)[0],p,kK(k)[1],0); }
      //This may contribute to bv_ex subtriadic problems
   if(offsetOver==(L)q)
   { DO(k->n-1, x=kK(k)[i+1];
@@ -907,7 +908,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
     if(!prnt && t0->t==7 && t0->n==3) prnt=ci(t0);
     if(*(v+1+i)==offsetDot && t0->t==7 && t0->n==1 && (kK(kK(t0)[CODE])[1]==(V)offsetEach || kK(kK(t0)[CODE])[1]==(V)offsetEachright || kK(kK(t0)[CODE])[1]==(V)offsetEachleft || kK(kK(t0)[CODE])[1]==(V)offsetEachpair) )
     { K p=kV(t0)[CODE]; I i=p->n-2;  V*q=(V*) kK(p)+i; e=bv_ex(q,t2); }
-    else{ e= dv_ex(t0,v+1+i,t2); v[1]=u; }
+    else{ e= dv_ex(t0,v+1+i,t2,0); v[1]=u; }
     cd(t0); cd(t2);
     if(!VA(t3)) cd(t3);
     R e; }
@@ -946,7 +947,7 @@ Z K ex2(V*v, K k)  //execute words --- all returns must be Ks. v: word list, k: 
   u=*v; //Fixes a bug, see above. Not thread-safe. Adding to LOCALS probably better
   *v=VA(t3)?t3:(V)&t3;
   if(*(v+i)==(V)offsetEach && !grnt) grnt=ci(prnt);
-  e=dv_ex(0,v+i,t2); *v=u;
+  e=dv_ex(0,v+i,t2,0); *v=u;
   if(*(v+i)==(V)offsetEach && prnt==grnt){ cd(grnt); grnt=0; }
   cd(t2);
   if(!VA(t3) && (encp!=3 || (encp==3 && kV(t3)[CACHE_WD]))) cd(t3);
