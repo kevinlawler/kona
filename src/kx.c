@@ -257,7 +257,7 @@ Z K each2(K a, V *p, K b, V h)
              else
              { if(prnt0){cd(prnt);prnt=ci(prnt0);}
                if(grnt0){cd(grnt);grnt=ci(grnt0);}
-               d=dv_ex(0,p-1,kK(b)[i],0);}
+               if(!h)h=&a; d=dv_ex(0,p-1,kK(b)[i],h);}
                if(!d || !z)
                { if(prnt0) { cd(prnt0);prnt0=0; }
                  if(grnt0) { cd(grnt0);grnt0=0; } }
