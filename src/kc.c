@@ -224,7 +224,7 @@ I lines(FILE*f)
   //You could put lines(stdin) in main() to have not-multiplexed command-line-only input
 
 I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0,  intermediate is non-zero
-{ S s=0; I b=0,c=0,m=0,o=1,q=1; K k; F d; fbr=fer=feci=0; fam=1;
+{ S s=0; I b=0,c=0,m=0,o=1,q=1; K k; F d=0; fbr=fer=feci=0; fam=1;
   if(-1==(c=getline_(&s,&m,f))) GC;
   if(fCheck && 1==strlen(s) && s[0]=='\n')
   { while(1==strlen(s) && s[0]=='\n')
