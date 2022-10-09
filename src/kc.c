@@ -316,8 +316,9 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
                flc=1; }
              check(); } } }    //enter suspended execution mode for checking
   if(*p)pdafree(*p);
-  *p=0; free(*a); *a=0; *n=0; free(s); s=0;
+  *p=0; free(*a); *a=0; *n=0;
  done:
+  free(s); s=0;
   if(fWksp)
   { O("used now : %lld (%lld %lld)\n",(I)mUsed,(I)mAlloc,(I)mMap);
     O("max used : %lld\n",(I)mMax);
