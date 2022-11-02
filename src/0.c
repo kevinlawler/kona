@@ -561,7 +561,11 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
 
 K _1d(K x,K y) {
   I t=x->t;
-  if(4==t || -3==t)R _1d_write(x,y,0); //char-vector but not char-atom
+  if(4==t || -3==t){
+    S m=CSK(x); I sm = strlen(m);
+    S e= sm > 1 && '.'==m[sm-2] && *KFX==m[sm-1] ? strdupn(m,sm) : glueSS(m,KFX);
+    remove(e);
+    R _1d_write(x,y,0); } //char-vector but not char-atom
   if(!t)R _1d_read(x,y);
   if(3==t)R _1d_char(x,y);
   R TE; }
