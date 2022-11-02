@@ -50,7 +50,7 @@ Z K _0d_rdDsvWc(K a,K b);
 Z K _1m_r(I f,V fixed, V v,V aft,I*b);
 Z K _1d_char(K x,K y);
 Z K _1d_read(K a,K b);
-Z K _1d_write(K x,K y,I dosync);
+Z K _1d_write(K x,K y,I dosync,S e);
 Z I disk(K x);
 Z I rrep_4(S *z,S a,S t);
 Z K readVector(K x,I t);
@@ -564,28 +564,23 @@ K _1d(K x,K y) {
   if(4==t || -3==t){
     S m=CSK(x); I sm = strlen(m);
     S e= sm > 1 && '.'==m[sm-2] && *KFX==m[sm-1] ? strdupn(m,sm) : glueSS(m,KFX);
+    //TODO: lfop (lower-case l on Windows -- differs from 'L' in manual)
+    U(e)
     remove(e);
-    R _1d_write(x,y,0); } //char-vector but not char-atom
+    R _1d_write(x,y,0,e); //char-vector but not char-atom
+    free(e); }
   if(!t)R _1d_read(x,y);
   if(3==t)R _1d_char(x,y);
   R TE; }
 
 //TODO: for testing this, use 1:write and 2:read (or 1:read) to confim items are the same before write & after read
-Z K _1d_write(K x,K y,I dosync) {
+Z K _1d_write(K x,K y,I dosync,S e) {
   //Note: all file objects must be at least 4*sizeof(I) bytes...fixes bugs in K3.2, too
   //K3.2 Bug - "a"1:`a;2:"a" or 1:"a" - wsfull, tries to read sym but didn't write enough bytes?
   I n=disk(y);
 
-  //Copy-pasted from 2:
-  S m=CSK(x);
-  I sm = strlen(m);
-  S e= sm > 1 && '.'==m[sm-2] && *KFX==m[sm-1] ? strdupn(m,sm) : glueSS(m,KFX);
-     //lfop (lower-case l on Windows -- differs from 'L' in manual)
-  U(e)
-
   //Largely copy-pasted from 6:dyadic
   I f=open(e,O_RDWR|O_CREAT|O_TRUNC,07777);
-  free(e);
   P(f<0,SE)
 
   P(ftruncate(f,n),SE)
@@ -599,8 +594,7 @@ Z K _1d_write(K x,K y,I dosync) {
   if(dosync)msync(v,n,MS_SYNC|MS_INVALIDATE); //slow,but necessary
   r=munmap(v,n); if(r)R UE;
 
-  R _n();
-}
+  R _n(); }
 
 I wrep(K x,V v,I y) {   //write representation. see rep(). y in {0,1}->{net, disk}
   I t=xt, n=xn;
@@ -1130,11 +1124,11 @@ K _5d_(K x,K y,I dosync) {
   I f=open(e,O_RDWR,07777); //Try the extended version of the filename first
   if(f>=0) stat(e,&c);
   else {f=open(m,O_RDWR,07777); stat(m,&c);} //Then try the plain version
-  free(e);
   //End copy/paste
 
   //File doesn't exist so fall back to 1:
-  if(f<0) R _1d_write(x,y,1); //manual says return count but that is incorrect/bug.
+  if(f<0) R _1d_write(x,y,1,e); //manual says return count but that is incorrect/bug.
+  free(e);
 
   I s = c.st_size;
   if(s < 4*sizeof(I)) R 0; //TODO: err, file is malformed
