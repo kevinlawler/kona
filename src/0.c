@@ -580,7 +580,7 @@ Z K _1d_write(K x,K y,I dosync,S e) {
   I n=disk(y);
 
   //Largely copy-pasted from 6:dyadic
-  I f=open(e,O_RDWR|O_CREAT|O_TRUNC,07777);
+  I f=open(e,O_RDWR|O_CREAT|O_TRUNC,0777);
   P(f<0,SE)
 
   P(ftruncate(f,n),SE)
@@ -1121,9 +1121,9 @@ K _5d_(K x,K y,I dosync) {
 
   struct stat c; //lfop windows: GetFileSizeEx
 
-  I f=open(e,O_RDWR,07777); //Try the extended version of the filename first
+  I f=open(e,O_RDWR,0777); //Try the extended version of the filename first
   if(f>=0) stat(e,&c);
-  else {f=open(m,O_RDWR,07777); stat(m,&c);} //Then try the plain version
+  else {f=open(m,O_RDWR,0777); stat(m,&c);} //Then try the plain version
   //End copy/paste
 
   //File doesn't exist so fall back to 1:
@@ -1216,7 +1216,7 @@ K _6d(K a,K b) {  //A lot of this is copy/paste from 0: dyadic write
 
   S m=CSK(c); //possible inputs reaching this point: 4,3,-3, and -4 (size 1)
 
-  I f=m[0]?open(m,O_RDWR|O_CREAT|(append ?0:O_TRUNC),07777):1; //stdout if m is ` or "" or "\000..."
+  I f=m[0]?open(m,O_RDWR|O_CREAT|(append ?0:O_TRUNC),0777):1; //stdout if m is ` or "" or "\000..."
   I e=0;
   if(append && m[0]) //below 'open' : don't fail if file didn't exist prior to this append
     P(stat_sz(m,&e),SE)
