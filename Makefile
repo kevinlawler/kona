@@ -127,8 +127,15 @@ k_dyn: CFLAGS += $(PRODFLAGS)
 k_dyn: src/kbuild.h $(OBJS)
 	$(CC) ${CFLAGS} $(OBJS) -rdynamic -o $@ $(LDFLAGS)
 
+DATE_FMT = +%Y-%m-%d
+ifdef SOURCE_DATE_EPOCH
+	BUILD_DATE := $(shell date -u -d "@$(SOURCE_DATE_EPOCH)" "$(DATE_FMT)" 2>/dev/null || date -u -r "$(SOURCE_DATE_EPOCH)" "$(DATE_FMT)" 2>/dev/null || date -u "$(DATE_FMT)")
+else
+	BUILD_DATE := $(shell date "$(DATE_FMT)")
+endif
+
 src/kbuild.h:
-	echo "#define KBUILD_DATE \"`date +%Y-%m-%d`\"" >$@
+	echo "#define KBUILD_DATE \"$(BUILD_DATE)\"" >$@
 
 test: k_test
 
