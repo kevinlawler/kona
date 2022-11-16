@@ -580,7 +580,7 @@ Z K _1d_write(K x,K y,I dosync,S e) {
   I n=disk(y);
 
   //Largely copy-pasted from 6:dyadic
-  I f=open(e,O_RDWR|O_CREAT|O_TRUNC,0777);
+  I f=open(e,O_RDWR|O_CREAT|O_TRUNC,0644);
   P(f<0,SE)
 
   P(ftruncate(f,n),SE)
