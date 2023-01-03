@@ -268,8 +268,8 @@ I line(FILE*f, S*a, I*n, PDA*p)     //just starting or just executed: *a=*n=*p=0
   if(v==1){ fCmplt=1; goto done; }         //generally incomplete
   if(v==0) fCmplt=0;
   if(n && '\n'==(*a)[*n-1]) (*a)[--*n]=0;   //chop for getline
-  //trim(*a); //remove leading blanks
-  //*n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
+  // trim(*a); //remove leading blanks
+  // *n=strlen(*a); //strlen might have been changed in 'trim' or in 'recur'
   if(pthread_mutex_lock(&execute_mutex)){ perror("Lock mutex in line()"); abort(); }
   RTIME(d,k=ex(wd(*a,*n)))
   if(pthread_mutex_unlock(&execute_mutex)){ perror("Unlock mutex in line()"); abort(); }
