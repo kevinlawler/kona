@@ -551,7 +551,9 @@ Z K _1m_r(I f,V fixed, V v,V aft,I*b) {   //File descriptor, moving * into mmap,
     z=(K)(((V)u+mod)-3*sizeof(I)); //3*sizeof(I) for c,t,n
 
     //ref count should be reset to 1 after mapping
-    mrc((K)z,1);
+    #ifndef WIN32
+    mrc((K)z,1);   //suppressed in Windows to fix issue #628
+    #endif
     //if(1<=t || 3<=t){dd(z->n)} // ???
   }
 
