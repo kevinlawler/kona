@@ -173,7 +173,11 @@ Z V unpool(I r)
   V*z;
   V*L=((V*)KP)+r;
   I k= ((I)1)<<r;
+  #ifdef WIN32
+  if(!*L || (V)0x106==*L)
+  #else
   if((V)0x200>*L)
+  #endif
   {
     U(z=amem(k,r))
     if(k<PG)
