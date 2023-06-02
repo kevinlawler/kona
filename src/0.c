@@ -569,8 +569,8 @@ K _1d(K x,K y) {
     //TODO: lfop (lower-case l on Windows -- differs from 'L' in manual)
     U(e)
     remove(e);
-    R _1d_write(x,y,0,e); //char-vector but not char-atom
-    free(e); }
+    K xx= _1d_write(x,y,0,e); //char-vector but not char-atom
+    free(e); R xx; }
   if(!t)R _1d_read(x,y);
   if(3==t)R _1d_char(x,y);
   R TE; }
